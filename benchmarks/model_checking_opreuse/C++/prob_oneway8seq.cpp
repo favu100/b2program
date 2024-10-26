@@ -10,11 +10,10 @@
 #include <atomic>
 #include <any>
 #include <mutex>
+#include <shared_mutex>
 #include <future>
 #include <boost/asio/post.hpp>
 #include <boost/asio/thread_pool.hpp>
-#include <boost/any.hpp>
-#include <boost/optional.hpp>
 #include <btypes_primitives/BUtils.hpp>
 #include <btypes_primitives/StateNotReachableError.hpp>
 #include <btypes_primitives/PreconditionOrAssertionViolation.hpp>
@@ -2818,43 +2817,43 @@ class prob_oneway8seq {
             RB = (BInteger(1));
         }
 
-        prob_oneway8seq(const BRelation<BInteger, BInteger >& T0, const BRelation<BInteger, BInteger >& T1, const BRelation<BInteger, BInteger >& T2, const BRelation<BInteger, BInteger >& T3, const BRelation<BInteger, BInteger >& T4, const BRelation<BInteger, BInteger >& T5, const BRelation<BInteger, BInteger >& T6, const BRelation<BInteger, BInteger >& T7, const BRelation<BInteger, BInteger >& A0, const BRelation<BInteger, BInteger >& A1, const BRelation<BInteger, BInteger >& A2, const BRelation<BInteger, BInteger >& A3, const BRelation<BInteger, BInteger >& A4, const BRelation<BInteger, BInteger >& A5, const BRelation<BInteger, BInteger >& A6, const BRelation<BInteger, BInteger >& A7, const BRelation<BInteger, BInteger >& B0, const BRelation<BInteger, BInteger >& B1, const BRelation<BInteger, BInteger >& B2, const BRelation<BInteger, BInteger >& B3, const BRelation<BInteger, BInteger >& B4, const BRelation<BInteger, BInteger >& B5, const BRelation<BInteger, BInteger >& B6, const BRelation<BInteger, BInteger >& B7, const BInteger& LA, const BInteger& LB, const BInteger& P0, const BInteger& P1, const BInteger& P2, const BInteger& P3, const BInteger& P4, const BInteger& P5, const BInteger& P6, const BInteger& P7, const BInteger& RA, const BInteger& RB) {
-            this->T0 = T0;
-            this->T1 = T1;
-            this->T2 = T2;
-            this->T3 = T3;
-            this->T4 = T4;
-            this->T5 = T5;
-            this->T6 = T6;
-            this->T7 = T7;
-            this->A0 = A0;
-            this->A1 = A1;
-            this->A2 = A2;
-            this->A3 = A3;
-            this->A4 = A4;
-            this->A5 = A5;
-            this->A6 = A6;
-            this->A7 = A7;
-            this->B0 = B0;
-            this->B1 = B1;
-            this->B2 = B2;
-            this->B3 = B3;
-            this->B4 = B4;
-            this->B5 = B5;
-            this->B6 = B6;
-            this->B7 = B7;
-            this->LA = LA;
-            this->LB = LB;
-            this->P0 = P0;
-            this->P1 = P1;
-            this->P2 = P2;
-            this->P3 = P3;
-            this->P4 = P4;
-            this->P5 = P5;
-            this->P6 = P6;
-            this->P7 = P7;
-            this->RA = RA;
-            this->RB = RB;
+        prob_oneway8seq(const prob_oneway8seq& copy) {
+            this->T0 = copy.T0;
+            this->T1 = copy.T1;
+            this->T2 = copy.T2;
+            this->T3 = copy.T3;
+            this->T4 = copy.T4;
+            this->T5 = copy.T5;
+            this->T6 = copy.T6;
+            this->T7 = copy.T7;
+            this->A0 = copy.A0;
+            this->A1 = copy.A1;
+            this->A2 = copy.A2;
+            this->A3 = copy.A3;
+            this->A4 = copy.A4;
+            this->A5 = copy.A5;
+            this->A6 = copy.A6;
+            this->A7 = copy.A7;
+            this->B0 = copy.B0;
+            this->B1 = copy.B1;
+            this->B2 = copy.B2;
+            this->B3 = copy.B3;
+            this->B4 = copy.B4;
+            this->B5 = copy.B5;
+            this->B6 = copy.B6;
+            this->B7 = copy.B7;
+            this->LA = copy.LA;
+            this->LB = copy.LB;
+            this->P0 = copy.P0;
+            this->P1 = copy.P1;
+            this->P2 = copy.P2;
+            this->P3 = copy.P3;
+            this->P4 = copy.P4;
+            this->P5 = copy.P5;
+            this->P6 = copy.P6;
+            this->P7 = copy.P7;
+            this->RA = copy.RA;
+            this->RB = copy.RB;
         }
 
         void move0() {
@@ -3337,7 +3336,7 @@ class prob_oneway8seq {
         }
 
         prob_oneway8seq _copy() const {
-            return prob_oneway8seq(T0, T1, T2, T3, T4, T5, T6, T7, A0, A1, A2, A3, A4, A5, A6, A7, B0, B1, B2, B3, B4, B5, B6, B7, LA, LB, P0, P1, P2, P3, P4, P5, P6, P7, RA, RB);
+            return prob_oneway8seq(*this);
         }
 
         friend bool operator ==(const prob_oneway8seq& o1, const prob_oneway8seq& o2) {
@@ -3508,7 +3507,7 @@ class ModelChecker {
             if (threads <= 1) {
                 modelCheckSingleThreaded();
             } else {
-                boost::asio::thread_pool workers(threads); // threads indicates the number of workers (without the coordinator)
+                boost::asio::thread_pool workers(threads-1); // threads indicates the number of workers (without the coordinator)
                 modelCheckMultiThreaded(workers);
             }
         }
@@ -3557,16 +3556,12 @@ class ModelChecker {
             states.insert(machine);
             unvisitedStates.push_back(machine);
 
-            std::atomic<bool> stopThreads;
-            stopThreads = false;
+            std::atomic<bool> stopThreads(false);
             std::atomic<int> possibleQueueChanges;
             possibleQueueChanges = 0;
 
-            std::atomic<bool> waitFlag;
-            waitFlag = true;
-
-            while(!unvisitedStates.empty() && !stopThreads) {
-                possibleQueueChanges += 1;
+            while(!unvisitedStates.empty() && !stopThreads.load()) {
+                possibleQueueChanges.fetch_add(1);
                 prob_oneway8seq state = next();
                 std::packaged_task<void()> task([&, state] {
                     std::unordered_set<prob_oneway8seq, prob_oneway8seq::Hash, prob_oneway8seq::HashEqual> nextStates = generateNextStates(state);
@@ -3587,16 +3582,11 @@ class ModelChecker {
                         }
                     }
 
+                    possibleQueueChanges.fetch_sub(1);
                     {
-                        std::unique_lock<std::mutex> lock(mutex);
-                        possibleQueueChanges -= 1;
-                        int running = possibleQueueChanges;
-                        if (!unvisitedStates.empty() || running == 0) {
-                            {
-                                std::unique_lock<std::mutex> lock(waitMutex);
-                                waitFlag = false;
-                                waitCV.notify_one();
-                            }
+                        std::unique_lock<std::mutex> lock(waitMutex);
+                        if (!unvisitedStates.empty() || possibleQueueChanges.load() == 0) {
+                            waitCV.notify_one();
                         }
                     }
 
@@ -3604,27 +3594,24 @@ class ModelChecker {
                     if(invariantViolated(state)) {
                         invariantViolatedBool = true;
                         counterExampleState = state;
-                        stopThreads = true;
+                        stopThreads.store(true);
                     }
 
                     if(nextStates.empty()) {
                         deadlockDetected = true;
                         counterExampleState = state;
-                        stopThreads = true;
+                        stopThreads.store(true);
                     }
 
                 });
 
-                waitFlag = true;
                 boost::asio::post(workers, std::move(task));
 
                 {
                     std::unique_lock<std::mutex> lock(waitMutex);
-                    if(unvisitedStates.empty() && possibleQueueChanges > 0) {
-                        waitCV.wait(lock, [&] {
-                            return waitFlag == false;
-                        });
-                    }
+                    waitCV.wait(lock, [&] {
+                        return !unvisitedStates.empty() || possibleQueueChanges == 0;
+                    });
                 }
             }
             workers.join();
@@ -3713,10 +3700,7 @@ class ModelChecker {
 
                     copiedState.stateAccessedVia = "move0";
                     result.insert(copiedState);
-                    {
-                        std::unique_lock<std::mutex> lock(mutex);
-                        transitions += 1;
-                    }
+                    transitions += 1;
                 }
                 prob_oneway8seq::_ProjectionRead__tr_move1 read__tr_move1_state = state._projected_state_for__tr_move1();
                 bool _trid_2;
@@ -3763,10 +3747,7 @@ class ModelChecker {
 
                     copiedState.stateAccessedVia = "move1";
                     result.insert(copiedState);
-                    {
-                        std::unique_lock<std::mutex> lock(mutex);
-                        transitions += 1;
-                    }
+                    transitions += 1;
                 }
                 prob_oneway8seq::_ProjectionRead__tr_move2 read__tr_move2_state = state._projected_state_for__tr_move2();
                 bool _trid_3;
@@ -3813,10 +3794,7 @@ class ModelChecker {
 
                     copiedState.stateAccessedVia = "move2";
                     result.insert(copiedState);
-                    {
-                        std::unique_lock<std::mutex> lock(mutex);
-                        transitions += 1;
-                    }
+                    transitions += 1;
                 }
                 prob_oneway8seq::_ProjectionRead__tr_move3 read__tr_move3_state = state._projected_state_for__tr_move3();
                 bool _trid_4;
@@ -3863,10 +3841,7 @@ class ModelChecker {
 
                     copiedState.stateAccessedVia = "move3";
                     result.insert(copiedState);
-                    {
-                        std::unique_lock<std::mutex> lock(mutex);
-                        transitions += 1;
-                    }
+                    transitions += 1;
                 }
                 prob_oneway8seq::_ProjectionRead__tr_move4 read__tr_move4_state = state._projected_state_for__tr_move4();
                 bool _trid_5;
@@ -3913,10 +3888,7 @@ class ModelChecker {
 
                     copiedState.stateAccessedVia = "move4";
                     result.insert(copiedState);
-                    {
-                        std::unique_lock<std::mutex> lock(mutex);
-                        transitions += 1;
-                    }
+                    transitions += 1;
                 }
                 prob_oneway8seq::_ProjectionRead__tr_move5 read__tr_move5_state = state._projected_state_for__tr_move5();
                 bool _trid_6;
@@ -3963,10 +3935,7 @@ class ModelChecker {
 
                     copiedState.stateAccessedVia = "move5";
                     result.insert(copiedState);
-                    {
-                        std::unique_lock<std::mutex> lock(mutex);
-                        transitions += 1;
-                    }
+                    transitions += 1;
                 }
                 prob_oneway8seq::_ProjectionRead__tr_move6 read__tr_move6_state = state._projected_state_for__tr_move6();
                 bool _trid_7;
@@ -4013,10 +3982,7 @@ class ModelChecker {
 
                     copiedState.stateAccessedVia = "move6";
                     result.insert(copiedState);
-                    {
-                        std::unique_lock<std::mutex> lock(mutex);
-                        transitions += 1;
-                    }
+                    transitions += 1;
                 }
                 prob_oneway8seq::_ProjectionRead__tr_move7 read__tr_move7_state = state._projected_state_for__tr_move7();
                 bool _trid_8;
@@ -4063,10 +4029,7 @@ class ModelChecker {
 
                     copiedState.stateAccessedVia = "move7";
                     result.insert(copiedState);
-                    {
-                        std::unique_lock<std::mutex> lock(mutex);
-                        transitions += 1;
-                    }
+                    transitions += 1;
                 }
                 prob_oneway8seq::_ProjectionRead__tr_arrived read__tr_arrived_state = state._projected_state_for__tr_arrived();
                 bool _trid_9;
@@ -4113,10 +4076,7 @@ class ModelChecker {
 
                     copiedState.stateAccessedVia = "arrived";
                     result.insert(copiedState);
-                    {
-                        std::unique_lock<std::mutex> lock(mutex);
-                        transitions += 1;
-                    }
+                    transitions += 1;
                 }
 
             } else {
@@ -4125,90 +4085,63 @@ class ModelChecker {
                     copiedState.move0();
                     copiedState.stateAccessedVia = "move0";
                     result.insert(copiedState);
-                    {
-                        std::unique_lock<std::mutex> lock(mutex);
-                        transitions += 1;
-                    }
+                    transitions += 1;
                 }
                 if(state._tr_move1()) {
                     prob_oneway8seq copiedState = state._copy();
                     copiedState.move1();
                     copiedState.stateAccessedVia = "move1";
                     result.insert(copiedState);
-                    {
-                        std::unique_lock<std::mutex> lock(mutex);
-                        transitions += 1;
-                    }
+                    transitions += 1;
                 }
                 if(state._tr_move2()) {
                     prob_oneway8seq copiedState = state._copy();
                     copiedState.move2();
                     copiedState.stateAccessedVia = "move2";
                     result.insert(copiedState);
-                    {
-                        std::unique_lock<std::mutex> lock(mutex);
-                        transitions += 1;
-                    }
+                    transitions += 1;
                 }
                 if(state._tr_move3()) {
                     prob_oneway8seq copiedState = state._copy();
                     copiedState.move3();
                     copiedState.stateAccessedVia = "move3";
                     result.insert(copiedState);
-                    {
-                        std::unique_lock<std::mutex> lock(mutex);
-                        transitions += 1;
-                    }
+                    transitions += 1;
                 }
                 if(state._tr_move4()) {
                     prob_oneway8seq copiedState = state._copy();
                     copiedState.move4();
                     copiedState.stateAccessedVia = "move4";
                     result.insert(copiedState);
-                    {
-                        std::unique_lock<std::mutex> lock(mutex);
-                        transitions += 1;
-                    }
+                    transitions += 1;
                 }
                 if(state._tr_move5()) {
                     prob_oneway8seq copiedState = state._copy();
                     copiedState.move5();
                     copiedState.stateAccessedVia = "move5";
                     result.insert(copiedState);
-                    {
-                        std::unique_lock<std::mutex> lock(mutex);
-                        transitions += 1;
-                    }
+                    transitions += 1;
                 }
                 if(state._tr_move6()) {
                     prob_oneway8seq copiedState = state._copy();
                     copiedState.move6();
                     copiedState.stateAccessedVia = "move6";
                     result.insert(copiedState);
-                    {
-                        std::unique_lock<std::mutex> lock(mutex);
-                        transitions += 1;
-                    }
+                    transitions += 1;
                 }
                 if(state._tr_move7()) {
                     prob_oneway8seq copiedState = state._copy();
                     copiedState.move7();
                     copiedState.stateAccessedVia = "move7";
                     result.insert(copiedState);
-                    {
-                        std::unique_lock<std::mutex> lock(mutex);
-                        transitions += 1;
-                    }
+                    transitions += 1;
                 }
                 if(state._tr_arrived()) {
                     prob_oneway8seq copiedState = state._copy();
                     copiedState.arrived();
                     copiedState.stateAccessedVia = "arrived";
                     result.insert(copiedState);
-                    {
-                        std::unique_lock<std::mutex> lock(mutex);
-                        transitions += 1;
-                    }
+                    transitions += 1;
                 }
 
             }

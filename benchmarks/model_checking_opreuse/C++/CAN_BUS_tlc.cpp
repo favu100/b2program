@@ -10,11 +10,10 @@
 #include <atomic>
 #include <any>
 #include <mutex>
+#include <shared_mutex>
 #include <future>
 #include <boost/asio/post.hpp>
 #include <boost/asio/thread_pool.hpp>
-#include <boost/any.hpp>
-#include <boost/optional.hpp>
 #include <btypes_primitives/BUtils.hpp>
 #include <btypes_primitives/StateNotReachableError.hpp>
 #include <btypes_primitives/PreconditionOrAssertionViolation.hpp>
@@ -4807,27 +4806,27 @@ class CAN_BUS_tlc {
             T2_mode = (T2mode(T2mode::T2MODE_SENSE));
         }
 
-        CAN_BUS_tlc(const BSet<BInteger >& NATSET, const BSet<BInteger >& __aux_constant_1, const BInteger& BUSpriority, const BInteger& BUSvalue, const BRelation<BInteger, BInteger >& BUSwrite, const T1state& T1_state, const BInteger& T1_timer, const BInteger& T1_writevalue, const T2mode& T2_mode, const BInteger& T2_readpriority, const BInteger& T2_readvalue, const T2state& T2_state, const BInteger& T2_timer, const BInteger& T2_writevalue, const BInteger& T2v, const BBoolean& T3_enabled, const BBoolean& T3_evaluated, const BInteger& T3_readpriority, const BInteger& T3_readvalue, const T3state& T3_state) {
-            this->NATSET = NATSET;
-            this->__aux_constant_1 = __aux_constant_1;
-            this->BUSpriority = BUSpriority;
-            this->BUSvalue = BUSvalue;
-            this->BUSwrite = BUSwrite;
-            this->T1_state = T1_state;
-            this->T1_timer = T1_timer;
-            this->T1_writevalue = T1_writevalue;
-            this->T2_mode = T2_mode;
-            this->T2_readpriority = T2_readpriority;
-            this->T2_readvalue = T2_readvalue;
-            this->T2_state = T2_state;
-            this->T2_timer = T2_timer;
-            this->T2_writevalue = T2_writevalue;
-            this->T2v = T2v;
-            this->T3_enabled = T3_enabled;
-            this->T3_evaluated = T3_evaluated;
-            this->T3_readpriority = T3_readpriority;
-            this->T3_readvalue = T3_readvalue;
-            this->T3_state = T3_state;
+        CAN_BUS_tlc(const CAN_BUS_tlc& copy) {
+            this->NATSET = copy.NATSET;
+            this->__aux_constant_1 = copy.__aux_constant_1;
+            this->BUSpriority = copy.BUSpriority;
+            this->BUSvalue = copy.BUSvalue;
+            this->BUSwrite = copy.BUSwrite;
+            this->T1_state = copy.T1_state;
+            this->T1_timer = copy.T1_timer;
+            this->T1_writevalue = copy.T1_writevalue;
+            this->T2_mode = copy.T2_mode;
+            this->T2_readpriority = copy.T2_readpriority;
+            this->T2_readvalue = copy.T2_readvalue;
+            this->T2_state = copy.T2_state;
+            this->T2_timer = copy.T2_timer;
+            this->T2_writevalue = copy.T2_writevalue;
+            this->T2v = copy.T2v;
+            this->T3_enabled = copy.T3_enabled;
+            this->T3_evaluated = copy.T3_evaluated;
+            this->T3_readpriority = copy.T3_readpriority;
+            this->T3_readvalue = copy.T3_readvalue;
+            this->T3_state = copy.T3_state;
         }
 
         void T1Evaluate() {
@@ -5778,7 +5777,7 @@ class CAN_BUS_tlc {
         }
 
         CAN_BUS_tlc _copy() const {
-            return CAN_BUS_tlc(NATSET, __aux_constant_1, BUSpriority, BUSvalue, BUSwrite, T1_state, T1_timer, T1_writevalue, T2_mode, T2_readpriority, T2_readvalue, T2_state, T2_timer, T2_writevalue, T2v, T3_enabled, T3_evaluated, T3_readpriority, T3_readvalue, T3_state);
+            return CAN_BUS_tlc(*this);
         }
 
         friend bool operator ==(const CAN_BUS_tlc& o1, const CAN_BUS_tlc& o2) {
@@ -6053,7 +6052,7 @@ class ModelChecker {
             if (threads <= 1) {
                 modelCheckSingleThreaded();
             } else {
-                boost::asio::thread_pool workers(threads); // threads indicates the number of workers (without the coordinator)
+                boost::asio::thread_pool workers(threads-1); // threads indicates the number of workers (without the coordinator)
                 modelCheckMultiThreaded(workers);
             }
         }
@@ -6102,16 +6101,12 @@ class ModelChecker {
             states.insert(machine);
             unvisitedStates.push_back(machine);
 
-            std::atomic<bool> stopThreads;
-            stopThreads = false;
+            std::atomic<bool> stopThreads(false);
             std::atomic<int> possibleQueueChanges;
             possibleQueueChanges = 0;
 
-            std::atomic<bool> waitFlag;
-            waitFlag = true;
-
-            while(!unvisitedStates.empty() && !stopThreads) {
-                possibleQueueChanges += 1;
+            while(!unvisitedStates.empty() && !stopThreads.load()) {
+                possibleQueueChanges.fetch_add(1);
                 CAN_BUS_tlc state = next();
                 std::packaged_task<void()> task([&, state] {
                     std::unordered_set<CAN_BUS_tlc, CAN_BUS_tlc::Hash, CAN_BUS_tlc::HashEqual> nextStates = generateNextStates(state);
@@ -6132,16 +6127,11 @@ class ModelChecker {
                         }
                     }
 
+                    possibleQueueChanges.fetch_sub(1);
                     {
-                        std::unique_lock<std::mutex> lock(mutex);
-                        possibleQueueChanges -= 1;
-                        int running = possibleQueueChanges;
-                        if (!unvisitedStates.empty() || running == 0) {
-                            {
-                                std::unique_lock<std::mutex> lock(waitMutex);
-                                waitFlag = false;
-                                waitCV.notify_one();
-                            }
+                        std::unique_lock<std::mutex> lock(waitMutex);
+                        if (!unvisitedStates.empty() || possibleQueueChanges.load() == 0) {
+                            waitCV.notify_one();
                         }
                     }
 
@@ -6149,27 +6139,24 @@ class ModelChecker {
                     if(invariantViolated(state)) {
                         invariantViolatedBool = true;
                         counterExampleState = state;
-                        stopThreads = true;
+                        stopThreads.store(true);
                     }
 
                     if(nextStates.empty()) {
                         deadlockDetected = true;
                         counterExampleState = state;
-                        stopThreads = true;
+                        stopThreads.store(true);
                     }
 
                 });
 
-                waitFlag = true;
                 boost::asio::post(workers, std::move(task));
 
                 {
                     std::unique_lock<std::mutex> lock(waitMutex);
-                    if(unvisitedStates.empty() && possibleQueueChanges > 0) {
-                        waitCV.wait(lock, [&] {
-                            return waitFlag == false;
-                        });
-                    }
+                    waitCV.wait(lock, [&] {
+                        return !unvisitedStates.empty() || possibleQueueChanges == 0;
+                    });
                 }
             }
             workers.join();
@@ -6258,168 +6245,262 @@ class ModelChecker {
 
                     copiedState.stateAccessedVia = "T1Evaluate";
                     result.insert(copiedState);
-                    {
-                        std::unique_lock<std::mutex> lock(mutex);
-                        transitions += 1;
-                    }
+                    transitions += 1;
                 }
                 CAN_BUS_tlc::_ProjectionRead__tr_T1Calculate read__tr_T1Calculate_state = state._projected_state_for__tr_T1Calculate();
-                BSet<BInteger> _trid_2;
                 auto _trid_2_ptr = _OpCache_tr_T1Calculate.find(read__tr_T1Calculate_state);
                 if(_trid_2_ptr == _OpCache_tr_T1Calculate.end()) {
-                    _trid_2 = state._tr_T1Calculate();
+                    BSet<BInteger> _trid_2 = state._tr_T1Calculate();
                     {
                         std::unique_lock<std::mutex> _ProjectionRead__tr_T1Calculate_lock(_ProjectionRead__tr_T1Calculate_mutex);
                         _OpCache_tr_T1Calculate.insert({read__tr_T1Calculate_state, _trid_2});
                     }
-                } else {
-                    _trid_2 = _trid_2_ptr->second;
-                }
+                    for(const BInteger& param : _trid_2) {
+                        BInteger _tmp_1 = param;
 
-                for(const BInteger& param : _trid_2) {
-                    BInteger _tmp_1 = param;
+                        CAN_BUS_tlc copiedState = state._copy();
+                        CAN_BUS_tlc::_ProjectionRead_T1Calculate readState = state._projected_state_for_T1Calculate();
 
-                    CAN_BUS_tlc copiedState = state._copy();
-                    CAN_BUS_tlc::_ProjectionRead_T1Calculate readState = state._projected_state_for_T1Calculate();
-
-                    auto _OpCache_with_parameter_T1Calculate_ptr = _OpCache_T1Calculate.find(param);
-                    if(_OpCache_with_parameter_T1Calculate_ptr == _OpCache_T1Calculate.end()) {
-                        copiedState.T1Calculate(_tmp_1);
-                        CAN_BUS_tlc::_ProjectionWrite_T1Calculate writeState = copiedState._update_for_T1Calculate();
-                        std::unordered_map<CAN_BUS_tlc::_ProjectionRead_T1Calculate, CAN_BUS_tlc::_ProjectionWrite_T1Calculate, CAN_BUS_tlc::_ProjectionRead_T1Calculate::Hash, CAN_BUS_tlc::_ProjectionRead_T1Calculate::HashEqual> _OpCache_with_parameter_T1Calculate;
-                        _OpCache_with_parameter_T1Calculate.insert({readState, writeState});
-                        {
-                            std::unique_lock<std::mutex> _ProjectionRead_T1Calculate_lock(_ProjectionRead_T1Calculate_mutex);
-                            _OpCache_T1Calculate.insert({param, _OpCache_with_parameter_T1Calculate});
-                        }
-
-                    } else {
-                        std::unordered_map<CAN_BUS_tlc::_ProjectionRead_T1Calculate, CAN_BUS_tlc::_ProjectionWrite_T1Calculate, CAN_BUS_tlc::_ProjectionRead_T1Calculate::Hash, CAN_BUS_tlc::_ProjectionRead_T1Calculate::HashEqual> _OpCache_with_parameter_T1Calculate = _OpCache_with_parameter_T1Calculate_ptr->second;
-                        auto writeState_ptr = _OpCache_with_parameter_T1Calculate.find(readState);
-                        if(writeState_ptr != _OpCache_with_parameter_T1Calculate.end()) {
-                            CAN_BUS_tlc::_ProjectionWrite_T1Calculate writeState = writeState_ptr->second;
-                            copiedState._apply_update_for_T1Calculate(writeState);
-                        } else {
+                        auto _OpCache_with_parameter_T1Calculate_ptr = _OpCache_T1Calculate.find(param);
+                        if(_OpCache_with_parameter_T1Calculate_ptr == _OpCache_T1Calculate.end()) {
                             copiedState.T1Calculate(_tmp_1);
                             CAN_BUS_tlc::_ProjectionWrite_T1Calculate writeState = copiedState._update_for_T1Calculate();
+                            std::unordered_map<CAN_BUS_tlc::_ProjectionRead_T1Calculate, CAN_BUS_tlc::_ProjectionWrite_T1Calculate, CAN_BUS_tlc::_ProjectionRead_T1Calculate::Hash, CAN_BUS_tlc::_ProjectionRead_T1Calculate::HashEqual> _OpCache_with_parameter_T1Calculate;
+                            _OpCache_with_parameter_T1Calculate.insert({readState, writeState});
                             {
                                 std::unique_lock<std::mutex> _ProjectionRead_T1Calculate_lock(_ProjectionRead_T1Calculate_mutex);
-                                _OpCache_with_parameter_T1Calculate.insert({readState, writeState});
+                                _OpCache_T1Calculate.insert({param, _OpCache_with_parameter_T1Calculate});
+                            }
+
+                        } else {
+                            std::unordered_map<CAN_BUS_tlc::_ProjectionRead_T1Calculate, CAN_BUS_tlc::_ProjectionWrite_T1Calculate, CAN_BUS_tlc::_ProjectionRead_T1Calculate::Hash, CAN_BUS_tlc::_ProjectionRead_T1Calculate::HashEqual> _OpCache_with_parameter_T1Calculate = _OpCache_with_parameter_T1Calculate_ptr->second;
+                            auto writeState_ptr = _OpCache_with_parameter_T1Calculate.find(readState);
+                            if(writeState_ptr != _OpCache_with_parameter_T1Calculate.end()) {
+                                CAN_BUS_tlc::_ProjectionWrite_T1Calculate writeState = writeState_ptr->second;
+                                copiedState._apply_update_for_T1Calculate(writeState);
+                            } else {
+                                copiedState.T1Calculate(_tmp_1);
+                                CAN_BUS_tlc::_ProjectionWrite_T1Calculate writeState = copiedState._update_for_T1Calculate();
+                                {
+                                    std::unique_lock<std::mutex> _ProjectionRead_T1Calculate_lock(_ProjectionRead_T1Calculate_mutex);
+                                    _OpCache_with_parameter_T1Calculate.insert({readState, writeState});
+                                }
                             }
                         }
-                    }
 
-                    copiedState.stateAccessedVia = "T1Calculate";
-                    result.insert(copiedState);
-                    {
-                        std::unique_lock<std::mutex> lock(mutex);
+                        copiedState.stateAccessedVia = "T1Calculate";
+                        result.insert(copiedState);
+                        transitions += 1;
+                    }
+                } else {
+                    BSet<BInteger> _trid_2 = _trid_2_ptr->second;
+                    for(const BInteger& param : _trid_2) {
+                        BInteger _tmp_1 = param;
+
+                        CAN_BUS_tlc copiedState = state._copy();
+                        CAN_BUS_tlc::_ProjectionRead_T1Calculate readState = state._projected_state_for_T1Calculate();
+
+                        auto _OpCache_with_parameter_T1Calculate_ptr = _OpCache_T1Calculate.find(param);
+                        if(_OpCache_with_parameter_T1Calculate_ptr == _OpCache_T1Calculate.end()) {
+                            copiedState.T1Calculate(_tmp_1);
+                            CAN_BUS_tlc::_ProjectionWrite_T1Calculate writeState = copiedState._update_for_T1Calculate();
+                            std::unordered_map<CAN_BUS_tlc::_ProjectionRead_T1Calculate, CAN_BUS_tlc::_ProjectionWrite_T1Calculate, CAN_BUS_tlc::_ProjectionRead_T1Calculate::Hash, CAN_BUS_tlc::_ProjectionRead_T1Calculate::HashEqual> _OpCache_with_parameter_T1Calculate;
+                            _OpCache_with_parameter_T1Calculate.insert({readState, writeState});
+                            {
+                                std::unique_lock<std::mutex> _ProjectionRead_T1Calculate_lock(_ProjectionRead_T1Calculate_mutex);
+                                _OpCache_T1Calculate.insert({param, _OpCache_with_parameter_T1Calculate});
+                            }
+
+                        } else {
+                            std::unordered_map<CAN_BUS_tlc::_ProjectionRead_T1Calculate, CAN_BUS_tlc::_ProjectionWrite_T1Calculate, CAN_BUS_tlc::_ProjectionRead_T1Calculate::Hash, CAN_BUS_tlc::_ProjectionRead_T1Calculate::HashEqual> _OpCache_with_parameter_T1Calculate = _OpCache_with_parameter_T1Calculate_ptr->second;
+                            auto writeState_ptr = _OpCache_with_parameter_T1Calculate.find(readState);
+                            if(writeState_ptr != _OpCache_with_parameter_T1Calculate.end()) {
+                                CAN_BUS_tlc::_ProjectionWrite_T1Calculate writeState = writeState_ptr->second;
+                                copiedState._apply_update_for_T1Calculate(writeState);
+                            } else {
+                                copiedState.T1Calculate(_tmp_1);
+                                CAN_BUS_tlc::_ProjectionWrite_T1Calculate writeState = copiedState._update_for_T1Calculate();
+                                {
+                                    std::unique_lock<std::mutex> _ProjectionRead_T1Calculate_lock(_ProjectionRead_T1Calculate_mutex);
+                                    _OpCache_with_parameter_T1Calculate.insert({readState, writeState});
+                                }
+                            }
+                        }
+
+                        copiedState.stateAccessedVia = "T1Calculate";
+                        result.insert(copiedState);
                         transitions += 1;
                     }
                 }
                 CAN_BUS_tlc::_ProjectionRead__tr_T1SendResult read__tr_T1SendResult_state = state._projected_state_for__tr_T1SendResult();
-                BSet<BTuple<BInteger, BInteger >> _trid_3;
                 auto _trid_3_ptr = _OpCache_tr_T1SendResult.find(read__tr_T1SendResult_state);
                 if(_trid_3_ptr == _OpCache_tr_T1SendResult.end()) {
-                    _trid_3 = state._tr_T1SendResult();
+                    BSet<BTuple<BInteger, BInteger >> _trid_3 = state._tr_T1SendResult();
                     {
                         std::unique_lock<std::mutex> _ProjectionRead__tr_T1SendResult_lock(_ProjectionRead__tr_T1SendResult_mutex);
                         _OpCache_tr_T1SendResult.insert({read__tr_T1SendResult_state, _trid_3});
                     }
-                } else {
-                    _trid_3 = _trid_3_ptr->second;
-                }
+                    for(const BTuple<BInteger, BInteger >& param : _trid_3) {
+                        BInteger _tmp_1 = param.projection2();
+                        BInteger _tmp_2 = param.projection1();
 
-                for(const BTuple<BInteger, BInteger >& param : _trid_3) {
-                    BInteger _tmp_1 = param.projection2();
-                    BInteger _tmp_2 = param.projection1();
+                        CAN_BUS_tlc copiedState = state._copy();
+                        CAN_BUS_tlc::_ProjectionRead_T1SendResult readState = state._projected_state_for_T1SendResult();
 
-                    CAN_BUS_tlc copiedState = state._copy();
-                    CAN_BUS_tlc::_ProjectionRead_T1SendResult readState = state._projected_state_for_T1SendResult();
-
-                    auto _OpCache_with_parameter_T1SendResult_ptr = _OpCache_T1SendResult.find(param);
-                    if(_OpCache_with_parameter_T1SendResult_ptr == _OpCache_T1SendResult.end()) {
-                        copiedState.T1SendResult(_tmp_2, _tmp_1);
-                        CAN_BUS_tlc::_ProjectionWrite_T1SendResult writeState = copiedState._update_for_T1SendResult();
-                        std::unordered_map<CAN_BUS_tlc::_ProjectionRead_T1SendResult, CAN_BUS_tlc::_ProjectionWrite_T1SendResult, CAN_BUS_tlc::_ProjectionRead_T1SendResult::Hash, CAN_BUS_tlc::_ProjectionRead_T1SendResult::HashEqual> _OpCache_with_parameter_T1SendResult;
-                        _OpCache_with_parameter_T1SendResult.insert({readState, writeState});
-                        {
-                            std::unique_lock<std::mutex> _ProjectionRead_T1SendResult_lock(_ProjectionRead_T1SendResult_mutex);
-                            _OpCache_T1SendResult.insert({param, _OpCache_with_parameter_T1SendResult});
-                        }
-
-                    } else {
-                        std::unordered_map<CAN_BUS_tlc::_ProjectionRead_T1SendResult, CAN_BUS_tlc::_ProjectionWrite_T1SendResult, CAN_BUS_tlc::_ProjectionRead_T1SendResult::Hash, CAN_BUS_tlc::_ProjectionRead_T1SendResult::HashEqual> _OpCache_with_parameter_T1SendResult = _OpCache_with_parameter_T1SendResult_ptr->second;
-                        auto writeState_ptr = _OpCache_with_parameter_T1SendResult.find(readState);
-                        if(writeState_ptr != _OpCache_with_parameter_T1SendResult.end()) {
-                            CAN_BUS_tlc::_ProjectionWrite_T1SendResult writeState = writeState_ptr->second;
-                            copiedState._apply_update_for_T1SendResult(writeState);
-                        } else {
+                        auto _OpCache_with_parameter_T1SendResult_ptr = _OpCache_T1SendResult.find(param);
+                        if(_OpCache_with_parameter_T1SendResult_ptr == _OpCache_T1SendResult.end()) {
                             copiedState.T1SendResult(_tmp_2, _tmp_1);
                             CAN_BUS_tlc::_ProjectionWrite_T1SendResult writeState = copiedState._update_for_T1SendResult();
+                            std::unordered_map<CAN_BUS_tlc::_ProjectionRead_T1SendResult, CAN_BUS_tlc::_ProjectionWrite_T1SendResult, CAN_BUS_tlc::_ProjectionRead_T1SendResult::Hash, CAN_BUS_tlc::_ProjectionRead_T1SendResult::HashEqual> _OpCache_with_parameter_T1SendResult;
+                            _OpCache_with_parameter_T1SendResult.insert({readState, writeState});
                             {
                                 std::unique_lock<std::mutex> _ProjectionRead_T1SendResult_lock(_ProjectionRead_T1SendResult_mutex);
-                                _OpCache_with_parameter_T1SendResult.insert({readState, writeState});
+                                _OpCache_T1SendResult.insert({param, _OpCache_with_parameter_T1SendResult});
+                            }
+
+                        } else {
+                            std::unordered_map<CAN_BUS_tlc::_ProjectionRead_T1SendResult, CAN_BUS_tlc::_ProjectionWrite_T1SendResult, CAN_BUS_tlc::_ProjectionRead_T1SendResult::Hash, CAN_BUS_tlc::_ProjectionRead_T1SendResult::HashEqual> _OpCache_with_parameter_T1SendResult = _OpCache_with_parameter_T1SendResult_ptr->second;
+                            auto writeState_ptr = _OpCache_with_parameter_T1SendResult.find(readState);
+                            if(writeState_ptr != _OpCache_with_parameter_T1SendResult.end()) {
+                                CAN_BUS_tlc::_ProjectionWrite_T1SendResult writeState = writeState_ptr->second;
+                                copiedState._apply_update_for_T1SendResult(writeState);
+                            } else {
+                                copiedState.T1SendResult(_tmp_2, _tmp_1);
+                                CAN_BUS_tlc::_ProjectionWrite_T1SendResult writeState = copiedState._update_for_T1SendResult();
+                                {
+                                    std::unique_lock<std::mutex> _ProjectionRead_T1SendResult_lock(_ProjectionRead_T1SendResult_mutex);
+                                    _OpCache_with_parameter_T1SendResult.insert({readState, writeState});
+                                }
                             }
                         }
-                    }
 
-                    copiedState.stateAccessedVia = "T1SendResult";
-                    result.insert(copiedState);
-                    {
-                        std::unique_lock<std::mutex> lock(mutex);
+                        copiedState.stateAccessedVia = "T1SendResult";
+                        result.insert(copiedState);
+                        transitions += 1;
+                    }
+                } else {
+                    BSet<BTuple<BInteger, BInteger >> _trid_3 = _trid_3_ptr->second;
+                    for(const BTuple<BInteger, BInteger >& param : _trid_3) {
+                        BInteger _tmp_1 = param.projection2();
+                        BInteger _tmp_2 = param.projection1();
+
+                        CAN_BUS_tlc copiedState = state._copy();
+                        CAN_BUS_tlc::_ProjectionRead_T1SendResult readState = state._projected_state_for_T1SendResult();
+
+                        auto _OpCache_with_parameter_T1SendResult_ptr = _OpCache_T1SendResult.find(param);
+                        if(_OpCache_with_parameter_T1SendResult_ptr == _OpCache_T1SendResult.end()) {
+                            copiedState.T1SendResult(_tmp_2, _tmp_1);
+                            CAN_BUS_tlc::_ProjectionWrite_T1SendResult writeState = copiedState._update_for_T1SendResult();
+                            std::unordered_map<CAN_BUS_tlc::_ProjectionRead_T1SendResult, CAN_BUS_tlc::_ProjectionWrite_T1SendResult, CAN_BUS_tlc::_ProjectionRead_T1SendResult::Hash, CAN_BUS_tlc::_ProjectionRead_T1SendResult::HashEqual> _OpCache_with_parameter_T1SendResult;
+                            _OpCache_with_parameter_T1SendResult.insert({readState, writeState});
+                            {
+                                std::unique_lock<std::mutex> _ProjectionRead_T1SendResult_lock(_ProjectionRead_T1SendResult_mutex);
+                                _OpCache_T1SendResult.insert({param, _OpCache_with_parameter_T1SendResult});
+                            }
+
+                        } else {
+                            std::unordered_map<CAN_BUS_tlc::_ProjectionRead_T1SendResult, CAN_BUS_tlc::_ProjectionWrite_T1SendResult, CAN_BUS_tlc::_ProjectionRead_T1SendResult::Hash, CAN_BUS_tlc::_ProjectionRead_T1SendResult::HashEqual> _OpCache_with_parameter_T1SendResult = _OpCache_with_parameter_T1SendResult_ptr->second;
+                            auto writeState_ptr = _OpCache_with_parameter_T1SendResult.find(readState);
+                            if(writeState_ptr != _OpCache_with_parameter_T1SendResult.end()) {
+                                CAN_BUS_tlc::_ProjectionWrite_T1SendResult writeState = writeState_ptr->second;
+                                copiedState._apply_update_for_T1SendResult(writeState);
+                            } else {
+                                copiedState.T1SendResult(_tmp_2, _tmp_1);
+                                CAN_BUS_tlc::_ProjectionWrite_T1SendResult writeState = copiedState._update_for_T1SendResult();
+                                {
+                                    std::unique_lock<std::mutex> _ProjectionRead_T1SendResult_lock(_ProjectionRead_T1SendResult_mutex);
+                                    _OpCache_with_parameter_T1SendResult.insert({readState, writeState});
+                                }
+                            }
+                        }
+
+                        copiedState.stateAccessedVia = "T1SendResult";
+                        result.insert(copiedState);
                         transitions += 1;
                     }
                 }
                 CAN_BUS_tlc::_ProjectionRead__tr_T1Wait read__tr_T1Wait_state = state._projected_state_for__tr_T1Wait();
-                BSet<BInteger> _trid_4;
                 auto _trid_4_ptr = _OpCache_tr_T1Wait.find(read__tr_T1Wait_state);
                 if(_trid_4_ptr == _OpCache_tr_T1Wait.end()) {
-                    _trid_4 = state._tr_T1Wait();
+                    BSet<BInteger> _trid_4 = state._tr_T1Wait();
                     {
                         std::unique_lock<std::mutex> _ProjectionRead__tr_T1Wait_lock(_ProjectionRead__tr_T1Wait_mutex);
                         _OpCache_tr_T1Wait.insert({read__tr_T1Wait_state, _trid_4});
                     }
-                } else {
-                    _trid_4 = _trid_4_ptr->second;
-                }
+                    for(const BInteger& param : _trid_4) {
+                        BInteger _tmp_1 = param;
 
-                for(const BInteger& param : _trid_4) {
-                    BInteger _tmp_1 = param;
+                        CAN_BUS_tlc copiedState = state._copy();
+                        CAN_BUS_tlc::_ProjectionRead_T1Wait readState = state._projected_state_for_T1Wait();
 
-                    CAN_BUS_tlc copiedState = state._copy();
-                    CAN_BUS_tlc::_ProjectionRead_T1Wait readState = state._projected_state_for_T1Wait();
-
-                    auto _OpCache_with_parameter_T1Wait_ptr = _OpCache_T1Wait.find(param);
-                    if(_OpCache_with_parameter_T1Wait_ptr == _OpCache_T1Wait.end()) {
-                        copiedState.T1Wait(_tmp_1);
-                        CAN_BUS_tlc::_ProjectionWrite_T1Wait writeState = copiedState._update_for_T1Wait();
-                        std::unordered_map<CAN_BUS_tlc::_ProjectionRead_T1Wait, CAN_BUS_tlc::_ProjectionWrite_T1Wait, CAN_BUS_tlc::_ProjectionRead_T1Wait::Hash, CAN_BUS_tlc::_ProjectionRead_T1Wait::HashEqual> _OpCache_with_parameter_T1Wait;
-                        _OpCache_with_parameter_T1Wait.insert({readState, writeState});
-                        {
-                            std::unique_lock<std::mutex> _ProjectionRead_T1Wait_lock(_ProjectionRead_T1Wait_mutex);
-                            _OpCache_T1Wait.insert({param, _OpCache_with_parameter_T1Wait});
-                        }
-
-                    } else {
-                        std::unordered_map<CAN_BUS_tlc::_ProjectionRead_T1Wait, CAN_BUS_tlc::_ProjectionWrite_T1Wait, CAN_BUS_tlc::_ProjectionRead_T1Wait::Hash, CAN_BUS_tlc::_ProjectionRead_T1Wait::HashEqual> _OpCache_with_parameter_T1Wait = _OpCache_with_parameter_T1Wait_ptr->second;
-                        auto writeState_ptr = _OpCache_with_parameter_T1Wait.find(readState);
-                        if(writeState_ptr != _OpCache_with_parameter_T1Wait.end()) {
-                            CAN_BUS_tlc::_ProjectionWrite_T1Wait writeState = writeState_ptr->second;
-                            copiedState._apply_update_for_T1Wait(writeState);
-                        } else {
+                        auto _OpCache_with_parameter_T1Wait_ptr = _OpCache_T1Wait.find(param);
+                        if(_OpCache_with_parameter_T1Wait_ptr == _OpCache_T1Wait.end()) {
                             copiedState.T1Wait(_tmp_1);
                             CAN_BUS_tlc::_ProjectionWrite_T1Wait writeState = copiedState._update_for_T1Wait();
+                            std::unordered_map<CAN_BUS_tlc::_ProjectionRead_T1Wait, CAN_BUS_tlc::_ProjectionWrite_T1Wait, CAN_BUS_tlc::_ProjectionRead_T1Wait::Hash, CAN_BUS_tlc::_ProjectionRead_T1Wait::HashEqual> _OpCache_with_parameter_T1Wait;
+                            _OpCache_with_parameter_T1Wait.insert({readState, writeState});
                             {
                                 std::unique_lock<std::mutex> _ProjectionRead_T1Wait_lock(_ProjectionRead_T1Wait_mutex);
-                                _OpCache_with_parameter_T1Wait.insert({readState, writeState});
+                                _OpCache_T1Wait.insert({param, _OpCache_with_parameter_T1Wait});
+                            }
+
+                        } else {
+                            std::unordered_map<CAN_BUS_tlc::_ProjectionRead_T1Wait, CAN_BUS_tlc::_ProjectionWrite_T1Wait, CAN_BUS_tlc::_ProjectionRead_T1Wait::Hash, CAN_BUS_tlc::_ProjectionRead_T1Wait::HashEqual> _OpCache_with_parameter_T1Wait = _OpCache_with_parameter_T1Wait_ptr->second;
+                            auto writeState_ptr = _OpCache_with_parameter_T1Wait.find(readState);
+                            if(writeState_ptr != _OpCache_with_parameter_T1Wait.end()) {
+                                CAN_BUS_tlc::_ProjectionWrite_T1Wait writeState = writeState_ptr->second;
+                                copiedState._apply_update_for_T1Wait(writeState);
+                            } else {
+                                copiedState.T1Wait(_tmp_1);
+                                CAN_BUS_tlc::_ProjectionWrite_T1Wait writeState = copiedState._update_for_T1Wait();
+                                {
+                                    std::unique_lock<std::mutex> _ProjectionRead_T1Wait_lock(_ProjectionRead_T1Wait_mutex);
+                                    _OpCache_with_parameter_T1Wait.insert({readState, writeState});
+                                }
                             }
                         }
-                    }
 
-                    copiedState.stateAccessedVia = "T1Wait";
-                    result.insert(copiedState);
-                    {
-                        std::unique_lock<std::mutex> lock(mutex);
+                        copiedState.stateAccessedVia = "T1Wait";
+                        result.insert(copiedState);
+                        transitions += 1;
+                    }
+                } else {
+                    BSet<BInteger> _trid_4 = _trid_4_ptr->second;
+                    for(const BInteger& param : _trid_4) {
+                        BInteger _tmp_1 = param;
+
+                        CAN_BUS_tlc copiedState = state._copy();
+                        CAN_BUS_tlc::_ProjectionRead_T1Wait readState = state._projected_state_for_T1Wait();
+
+                        auto _OpCache_with_parameter_T1Wait_ptr = _OpCache_T1Wait.find(param);
+                        if(_OpCache_with_parameter_T1Wait_ptr == _OpCache_T1Wait.end()) {
+                            copiedState.T1Wait(_tmp_1);
+                            CAN_BUS_tlc::_ProjectionWrite_T1Wait writeState = copiedState._update_for_T1Wait();
+                            std::unordered_map<CAN_BUS_tlc::_ProjectionRead_T1Wait, CAN_BUS_tlc::_ProjectionWrite_T1Wait, CAN_BUS_tlc::_ProjectionRead_T1Wait::Hash, CAN_BUS_tlc::_ProjectionRead_T1Wait::HashEqual> _OpCache_with_parameter_T1Wait;
+                            _OpCache_with_parameter_T1Wait.insert({readState, writeState});
+                            {
+                                std::unique_lock<std::mutex> _ProjectionRead_T1Wait_lock(_ProjectionRead_T1Wait_mutex);
+                                _OpCache_T1Wait.insert({param, _OpCache_with_parameter_T1Wait});
+                            }
+
+                        } else {
+                            std::unordered_map<CAN_BUS_tlc::_ProjectionRead_T1Wait, CAN_BUS_tlc::_ProjectionWrite_T1Wait, CAN_BUS_tlc::_ProjectionRead_T1Wait::Hash, CAN_BUS_tlc::_ProjectionRead_T1Wait::HashEqual> _OpCache_with_parameter_T1Wait = _OpCache_with_parameter_T1Wait_ptr->second;
+                            auto writeState_ptr = _OpCache_with_parameter_T1Wait.find(readState);
+                            if(writeState_ptr != _OpCache_with_parameter_T1Wait.end()) {
+                                CAN_BUS_tlc::_ProjectionWrite_T1Wait writeState = writeState_ptr->second;
+                                copiedState._apply_update_for_T1Wait(writeState);
+                            } else {
+                                copiedState.T1Wait(_tmp_1);
+                                CAN_BUS_tlc::_ProjectionWrite_T1Wait writeState = copiedState._update_for_T1Wait();
+                                {
+                                    std::unique_lock<std::mutex> _ProjectionRead_T1Wait_lock(_ProjectionRead_T1Wait_mutex);
+                                    _OpCache_with_parameter_T1Wait.insert({readState, writeState});
+                                }
+                            }
+                        }
+
+                        copiedState.stateAccessedVia = "T1Wait";
+                        result.insert(copiedState);
                         transitions += 1;
                     }
                 }
@@ -6468,62 +6549,92 @@ class ModelChecker {
 
                     copiedState.stateAccessedVia = "T2Evaluate";
                     result.insert(copiedState);
-                    {
-                        std::unique_lock<std::mutex> lock(mutex);
-                        transitions += 1;
-                    }
+                    transitions += 1;
                 }
                 CAN_BUS_tlc::_ProjectionRead__tr_T2ReadBus read__tr_T2ReadBus_state = state._projected_state_for__tr_T2ReadBus();
-                BSet<BTuple<BInteger, BInteger >> _trid_6;
                 auto _trid_6_ptr = _OpCache_tr_T2ReadBus.find(read__tr_T2ReadBus_state);
                 if(_trid_6_ptr == _OpCache_tr_T2ReadBus.end()) {
-                    _trid_6 = state._tr_T2ReadBus();
+                    BSet<BTuple<BInteger, BInteger >> _trid_6 = state._tr_T2ReadBus();
                     {
                         std::unique_lock<std::mutex> _ProjectionRead__tr_T2ReadBus_lock(_ProjectionRead__tr_T2ReadBus_mutex);
                         _OpCache_tr_T2ReadBus.insert({read__tr_T2ReadBus_state, _trid_6});
                     }
-                } else {
-                    _trid_6 = _trid_6_ptr->second;
-                }
+                    for(const BTuple<BInteger, BInteger >& param : _trid_6) {
+                        BInteger _tmp_1 = param.projection2();
+                        BInteger _tmp_2 = param.projection1();
 
-                for(const BTuple<BInteger, BInteger >& param : _trid_6) {
-                    BInteger _tmp_1 = param.projection2();
-                    BInteger _tmp_2 = param.projection1();
+                        CAN_BUS_tlc copiedState = state._copy();
+                        CAN_BUS_tlc::_ProjectionRead_T2ReadBus readState = state._projected_state_for_T2ReadBus();
 
-                    CAN_BUS_tlc copiedState = state._copy();
-                    CAN_BUS_tlc::_ProjectionRead_T2ReadBus readState = state._projected_state_for_T2ReadBus();
-
-                    auto _OpCache_with_parameter_T2ReadBus_ptr = _OpCache_T2ReadBus.find(param);
-                    if(_OpCache_with_parameter_T2ReadBus_ptr == _OpCache_T2ReadBus.end()) {
-                        copiedState.T2ReadBus(_tmp_2, _tmp_1);
-                        CAN_BUS_tlc::_ProjectionWrite_T2ReadBus writeState = copiedState._update_for_T2ReadBus();
-                        std::unordered_map<CAN_BUS_tlc::_ProjectionRead_T2ReadBus, CAN_BUS_tlc::_ProjectionWrite_T2ReadBus, CAN_BUS_tlc::_ProjectionRead_T2ReadBus::Hash, CAN_BUS_tlc::_ProjectionRead_T2ReadBus::HashEqual> _OpCache_with_parameter_T2ReadBus;
-                        _OpCache_with_parameter_T2ReadBus.insert({readState, writeState});
-                        {
-                            std::unique_lock<std::mutex> _ProjectionRead_T2ReadBus_lock(_ProjectionRead_T2ReadBus_mutex);
-                            _OpCache_T2ReadBus.insert({param, _OpCache_with_parameter_T2ReadBus});
-                        }
-
-                    } else {
-                        std::unordered_map<CAN_BUS_tlc::_ProjectionRead_T2ReadBus, CAN_BUS_tlc::_ProjectionWrite_T2ReadBus, CAN_BUS_tlc::_ProjectionRead_T2ReadBus::Hash, CAN_BUS_tlc::_ProjectionRead_T2ReadBus::HashEqual> _OpCache_with_parameter_T2ReadBus = _OpCache_with_parameter_T2ReadBus_ptr->second;
-                        auto writeState_ptr = _OpCache_with_parameter_T2ReadBus.find(readState);
-                        if(writeState_ptr != _OpCache_with_parameter_T2ReadBus.end()) {
-                            CAN_BUS_tlc::_ProjectionWrite_T2ReadBus writeState = writeState_ptr->second;
-                            copiedState._apply_update_for_T2ReadBus(writeState);
-                        } else {
+                        auto _OpCache_with_parameter_T2ReadBus_ptr = _OpCache_T2ReadBus.find(param);
+                        if(_OpCache_with_parameter_T2ReadBus_ptr == _OpCache_T2ReadBus.end()) {
                             copiedState.T2ReadBus(_tmp_2, _tmp_1);
                             CAN_BUS_tlc::_ProjectionWrite_T2ReadBus writeState = copiedState._update_for_T2ReadBus();
+                            std::unordered_map<CAN_BUS_tlc::_ProjectionRead_T2ReadBus, CAN_BUS_tlc::_ProjectionWrite_T2ReadBus, CAN_BUS_tlc::_ProjectionRead_T2ReadBus::Hash, CAN_BUS_tlc::_ProjectionRead_T2ReadBus::HashEqual> _OpCache_with_parameter_T2ReadBus;
+                            _OpCache_with_parameter_T2ReadBus.insert({readState, writeState});
                             {
                                 std::unique_lock<std::mutex> _ProjectionRead_T2ReadBus_lock(_ProjectionRead_T2ReadBus_mutex);
-                                _OpCache_with_parameter_T2ReadBus.insert({readState, writeState});
+                                _OpCache_T2ReadBus.insert({param, _OpCache_with_parameter_T2ReadBus});
+                            }
+
+                        } else {
+                            std::unordered_map<CAN_BUS_tlc::_ProjectionRead_T2ReadBus, CAN_BUS_tlc::_ProjectionWrite_T2ReadBus, CAN_BUS_tlc::_ProjectionRead_T2ReadBus::Hash, CAN_BUS_tlc::_ProjectionRead_T2ReadBus::HashEqual> _OpCache_with_parameter_T2ReadBus = _OpCache_with_parameter_T2ReadBus_ptr->second;
+                            auto writeState_ptr = _OpCache_with_parameter_T2ReadBus.find(readState);
+                            if(writeState_ptr != _OpCache_with_parameter_T2ReadBus.end()) {
+                                CAN_BUS_tlc::_ProjectionWrite_T2ReadBus writeState = writeState_ptr->second;
+                                copiedState._apply_update_for_T2ReadBus(writeState);
+                            } else {
+                                copiedState.T2ReadBus(_tmp_2, _tmp_1);
+                                CAN_BUS_tlc::_ProjectionWrite_T2ReadBus writeState = copiedState._update_for_T2ReadBus();
+                                {
+                                    std::unique_lock<std::mutex> _ProjectionRead_T2ReadBus_lock(_ProjectionRead_T2ReadBus_mutex);
+                                    _OpCache_with_parameter_T2ReadBus.insert({readState, writeState});
+                                }
                             }
                         }
-                    }
 
-                    copiedState.stateAccessedVia = "T2ReadBus";
-                    result.insert(copiedState);
-                    {
-                        std::unique_lock<std::mutex> lock(mutex);
+                        copiedState.stateAccessedVia = "T2ReadBus";
+                        result.insert(copiedState);
+                        transitions += 1;
+                    }
+                } else {
+                    BSet<BTuple<BInteger, BInteger >> _trid_6 = _trid_6_ptr->second;
+                    for(const BTuple<BInteger, BInteger >& param : _trid_6) {
+                        BInteger _tmp_1 = param.projection2();
+                        BInteger _tmp_2 = param.projection1();
+
+                        CAN_BUS_tlc copiedState = state._copy();
+                        CAN_BUS_tlc::_ProjectionRead_T2ReadBus readState = state._projected_state_for_T2ReadBus();
+
+                        auto _OpCache_with_parameter_T2ReadBus_ptr = _OpCache_T2ReadBus.find(param);
+                        if(_OpCache_with_parameter_T2ReadBus_ptr == _OpCache_T2ReadBus.end()) {
+                            copiedState.T2ReadBus(_tmp_2, _tmp_1);
+                            CAN_BUS_tlc::_ProjectionWrite_T2ReadBus writeState = copiedState._update_for_T2ReadBus();
+                            std::unordered_map<CAN_BUS_tlc::_ProjectionRead_T2ReadBus, CAN_BUS_tlc::_ProjectionWrite_T2ReadBus, CAN_BUS_tlc::_ProjectionRead_T2ReadBus::Hash, CAN_BUS_tlc::_ProjectionRead_T2ReadBus::HashEqual> _OpCache_with_parameter_T2ReadBus;
+                            _OpCache_with_parameter_T2ReadBus.insert({readState, writeState});
+                            {
+                                std::unique_lock<std::mutex> _ProjectionRead_T2ReadBus_lock(_ProjectionRead_T2ReadBus_mutex);
+                                _OpCache_T2ReadBus.insert({param, _OpCache_with_parameter_T2ReadBus});
+                            }
+
+                        } else {
+                            std::unordered_map<CAN_BUS_tlc::_ProjectionRead_T2ReadBus, CAN_BUS_tlc::_ProjectionWrite_T2ReadBus, CAN_BUS_tlc::_ProjectionRead_T2ReadBus::Hash, CAN_BUS_tlc::_ProjectionRead_T2ReadBus::HashEqual> _OpCache_with_parameter_T2ReadBus = _OpCache_with_parameter_T2ReadBus_ptr->second;
+                            auto writeState_ptr = _OpCache_with_parameter_T2ReadBus.find(readState);
+                            if(writeState_ptr != _OpCache_with_parameter_T2ReadBus.end()) {
+                                CAN_BUS_tlc::_ProjectionWrite_T2ReadBus writeState = writeState_ptr->second;
+                                copiedState._apply_update_for_T2ReadBus(writeState);
+                            } else {
+                                copiedState.T2ReadBus(_tmp_2, _tmp_1);
+                                CAN_BUS_tlc::_ProjectionWrite_T2ReadBus writeState = copiedState._update_for_T2ReadBus();
+                                {
+                                    std::unique_lock<std::mutex> _ProjectionRead_T2ReadBus_lock(_ProjectionRead_T2ReadBus_mutex);
+                                    _OpCache_with_parameter_T2ReadBus.insert({readState, writeState});
+                                }
+                            }
+                        }
+
+                        copiedState.stateAccessedVia = "T2ReadBus";
+                        result.insert(copiedState);
                         transitions += 1;
                     }
                 }
@@ -6572,10 +6683,7 @@ class ModelChecker {
 
                     copiedState.stateAccessedVia = "T2Reset";
                     result.insert(copiedState);
-                    {
-                        std::unique_lock<std::mutex> lock(mutex);
-                        transitions += 1;
-                    }
+                    transitions += 1;
                 }
                 CAN_BUS_tlc::_ProjectionRead__tr_T2Complete read__tr_T2Complete_state = state._projected_state_for__tr_T2Complete();
                 bool _trid_8;
@@ -6622,61 +6730,90 @@ class ModelChecker {
 
                     copiedState.stateAccessedVia = "T2Complete";
                     result.insert(copiedState);
-                    {
-                        std::unique_lock<std::mutex> lock(mutex);
-                        transitions += 1;
-                    }
+                    transitions += 1;
                 }
                 CAN_BUS_tlc::_ProjectionRead__tr_T2ReleaseBus read__tr_T2ReleaseBus_state = state._projected_state_for__tr_T2ReleaseBus();
-                BSet<BInteger> _trid_9;
                 auto _trid_9_ptr = _OpCache_tr_T2ReleaseBus.find(read__tr_T2ReleaseBus_state);
                 if(_trid_9_ptr == _OpCache_tr_T2ReleaseBus.end()) {
-                    _trid_9 = state._tr_T2ReleaseBus();
+                    BSet<BInteger> _trid_9 = state._tr_T2ReleaseBus();
                     {
                         std::unique_lock<std::mutex> _ProjectionRead__tr_T2ReleaseBus_lock(_ProjectionRead__tr_T2ReleaseBus_mutex);
                         _OpCache_tr_T2ReleaseBus.insert({read__tr_T2ReleaseBus_state, _trid_9});
                     }
-                } else {
-                    _trid_9 = _trid_9_ptr->second;
-                }
+                    for(const BInteger& param : _trid_9) {
+                        BInteger _tmp_1 = param;
 
-                for(const BInteger& param : _trid_9) {
-                    BInteger _tmp_1 = param;
+                        CAN_BUS_tlc copiedState = state._copy();
+                        CAN_BUS_tlc::_ProjectionRead_T2ReleaseBus readState = state._projected_state_for_T2ReleaseBus();
 
-                    CAN_BUS_tlc copiedState = state._copy();
-                    CAN_BUS_tlc::_ProjectionRead_T2ReleaseBus readState = state._projected_state_for_T2ReleaseBus();
-
-                    auto _OpCache_with_parameter_T2ReleaseBus_ptr = _OpCache_T2ReleaseBus.find(param);
-                    if(_OpCache_with_parameter_T2ReleaseBus_ptr == _OpCache_T2ReleaseBus.end()) {
-                        copiedState.T2ReleaseBus(_tmp_1);
-                        CAN_BUS_tlc::_ProjectionWrite_T2ReleaseBus writeState = copiedState._update_for_T2ReleaseBus();
-                        std::unordered_map<CAN_BUS_tlc::_ProjectionRead_T2ReleaseBus, CAN_BUS_tlc::_ProjectionWrite_T2ReleaseBus, CAN_BUS_tlc::_ProjectionRead_T2ReleaseBus::Hash, CAN_BUS_tlc::_ProjectionRead_T2ReleaseBus::HashEqual> _OpCache_with_parameter_T2ReleaseBus;
-                        _OpCache_with_parameter_T2ReleaseBus.insert({readState, writeState});
-                        {
-                            std::unique_lock<std::mutex> _ProjectionRead_T2ReleaseBus_lock(_ProjectionRead_T2ReleaseBus_mutex);
-                            _OpCache_T2ReleaseBus.insert({param, _OpCache_with_parameter_T2ReleaseBus});
-                        }
-
-                    } else {
-                        std::unordered_map<CAN_BUS_tlc::_ProjectionRead_T2ReleaseBus, CAN_BUS_tlc::_ProjectionWrite_T2ReleaseBus, CAN_BUS_tlc::_ProjectionRead_T2ReleaseBus::Hash, CAN_BUS_tlc::_ProjectionRead_T2ReleaseBus::HashEqual> _OpCache_with_parameter_T2ReleaseBus = _OpCache_with_parameter_T2ReleaseBus_ptr->second;
-                        auto writeState_ptr = _OpCache_with_parameter_T2ReleaseBus.find(readState);
-                        if(writeState_ptr != _OpCache_with_parameter_T2ReleaseBus.end()) {
-                            CAN_BUS_tlc::_ProjectionWrite_T2ReleaseBus writeState = writeState_ptr->second;
-                            copiedState._apply_update_for_T2ReleaseBus(writeState);
-                        } else {
+                        auto _OpCache_with_parameter_T2ReleaseBus_ptr = _OpCache_T2ReleaseBus.find(param);
+                        if(_OpCache_with_parameter_T2ReleaseBus_ptr == _OpCache_T2ReleaseBus.end()) {
                             copiedState.T2ReleaseBus(_tmp_1);
                             CAN_BUS_tlc::_ProjectionWrite_T2ReleaseBus writeState = copiedState._update_for_T2ReleaseBus();
+                            std::unordered_map<CAN_BUS_tlc::_ProjectionRead_T2ReleaseBus, CAN_BUS_tlc::_ProjectionWrite_T2ReleaseBus, CAN_BUS_tlc::_ProjectionRead_T2ReleaseBus::Hash, CAN_BUS_tlc::_ProjectionRead_T2ReleaseBus::HashEqual> _OpCache_with_parameter_T2ReleaseBus;
+                            _OpCache_with_parameter_T2ReleaseBus.insert({readState, writeState});
                             {
                                 std::unique_lock<std::mutex> _ProjectionRead_T2ReleaseBus_lock(_ProjectionRead_T2ReleaseBus_mutex);
-                                _OpCache_with_parameter_T2ReleaseBus.insert({readState, writeState});
+                                _OpCache_T2ReleaseBus.insert({param, _OpCache_with_parameter_T2ReleaseBus});
+                            }
+
+                        } else {
+                            std::unordered_map<CAN_BUS_tlc::_ProjectionRead_T2ReleaseBus, CAN_BUS_tlc::_ProjectionWrite_T2ReleaseBus, CAN_BUS_tlc::_ProjectionRead_T2ReleaseBus::Hash, CAN_BUS_tlc::_ProjectionRead_T2ReleaseBus::HashEqual> _OpCache_with_parameter_T2ReleaseBus = _OpCache_with_parameter_T2ReleaseBus_ptr->second;
+                            auto writeState_ptr = _OpCache_with_parameter_T2ReleaseBus.find(readState);
+                            if(writeState_ptr != _OpCache_with_parameter_T2ReleaseBus.end()) {
+                                CAN_BUS_tlc::_ProjectionWrite_T2ReleaseBus writeState = writeState_ptr->second;
+                                copiedState._apply_update_for_T2ReleaseBus(writeState);
+                            } else {
+                                copiedState.T2ReleaseBus(_tmp_1);
+                                CAN_BUS_tlc::_ProjectionWrite_T2ReleaseBus writeState = copiedState._update_for_T2ReleaseBus();
+                                {
+                                    std::unique_lock<std::mutex> _ProjectionRead_T2ReleaseBus_lock(_ProjectionRead_T2ReleaseBus_mutex);
+                                    _OpCache_with_parameter_T2ReleaseBus.insert({readState, writeState});
+                                }
                             }
                         }
-                    }
 
-                    copiedState.stateAccessedVia = "T2ReleaseBus";
-                    result.insert(copiedState);
-                    {
-                        std::unique_lock<std::mutex> lock(mutex);
+                        copiedState.stateAccessedVia = "T2ReleaseBus";
+                        result.insert(copiedState);
+                        transitions += 1;
+                    }
+                } else {
+                    BSet<BInteger> _trid_9 = _trid_9_ptr->second;
+                    for(const BInteger& param : _trid_9) {
+                        BInteger _tmp_1 = param;
+
+                        CAN_BUS_tlc copiedState = state._copy();
+                        CAN_BUS_tlc::_ProjectionRead_T2ReleaseBus readState = state._projected_state_for_T2ReleaseBus();
+
+                        auto _OpCache_with_parameter_T2ReleaseBus_ptr = _OpCache_T2ReleaseBus.find(param);
+                        if(_OpCache_with_parameter_T2ReleaseBus_ptr == _OpCache_T2ReleaseBus.end()) {
+                            copiedState.T2ReleaseBus(_tmp_1);
+                            CAN_BUS_tlc::_ProjectionWrite_T2ReleaseBus writeState = copiedState._update_for_T2ReleaseBus();
+                            std::unordered_map<CAN_BUS_tlc::_ProjectionRead_T2ReleaseBus, CAN_BUS_tlc::_ProjectionWrite_T2ReleaseBus, CAN_BUS_tlc::_ProjectionRead_T2ReleaseBus::Hash, CAN_BUS_tlc::_ProjectionRead_T2ReleaseBus::HashEqual> _OpCache_with_parameter_T2ReleaseBus;
+                            _OpCache_with_parameter_T2ReleaseBus.insert({readState, writeState});
+                            {
+                                std::unique_lock<std::mutex> _ProjectionRead_T2ReleaseBus_lock(_ProjectionRead_T2ReleaseBus_mutex);
+                                _OpCache_T2ReleaseBus.insert({param, _OpCache_with_parameter_T2ReleaseBus});
+                            }
+
+                        } else {
+                            std::unordered_map<CAN_BUS_tlc::_ProjectionRead_T2ReleaseBus, CAN_BUS_tlc::_ProjectionWrite_T2ReleaseBus, CAN_BUS_tlc::_ProjectionRead_T2ReleaseBus::Hash, CAN_BUS_tlc::_ProjectionRead_T2ReleaseBus::HashEqual> _OpCache_with_parameter_T2ReleaseBus = _OpCache_with_parameter_T2ReleaseBus_ptr->second;
+                            auto writeState_ptr = _OpCache_with_parameter_T2ReleaseBus.find(readState);
+                            if(writeState_ptr != _OpCache_with_parameter_T2ReleaseBus.end()) {
+                                CAN_BUS_tlc::_ProjectionWrite_T2ReleaseBus writeState = writeState_ptr->second;
+                                copiedState._apply_update_for_T2ReleaseBus(writeState);
+                            } else {
+                                copiedState.T2ReleaseBus(_tmp_1);
+                                CAN_BUS_tlc::_ProjectionWrite_T2ReleaseBus writeState = copiedState._update_for_T2ReleaseBus();
+                                {
+                                    std::unique_lock<std::mutex> _ProjectionRead_T2ReleaseBus_lock(_ProjectionRead_T2ReleaseBus_mutex);
+                                    _OpCache_with_parameter_T2ReleaseBus.insert({readState, writeState});
+                                }
+                            }
+                        }
+
+                        copiedState.stateAccessedVia = "T2ReleaseBus";
+                        result.insert(copiedState);
                         transitions += 1;
                     }
                 }
@@ -6725,115 +6862,177 @@ class ModelChecker {
 
                     copiedState.stateAccessedVia = "T2Calculate";
                     result.insert(copiedState);
-                    {
-                        std::unique_lock<std::mutex> lock(mutex);
-                        transitions += 1;
-                    }
+                    transitions += 1;
                 }
                 CAN_BUS_tlc::_ProjectionRead__tr_T2WriteBus read__tr_T2WriteBus_state = state._projected_state_for__tr_T2WriteBus();
-                BSet<BTuple<BInteger, BInteger >> _trid_11;
                 auto _trid_11_ptr = _OpCache_tr_T2WriteBus.find(read__tr_T2WriteBus_state);
                 if(_trid_11_ptr == _OpCache_tr_T2WriteBus.end()) {
-                    _trid_11 = state._tr_T2WriteBus();
+                    BSet<BTuple<BInteger, BInteger >> _trid_11 = state._tr_T2WriteBus();
                     {
                         std::unique_lock<std::mutex> _ProjectionRead__tr_T2WriteBus_lock(_ProjectionRead__tr_T2WriteBus_mutex);
                         _OpCache_tr_T2WriteBus.insert({read__tr_T2WriteBus_state, _trid_11});
                     }
-                } else {
-                    _trid_11 = _trid_11_ptr->second;
-                }
+                    for(const BTuple<BInteger, BInteger >& param : _trid_11) {
+                        BInteger _tmp_1 = param.projection2();
+                        BInteger _tmp_2 = param.projection1();
 
-                for(const BTuple<BInteger, BInteger >& param : _trid_11) {
-                    BInteger _tmp_1 = param.projection2();
-                    BInteger _tmp_2 = param.projection1();
+                        CAN_BUS_tlc copiedState = state._copy();
+                        CAN_BUS_tlc::_ProjectionRead_T2WriteBus readState = state._projected_state_for_T2WriteBus();
 
-                    CAN_BUS_tlc copiedState = state._copy();
-                    CAN_BUS_tlc::_ProjectionRead_T2WriteBus readState = state._projected_state_for_T2WriteBus();
-
-                    auto _OpCache_with_parameter_T2WriteBus_ptr = _OpCache_T2WriteBus.find(param);
-                    if(_OpCache_with_parameter_T2WriteBus_ptr == _OpCache_T2WriteBus.end()) {
-                        copiedState.T2WriteBus(_tmp_2, _tmp_1);
-                        CAN_BUS_tlc::_ProjectionWrite_T2WriteBus writeState = copiedState._update_for_T2WriteBus();
-                        std::unordered_map<CAN_BUS_tlc::_ProjectionRead_T2WriteBus, CAN_BUS_tlc::_ProjectionWrite_T2WriteBus, CAN_BUS_tlc::_ProjectionRead_T2WriteBus::Hash, CAN_BUS_tlc::_ProjectionRead_T2WriteBus::HashEqual> _OpCache_with_parameter_T2WriteBus;
-                        _OpCache_with_parameter_T2WriteBus.insert({readState, writeState});
-                        {
-                            std::unique_lock<std::mutex> _ProjectionRead_T2WriteBus_lock(_ProjectionRead_T2WriteBus_mutex);
-                            _OpCache_T2WriteBus.insert({param, _OpCache_with_parameter_T2WriteBus});
-                        }
-
-                    } else {
-                        std::unordered_map<CAN_BUS_tlc::_ProjectionRead_T2WriteBus, CAN_BUS_tlc::_ProjectionWrite_T2WriteBus, CAN_BUS_tlc::_ProjectionRead_T2WriteBus::Hash, CAN_BUS_tlc::_ProjectionRead_T2WriteBus::HashEqual> _OpCache_with_parameter_T2WriteBus = _OpCache_with_parameter_T2WriteBus_ptr->second;
-                        auto writeState_ptr = _OpCache_with_parameter_T2WriteBus.find(readState);
-                        if(writeState_ptr != _OpCache_with_parameter_T2WriteBus.end()) {
-                            CAN_BUS_tlc::_ProjectionWrite_T2WriteBus writeState = writeState_ptr->second;
-                            copiedState._apply_update_for_T2WriteBus(writeState);
-                        } else {
+                        auto _OpCache_with_parameter_T2WriteBus_ptr = _OpCache_T2WriteBus.find(param);
+                        if(_OpCache_with_parameter_T2WriteBus_ptr == _OpCache_T2WriteBus.end()) {
                             copiedState.T2WriteBus(_tmp_2, _tmp_1);
                             CAN_BUS_tlc::_ProjectionWrite_T2WriteBus writeState = copiedState._update_for_T2WriteBus();
+                            std::unordered_map<CAN_BUS_tlc::_ProjectionRead_T2WriteBus, CAN_BUS_tlc::_ProjectionWrite_T2WriteBus, CAN_BUS_tlc::_ProjectionRead_T2WriteBus::Hash, CAN_BUS_tlc::_ProjectionRead_T2WriteBus::HashEqual> _OpCache_with_parameter_T2WriteBus;
+                            _OpCache_with_parameter_T2WriteBus.insert({readState, writeState});
                             {
                                 std::unique_lock<std::mutex> _ProjectionRead_T2WriteBus_lock(_ProjectionRead_T2WriteBus_mutex);
-                                _OpCache_with_parameter_T2WriteBus.insert({readState, writeState});
+                                _OpCache_T2WriteBus.insert({param, _OpCache_with_parameter_T2WriteBus});
+                            }
+
+                        } else {
+                            std::unordered_map<CAN_BUS_tlc::_ProjectionRead_T2WriteBus, CAN_BUS_tlc::_ProjectionWrite_T2WriteBus, CAN_BUS_tlc::_ProjectionRead_T2WriteBus::Hash, CAN_BUS_tlc::_ProjectionRead_T2WriteBus::HashEqual> _OpCache_with_parameter_T2WriteBus = _OpCache_with_parameter_T2WriteBus_ptr->second;
+                            auto writeState_ptr = _OpCache_with_parameter_T2WriteBus.find(readState);
+                            if(writeState_ptr != _OpCache_with_parameter_T2WriteBus.end()) {
+                                CAN_BUS_tlc::_ProjectionWrite_T2WriteBus writeState = writeState_ptr->second;
+                                copiedState._apply_update_for_T2WriteBus(writeState);
+                            } else {
+                                copiedState.T2WriteBus(_tmp_2, _tmp_1);
+                                CAN_BUS_tlc::_ProjectionWrite_T2WriteBus writeState = copiedState._update_for_T2WriteBus();
+                                {
+                                    std::unique_lock<std::mutex> _ProjectionRead_T2WriteBus_lock(_ProjectionRead_T2WriteBus_mutex);
+                                    _OpCache_with_parameter_T2WriteBus.insert({readState, writeState});
+                                }
                             }
                         }
-                    }
 
-                    copiedState.stateAccessedVia = "T2WriteBus";
-                    result.insert(copiedState);
-                    {
-                        std::unique_lock<std::mutex> lock(mutex);
+                        copiedState.stateAccessedVia = "T2WriteBus";
+                        result.insert(copiedState);
+                        transitions += 1;
+                    }
+                } else {
+                    BSet<BTuple<BInteger, BInteger >> _trid_11 = _trid_11_ptr->second;
+                    for(const BTuple<BInteger, BInteger >& param : _trid_11) {
+                        BInteger _tmp_1 = param.projection2();
+                        BInteger _tmp_2 = param.projection1();
+
+                        CAN_BUS_tlc copiedState = state._copy();
+                        CAN_BUS_tlc::_ProjectionRead_T2WriteBus readState = state._projected_state_for_T2WriteBus();
+
+                        auto _OpCache_with_parameter_T2WriteBus_ptr = _OpCache_T2WriteBus.find(param);
+                        if(_OpCache_with_parameter_T2WriteBus_ptr == _OpCache_T2WriteBus.end()) {
+                            copiedState.T2WriteBus(_tmp_2, _tmp_1);
+                            CAN_BUS_tlc::_ProjectionWrite_T2WriteBus writeState = copiedState._update_for_T2WriteBus();
+                            std::unordered_map<CAN_BUS_tlc::_ProjectionRead_T2WriteBus, CAN_BUS_tlc::_ProjectionWrite_T2WriteBus, CAN_BUS_tlc::_ProjectionRead_T2WriteBus::Hash, CAN_BUS_tlc::_ProjectionRead_T2WriteBus::HashEqual> _OpCache_with_parameter_T2WriteBus;
+                            _OpCache_with_parameter_T2WriteBus.insert({readState, writeState});
+                            {
+                                std::unique_lock<std::mutex> _ProjectionRead_T2WriteBus_lock(_ProjectionRead_T2WriteBus_mutex);
+                                _OpCache_T2WriteBus.insert({param, _OpCache_with_parameter_T2WriteBus});
+                            }
+
+                        } else {
+                            std::unordered_map<CAN_BUS_tlc::_ProjectionRead_T2WriteBus, CAN_BUS_tlc::_ProjectionWrite_T2WriteBus, CAN_BUS_tlc::_ProjectionRead_T2WriteBus::Hash, CAN_BUS_tlc::_ProjectionRead_T2WriteBus::HashEqual> _OpCache_with_parameter_T2WriteBus = _OpCache_with_parameter_T2WriteBus_ptr->second;
+                            auto writeState_ptr = _OpCache_with_parameter_T2WriteBus.find(readState);
+                            if(writeState_ptr != _OpCache_with_parameter_T2WriteBus.end()) {
+                                CAN_BUS_tlc::_ProjectionWrite_T2WriteBus writeState = writeState_ptr->second;
+                                copiedState._apply_update_for_T2WriteBus(writeState);
+                            } else {
+                                copiedState.T2WriteBus(_tmp_2, _tmp_1);
+                                CAN_BUS_tlc::_ProjectionWrite_T2WriteBus writeState = copiedState._update_for_T2WriteBus();
+                                {
+                                    std::unique_lock<std::mutex> _ProjectionRead_T2WriteBus_lock(_ProjectionRead_T2WriteBus_mutex);
+                                    _OpCache_with_parameter_T2WriteBus.insert({readState, writeState});
+                                }
+                            }
+                        }
+
+                        copiedState.stateAccessedVia = "T2WriteBus";
+                        result.insert(copiedState);
                         transitions += 1;
                     }
                 }
                 CAN_BUS_tlc::_ProjectionRead__tr_T2Wait read__tr_T2Wait_state = state._projected_state_for__tr_T2Wait();
-                BSet<BInteger> _trid_12;
                 auto _trid_12_ptr = _OpCache_tr_T2Wait.find(read__tr_T2Wait_state);
                 if(_trid_12_ptr == _OpCache_tr_T2Wait.end()) {
-                    _trid_12 = state._tr_T2Wait();
+                    BSet<BInteger> _trid_12 = state._tr_T2Wait();
                     {
                         std::unique_lock<std::mutex> _ProjectionRead__tr_T2Wait_lock(_ProjectionRead__tr_T2Wait_mutex);
                         _OpCache_tr_T2Wait.insert({read__tr_T2Wait_state, _trid_12});
                     }
-                } else {
-                    _trid_12 = _trid_12_ptr->second;
-                }
+                    for(const BInteger& param : _trid_12) {
+                        BInteger _tmp_1 = param;
 
-                for(const BInteger& param : _trid_12) {
-                    BInteger _tmp_1 = param;
+                        CAN_BUS_tlc copiedState = state._copy();
+                        CAN_BUS_tlc::_ProjectionRead_T2Wait readState = state._projected_state_for_T2Wait();
 
-                    CAN_BUS_tlc copiedState = state._copy();
-                    CAN_BUS_tlc::_ProjectionRead_T2Wait readState = state._projected_state_for_T2Wait();
-
-                    auto _OpCache_with_parameter_T2Wait_ptr = _OpCache_T2Wait.find(param);
-                    if(_OpCache_with_parameter_T2Wait_ptr == _OpCache_T2Wait.end()) {
-                        copiedState.T2Wait(_tmp_1);
-                        CAN_BUS_tlc::_ProjectionWrite_T2Wait writeState = copiedState._update_for_T2Wait();
-                        std::unordered_map<CAN_BUS_tlc::_ProjectionRead_T2Wait, CAN_BUS_tlc::_ProjectionWrite_T2Wait, CAN_BUS_tlc::_ProjectionRead_T2Wait::Hash, CAN_BUS_tlc::_ProjectionRead_T2Wait::HashEqual> _OpCache_with_parameter_T2Wait;
-                        _OpCache_with_parameter_T2Wait.insert({readState, writeState});
-                        {
-                            std::unique_lock<std::mutex> _ProjectionRead_T2Wait_lock(_ProjectionRead_T2Wait_mutex);
-                            _OpCache_T2Wait.insert({param, _OpCache_with_parameter_T2Wait});
-                        }
-
-                    } else {
-                        std::unordered_map<CAN_BUS_tlc::_ProjectionRead_T2Wait, CAN_BUS_tlc::_ProjectionWrite_T2Wait, CAN_BUS_tlc::_ProjectionRead_T2Wait::Hash, CAN_BUS_tlc::_ProjectionRead_T2Wait::HashEqual> _OpCache_with_parameter_T2Wait = _OpCache_with_parameter_T2Wait_ptr->second;
-                        auto writeState_ptr = _OpCache_with_parameter_T2Wait.find(readState);
-                        if(writeState_ptr != _OpCache_with_parameter_T2Wait.end()) {
-                            CAN_BUS_tlc::_ProjectionWrite_T2Wait writeState = writeState_ptr->second;
-                            copiedState._apply_update_for_T2Wait(writeState);
-                        } else {
+                        auto _OpCache_with_parameter_T2Wait_ptr = _OpCache_T2Wait.find(param);
+                        if(_OpCache_with_parameter_T2Wait_ptr == _OpCache_T2Wait.end()) {
                             copiedState.T2Wait(_tmp_1);
                             CAN_BUS_tlc::_ProjectionWrite_T2Wait writeState = copiedState._update_for_T2Wait();
+                            std::unordered_map<CAN_BUS_tlc::_ProjectionRead_T2Wait, CAN_BUS_tlc::_ProjectionWrite_T2Wait, CAN_BUS_tlc::_ProjectionRead_T2Wait::Hash, CAN_BUS_tlc::_ProjectionRead_T2Wait::HashEqual> _OpCache_with_parameter_T2Wait;
+                            _OpCache_with_parameter_T2Wait.insert({readState, writeState});
                             {
                                 std::unique_lock<std::mutex> _ProjectionRead_T2Wait_lock(_ProjectionRead_T2Wait_mutex);
-                                _OpCache_with_parameter_T2Wait.insert({readState, writeState});
+                                _OpCache_T2Wait.insert({param, _OpCache_with_parameter_T2Wait});
+                            }
+
+                        } else {
+                            std::unordered_map<CAN_BUS_tlc::_ProjectionRead_T2Wait, CAN_BUS_tlc::_ProjectionWrite_T2Wait, CAN_BUS_tlc::_ProjectionRead_T2Wait::Hash, CAN_BUS_tlc::_ProjectionRead_T2Wait::HashEqual> _OpCache_with_parameter_T2Wait = _OpCache_with_parameter_T2Wait_ptr->second;
+                            auto writeState_ptr = _OpCache_with_parameter_T2Wait.find(readState);
+                            if(writeState_ptr != _OpCache_with_parameter_T2Wait.end()) {
+                                CAN_BUS_tlc::_ProjectionWrite_T2Wait writeState = writeState_ptr->second;
+                                copiedState._apply_update_for_T2Wait(writeState);
+                            } else {
+                                copiedState.T2Wait(_tmp_1);
+                                CAN_BUS_tlc::_ProjectionWrite_T2Wait writeState = copiedState._update_for_T2Wait();
+                                {
+                                    std::unique_lock<std::mutex> _ProjectionRead_T2Wait_lock(_ProjectionRead_T2Wait_mutex);
+                                    _OpCache_with_parameter_T2Wait.insert({readState, writeState});
+                                }
                             }
                         }
-                    }
 
-                    copiedState.stateAccessedVia = "T2Wait";
-                    result.insert(copiedState);
-                    {
-                        std::unique_lock<std::mutex> lock(mutex);
+                        copiedState.stateAccessedVia = "T2Wait";
+                        result.insert(copiedState);
+                        transitions += 1;
+                    }
+                } else {
+                    BSet<BInteger> _trid_12 = _trid_12_ptr->second;
+                    for(const BInteger& param : _trid_12) {
+                        BInteger _tmp_1 = param;
+
+                        CAN_BUS_tlc copiedState = state._copy();
+                        CAN_BUS_tlc::_ProjectionRead_T2Wait readState = state._projected_state_for_T2Wait();
+
+                        auto _OpCache_with_parameter_T2Wait_ptr = _OpCache_T2Wait.find(param);
+                        if(_OpCache_with_parameter_T2Wait_ptr == _OpCache_T2Wait.end()) {
+                            copiedState.T2Wait(_tmp_1);
+                            CAN_BUS_tlc::_ProjectionWrite_T2Wait writeState = copiedState._update_for_T2Wait();
+                            std::unordered_map<CAN_BUS_tlc::_ProjectionRead_T2Wait, CAN_BUS_tlc::_ProjectionWrite_T2Wait, CAN_BUS_tlc::_ProjectionRead_T2Wait::Hash, CAN_BUS_tlc::_ProjectionRead_T2Wait::HashEqual> _OpCache_with_parameter_T2Wait;
+                            _OpCache_with_parameter_T2Wait.insert({readState, writeState});
+                            {
+                                std::unique_lock<std::mutex> _ProjectionRead_T2Wait_lock(_ProjectionRead_T2Wait_mutex);
+                                _OpCache_T2Wait.insert({param, _OpCache_with_parameter_T2Wait});
+                            }
+
+                        } else {
+                            std::unordered_map<CAN_BUS_tlc::_ProjectionRead_T2Wait, CAN_BUS_tlc::_ProjectionWrite_T2Wait, CAN_BUS_tlc::_ProjectionRead_T2Wait::Hash, CAN_BUS_tlc::_ProjectionRead_T2Wait::HashEqual> _OpCache_with_parameter_T2Wait = _OpCache_with_parameter_T2Wait_ptr->second;
+                            auto writeState_ptr = _OpCache_with_parameter_T2Wait.find(readState);
+                            if(writeState_ptr != _OpCache_with_parameter_T2Wait.end()) {
+                                CAN_BUS_tlc::_ProjectionWrite_T2Wait writeState = writeState_ptr->second;
+                                copiedState._apply_update_for_T2Wait(writeState);
+                            } else {
+                                copiedState.T2Wait(_tmp_1);
+                                CAN_BUS_tlc::_ProjectionWrite_T2Wait writeState = copiedState._update_for_T2Wait();
+                                {
+                                    std::unique_lock<std::mutex> _ProjectionRead_T2Wait_lock(_ProjectionRead_T2Wait_mutex);
+                                    _OpCache_with_parameter_T2Wait.insert({readState, writeState});
+                                }
+                            }
+                        }
+
+                        copiedState.stateAccessedVia = "T2Wait";
+                        result.insert(copiedState);
                         transitions += 1;
                     }
                 }
@@ -6882,10 +7081,7 @@ class ModelChecker {
 
                     copiedState.stateAccessedVia = "T3Initiate";
                     result.insert(copiedState);
-                    {
-                        std::unique_lock<std::mutex> lock(mutex);
-                        transitions += 1;
-                    }
+                    transitions += 1;
                 }
                 CAN_BUS_tlc::_ProjectionRead__tr_T3Evaluate read__tr_T3Evaluate_state = state._projected_state_for__tr_T3Evaluate();
                 bool _trid_14;
@@ -6932,116 +7128,179 @@ class ModelChecker {
 
                     copiedState.stateAccessedVia = "T3Evaluate";
                     result.insert(copiedState);
-                    {
-                        std::unique_lock<std::mutex> lock(mutex);
-                        transitions += 1;
-                    }
+                    transitions += 1;
                 }
                 CAN_BUS_tlc::_ProjectionRead__tr_T3writebus read__tr_T3writebus_state = state._projected_state_for__tr_T3writebus();
-                BSet<BTuple<BInteger, BInteger >> _trid_15;
                 auto _trid_15_ptr = _OpCache_tr_T3writebus.find(read__tr_T3writebus_state);
                 if(_trid_15_ptr == _OpCache_tr_T3writebus.end()) {
-                    _trid_15 = state._tr_T3writebus();
+                    BSet<BTuple<BInteger, BInteger >> _trid_15 = state._tr_T3writebus();
                     {
                         std::unique_lock<std::mutex> _ProjectionRead__tr_T3writebus_lock(_ProjectionRead__tr_T3writebus_mutex);
                         _OpCache_tr_T3writebus.insert({read__tr_T3writebus_state, _trid_15});
                     }
-                } else {
-                    _trid_15 = _trid_15_ptr->second;
-                }
+                    for(const BTuple<BInteger, BInteger >& param : _trid_15) {
+                        BInteger _tmp_1 = param.projection2();
+                        BInteger _tmp_2 = param.projection1();
 
-                for(const BTuple<BInteger, BInteger >& param : _trid_15) {
-                    BInteger _tmp_1 = param.projection2();
-                    BInteger _tmp_2 = param.projection1();
+                        CAN_BUS_tlc copiedState = state._copy();
+                        CAN_BUS_tlc::_ProjectionRead_T3writebus readState = state._projected_state_for_T3writebus();
 
-                    CAN_BUS_tlc copiedState = state._copy();
-                    CAN_BUS_tlc::_ProjectionRead_T3writebus readState = state._projected_state_for_T3writebus();
-
-                    auto _OpCache_with_parameter_T3writebus_ptr = _OpCache_T3writebus.find(param);
-                    if(_OpCache_with_parameter_T3writebus_ptr == _OpCache_T3writebus.end()) {
-                        copiedState.T3writebus(_tmp_2, _tmp_1);
-                        CAN_BUS_tlc::_ProjectionWrite_T3writebus writeState = copiedState._update_for_T3writebus();
-                        std::unordered_map<CAN_BUS_tlc::_ProjectionRead_T3writebus, CAN_BUS_tlc::_ProjectionWrite_T3writebus, CAN_BUS_tlc::_ProjectionRead_T3writebus::Hash, CAN_BUS_tlc::_ProjectionRead_T3writebus::HashEqual> _OpCache_with_parameter_T3writebus;
-                        _OpCache_with_parameter_T3writebus.insert({readState, writeState});
-                        {
-                            std::unique_lock<std::mutex> _ProjectionRead_T3writebus_lock(_ProjectionRead_T3writebus_mutex);
-                            _OpCache_T3writebus.insert({param, _OpCache_with_parameter_T3writebus});
-                        }
-
-                    } else {
-                        std::unordered_map<CAN_BUS_tlc::_ProjectionRead_T3writebus, CAN_BUS_tlc::_ProjectionWrite_T3writebus, CAN_BUS_tlc::_ProjectionRead_T3writebus::Hash, CAN_BUS_tlc::_ProjectionRead_T3writebus::HashEqual> _OpCache_with_parameter_T3writebus = _OpCache_with_parameter_T3writebus_ptr->second;
-                        auto writeState_ptr = _OpCache_with_parameter_T3writebus.find(readState);
-                        if(writeState_ptr != _OpCache_with_parameter_T3writebus.end()) {
-                            CAN_BUS_tlc::_ProjectionWrite_T3writebus writeState = writeState_ptr->second;
-                            copiedState._apply_update_for_T3writebus(writeState);
-                        } else {
+                        auto _OpCache_with_parameter_T3writebus_ptr = _OpCache_T3writebus.find(param);
+                        if(_OpCache_with_parameter_T3writebus_ptr == _OpCache_T3writebus.end()) {
                             copiedState.T3writebus(_tmp_2, _tmp_1);
                             CAN_BUS_tlc::_ProjectionWrite_T3writebus writeState = copiedState._update_for_T3writebus();
+                            std::unordered_map<CAN_BUS_tlc::_ProjectionRead_T3writebus, CAN_BUS_tlc::_ProjectionWrite_T3writebus, CAN_BUS_tlc::_ProjectionRead_T3writebus::Hash, CAN_BUS_tlc::_ProjectionRead_T3writebus::HashEqual> _OpCache_with_parameter_T3writebus;
+                            _OpCache_with_parameter_T3writebus.insert({readState, writeState});
                             {
                                 std::unique_lock<std::mutex> _ProjectionRead_T3writebus_lock(_ProjectionRead_T3writebus_mutex);
-                                _OpCache_with_parameter_T3writebus.insert({readState, writeState});
+                                _OpCache_T3writebus.insert({param, _OpCache_with_parameter_T3writebus});
+                            }
+
+                        } else {
+                            std::unordered_map<CAN_BUS_tlc::_ProjectionRead_T3writebus, CAN_BUS_tlc::_ProjectionWrite_T3writebus, CAN_BUS_tlc::_ProjectionRead_T3writebus::Hash, CAN_BUS_tlc::_ProjectionRead_T3writebus::HashEqual> _OpCache_with_parameter_T3writebus = _OpCache_with_parameter_T3writebus_ptr->second;
+                            auto writeState_ptr = _OpCache_with_parameter_T3writebus.find(readState);
+                            if(writeState_ptr != _OpCache_with_parameter_T3writebus.end()) {
+                                CAN_BUS_tlc::_ProjectionWrite_T3writebus writeState = writeState_ptr->second;
+                                copiedState._apply_update_for_T3writebus(writeState);
+                            } else {
+                                copiedState.T3writebus(_tmp_2, _tmp_1);
+                                CAN_BUS_tlc::_ProjectionWrite_T3writebus writeState = copiedState._update_for_T3writebus();
+                                {
+                                    std::unique_lock<std::mutex> _ProjectionRead_T3writebus_lock(_ProjectionRead_T3writebus_mutex);
+                                    _OpCache_with_parameter_T3writebus.insert({readState, writeState});
+                                }
                             }
                         }
-                    }
 
-                    copiedState.stateAccessedVia = "T3writebus";
-                    result.insert(copiedState);
-                    {
-                        std::unique_lock<std::mutex> lock(mutex);
+                        copiedState.stateAccessedVia = "T3writebus";
+                        result.insert(copiedState);
+                        transitions += 1;
+                    }
+                } else {
+                    BSet<BTuple<BInteger, BInteger >> _trid_15 = _trid_15_ptr->second;
+                    for(const BTuple<BInteger, BInteger >& param : _trid_15) {
+                        BInteger _tmp_1 = param.projection2();
+                        BInteger _tmp_2 = param.projection1();
+
+                        CAN_BUS_tlc copiedState = state._copy();
+                        CAN_BUS_tlc::_ProjectionRead_T3writebus readState = state._projected_state_for_T3writebus();
+
+                        auto _OpCache_with_parameter_T3writebus_ptr = _OpCache_T3writebus.find(param);
+                        if(_OpCache_with_parameter_T3writebus_ptr == _OpCache_T3writebus.end()) {
+                            copiedState.T3writebus(_tmp_2, _tmp_1);
+                            CAN_BUS_tlc::_ProjectionWrite_T3writebus writeState = copiedState._update_for_T3writebus();
+                            std::unordered_map<CAN_BUS_tlc::_ProjectionRead_T3writebus, CAN_BUS_tlc::_ProjectionWrite_T3writebus, CAN_BUS_tlc::_ProjectionRead_T3writebus::Hash, CAN_BUS_tlc::_ProjectionRead_T3writebus::HashEqual> _OpCache_with_parameter_T3writebus;
+                            _OpCache_with_parameter_T3writebus.insert({readState, writeState});
+                            {
+                                std::unique_lock<std::mutex> _ProjectionRead_T3writebus_lock(_ProjectionRead_T3writebus_mutex);
+                                _OpCache_T3writebus.insert({param, _OpCache_with_parameter_T3writebus});
+                            }
+
+                        } else {
+                            std::unordered_map<CAN_BUS_tlc::_ProjectionRead_T3writebus, CAN_BUS_tlc::_ProjectionWrite_T3writebus, CAN_BUS_tlc::_ProjectionRead_T3writebus::Hash, CAN_BUS_tlc::_ProjectionRead_T3writebus::HashEqual> _OpCache_with_parameter_T3writebus = _OpCache_with_parameter_T3writebus_ptr->second;
+                            auto writeState_ptr = _OpCache_with_parameter_T3writebus.find(readState);
+                            if(writeState_ptr != _OpCache_with_parameter_T3writebus.end()) {
+                                CAN_BUS_tlc::_ProjectionWrite_T3writebus writeState = writeState_ptr->second;
+                                copiedState._apply_update_for_T3writebus(writeState);
+                            } else {
+                                copiedState.T3writebus(_tmp_2, _tmp_1);
+                                CAN_BUS_tlc::_ProjectionWrite_T3writebus writeState = copiedState._update_for_T3writebus();
+                                {
+                                    std::unique_lock<std::mutex> _ProjectionRead_T3writebus_lock(_ProjectionRead_T3writebus_mutex);
+                                    _OpCache_with_parameter_T3writebus.insert({readState, writeState});
+                                }
+                            }
+                        }
+
+                        copiedState.stateAccessedVia = "T3writebus";
+                        result.insert(copiedState);
                         transitions += 1;
                     }
                 }
                 CAN_BUS_tlc::_ProjectionRead__tr_T3Read read__tr_T3Read_state = state._projected_state_for__tr_T3Read();
-                BSet<BTuple<BInteger, BInteger >> _trid_16;
                 auto _trid_16_ptr = _OpCache_tr_T3Read.find(read__tr_T3Read_state);
                 if(_trid_16_ptr == _OpCache_tr_T3Read.end()) {
-                    _trid_16 = state._tr_T3Read();
+                    BSet<BTuple<BInteger, BInteger >> _trid_16 = state._tr_T3Read();
                     {
                         std::unique_lock<std::mutex> _ProjectionRead__tr_T3Read_lock(_ProjectionRead__tr_T3Read_mutex);
                         _OpCache_tr_T3Read.insert({read__tr_T3Read_state, _trid_16});
                     }
-                } else {
-                    _trid_16 = _trid_16_ptr->second;
-                }
+                    for(const BTuple<BInteger, BInteger >& param : _trid_16) {
+                        BInteger _tmp_1 = param.projection2();
+                        BInteger _tmp_2 = param.projection1();
 
-                for(const BTuple<BInteger, BInteger >& param : _trid_16) {
-                    BInteger _tmp_1 = param.projection2();
-                    BInteger _tmp_2 = param.projection1();
+                        CAN_BUS_tlc copiedState = state._copy();
+                        CAN_BUS_tlc::_ProjectionRead_T3Read readState = state._projected_state_for_T3Read();
 
-                    CAN_BUS_tlc copiedState = state._copy();
-                    CAN_BUS_tlc::_ProjectionRead_T3Read readState = state._projected_state_for_T3Read();
-
-                    auto _OpCache_with_parameter_T3Read_ptr = _OpCache_T3Read.find(param);
-                    if(_OpCache_with_parameter_T3Read_ptr == _OpCache_T3Read.end()) {
-                        copiedState.T3Read(_tmp_2, _tmp_1);
-                        CAN_BUS_tlc::_ProjectionWrite_T3Read writeState = copiedState._update_for_T3Read();
-                        std::unordered_map<CAN_BUS_tlc::_ProjectionRead_T3Read, CAN_BUS_tlc::_ProjectionWrite_T3Read, CAN_BUS_tlc::_ProjectionRead_T3Read::Hash, CAN_BUS_tlc::_ProjectionRead_T3Read::HashEqual> _OpCache_with_parameter_T3Read;
-                        _OpCache_with_parameter_T3Read.insert({readState, writeState});
-                        {
-                            std::unique_lock<std::mutex> _ProjectionRead_T3Read_lock(_ProjectionRead_T3Read_mutex);
-                            _OpCache_T3Read.insert({param, _OpCache_with_parameter_T3Read});
-                        }
-
-                    } else {
-                        std::unordered_map<CAN_BUS_tlc::_ProjectionRead_T3Read, CAN_BUS_tlc::_ProjectionWrite_T3Read, CAN_BUS_tlc::_ProjectionRead_T3Read::Hash, CAN_BUS_tlc::_ProjectionRead_T3Read::HashEqual> _OpCache_with_parameter_T3Read = _OpCache_with_parameter_T3Read_ptr->second;
-                        auto writeState_ptr = _OpCache_with_parameter_T3Read.find(readState);
-                        if(writeState_ptr != _OpCache_with_parameter_T3Read.end()) {
-                            CAN_BUS_tlc::_ProjectionWrite_T3Read writeState = writeState_ptr->second;
-                            copiedState._apply_update_for_T3Read(writeState);
-                        } else {
+                        auto _OpCache_with_parameter_T3Read_ptr = _OpCache_T3Read.find(param);
+                        if(_OpCache_with_parameter_T3Read_ptr == _OpCache_T3Read.end()) {
                             copiedState.T3Read(_tmp_2, _tmp_1);
                             CAN_BUS_tlc::_ProjectionWrite_T3Read writeState = copiedState._update_for_T3Read();
+                            std::unordered_map<CAN_BUS_tlc::_ProjectionRead_T3Read, CAN_BUS_tlc::_ProjectionWrite_T3Read, CAN_BUS_tlc::_ProjectionRead_T3Read::Hash, CAN_BUS_tlc::_ProjectionRead_T3Read::HashEqual> _OpCache_with_parameter_T3Read;
+                            _OpCache_with_parameter_T3Read.insert({readState, writeState});
                             {
                                 std::unique_lock<std::mutex> _ProjectionRead_T3Read_lock(_ProjectionRead_T3Read_mutex);
-                                _OpCache_with_parameter_T3Read.insert({readState, writeState});
+                                _OpCache_T3Read.insert({param, _OpCache_with_parameter_T3Read});
+                            }
+
+                        } else {
+                            std::unordered_map<CAN_BUS_tlc::_ProjectionRead_T3Read, CAN_BUS_tlc::_ProjectionWrite_T3Read, CAN_BUS_tlc::_ProjectionRead_T3Read::Hash, CAN_BUS_tlc::_ProjectionRead_T3Read::HashEqual> _OpCache_with_parameter_T3Read = _OpCache_with_parameter_T3Read_ptr->second;
+                            auto writeState_ptr = _OpCache_with_parameter_T3Read.find(readState);
+                            if(writeState_ptr != _OpCache_with_parameter_T3Read.end()) {
+                                CAN_BUS_tlc::_ProjectionWrite_T3Read writeState = writeState_ptr->second;
+                                copiedState._apply_update_for_T3Read(writeState);
+                            } else {
+                                copiedState.T3Read(_tmp_2, _tmp_1);
+                                CAN_BUS_tlc::_ProjectionWrite_T3Read writeState = copiedState._update_for_T3Read();
+                                {
+                                    std::unique_lock<std::mutex> _ProjectionRead_T3Read_lock(_ProjectionRead_T3Read_mutex);
+                                    _OpCache_with_parameter_T3Read.insert({readState, writeState});
+                                }
                             }
                         }
-                    }
 
-                    copiedState.stateAccessedVia = "T3Read";
-                    result.insert(copiedState);
-                    {
-                        std::unique_lock<std::mutex> lock(mutex);
+                        copiedState.stateAccessedVia = "T3Read";
+                        result.insert(copiedState);
+                        transitions += 1;
+                    }
+                } else {
+                    BSet<BTuple<BInteger, BInteger >> _trid_16 = _trid_16_ptr->second;
+                    for(const BTuple<BInteger, BInteger >& param : _trid_16) {
+                        BInteger _tmp_1 = param.projection2();
+                        BInteger _tmp_2 = param.projection1();
+
+                        CAN_BUS_tlc copiedState = state._copy();
+                        CAN_BUS_tlc::_ProjectionRead_T3Read readState = state._projected_state_for_T3Read();
+
+                        auto _OpCache_with_parameter_T3Read_ptr = _OpCache_T3Read.find(param);
+                        if(_OpCache_with_parameter_T3Read_ptr == _OpCache_T3Read.end()) {
+                            copiedState.T3Read(_tmp_2, _tmp_1);
+                            CAN_BUS_tlc::_ProjectionWrite_T3Read writeState = copiedState._update_for_T3Read();
+                            std::unordered_map<CAN_BUS_tlc::_ProjectionRead_T3Read, CAN_BUS_tlc::_ProjectionWrite_T3Read, CAN_BUS_tlc::_ProjectionRead_T3Read::Hash, CAN_BUS_tlc::_ProjectionRead_T3Read::HashEqual> _OpCache_with_parameter_T3Read;
+                            _OpCache_with_parameter_T3Read.insert({readState, writeState});
+                            {
+                                std::unique_lock<std::mutex> _ProjectionRead_T3Read_lock(_ProjectionRead_T3Read_mutex);
+                                _OpCache_T3Read.insert({param, _OpCache_with_parameter_T3Read});
+                            }
+
+                        } else {
+                            std::unordered_map<CAN_BUS_tlc::_ProjectionRead_T3Read, CAN_BUS_tlc::_ProjectionWrite_T3Read, CAN_BUS_tlc::_ProjectionRead_T3Read::Hash, CAN_BUS_tlc::_ProjectionRead_T3Read::HashEqual> _OpCache_with_parameter_T3Read = _OpCache_with_parameter_T3Read_ptr->second;
+                            auto writeState_ptr = _OpCache_with_parameter_T3Read.find(readState);
+                            if(writeState_ptr != _OpCache_with_parameter_T3Read.end()) {
+                                CAN_BUS_tlc::_ProjectionWrite_T3Read writeState = writeState_ptr->second;
+                                copiedState._apply_update_for_T3Read(writeState);
+                            } else {
+                                copiedState.T3Read(_tmp_2, _tmp_1);
+                                CAN_BUS_tlc::_ProjectionWrite_T3Read writeState = copiedState._update_for_T3Read();
+                                {
+                                    std::unique_lock<std::mutex> _ProjectionRead_T3Read_lock(_ProjectionRead_T3Read_mutex);
+                                    _OpCache_with_parameter_T3Read.insert({readState, writeState});
+                                }
+                            }
+                        }
+
+                        copiedState.stateAccessedVia = "T3Read";
+                        result.insert(copiedState);
                         transitions += 1;
                     }
                 }
@@ -7090,61 +7349,90 @@ class ModelChecker {
 
                     copiedState.stateAccessedVia = "T3Poll";
                     result.insert(copiedState);
-                    {
-                        std::unique_lock<std::mutex> lock(mutex);
-                        transitions += 1;
-                    }
+                    transitions += 1;
                 }
                 CAN_BUS_tlc::_ProjectionRead__tr_T3ReleaseBus read__tr_T3ReleaseBus_state = state._projected_state_for__tr_T3ReleaseBus();
-                BSet<BInteger> _trid_18;
                 auto _trid_18_ptr = _OpCache_tr_T3ReleaseBus.find(read__tr_T3ReleaseBus_state);
                 if(_trid_18_ptr == _OpCache_tr_T3ReleaseBus.end()) {
-                    _trid_18 = state._tr_T3ReleaseBus();
+                    BSet<BInteger> _trid_18 = state._tr_T3ReleaseBus();
                     {
                         std::unique_lock<std::mutex> _ProjectionRead__tr_T3ReleaseBus_lock(_ProjectionRead__tr_T3ReleaseBus_mutex);
                         _OpCache_tr_T3ReleaseBus.insert({read__tr_T3ReleaseBus_state, _trid_18});
                     }
-                } else {
-                    _trid_18 = _trid_18_ptr->second;
-                }
+                    for(const BInteger& param : _trid_18) {
+                        BInteger _tmp_1 = param;
 
-                for(const BInteger& param : _trid_18) {
-                    BInteger _tmp_1 = param;
+                        CAN_BUS_tlc copiedState = state._copy();
+                        CAN_BUS_tlc::_ProjectionRead_T3ReleaseBus readState = state._projected_state_for_T3ReleaseBus();
 
-                    CAN_BUS_tlc copiedState = state._copy();
-                    CAN_BUS_tlc::_ProjectionRead_T3ReleaseBus readState = state._projected_state_for_T3ReleaseBus();
-
-                    auto _OpCache_with_parameter_T3ReleaseBus_ptr = _OpCache_T3ReleaseBus.find(param);
-                    if(_OpCache_with_parameter_T3ReleaseBus_ptr == _OpCache_T3ReleaseBus.end()) {
-                        copiedState.T3ReleaseBus(_tmp_1);
-                        CAN_BUS_tlc::_ProjectionWrite_T3ReleaseBus writeState = copiedState._update_for_T3ReleaseBus();
-                        std::unordered_map<CAN_BUS_tlc::_ProjectionRead_T3ReleaseBus, CAN_BUS_tlc::_ProjectionWrite_T3ReleaseBus, CAN_BUS_tlc::_ProjectionRead_T3ReleaseBus::Hash, CAN_BUS_tlc::_ProjectionRead_T3ReleaseBus::HashEqual> _OpCache_with_parameter_T3ReleaseBus;
-                        _OpCache_with_parameter_T3ReleaseBus.insert({readState, writeState});
-                        {
-                            std::unique_lock<std::mutex> _ProjectionRead_T3ReleaseBus_lock(_ProjectionRead_T3ReleaseBus_mutex);
-                            _OpCache_T3ReleaseBus.insert({param, _OpCache_with_parameter_T3ReleaseBus});
-                        }
-
-                    } else {
-                        std::unordered_map<CAN_BUS_tlc::_ProjectionRead_T3ReleaseBus, CAN_BUS_tlc::_ProjectionWrite_T3ReleaseBus, CAN_BUS_tlc::_ProjectionRead_T3ReleaseBus::Hash, CAN_BUS_tlc::_ProjectionRead_T3ReleaseBus::HashEqual> _OpCache_with_parameter_T3ReleaseBus = _OpCache_with_parameter_T3ReleaseBus_ptr->second;
-                        auto writeState_ptr = _OpCache_with_parameter_T3ReleaseBus.find(readState);
-                        if(writeState_ptr != _OpCache_with_parameter_T3ReleaseBus.end()) {
-                            CAN_BUS_tlc::_ProjectionWrite_T3ReleaseBus writeState = writeState_ptr->second;
-                            copiedState._apply_update_for_T3ReleaseBus(writeState);
-                        } else {
+                        auto _OpCache_with_parameter_T3ReleaseBus_ptr = _OpCache_T3ReleaseBus.find(param);
+                        if(_OpCache_with_parameter_T3ReleaseBus_ptr == _OpCache_T3ReleaseBus.end()) {
                             copiedState.T3ReleaseBus(_tmp_1);
                             CAN_BUS_tlc::_ProjectionWrite_T3ReleaseBus writeState = copiedState._update_for_T3ReleaseBus();
+                            std::unordered_map<CAN_BUS_tlc::_ProjectionRead_T3ReleaseBus, CAN_BUS_tlc::_ProjectionWrite_T3ReleaseBus, CAN_BUS_tlc::_ProjectionRead_T3ReleaseBus::Hash, CAN_BUS_tlc::_ProjectionRead_T3ReleaseBus::HashEqual> _OpCache_with_parameter_T3ReleaseBus;
+                            _OpCache_with_parameter_T3ReleaseBus.insert({readState, writeState});
                             {
                                 std::unique_lock<std::mutex> _ProjectionRead_T3ReleaseBus_lock(_ProjectionRead_T3ReleaseBus_mutex);
-                                _OpCache_with_parameter_T3ReleaseBus.insert({readState, writeState});
+                                _OpCache_T3ReleaseBus.insert({param, _OpCache_with_parameter_T3ReleaseBus});
+                            }
+
+                        } else {
+                            std::unordered_map<CAN_BUS_tlc::_ProjectionRead_T3ReleaseBus, CAN_BUS_tlc::_ProjectionWrite_T3ReleaseBus, CAN_BUS_tlc::_ProjectionRead_T3ReleaseBus::Hash, CAN_BUS_tlc::_ProjectionRead_T3ReleaseBus::HashEqual> _OpCache_with_parameter_T3ReleaseBus = _OpCache_with_parameter_T3ReleaseBus_ptr->second;
+                            auto writeState_ptr = _OpCache_with_parameter_T3ReleaseBus.find(readState);
+                            if(writeState_ptr != _OpCache_with_parameter_T3ReleaseBus.end()) {
+                                CAN_BUS_tlc::_ProjectionWrite_T3ReleaseBus writeState = writeState_ptr->second;
+                                copiedState._apply_update_for_T3ReleaseBus(writeState);
+                            } else {
+                                copiedState.T3ReleaseBus(_tmp_1);
+                                CAN_BUS_tlc::_ProjectionWrite_T3ReleaseBus writeState = copiedState._update_for_T3ReleaseBus();
+                                {
+                                    std::unique_lock<std::mutex> _ProjectionRead_T3ReleaseBus_lock(_ProjectionRead_T3ReleaseBus_mutex);
+                                    _OpCache_with_parameter_T3ReleaseBus.insert({readState, writeState});
+                                }
                             }
                         }
-                    }
 
-                    copiedState.stateAccessedVia = "T3ReleaseBus";
-                    result.insert(copiedState);
-                    {
-                        std::unique_lock<std::mutex> lock(mutex);
+                        copiedState.stateAccessedVia = "T3ReleaseBus";
+                        result.insert(copiedState);
+                        transitions += 1;
+                    }
+                } else {
+                    BSet<BInteger> _trid_18 = _trid_18_ptr->second;
+                    for(const BInteger& param : _trid_18) {
+                        BInteger _tmp_1 = param;
+
+                        CAN_BUS_tlc copiedState = state._copy();
+                        CAN_BUS_tlc::_ProjectionRead_T3ReleaseBus readState = state._projected_state_for_T3ReleaseBus();
+
+                        auto _OpCache_with_parameter_T3ReleaseBus_ptr = _OpCache_T3ReleaseBus.find(param);
+                        if(_OpCache_with_parameter_T3ReleaseBus_ptr == _OpCache_T3ReleaseBus.end()) {
+                            copiedState.T3ReleaseBus(_tmp_1);
+                            CAN_BUS_tlc::_ProjectionWrite_T3ReleaseBus writeState = copiedState._update_for_T3ReleaseBus();
+                            std::unordered_map<CAN_BUS_tlc::_ProjectionRead_T3ReleaseBus, CAN_BUS_tlc::_ProjectionWrite_T3ReleaseBus, CAN_BUS_tlc::_ProjectionRead_T3ReleaseBus::Hash, CAN_BUS_tlc::_ProjectionRead_T3ReleaseBus::HashEqual> _OpCache_with_parameter_T3ReleaseBus;
+                            _OpCache_with_parameter_T3ReleaseBus.insert({readState, writeState});
+                            {
+                                std::unique_lock<std::mutex> _ProjectionRead_T3ReleaseBus_lock(_ProjectionRead_T3ReleaseBus_mutex);
+                                _OpCache_T3ReleaseBus.insert({param, _OpCache_with_parameter_T3ReleaseBus});
+                            }
+
+                        } else {
+                            std::unordered_map<CAN_BUS_tlc::_ProjectionRead_T3ReleaseBus, CAN_BUS_tlc::_ProjectionWrite_T3ReleaseBus, CAN_BUS_tlc::_ProjectionRead_T3ReleaseBus::Hash, CAN_BUS_tlc::_ProjectionRead_T3ReleaseBus::HashEqual> _OpCache_with_parameter_T3ReleaseBus = _OpCache_with_parameter_T3ReleaseBus_ptr->second;
+                            auto writeState_ptr = _OpCache_with_parameter_T3ReleaseBus.find(readState);
+                            if(writeState_ptr != _OpCache_with_parameter_T3ReleaseBus.end()) {
+                                CAN_BUS_tlc::_ProjectionWrite_T3ReleaseBus writeState = writeState_ptr->second;
+                                copiedState._apply_update_for_T3ReleaseBus(writeState);
+                            } else {
+                                copiedState.T3ReleaseBus(_tmp_1);
+                                CAN_BUS_tlc::_ProjectionWrite_T3ReleaseBus writeState = copiedState._update_for_T3ReleaseBus();
+                                {
+                                    std::unique_lock<std::mutex> _ProjectionRead_T3ReleaseBus_lock(_ProjectionRead_T3ReleaseBus_mutex);
+                                    _OpCache_with_parameter_T3ReleaseBus.insert({readState, writeState});
+                                }
+                            }
+                        }
+
+                        copiedState.stateAccessedVia = "T3ReleaseBus";
+                        result.insert(copiedState);
                         transitions += 1;
                     }
                 }
@@ -7193,10 +7481,7 @@ class ModelChecker {
 
                     copiedState.stateAccessedVia = "T3Wait";
                     result.insert(copiedState);
-                    {
-                        std::unique_lock<std::mutex> lock(mutex);
-                        transitions += 1;
-                    }
+                    transitions += 1;
                 }
                 CAN_BUS_tlc::_ProjectionRead__tr_T3ReEnableWait read__tr_T3ReEnableWait_state = state._projected_state_for__tr_T3ReEnableWait();
                 bool _trid_20;
@@ -7243,61 +7528,90 @@ class ModelChecker {
 
                     copiedState.stateAccessedVia = "T3ReEnableWait";
                     result.insert(copiedState);
-                    {
-                        std::unique_lock<std::mutex> lock(mutex);
-                        transitions += 1;
-                    }
+                    transitions += 1;
                 }
                 CAN_BUS_tlc::_ProjectionRead__tr_Update read__tr_Update_state = state._projected_state_for__tr_Update();
-                BSet<BInteger> _trid_21;
                 auto _trid_21_ptr = _OpCache_tr_Update.find(read__tr_Update_state);
                 if(_trid_21_ptr == _OpCache_tr_Update.end()) {
-                    _trid_21 = state._tr_Update();
+                    BSet<BInteger> _trid_21 = state._tr_Update();
                     {
                         std::unique_lock<std::mutex> _ProjectionRead__tr_Update_lock(_ProjectionRead__tr_Update_mutex);
                         _OpCache_tr_Update.insert({read__tr_Update_state, _trid_21});
                     }
-                } else {
-                    _trid_21 = _trid_21_ptr->second;
-                }
+                    for(const BInteger& param : _trid_21) {
+                        BInteger _tmp_1 = param;
 
-                for(const BInteger& param : _trid_21) {
-                    BInteger _tmp_1 = param;
+                        CAN_BUS_tlc copiedState = state._copy();
+                        CAN_BUS_tlc::_ProjectionRead_Update readState = state._projected_state_for_Update();
 
-                    CAN_BUS_tlc copiedState = state._copy();
-                    CAN_BUS_tlc::_ProjectionRead_Update readState = state._projected_state_for_Update();
-
-                    auto _OpCache_with_parameter_Update_ptr = _OpCache_Update.find(param);
-                    if(_OpCache_with_parameter_Update_ptr == _OpCache_Update.end()) {
-                        copiedState.Update(_tmp_1);
-                        CAN_BUS_tlc::_ProjectionWrite_Update writeState = copiedState._update_for_Update();
-                        std::unordered_map<CAN_BUS_tlc::_ProjectionRead_Update, CAN_BUS_tlc::_ProjectionWrite_Update, CAN_BUS_tlc::_ProjectionRead_Update::Hash, CAN_BUS_tlc::_ProjectionRead_Update::HashEqual> _OpCache_with_parameter_Update;
-                        _OpCache_with_parameter_Update.insert({readState, writeState});
-                        {
-                            std::unique_lock<std::mutex> _ProjectionRead_Update_lock(_ProjectionRead_Update_mutex);
-                            _OpCache_Update.insert({param, _OpCache_with_parameter_Update});
-                        }
-
-                    } else {
-                        std::unordered_map<CAN_BUS_tlc::_ProjectionRead_Update, CAN_BUS_tlc::_ProjectionWrite_Update, CAN_BUS_tlc::_ProjectionRead_Update::Hash, CAN_BUS_tlc::_ProjectionRead_Update::HashEqual> _OpCache_with_parameter_Update = _OpCache_with_parameter_Update_ptr->second;
-                        auto writeState_ptr = _OpCache_with_parameter_Update.find(readState);
-                        if(writeState_ptr != _OpCache_with_parameter_Update.end()) {
-                            CAN_BUS_tlc::_ProjectionWrite_Update writeState = writeState_ptr->second;
-                            copiedState._apply_update_for_Update(writeState);
-                        } else {
+                        auto _OpCache_with_parameter_Update_ptr = _OpCache_Update.find(param);
+                        if(_OpCache_with_parameter_Update_ptr == _OpCache_Update.end()) {
                             copiedState.Update(_tmp_1);
                             CAN_BUS_tlc::_ProjectionWrite_Update writeState = copiedState._update_for_Update();
+                            std::unordered_map<CAN_BUS_tlc::_ProjectionRead_Update, CAN_BUS_tlc::_ProjectionWrite_Update, CAN_BUS_tlc::_ProjectionRead_Update::Hash, CAN_BUS_tlc::_ProjectionRead_Update::HashEqual> _OpCache_with_parameter_Update;
+                            _OpCache_with_parameter_Update.insert({readState, writeState});
                             {
                                 std::unique_lock<std::mutex> _ProjectionRead_Update_lock(_ProjectionRead_Update_mutex);
-                                _OpCache_with_parameter_Update.insert({readState, writeState});
+                                _OpCache_Update.insert({param, _OpCache_with_parameter_Update});
+                            }
+
+                        } else {
+                            std::unordered_map<CAN_BUS_tlc::_ProjectionRead_Update, CAN_BUS_tlc::_ProjectionWrite_Update, CAN_BUS_tlc::_ProjectionRead_Update::Hash, CAN_BUS_tlc::_ProjectionRead_Update::HashEqual> _OpCache_with_parameter_Update = _OpCache_with_parameter_Update_ptr->second;
+                            auto writeState_ptr = _OpCache_with_parameter_Update.find(readState);
+                            if(writeState_ptr != _OpCache_with_parameter_Update.end()) {
+                                CAN_BUS_tlc::_ProjectionWrite_Update writeState = writeState_ptr->second;
+                                copiedState._apply_update_for_Update(writeState);
+                            } else {
+                                copiedState.Update(_tmp_1);
+                                CAN_BUS_tlc::_ProjectionWrite_Update writeState = copiedState._update_for_Update();
+                                {
+                                    std::unique_lock<std::mutex> _ProjectionRead_Update_lock(_ProjectionRead_Update_mutex);
+                                    _OpCache_with_parameter_Update.insert({readState, writeState});
+                                }
                             }
                         }
-                    }
 
-                    copiedState.stateAccessedVia = "Update";
-                    result.insert(copiedState);
-                    {
-                        std::unique_lock<std::mutex> lock(mutex);
+                        copiedState.stateAccessedVia = "Update";
+                        result.insert(copiedState);
+                        transitions += 1;
+                    }
+                } else {
+                    BSet<BInteger> _trid_21 = _trid_21_ptr->second;
+                    for(const BInteger& param : _trid_21) {
+                        BInteger _tmp_1 = param;
+
+                        CAN_BUS_tlc copiedState = state._copy();
+                        CAN_BUS_tlc::_ProjectionRead_Update readState = state._projected_state_for_Update();
+
+                        auto _OpCache_with_parameter_Update_ptr = _OpCache_Update.find(param);
+                        if(_OpCache_with_parameter_Update_ptr == _OpCache_Update.end()) {
+                            copiedState.Update(_tmp_1);
+                            CAN_BUS_tlc::_ProjectionWrite_Update writeState = copiedState._update_for_Update();
+                            std::unordered_map<CAN_BUS_tlc::_ProjectionRead_Update, CAN_BUS_tlc::_ProjectionWrite_Update, CAN_BUS_tlc::_ProjectionRead_Update::Hash, CAN_BUS_tlc::_ProjectionRead_Update::HashEqual> _OpCache_with_parameter_Update;
+                            _OpCache_with_parameter_Update.insert({readState, writeState});
+                            {
+                                std::unique_lock<std::mutex> _ProjectionRead_Update_lock(_ProjectionRead_Update_mutex);
+                                _OpCache_Update.insert({param, _OpCache_with_parameter_Update});
+                            }
+
+                        } else {
+                            std::unordered_map<CAN_BUS_tlc::_ProjectionRead_Update, CAN_BUS_tlc::_ProjectionWrite_Update, CAN_BUS_tlc::_ProjectionRead_Update::Hash, CAN_BUS_tlc::_ProjectionRead_Update::HashEqual> _OpCache_with_parameter_Update = _OpCache_with_parameter_Update_ptr->second;
+                            auto writeState_ptr = _OpCache_with_parameter_Update.find(readState);
+                            if(writeState_ptr != _OpCache_with_parameter_Update.end()) {
+                                CAN_BUS_tlc::_ProjectionWrite_Update writeState = writeState_ptr->second;
+                                copiedState._apply_update_for_Update(writeState);
+                            } else {
+                                copiedState.Update(_tmp_1);
+                                CAN_BUS_tlc::_ProjectionWrite_Update writeState = copiedState._update_for_Update();
+                                {
+                                    std::unique_lock<std::mutex> _ProjectionRead_Update_lock(_ProjectionRead_Update_mutex);
+                                    _OpCache_with_parameter_Update.insert({readState, writeState});
+                                }
+                            }
+                        }
+
+                        copiedState.stateAccessedVia = "Update";
+                        result.insert(copiedState);
                         transitions += 1;
                     }
                 }
@@ -7308,10 +7622,7 @@ class ModelChecker {
                     copiedState.T1Evaluate();
                     copiedState.stateAccessedVia = "T1Evaluate";
                     result.insert(copiedState);
-                    {
-                        std::unique_lock<std::mutex> lock(mutex);
-                        transitions += 1;
-                    }
+                    transitions += 1;
                 }
                 BSet<BInteger> _trid_2 = state._tr_T1Calculate();
                 for(const BInteger& param : _trid_2) {
@@ -7321,10 +7632,7 @@ class ModelChecker {
                     copiedState.T1Calculate(_tmp_1);
                     copiedState.stateAccessedVia = "T1Calculate";
                     result.insert(copiedState);
-                    {
-                        std::unique_lock<std::mutex> lock(mutex);
-                        transitions += 1;
-                    }
+                    transitions += 1;
                 }
                 BSet<BTuple<BInteger, BInteger >> _trid_3 = state._tr_T1SendResult();
                 for(const BTuple<BInteger, BInteger >& param : _trid_3) {
@@ -7335,10 +7643,7 @@ class ModelChecker {
                     copiedState.T1SendResult(_tmp_2, _tmp_1);
                     copiedState.stateAccessedVia = "T1SendResult";
                     result.insert(copiedState);
-                    {
-                        std::unique_lock<std::mutex> lock(mutex);
-                        transitions += 1;
-                    }
+                    transitions += 1;
                 }
                 BSet<BInteger> _trid_4 = state._tr_T1Wait();
                 for(const BInteger& param : _trid_4) {
@@ -7348,20 +7653,14 @@ class ModelChecker {
                     copiedState.T1Wait(_tmp_1);
                     copiedState.stateAccessedVia = "T1Wait";
                     result.insert(copiedState);
-                    {
-                        std::unique_lock<std::mutex> lock(mutex);
-                        transitions += 1;
-                    }
+                    transitions += 1;
                 }
                 if(state._tr_T2Evaluate()) {
                     CAN_BUS_tlc copiedState = state._copy();
                     copiedState.T2Evaluate();
                     copiedState.stateAccessedVia = "T2Evaluate";
                     result.insert(copiedState);
-                    {
-                        std::unique_lock<std::mutex> lock(mutex);
-                        transitions += 1;
-                    }
+                    transitions += 1;
                 }
                 BSet<BTuple<BInteger, BInteger >> _trid_6 = state._tr_T2ReadBus();
                 for(const BTuple<BInteger, BInteger >& param : _trid_6) {
@@ -7372,30 +7671,21 @@ class ModelChecker {
                     copiedState.T2ReadBus(_tmp_2, _tmp_1);
                     copiedState.stateAccessedVia = "T2ReadBus";
                     result.insert(copiedState);
-                    {
-                        std::unique_lock<std::mutex> lock(mutex);
-                        transitions += 1;
-                    }
+                    transitions += 1;
                 }
                 if(state._tr_T2Reset()) {
                     CAN_BUS_tlc copiedState = state._copy();
                     copiedState.T2Reset();
                     copiedState.stateAccessedVia = "T2Reset";
                     result.insert(copiedState);
-                    {
-                        std::unique_lock<std::mutex> lock(mutex);
-                        transitions += 1;
-                    }
+                    transitions += 1;
                 }
                 if(state._tr_T2Complete()) {
                     CAN_BUS_tlc copiedState = state._copy();
                     copiedState.T2Complete();
                     copiedState.stateAccessedVia = "T2Complete";
                     result.insert(copiedState);
-                    {
-                        std::unique_lock<std::mutex> lock(mutex);
-                        transitions += 1;
-                    }
+                    transitions += 1;
                 }
                 BSet<BInteger> _trid_9 = state._tr_T2ReleaseBus();
                 for(const BInteger& param : _trid_9) {
@@ -7405,20 +7695,14 @@ class ModelChecker {
                     copiedState.T2ReleaseBus(_tmp_1);
                     copiedState.stateAccessedVia = "T2ReleaseBus";
                     result.insert(copiedState);
-                    {
-                        std::unique_lock<std::mutex> lock(mutex);
-                        transitions += 1;
-                    }
+                    transitions += 1;
                 }
                 if(state._tr_T2Calculate()) {
                     CAN_BUS_tlc copiedState = state._copy();
                     copiedState.T2Calculate();
                     copiedState.stateAccessedVia = "T2Calculate";
                     result.insert(copiedState);
-                    {
-                        std::unique_lock<std::mutex> lock(mutex);
-                        transitions += 1;
-                    }
+                    transitions += 1;
                 }
                 BSet<BTuple<BInteger, BInteger >> _trid_11 = state._tr_T2WriteBus();
                 for(const BTuple<BInteger, BInteger >& param : _trid_11) {
@@ -7429,10 +7713,7 @@ class ModelChecker {
                     copiedState.T2WriteBus(_tmp_2, _tmp_1);
                     copiedState.stateAccessedVia = "T2WriteBus";
                     result.insert(copiedState);
-                    {
-                        std::unique_lock<std::mutex> lock(mutex);
-                        transitions += 1;
-                    }
+                    transitions += 1;
                 }
                 BSet<BInteger> _trid_12 = state._tr_T2Wait();
                 for(const BInteger& param : _trid_12) {
@@ -7442,30 +7723,21 @@ class ModelChecker {
                     copiedState.T2Wait(_tmp_1);
                     copiedState.stateAccessedVia = "T2Wait";
                     result.insert(copiedState);
-                    {
-                        std::unique_lock<std::mutex> lock(mutex);
-                        transitions += 1;
-                    }
+                    transitions += 1;
                 }
                 if(state._tr_T3Initiate()) {
                     CAN_BUS_tlc copiedState = state._copy();
                     copiedState.T3Initiate();
                     copiedState.stateAccessedVia = "T3Initiate";
                     result.insert(copiedState);
-                    {
-                        std::unique_lock<std::mutex> lock(mutex);
-                        transitions += 1;
-                    }
+                    transitions += 1;
                 }
                 if(state._tr_T3Evaluate()) {
                     CAN_BUS_tlc copiedState = state._copy();
                     copiedState.T3Evaluate();
                     copiedState.stateAccessedVia = "T3Evaluate";
                     result.insert(copiedState);
-                    {
-                        std::unique_lock<std::mutex> lock(mutex);
-                        transitions += 1;
-                    }
+                    transitions += 1;
                 }
                 BSet<BTuple<BInteger, BInteger >> _trid_15 = state._tr_T3writebus();
                 for(const BTuple<BInteger, BInteger >& param : _trid_15) {
@@ -7476,10 +7748,7 @@ class ModelChecker {
                     copiedState.T3writebus(_tmp_2, _tmp_1);
                     copiedState.stateAccessedVia = "T3writebus";
                     result.insert(copiedState);
-                    {
-                        std::unique_lock<std::mutex> lock(mutex);
-                        transitions += 1;
-                    }
+                    transitions += 1;
                 }
                 BSet<BTuple<BInteger, BInteger >> _trid_16 = state._tr_T3Read();
                 for(const BTuple<BInteger, BInteger >& param : _trid_16) {
@@ -7490,20 +7759,14 @@ class ModelChecker {
                     copiedState.T3Read(_tmp_2, _tmp_1);
                     copiedState.stateAccessedVia = "T3Read";
                     result.insert(copiedState);
-                    {
-                        std::unique_lock<std::mutex> lock(mutex);
-                        transitions += 1;
-                    }
+                    transitions += 1;
                 }
                 if(state._tr_T3Poll()) {
                     CAN_BUS_tlc copiedState = state._copy();
                     copiedState.T3Poll();
                     copiedState.stateAccessedVia = "T3Poll";
                     result.insert(copiedState);
-                    {
-                        std::unique_lock<std::mutex> lock(mutex);
-                        transitions += 1;
-                    }
+                    transitions += 1;
                 }
                 BSet<BInteger> _trid_18 = state._tr_T3ReleaseBus();
                 for(const BInteger& param : _trid_18) {
@@ -7513,30 +7776,21 @@ class ModelChecker {
                     copiedState.T3ReleaseBus(_tmp_1);
                     copiedState.stateAccessedVia = "T3ReleaseBus";
                     result.insert(copiedState);
-                    {
-                        std::unique_lock<std::mutex> lock(mutex);
-                        transitions += 1;
-                    }
+                    transitions += 1;
                 }
                 if(state._tr_T3Wait()) {
                     CAN_BUS_tlc copiedState = state._copy();
                     copiedState.T3Wait();
                     copiedState.stateAccessedVia = "T3Wait";
                     result.insert(copiedState);
-                    {
-                        std::unique_lock<std::mutex> lock(mutex);
-                        transitions += 1;
-                    }
+                    transitions += 1;
                 }
                 if(state._tr_T3ReEnableWait()) {
                     CAN_BUS_tlc copiedState = state._copy();
                     copiedState.T3ReEnableWait();
                     copiedState.stateAccessedVia = "T3ReEnableWait";
                     result.insert(copiedState);
-                    {
-                        std::unique_lock<std::mutex> lock(mutex);
-                        transitions += 1;
-                    }
+                    transitions += 1;
                 }
                 BSet<BInteger> _trid_21 = state._tr_Update();
                 for(const BInteger& param : _trid_21) {
@@ -7546,10 +7800,7 @@ class ModelChecker {
                     copiedState.Update(_tmp_1);
                     copiedState.stateAccessedVia = "Update";
                     result.insert(copiedState);
-                    {
-                        std::unique_lock<std::mutex> lock(mutex);
-                        transitions += 1;
-                    }
+                    transitions += 1;
                 }
 
             }

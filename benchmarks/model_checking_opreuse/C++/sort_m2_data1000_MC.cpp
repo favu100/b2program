@@ -10,11 +10,10 @@
 #include <atomic>
 #include <any>
 #include <mutex>
+#include <shared_mutex>
 #include <future>
 #include <boost/asio/post.hpp>
 #include <boost/asio/thread_pool.hpp>
-#include <boost/any.hpp>
-#include <boost/optional.hpp>
 #include <btypes_primitives/BUtils.hpp>
 #include <btypes_primitives/StateNotReachableError.hpp>
 #include <btypes_primitives/PreconditionOrAssertionViolation.hpp>
@@ -1156,15 +1155,15 @@ class sort_m2_data1000_MC {
             j = (BInteger(1));
         }
 
-        sort_m2_data1000_MC(const BInteger& n, const BRelation<BInteger, BInteger >& f, const BSet<BInteger >& __aux_constant_2, const BSet<BInteger >& __aux_constant_1, const BInteger& j, const BInteger& k, const BInteger& l, const BRelation<BInteger, BInteger >& g) {
-            this->n = n;
-            this->f = f;
-            this->__aux_constant_2 = __aux_constant_2;
-            this->__aux_constant_1 = __aux_constant_1;
-            this->j = j;
-            this->k = k;
-            this->l = l;
-            this->g = g;
+        sort_m2_data1000_MC(const sort_m2_data1000_MC& copy) {
+            this->n = copy.n;
+            this->f = copy.f;
+            this->__aux_constant_2 = copy.__aux_constant_2;
+            this->__aux_constant_1 = copy.__aux_constant_1;
+            this->j = copy.j;
+            this->k = copy.k;
+            this->l = copy.l;
+            this->g = copy.g;
         }
 
         void progress() {
@@ -1370,7 +1369,7 @@ class sort_m2_data1000_MC {
         }
 
         sort_m2_data1000_MC _copy() const {
-            return sort_m2_data1000_MC(n, f, __aux_constant_2, __aux_constant_1, j, k, l, g);
+            return sort_m2_data1000_MC(*this);
         }
 
         friend bool operator ==(const sort_m2_data1000_MC& o1, const sort_m2_data1000_MC& o2) {
@@ -1492,7 +1491,7 @@ class ModelChecker {
             if (threads <= 1) {
                 modelCheckSingleThreaded();
             } else {
-                boost::asio::thread_pool workers(threads); // threads indicates the number of workers (without the coordinator)
+                boost::asio::thread_pool workers(threads-1); // threads indicates the number of workers (without the coordinator)
                 modelCheckMultiThreaded(workers);
             }
         }
@@ -1541,16 +1540,12 @@ class ModelChecker {
             states.insert(machine);
             unvisitedStates.push_back(machine);
 
-            std::atomic<bool> stopThreads;
-            stopThreads = false;
+            std::atomic<bool> stopThreads(false);
             std::atomic<int> possibleQueueChanges;
             possibleQueueChanges = 0;
 
-            std::atomic<bool> waitFlag;
-            waitFlag = true;
-
-            while(!unvisitedStates.empty() && !stopThreads) {
-                possibleQueueChanges += 1;
+            while(!unvisitedStates.empty() && !stopThreads.load()) {
+                possibleQueueChanges.fetch_add(1);
                 sort_m2_data1000_MC state = next();
                 std::packaged_task<void()> task([&, state] {
                     std::unordered_set<sort_m2_data1000_MC, sort_m2_data1000_MC::Hash, sort_m2_data1000_MC::HashEqual> nextStates = generateNextStates(state);
@@ -1571,16 +1566,11 @@ class ModelChecker {
                         }
                     }
 
+                    possibleQueueChanges.fetch_sub(1);
                     {
-                        std::unique_lock<std::mutex> lock(mutex);
-                        possibleQueueChanges -= 1;
-                        int running = possibleQueueChanges;
-                        if (!unvisitedStates.empty() || running == 0) {
-                            {
-                                std::unique_lock<std::mutex> lock(waitMutex);
-                                waitFlag = false;
-                                waitCV.notify_one();
-                            }
+                        std::unique_lock<std::mutex> lock(waitMutex);
+                        if (!unvisitedStates.empty() || possibleQueueChanges.load() == 0) {
+                            waitCV.notify_one();
                         }
                     }
 
@@ -1588,27 +1578,24 @@ class ModelChecker {
                     if(invariantViolated(state)) {
                         invariantViolatedBool = true;
                         counterExampleState = state;
-                        stopThreads = true;
+                        stopThreads.store(true);
                     }
 
                     if(nextStates.empty()) {
                         deadlockDetected = true;
                         counterExampleState = state;
-                        stopThreads = true;
+                        stopThreads.store(true);
                     }
 
                 });
 
-                waitFlag = true;
                 boost::asio::post(workers, std::move(task));
 
                 {
                     std::unique_lock<std::mutex> lock(waitMutex);
-                    if(unvisitedStates.empty() && possibleQueueChanges > 0) {
-                        waitCV.wait(lock, [&] {
-                            return waitFlag == false;
-                        });
-                    }
+                    waitCV.wait(lock, [&] {
+                        return !unvisitedStates.empty() || possibleQueueChanges == 0;
+                    });
                 }
             }
             workers.join();
@@ -1697,10 +1684,7 @@ class ModelChecker {
 
                     copiedState.stateAccessedVia = "progress";
                     result.insert(copiedState);
-                    {
-                        std::unique_lock<std::mutex> lock(mutex);
-                        transitions += 1;
-                    }
+                    transitions += 1;
                 }
                 sort_m2_data1000_MC::_ProjectionRead__tr_prog1 read__tr_prog1_state = state._projected_state_for__tr_prog1();
                 bool _trid_2;
@@ -1747,10 +1731,7 @@ class ModelChecker {
 
                     copiedState.stateAccessedVia = "prog1";
                     result.insert(copiedState);
-                    {
-                        std::unique_lock<std::mutex> lock(mutex);
-                        transitions += 1;
-                    }
+                    transitions += 1;
                 }
                 sort_m2_data1000_MC::_ProjectionRead__tr_prog2 read__tr_prog2_state = state._projected_state_for__tr_prog2();
                 bool _trid_3;
@@ -1797,10 +1778,7 @@ class ModelChecker {
 
                     copiedState.stateAccessedVia = "prog2";
                     result.insert(copiedState);
-                    {
-                        std::unique_lock<std::mutex> lock(mutex);
-                        transitions += 1;
-                    }
+                    transitions += 1;
                 }
                 sort_m2_data1000_MC::_ProjectionRead__tr_final_evt read__tr_final_evt_state = state._projected_state_for__tr_final_evt();
                 bool _trid_4;
@@ -1847,10 +1825,7 @@ class ModelChecker {
 
                     copiedState.stateAccessedVia = "final_evt";
                     result.insert(copiedState);
-                    {
-                        std::unique_lock<std::mutex> lock(mutex);
-                        transitions += 1;
-                    }
+                    transitions += 1;
                 }
 
             } else {
@@ -1859,40 +1834,28 @@ class ModelChecker {
                     copiedState.progress();
                     copiedState.stateAccessedVia = "progress";
                     result.insert(copiedState);
-                    {
-                        std::unique_lock<std::mutex> lock(mutex);
-                        transitions += 1;
-                    }
+                    transitions += 1;
                 }
                 if(state._tr_prog1()) {
                     sort_m2_data1000_MC copiedState = state._copy();
                     copiedState.prog1();
                     copiedState.stateAccessedVia = "prog1";
                     result.insert(copiedState);
-                    {
-                        std::unique_lock<std::mutex> lock(mutex);
-                        transitions += 1;
-                    }
+                    transitions += 1;
                 }
                 if(state._tr_prog2()) {
                     sort_m2_data1000_MC copiedState = state._copy();
                     copiedState.prog2();
                     copiedState.stateAccessedVia = "prog2";
                     result.insert(copiedState);
-                    {
-                        std::unique_lock<std::mutex> lock(mutex);
-                        transitions += 1;
-                    }
+                    transitions += 1;
                 }
                 if(state._tr_final_evt()) {
                     sort_m2_data1000_MC copiedState = state._copy();
                     copiedState.final_evt();
                     copiedState.stateAccessedVia = "final_evt";
                     result.insert(copiedState);
-                    {
-                        std::unique_lock<std::mutex> lock(mutex);
-                        transitions += 1;
-                    }
+                    transitions += 1;
                 }
 
             }

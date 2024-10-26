@@ -10,11 +10,10 @@
 #include <atomic>
 #include <any>
 #include <mutex>
+#include <shared_mutex>
 #include <future>
 #include <boost/asio/post.hpp>
 #include <boost/asio/thread_pool.hpp>
-#include <boost/any.hpp>
-#include <boost/optional.hpp>
 #include <btypes_primitives/BUtils.hpp>
 #include <btypes_primitives/StateNotReachableError.hpp>
 #include <btypes_primitives/PreconditionOrAssertionViolation.hpp>
@@ -281,12 +280,12 @@ class QueensWithEvents_4 {
             queens = (BRelation<BInteger, BInteger >());
         }
 
-        QueensWithEvents_4(const BInteger& n, const BSet<BRelation<BInteger, BInteger > >& __aux_constant_2, const BSet<BInteger >& __aux_constant_3, const BSet<BInteger >& __aux_constant_1, const BRelation<BInteger, BInteger >& queens) {
-            this->n = n;
-            this->__aux_constant_2 = __aux_constant_2;
-            this->__aux_constant_3 = __aux_constant_3;
-            this->__aux_constant_1 = __aux_constant_1;
-            this->queens = queens;
+        QueensWithEvents_4(const QueensWithEvents_4& copy) {
+            this->n = copy.n;
+            this->__aux_constant_2 = copy.__aux_constant_2;
+            this->__aux_constant_3 = copy.__aux_constant_3;
+            this->__aux_constant_1 = copy.__aux_constant_1;
+            this->queens = copy.queens;
         }
 
         void Solve(const BRelation<BInteger, BInteger >& solution) {
@@ -376,7 +375,7 @@ class QueensWithEvents_4 {
         }
 
         QueensWithEvents_4 _copy() const {
-            return QueensWithEvents_4(n, __aux_constant_2, __aux_constant_3, __aux_constant_1, queens);
+            return QueensWithEvents_4(*this);
         }
 
         friend bool operator ==(const QueensWithEvents_4& o1, const QueensWithEvents_4& o2) {
@@ -462,7 +461,7 @@ class ModelChecker {
             if (threads <= 1) {
                 modelCheckSingleThreaded();
             } else {
-                boost::asio::thread_pool workers(threads); // threads indicates the number of workers (without the coordinator)
+                boost::asio::thread_pool workers(threads-1); // threads indicates the number of workers (without the coordinator)
                 modelCheckMultiThreaded(workers);
             }
         }
@@ -511,16 +510,12 @@ class ModelChecker {
             states.insert(machine);
             unvisitedStates.push_back(machine);
 
-            std::atomic<bool> stopThreads;
-            stopThreads = false;
+            std::atomic<bool> stopThreads(false);
             std::atomic<int> possibleQueueChanges;
             possibleQueueChanges = 0;
 
-            std::atomic<bool> waitFlag;
-            waitFlag = true;
-
-            while(!unvisitedStates.empty() && !stopThreads) {
-                possibleQueueChanges += 1;
+            while(!unvisitedStates.empty() && !stopThreads.load()) {
+                possibleQueueChanges.fetch_add(1);
                 QueensWithEvents_4 state = next();
                 std::packaged_task<void()> task([&, state] {
                     std::unordered_set<QueensWithEvents_4, QueensWithEvents_4::Hash, QueensWithEvents_4::HashEqual> nextStates = generateNextStates(state);
@@ -541,16 +536,11 @@ class ModelChecker {
                         }
                     }
 
+                    possibleQueueChanges.fetch_sub(1);
                     {
-                        std::unique_lock<std::mutex> lock(mutex);
-                        possibleQueueChanges -= 1;
-                        int running = possibleQueueChanges;
-                        if (!unvisitedStates.empty() || running == 0) {
-                            {
-                                std::unique_lock<std::mutex> lock(waitMutex);
-                                waitFlag = false;
-                                waitCV.notify_one();
-                            }
+                        std::unique_lock<std::mutex> lock(waitMutex);
+                        if (!unvisitedStates.empty() || possibleQueueChanges.load() == 0) {
+                            waitCV.notify_one();
                         }
                     }
 
@@ -558,27 +548,24 @@ class ModelChecker {
                     if(invariantViolated(state)) {
                         invariantViolatedBool = true;
                         counterExampleState = state;
-                        stopThreads = true;
+                        stopThreads.store(true);
                     }
 
                     if(nextStates.empty()) {
                         deadlockDetected = true;
                         counterExampleState = state;
-                        stopThreads = true;
+                        stopThreads.store(true);
                     }
 
                 });
 
-                waitFlag = true;
                 boost::asio::post(workers, std::move(task));
 
                 {
                     std::unique_lock<std::mutex> lock(waitMutex);
-                    if(unvisitedStates.empty() && possibleQueueChanges > 0) {
-                        waitCV.wait(lock, [&] {
-                            return waitFlag == false;
-                        });
-                    }
+                    waitCV.wait(lock, [&] {
+                        return !unvisitedStates.empty() || possibleQueueChanges == 0;
+                    });
                 }
             }
             workers.join();
@@ -623,55 +610,87 @@ class ModelChecker {
             std::unordered_set<QueensWithEvents_4, QueensWithEvents_4::Hash, QueensWithEvents_4::HashEqual> result = std::unordered_set<QueensWithEvents_4, QueensWithEvents_4::Hash, QueensWithEvents_4::HashEqual>();
             if(isCaching) {
                 QueensWithEvents_4::_ProjectionRead__tr_Solve read__tr_Solve_state = state._projected_state_for__tr_Solve();
-                BSet<BRelation<BInteger, BInteger >> _trid_1;
                 auto _trid_1_ptr = _OpCache_tr_Solve.find(read__tr_Solve_state);
                 if(_trid_1_ptr == _OpCache_tr_Solve.end()) {
-                    _trid_1 = state._tr_Solve();
+                    BSet<BRelation<BInteger, BInteger >> _trid_1 = state._tr_Solve();
                     {
                         std::unique_lock<std::mutex> _ProjectionRead__tr_Solve_lock(_ProjectionRead__tr_Solve_mutex);
                         _OpCache_tr_Solve.insert({read__tr_Solve_state, _trid_1});
                     }
-                } else {
-                    _trid_1 = _trid_1_ptr->second;
-                }
+                    for(const BRelation<BInteger, BInteger >& param : _trid_1) {
+                        BRelation<BInteger, BInteger > _tmp_1 = param;
 
-                for(const BRelation<BInteger, BInteger >& param : _trid_1) {
-                    BRelation<BInteger, BInteger > _tmp_1 = param;
+                        QueensWithEvents_4 copiedState = state._copy();
+                        QueensWithEvents_4::_ProjectionRead_Solve readState = state._projected_state_for_Solve();
 
-                    QueensWithEvents_4 copiedState = state._copy();
-                    QueensWithEvents_4::_ProjectionRead_Solve readState = state._projected_state_for_Solve();
-
-                    auto _OpCache_with_parameter_Solve_ptr = _OpCache_Solve.find(param);
-                    if(_OpCache_with_parameter_Solve_ptr == _OpCache_Solve.end()) {
-                        copiedState.Solve(_tmp_1);
-                        QueensWithEvents_4::_ProjectionWrite_Solve writeState = copiedState._update_for_Solve();
-                        std::unordered_map<QueensWithEvents_4::_ProjectionRead_Solve, QueensWithEvents_4::_ProjectionWrite_Solve, QueensWithEvents_4::_ProjectionRead_Solve::Hash, QueensWithEvents_4::_ProjectionRead_Solve::HashEqual> _OpCache_with_parameter_Solve;
-                        _OpCache_with_parameter_Solve.insert({readState, writeState});
-                        {
-                            std::unique_lock<std::mutex> _ProjectionRead_Solve_lock(_ProjectionRead_Solve_mutex);
-                            _OpCache_Solve.insert({param, _OpCache_with_parameter_Solve});
-                        }
-
-                    } else {
-                        std::unordered_map<QueensWithEvents_4::_ProjectionRead_Solve, QueensWithEvents_4::_ProjectionWrite_Solve, QueensWithEvents_4::_ProjectionRead_Solve::Hash, QueensWithEvents_4::_ProjectionRead_Solve::HashEqual> _OpCache_with_parameter_Solve = _OpCache_with_parameter_Solve_ptr->second;
-                        auto writeState_ptr = _OpCache_with_parameter_Solve.find(readState);
-                        if(writeState_ptr != _OpCache_with_parameter_Solve.end()) {
-                            QueensWithEvents_4::_ProjectionWrite_Solve writeState = writeState_ptr->second;
-                            copiedState._apply_update_for_Solve(writeState);
-                        } else {
+                        auto _OpCache_with_parameter_Solve_ptr = _OpCache_Solve.find(param);
+                        if(_OpCache_with_parameter_Solve_ptr == _OpCache_Solve.end()) {
                             copiedState.Solve(_tmp_1);
                             QueensWithEvents_4::_ProjectionWrite_Solve writeState = copiedState._update_for_Solve();
+                            std::unordered_map<QueensWithEvents_4::_ProjectionRead_Solve, QueensWithEvents_4::_ProjectionWrite_Solve, QueensWithEvents_4::_ProjectionRead_Solve::Hash, QueensWithEvents_4::_ProjectionRead_Solve::HashEqual> _OpCache_with_parameter_Solve;
+                            _OpCache_with_parameter_Solve.insert({readState, writeState});
                             {
                                 std::unique_lock<std::mutex> _ProjectionRead_Solve_lock(_ProjectionRead_Solve_mutex);
-                                _OpCache_with_parameter_Solve.insert({readState, writeState});
+                                _OpCache_Solve.insert({param, _OpCache_with_parameter_Solve});
+                            }
+
+                        } else {
+                            std::unordered_map<QueensWithEvents_4::_ProjectionRead_Solve, QueensWithEvents_4::_ProjectionWrite_Solve, QueensWithEvents_4::_ProjectionRead_Solve::Hash, QueensWithEvents_4::_ProjectionRead_Solve::HashEqual> _OpCache_with_parameter_Solve = _OpCache_with_parameter_Solve_ptr->second;
+                            auto writeState_ptr = _OpCache_with_parameter_Solve.find(readState);
+                            if(writeState_ptr != _OpCache_with_parameter_Solve.end()) {
+                                QueensWithEvents_4::_ProjectionWrite_Solve writeState = writeState_ptr->second;
+                                copiedState._apply_update_for_Solve(writeState);
+                            } else {
+                                copiedState.Solve(_tmp_1);
+                                QueensWithEvents_4::_ProjectionWrite_Solve writeState = copiedState._update_for_Solve();
+                                {
+                                    std::unique_lock<std::mutex> _ProjectionRead_Solve_lock(_ProjectionRead_Solve_mutex);
+                                    _OpCache_with_parameter_Solve.insert({readState, writeState});
+                                }
                             }
                         }
-                    }
 
-                    copiedState.stateAccessedVia = "Solve";
-                    result.insert(copiedState);
-                    {
-                        std::unique_lock<std::mutex> lock(mutex);
+                        copiedState.stateAccessedVia = "Solve";
+                        result.insert(copiedState);
+                        transitions += 1;
+                    }
+                } else {
+                    BSet<BRelation<BInteger, BInteger >> _trid_1 = _trid_1_ptr->second;
+                    for(const BRelation<BInteger, BInteger >& param : _trid_1) {
+                        BRelation<BInteger, BInteger > _tmp_1 = param;
+
+                        QueensWithEvents_4 copiedState = state._copy();
+                        QueensWithEvents_4::_ProjectionRead_Solve readState = state._projected_state_for_Solve();
+
+                        auto _OpCache_with_parameter_Solve_ptr = _OpCache_Solve.find(param);
+                        if(_OpCache_with_parameter_Solve_ptr == _OpCache_Solve.end()) {
+                            copiedState.Solve(_tmp_1);
+                            QueensWithEvents_4::_ProjectionWrite_Solve writeState = copiedState._update_for_Solve();
+                            std::unordered_map<QueensWithEvents_4::_ProjectionRead_Solve, QueensWithEvents_4::_ProjectionWrite_Solve, QueensWithEvents_4::_ProjectionRead_Solve::Hash, QueensWithEvents_4::_ProjectionRead_Solve::HashEqual> _OpCache_with_parameter_Solve;
+                            _OpCache_with_parameter_Solve.insert({readState, writeState});
+                            {
+                                std::unique_lock<std::mutex> _ProjectionRead_Solve_lock(_ProjectionRead_Solve_mutex);
+                                _OpCache_Solve.insert({param, _OpCache_with_parameter_Solve});
+                            }
+
+                        } else {
+                            std::unordered_map<QueensWithEvents_4::_ProjectionRead_Solve, QueensWithEvents_4::_ProjectionWrite_Solve, QueensWithEvents_4::_ProjectionRead_Solve::Hash, QueensWithEvents_4::_ProjectionRead_Solve::HashEqual> _OpCache_with_parameter_Solve = _OpCache_with_parameter_Solve_ptr->second;
+                            auto writeState_ptr = _OpCache_with_parameter_Solve.find(readState);
+                            if(writeState_ptr != _OpCache_with_parameter_Solve.end()) {
+                                QueensWithEvents_4::_ProjectionWrite_Solve writeState = writeState_ptr->second;
+                                copiedState._apply_update_for_Solve(writeState);
+                            } else {
+                                copiedState.Solve(_tmp_1);
+                                QueensWithEvents_4::_ProjectionWrite_Solve writeState = copiedState._update_for_Solve();
+                                {
+                                    std::unique_lock<std::mutex> _ProjectionRead_Solve_lock(_ProjectionRead_Solve_mutex);
+                                    _OpCache_with_parameter_Solve.insert({readState, writeState});
+                                }
+                            }
+                        }
+
+                        copiedState.stateAccessedVia = "Solve";
+                        result.insert(copiedState);
                         transitions += 1;
                     }
                 }
@@ -685,10 +704,7 @@ class ModelChecker {
                     copiedState.Solve(_tmp_1);
                     copiedState.stateAccessedVia = "Solve";
                     result.insert(copiedState);
-                    {
-                        std::unique_lock<std::mutex> lock(mutex);
-                        transitions += 1;
-                    }
+                    transitions += 1;
                 }
 
             }

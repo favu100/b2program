@@ -19,6 +19,7 @@ machine(forModelChecking, imports, includedMachines, machine, structs, constants
 #include \<atomic>
 #include \<any>
 #include \<mutex>
+#include \<shared_mutex>
 #include \<future>
 #include \<boost/asio/post.hpp>
 #include \<boost/asio/thread_pool.hpp>
@@ -1124,20 +1125,21 @@ model_check_transition(machine, hasParameters, tupleType, transitionIdentifier, 
 <if(hasParameters)>
 <if(isCaching)>
 <machine>::_ProjectionRead_<evalTransitions> read_<evalTransitions>_state = state._projected_state_for_<evalTransitions>();
-BSet\<<tupleType>\> <transitionIdentifier>;
 auto <transitionIdentifier>_ptr = _OpCache<evalTransitions>.find(read_<evalTransitions>_state);
 if(<transitionIdentifier>_ptr == _OpCache<evalTransitions>.end()) {
-    <transitionIdentifier> = state.<evalTransitions>();
+    BSet\<<tupleType>\> <transitionIdentifier> = state.<evalTransitions>();
     {
         std::unique_lock\<std::mutex> _ProjectionRead_<evalTransitions>_lock(_ProjectionRead_<evalTransitions>_mutex);
         _OpCache<evalTransitions>.insert({read_<evalTransitions>_state, <transitionIdentifier>});
     }
+    for(const <tupleType>& param : <transitionIdentifier>) {
+        <execTransitions>
+    }
 } else {
-    <transitionIdentifier> = <transitionIdentifier>_ptr->second;
-}
-
-for(const <tupleType>& param : <transitionIdentifier>) {
-    <execTransitions>
+    BSet\<<tupleType>\> <transitionIdentifier> = <transitionIdentifier>_ptr->second;
+    for(const <tupleType>& param : <transitionIdentifier>) {
+        <execTransitions>
+    }
 }
 <else>
 BSet\<<tupleType>\> <transitionIdentifier> = state.<evalTransitions>();
@@ -1655,13 +1657,12 @@ void modelCheckMultiThreaded(boost::asio::thread_pool& workers) {
     states.insert(machine);
     unvisitedStates.push_back(machine);
 
-    std::atomic\<bool> stopThreads;
-    stopThreads = false;
+    std::atomic\<bool> stopThreads(false);
     std::atomic\<int> possibleQueueChanges;
     possibleQueueChanges = 0;
 
-    while(!unvisitedStates.empty() && !stopThreads) {
-        possibleQueueChanges += 1;
+    while(!unvisitedStates.empty() && !stopThreads.load()) {
+        possibleQueueChanges.fetch_add(1);
         <machine> state = next();
         std::packaged_task\<void()> task([&, state] {
             std::unordered_set\<<machine>, <machine>::Hash, <machine>::HashEqual> nextStates = generateNextStates(state);
@@ -1682,12 +1683,11 @@ void modelCheckMultiThreaded(boost::asio::thread_pool& workers) {
                 }
             }
 
-            possibleQueueChanges -= 1;
-            int running = possibleQueueChanges;
+            possibleQueueChanges.fetch_sub(1);
             {
                 std::unique_lock\<std::mutex> lock(waitMutex);
-                if (!unvisitedStates.empty() || running == 0) {
-                    waitCV.notify_all();
+                if (!unvisitedStates.empty() || possibleQueueChanges.load() == 0) {
+                    waitCV.notify_one();
                 }
             }
 
@@ -1695,13 +1695,13 @@ void modelCheckMultiThreaded(boost::asio::thread_pool& workers) {
             if(invariantViolated(state)) {
                 invariantViolatedBool = true;
                 counterExampleState = state;
-                stopThreads = true;
+                stopThreads.store(true);
             }
 
             if(nextStates.empty()) {
                 deadlockDetected = true;
                 counterExampleState = state;
-                stopThreads = true;
+                stopThreads.store(true);
             }
 
         });

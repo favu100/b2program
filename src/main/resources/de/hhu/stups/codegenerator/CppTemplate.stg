@@ -1071,26 +1071,31 @@ class ModelChecker {
         <machine> next() {
             {
                 std::unique_lock\<std::mutex> lock(mutex);
-                <machine> state;
                 switch(type) {
                     case <machine>::BFS: {
-                        state = unvisitedStates.front();
+                        <machine> state = unvisitedStates.front();
                         unvisitedStates.pop_front();
+                        return state;
                     }
                     case <machine>::DFS: {
-                        state = unvisitedStates.back();
+                        <machine> state = unvisitedStates.back();
                         unvisitedStates.pop_back();
+                        return state;
                     }
                     case <machine>::MIXED: {
                         if(unvisitedStates.size() % 2 == 0) {
-                            state = unvisitedStates.front();
+                            <machine> state = unvisitedStates.front();
                             unvisitedStates.pop_front();
+                            return state;
                         } else {
-                            state = unvisitedStates.back();
+                            <machine> state = unvisitedStates.back();
                             unvisitedStates.pop_back();
+                            return state;
                         }
                     }
                 }
+                <machine> state = unvisitedStates.front();
+                unvisitedStates.pop_front();
                 return state;
             };
         }

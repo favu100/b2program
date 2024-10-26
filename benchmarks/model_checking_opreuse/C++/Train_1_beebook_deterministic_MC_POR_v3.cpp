@@ -10,7 +10,6 @@
 #include <atomic>
 #include <any>
 #include <mutex>
-#include <shared_mutex>
 #include <future>
 #include <boost/asio/post.hpp>
 #include <boost/asio/thread_pool.hpp>
@@ -3402,12 +3401,16 @@ class ModelChecker {
             states.insert(machine);
             unvisitedStates.push_back(machine);
 
-            std::atomic<bool> stopThreads(false);
+            std::atomic<bool> stopThreads;
+            stopThreads = false;
             std::atomic<int> possibleQueueChanges;
             possibleQueueChanges = 0;
 
-            while(!unvisitedStates.empty() && !stopThreads.load()) {
-                possibleQueueChanges.fetch_add(1);
+            std::atomic<bool> waitFlag;
+            waitFlag = true;
+
+            while(!unvisitedStates.empty() && !stopThreads) {
+                possibleQueueChanges += 1;
                 Train_1_beebook_deterministic_MC_POR_v3 state = next();
                 std::packaged_task<void()> task([&, state] {
                     std::unordered_set<Train_1_beebook_deterministic_MC_POR_v3, Train_1_beebook_deterministic_MC_POR_v3::Hash, Train_1_beebook_deterministic_MC_POR_v3::HashEqual> nextStates = generateNextStates(state);
@@ -3428,12 +3431,14 @@ class ModelChecker {
                         }
                     }
 
-                    possibleQueueChanges.fetch_sub(1);
                     {
                         std::unique_lock<std::mutex> lock(mutex);
-                        if (!unvisitedStates.empty() || possibleQueueChanges.load() == 0) {
+                        possibleQueueChanges -= 1;
+                        int running = possibleQueueChanges;
+                        if (!unvisitedStates.empty() || running == 0) {
                             {
                                 std::unique_lock<std::mutex> lock(waitMutex);
+                                waitFlag = false;
                                 waitCV.notify_one();
                             }
                         }
@@ -3443,24 +3448,27 @@ class ModelChecker {
                     if(invariantViolated(state)) {
                         invariantViolatedBool = true;
                         counterExampleState = state;
-                        stopThreads.store(true);
+                        stopThreads = true;
                     }
 
                     if(nextStates.empty()) {
                         deadlockDetected = true;
                         counterExampleState = state;
-                        stopThreads.store(true);
+                        stopThreads = true;
                     }
 
                 });
 
+                waitFlag = true;
                 boost::asio::post(workers, std::move(task));
 
                 {
                     std::unique_lock<std::mutex> lock(waitMutex);
-                    waitCV.wait(lock, [&] {
-                        return !unvisitedStates.empty() || possibleQueueChanges == 0;
-                    });
+                    if(unvisitedStates.empty() && possibleQueueChanges > 0) {
+                        waitCV.wait(lock, [&] {
+                            return waitFlag == false;
+                        });
+                    }
                 }
             }
             workers.join();
@@ -3505,682 +3513,426 @@ class ModelChecker {
             std::unordered_set<Train_1_beebook_deterministic_MC_POR_v3, Train_1_beebook_deterministic_MC_POR_v3::Hash, Train_1_beebook_deterministic_MC_POR_v3::HashEqual> result = std::unordered_set<Train_1_beebook_deterministic_MC_POR_v3, Train_1_beebook_deterministic_MC_POR_v3::Hash, Train_1_beebook_deterministic_MC_POR_v3::HashEqual>();
             if(isCaching) {
                 Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead__tr_route_reservation read__tr_route_reservation_state = state._projected_state_for__tr_route_reservation();
+                BSet<Train_1_beebook_deterministic_MC_POR_v3::ROUTES> _trid_1;
                 auto _trid_1_ptr = _OpCache_tr_route_reservation.find(read__tr_route_reservation_state);
                 if(_trid_1_ptr == _OpCache_tr_route_reservation.end()) {
-                    BSet<Train_1_beebook_deterministic_MC_POR_v3::ROUTES> _trid_1 = state._tr_route_reservation();
+                    _trid_1 = state._tr_route_reservation();
                     {
                         std::unique_lock<std::mutex> _ProjectionRead__tr_route_reservation_lock(_ProjectionRead__tr_route_reservation_mutex);
                         _OpCache_tr_route_reservation.insert({read__tr_route_reservation_state, _trid_1});
                     }
-                    for(const Train_1_beebook_deterministic_MC_POR_v3::ROUTES& param : _trid_1) {
-                        Train_1_beebook_deterministic_MC_POR_v3::ROUTES _tmp_1 = param;
-
-                        Train_1_beebook_deterministic_MC_POR_v3 copiedState = state._copy();
-                        Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_route_reservation readState = state._projected_state_for_route_reservation();
-
-                        auto _OpCache_with_parameter_route_reservation_ptr = _OpCache_route_reservation.find(param);
-                        if(_OpCache_with_parameter_route_reservation_ptr == _OpCache_route_reservation.end()) {
-                            copiedState.route_reservation(_tmp_1);
-                            Train_1_beebook_deterministic_MC_POR_v3::_ProjectionWrite_route_reservation writeState = copiedState._update_for_route_reservation();
-                            std::unordered_map<Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_route_reservation, Train_1_beebook_deterministic_MC_POR_v3::_ProjectionWrite_route_reservation, Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_route_reservation::Hash, Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_route_reservation::HashEqual> _OpCache_with_parameter_route_reservation;
-                            _OpCache_with_parameter_route_reservation.insert({readState, writeState});
-                            {
-                                std::unique_lock<std::mutex> _ProjectionRead_route_reservation_lock(_ProjectionRead_route_reservation_mutex);
-                                _OpCache_route_reservation.insert({param, _OpCache_with_parameter_route_reservation});
-                            }
-
-                        } else {
-                            std::unordered_map<Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_route_reservation, Train_1_beebook_deterministic_MC_POR_v3::_ProjectionWrite_route_reservation, Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_route_reservation::Hash, Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_route_reservation::HashEqual> _OpCache_with_parameter_route_reservation = _OpCache_with_parameter_route_reservation_ptr->second;
-                            auto writeState_ptr = _OpCache_with_parameter_route_reservation.find(readState);
-                            if(writeState_ptr != _OpCache_with_parameter_route_reservation.end()) {
-                                Train_1_beebook_deterministic_MC_POR_v3::_ProjectionWrite_route_reservation writeState = writeState_ptr->second;
-                                copiedState._apply_update_for_route_reservation(writeState);
-                            } else {
-                                copiedState.route_reservation(_tmp_1);
-                                Train_1_beebook_deterministic_MC_POR_v3::_ProjectionWrite_route_reservation writeState = copiedState._update_for_route_reservation();
-                                {
-                                    std::unique_lock<std::mutex> _ProjectionRead_route_reservation_lock(_ProjectionRead_route_reservation_mutex);
-                                    _OpCache_with_parameter_route_reservation.insert({readState, writeState});
-                                }
-                            }
-                        }
-
-                        copiedState.stateAccessedVia = "route_reservation";
-                        result.insert(copiedState);
-                        transitions += 1;
-                    }
                 } else {
-                    BSet<Train_1_beebook_deterministic_MC_POR_v3::ROUTES> _trid_1 = _trid_1_ptr->second;
-                    for(const Train_1_beebook_deterministic_MC_POR_v3::ROUTES& param : _trid_1) {
-                        Train_1_beebook_deterministic_MC_POR_v3::ROUTES _tmp_1 = param;
+                    _trid_1 = _trid_1_ptr->second;
+                }
 
-                        Train_1_beebook_deterministic_MC_POR_v3 copiedState = state._copy();
-                        Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_route_reservation readState = state._projected_state_for_route_reservation();
+                for(const Train_1_beebook_deterministic_MC_POR_v3::ROUTES& param : _trid_1) {
+                    Train_1_beebook_deterministic_MC_POR_v3::ROUTES _tmp_1 = param;
 
-                        auto _OpCache_with_parameter_route_reservation_ptr = _OpCache_route_reservation.find(param);
-                        if(_OpCache_with_parameter_route_reservation_ptr == _OpCache_route_reservation.end()) {
-                            copiedState.route_reservation(_tmp_1);
-                            Train_1_beebook_deterministic_MC_POR_v3::_ProjectionWrite_route_reservation writeState = copiedState._update_for_route_reservation();
-                            std::unordered_map<Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_route_reservation, Train_1_beebook_deterministic_MC_POR_v3::_ProjectionWrite_route_reservation, Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_route_reservation::Hash, Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_route_reservation::HashEqual> _OpCache_with_parameter_route_reservation;
-                            _OpCache_with_parameter_route_reservation.insert({readState, writeState});
-                            {
-                                std::unique_lock<std::mutex> _ProjectionRead_route_reservation_lock(_ProjectionRead_route_reservation_mutex);
-                                _OpCache_route_reservation.insert({param, _OpCache_with_parameter_route_reservation});
-                            }
+                    Train_1_beebook_deterministic_MC_POR_v3 copiedState = state._copy();
+                    Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_route_reservation readState = state._projected_state_for_route_reservation();
 
-                        } else {
-                            std::unordered_map<Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_route_reservation, Train_1_beebook_deterministic_MC_POR_v3::_ProjectionWrite_route_reservation, Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_route_reservation::Hash, Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_route_reservation::HashEqual> _OpCache_with_parameter_route_reservation = _OpCache_with_parameter_route_reservation_ptr->second;
-                            auto writeState_ptr = _OpCache_with_parameter_route_reservation.find(readState);
-                            if(writeState_ptr != _OpCache_with_parameter_route_reservation.end()) {
-                                Train_1_beebook_deterministic_MC_POR_v3::_ProjectionWrite_route_reservation writeState = writeState_ptr->second;
-                                copiedState._apply_update_for_route_reservation(writeState);
-                            } else {
-                                copiedState.route_reservation(_tmp_1);
-                                Train_1_beebook_deterministic_MC_POR_v3::_ProjectionWrite_route_reservation writeState = copiedState._update_for_route_reservation();
-                                {
-                                    std::unique_lock<std::mutex> _ProjectionRead_route_reservation_lock(_ProjectionRead_route_reservation_mutex);
-                                    _OpCache_with_parameter_route_reservation.insert({readState, writeState});
-                                }
-                            }
+                    auto _OpCache_with_parameter_route_reservation_ptr = _OpCache_route_reservation.find(param);
+                    if(_OpCache_with_parameter_route_reservation_ptr == _OpCache_route_reservation.end()) {
+                        copiedState.route_reservation(_tmp_1);
+                        Train_1_beebook_deterministic_MC_POR_v3::_ProjectionWrite_route_reservation writeState = copiedState._update_for_route_reservation();
+                        std::unordered_map<Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_route_reservation, Train_1_beebook_deterministic_MC_POR_v3::_ProjectionWrite_route_reservation, Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_route_reservation::Hash, Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_route_reservation::HashEqual> _OpCache_with_parameter_route_reservation;
+                        _OpCache_with_parameter_route_reservation.insert({readState, writeState});
+                        {
+                            std::unique_lock<std::mutex> _ProjectionRead_route_reservation_lock(_ProjectionRead_route_reservation_mutex);
+                            _OpCache_route_reservation.insert({param, _OpCache_with_parameter_route_reservation});
                         }
 
-                        copiedState.stateAccessedVia = "route_reservation";
-                        result.insert(copiedState);
+                    } else {
+                        std::unordered_map<Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_route_reservation, Train_1_beebook_deterministic_MC_POR_v3::_ProjectionWrite_route_reservation, Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_route_reservation::Hash, Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_route_reservation::HashEqual> _OpCache_with_parameter_route_reservation = _OpCache_with_parameter_route_reservation_ptr->second;
+                        auto writeState_ptr = _OpCache_with_parameter_route_reservation.find(readState);
+                        if(writeState_ptr != _OpCache_with_parameter_route_reservation.end()) {
+                            Train_1_beebook_deterministic_MC_POR_v3::_ProjectionWrite_route_reservation writeState = writeState_ptr->second;
+                            copiedState._apply_update_for_route_reservation(writeState);
+                        } else {
+                            copiedState.route_reservation(_tmp_1);
+                            Train_1_beebook_deterministic_MC_POR_v3::_ProjectionWrite_route_reservation writeState = copiedState._update_for_route_reservation();
+                            {
+                                std::unique_lock<std::mutex> _ProjectionRead_route_reservation_lock(_ProjectionRead_route_reservation_mutex);
+                                _OpCache_with_parameter_route_reservation.insert({readState, writeState});
+                            }
+                        }
+                    }
+
+                    copiedState.stateAccessedVia = "route_reservation";
+                    result.insert(copiedState);
+                    {
+                        std::unique_lock<std::mutex> lock(mutex);
                         transitions += 1;
                     }
                 }
                 Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead__tr_route_freeing read__tr_route_freeing_state = state._projected_state_for__tr_route_freeing();
+                BSet<Train_1_beebook_deterministic_MC_POR_v3::ROUTES> _trid_2;
                 auto _trid_2_ptr = _OpCache_tr_route_freeing.find(read__tr_route_freeing_state);
                 if(_trid_2_ptr == _OpCache_tr_route_freeing.end()) {
-                    BSet<Train_1_beebook_deterministic_MC_POR_v3::ROUTES> _trid_2 = state._tr_route_freeing();
+                    _trid_2 = state._tr_route_freeing();
                     {
                         std::unique_lock<std::mutex> _ProjectionRead__tr_route_freeing_lock(_ProjectionRead__tr_route_freeing_mutex);
                         _OpCache_tr_route_freeing.insert({read__tr_route_freeing_state, _trid_2});
                     }
-                    for(const Train_1_beebook_deterministic_MC_POR_v3::ROUTES& param : _trid_2) {
-                        Train_1_beebook_deterministic_MC_POR_v3::ROUTES _tmp_1 = param;
-
-                        Train_1_beebook_deterministic_MC_POR_v3 copiedState = state._copy();
-                        Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_route_freeing readState = state._projected_state_for_route_freeing();
-
-                        auto _OpCache_with_parameter_route_freeing_ptr = _OpCache_route_freeing.find(param);
-                        if(_OpCache_with_parameter_route_freeing_ptr == _OpCache_route_freeing.end()) {
-                            copiedState.route_freeing(_tmp_1);
-                            Train_1_beebook_deterministic_MC_POR_v3::_ProjectionWrite_route_freeing writeState = copiedState._update_for_route_freeing();
-                            std::unordered_map<Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_route_freeing, Train_1_beebook_deterministic_MC_POR_v3::_ProjectionWrite_route_freeing, Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_route_freeing::Hash, Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_route_freeing::HashEqual> _OpCache_with_parameter_route_freeing;
-                            _OpCache_with_parameter_route_freeing.insert({readState, writeState});
-                            {
-                                std::unique_lock<std::mutex> _ProjectionRead_route_freeing_lock(_ProjectionRead_route_freeing_mutex);
-                                _OpCache_route_freeing.insert({param, _OpCache_with_parameter_route_freeing});
-                            }
-
-                        } else {
-                            std::unordered_map<Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_route_freeing, Train_1_beebook_deterministic_MC_POR_v3::_ProjectionWrite_route_freeing, Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_route_freeing::Hash, Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_route_freeing::HashEqual> _OpCache_with_parameter_route_freeing = _OpCache_with_parameter_route_freeing_ptr->second;
-                            auto writeState_ptr = _OpCache_with_parameter_route_freeing.find(readState);
-                            if(writeState_ptr != _OpCache_with_parameter_route_freeing.end()) {
-                                Train_1_beebook_deterministic_MC_POR_v3::_ProjectionWrite_route_freeing writeState = writeState_ptr->second;
-                                copiedState._apply_update_for_route_freeing(writeState);
-                            } else {
-                                copiedState.route_freeing(_tmp_1);
-                                Train_1_beebook_deterministic_MC_POR_v3::_ProjectionWrite_route_freeing writeState = copiedState._update_for_route_freeing();
-                                {
-                                    std::unique_lock<std::mutex> _ProjectionRead_route_freeing_lock(_ProjectionRead_route_freeing_mutex);
-                                    _OpCache_with_parameter_route_freeing.insert({readState, writeState});
-                                }
-                            }
-                        }
-
-                        copiedState.stateAccessedVia = "route_freeing";
-                        result.insert(copiedState);
-                        transitions += 1;
-                    }
                 } else {
-                    BSet<Train_1_beebook_deterministic_MC_POR_v3::ROUTES> _trid_2 = _trid_2_ptr->second;
-                    for(const Train_1_beebook_deterministic_MC_POR_v3::ROUTES& param : _trid_2) {
-                        Train_1_beebook_deterministic_MC_POR_v3::ROUTES _tmp_1 = param;
+                    _trid_2 = _trid_2_ptr->second;
+                }
 
-                        Train_1_beebook_deterministic_MC_POR_v3 copiedState = state._copy();
-                        Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_route_freeing readState = state._projected_state_for_route_freeing();
+                for(const Train_1_beebook_deterministic_MC_POR_v3::ROUTES& param : _trid_2) {
+                    Train_1_beebook_deterministic_MC_POR_v3::ROUTES _tmp_1 = param;
 
-                        auto _OpCache_with_parameter_route_freeing_ptr = _OpCache_route_freeing.find(param);
-                        if(_OpCache_with_parameter_route_freeing_ptr == _OpCache_route_freeing.end()) {
-                            copiedState.route_freeing(_tmp_1);
-                            Train_1_beebook_deterministic_MC_POR_v3::_ProjectionWrite_route_freeing writeState = copiedState._update_for_route_freeing();
-                            std::unordered_map<Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_route_freeing, Train_1_beebook_deterministic_MC_POR_v3::_ProjectionWrite_route_freeing, Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_route_freeing::Hash, Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_route_freeing::HashEqual> _OpCache_with_parameter_route_freeing;
-                            _OpCache_with_parameter_route_freeing.insert({readState, writeState});
-                            {
-                                std::unique_lock<std::mutex> _ProjectionRead_route_freeing_lock(_ProjectionRead_route_freeing_mutex);
-                                _OpCache_route_freeing.insert({param, _OpCache_with_parameter_route_freeing});
-                            }
+                    Train_1_beebook_deterministic_MC_POR_v3 copiedState = state._copy();
+                    Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_route_freeing readState = state._projected_state_for_route_freeing();
 
-                        } else {
-                            std::unordered_map<Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_route_freeing, Train_1_beebook_deterministic_MC_POR_v3::_ProjectionWrite_route_freeing, Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_route_freeing::Hash, Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_route_freeing::HashEqual> _OpCache_with_parameter_route_freeing = _OpCache_with_parameter_route_freeing_ptr->second;
-                            auto writeState_ptr = _OpCache_with_parameter_route_freeing.find(readState);
-                            if(writeState_ptr != _OpCache_with_parameter_route_freeing.end()) {
-                                Train_1_beebook_deterministic_MC_POR_v3::_ProjectionWrite_route_freeing writeState = writeState_ptr->second;
-                                copiedState._apply_update_for_route_freeing(writeState);
-                            } else {
-                                copiedState.route_freeing(_tmp_1);
-                                Train_1_beebook_deterministic_MC_POR_v3::_ProjectionWrite_route_freeing writeState = copiedState._update_for_route_freeing();
-                                {
-                                    std::unique_lock<std::mutex> _ProjectionRead_route_freeing_lock(_ProjectionRead_route_freeing_mutex);
-                                    _OpCache_with_parameter_route_freeing.insert({readState, writeState});
-                                }
-                            }
+                    auto _OpCache_with_parameter_route_freeing_ptr = _OpCache_route_freeing.find(param);
+                    if(_OpCache_with_parameter_route_freeing_ptr == _OpCache_route_freeing.end()) {
+                        copiedState.route_freeing(_tmp_1);
+                        Train_1_beebook_deterministic_MC_POR_v3::_ProjectionWrite_route_freeing writeState = copiedState._update_for_route_freeing();
+                        std::unordered_map<Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_route_freeing, Train_1_beebook_deterministic_MC_POR_v3::_ProjectionWrite_route_freeing, Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_route_freeing::Hash, Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_route_freeing::HashEqual> _OpCache_with_parameter_route_freeing;
+                        _OpCache_with_parameter_route_freeing.insert({readState, writeState});
+                        {
+                            std::unique_lock<std::mutex> _ProjectionRead_route_freeing_lock(_ProjectionRead_route_freeing_mutex);
+                            _OpCache_route_freeing.insert({param, _OpCache_with_parameter_route_freeing});
                         }
 
-                        copiedState.stateAccessedVia = "route_freeing";
-                        result.insert(copiedState);
+                    } else {
+                        std::unordered_map<Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_route_freeing, Train_1_beebook_deterministic_MC_POR_v3::_ProjectionWrite_route_freeing, Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_route_freeing::Hash, Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_route_freeing::HashEqual> _OpCache_with_parameter_route_freeing = _OpCache_with_parameter_route_freeing_ptr->second;
+                        auto writeState_ptr = _OpCache_with_parameter_route_freeing.find(readState);
+                        if(writeState_ptr != _OpCache_with_parameter_route_freeing.end()) {
+                            Train_1_beebook_deterministic_MC_POR_v3::_ProjectionWrite_route_freeing writeState = writeState_ptr->second;
+                            copiedState._apply_update_for_route_freeing(writeState);
+                        } else {
+                            copiedState.route_freeing(_tmp_1);
+                            Train_1_beebook_deterministic_MC_POR_v3::_ProjectionWrite_route_freeing writeState = copiedState._update_for_route_freeing();
+                            {
+                                std::unique_lock<std::mutex> _ProjectionRead_route_freeing_lock(_ProjectionRead_route_freeing_mutex);
+                                _OpCache_with_parameter_route_freeing.insert({readState, writeState});
+                            }
+                        }
+                    }
+
+                    copiedState.stateAccessedVia = "route_freeing";
+                    result.insert(copiedState);
+                    {
+                        std::unique_lock<std::mutex> lock(mutex);
                         transitions += 1;
                     }
                 }
                 Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead__tr_FRONT_MOVE_1 read__tr_FRONT_MOVE_1_state = state._projected_state_for__tr_FRONT_MOVE_1();
+                BSet<Train_1_beebook_deterministic_MC_POR_v3::ROUTES> _trid_3;
                 auto _trid_3_ptr = _OpCache_tr_FRONT_MOVE_1.find(read__tr_FRONT_MOVE_1_state);
                 if(_trid_3_ptr == _OpCache_tr_FRONT_MOVE_1.end()) {
-                    BSet<Train_1_beebook_deterministic_MC_POR_v3::ROUTES> _trid_3 = state._tr_FRONT_MOVE_1();
+                    _trid_3 = state._tr_FRONT_MOVE_1();
                     {
                         std::unique_lock<std::mutex> _ProjectionRead__tr_FRONT_MOVE_1_lock(_ProjectionRead__tr_FRONT_MOVE_1_mutex);
                         _OpCache_tr_FRONT_MOVE_1.insert({read__tr_FRONT_MOVE_1_state, _trid_3});
                     }
-                    for(const Train_1_beebook_deterministic_MC_POR_v3::ROUTES& param : _trid_3) {
-                        Train_1_beebook_deterministic_MC_POR_v3::ROUTES _tmp_1 = param;
-
-                        Train_1_beebook_deterministic_MC_POR_v3 copiedState = state._copy();
-                        Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_FRONT_MOVE_1 readState = state._projected_state_for_FRONT_MOVE_1();
-
-                        auto _OpCache_with_parameter_FRONT_MOVE_1_ptr = _OpCache_FRONT_MOVE_1.find(param);
-                        if(_OpCache_with_parameter_FRONT_MOVE_1_ptr == _OpCache_FRONT_MOVE_1.end()) {
-                            copiedState.FRONT_MOVE_1(_tmp_1);
-                            Train_1_beebook_deterministic_MC_POR_v3::_ProjectionWrite_FRONT_MOVE_1 writeState = copiedState._update_for_FRONT_MOVE_1();
-                            std::unordered_map<Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_FRONT_MOVE_1, Train_1_beebook_deterministic_MC_POR_v3::_ProjectionWrite_FRONT_MOVE_1, Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_FRONT_MOVE_1::Hash, Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_FRONT_MOVE_1::HashEqual> _OpCache_with_parameter_FRONT_MOVE_1;
-                            _OpCache_with_parameter_FRONT_MOVE_1.insert({readState, writeState});
-                            {
-                                std::unique_lock<std::mutex> _ProjectionRead_FRONT_MOVE_1_lock(_ProjectionRead_FRONT_MOVE_1_mutex);
-                                _OpCache_FRONT_MOVE_1.insert({param, _OpCache_with_parameter_FRONT_MOVE_1});
-                            }
-
-                        } else {
-                            std::unordered_map<Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_FRONT_MOVE_1, Train_1_beebook_deterministic_MC_POR_v3::_ProjectionWrite_FRONT_MOVE_1, Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_FRONT_MOVE_1::Hash, Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_FRONT_MOVE_1::HashEqual> _OpCache_with_parameter_FRONT_MOVE_1 = _OpCache_with_parameter_FRONT_MOVE_1_ptr->second;
-                            auto writeState_ptr = _OpCache_with_parameter_FRONT_MOVE_1.find(readState);
-                            if(writeState_ptr != _OpCache_with_parameter_FRONT_MOVE_1.end()) {
-                                Train_1_beebook_deterministic_MC_POR_v3::_ProjectionWrite_FRONT_MOVE_1 writeState = writeState_ptr->second;
-                                copiedState._apply_update_for_FRONT_MOVE_1(writeState);
-                            } else {
-                                copiedState.FRONT_MOVE_1(_tmp_1);
-                                Train_1_beebook_deterministic_MC_POR_v3::_ProjectionWrite_FRONT_MOVE_1 writeState = copiedState._update_for_FRONT_MOVE_1();
-                                {
-                                    std::unique_lock<std::mutex> _ProjectionRead_FRONT_MOVE_1_lock(_ProjectionRead_FRONT_MOVE_1_mutex);
-                                    _OpCache_with_parameter_FRONT_MOVE_1.insert({readState, writeState});
-                                }
-                            }
-                        }
-
-                        copiedState.stateAccessedVia = "FRONT_MOVE_1";
-                        result.insert(copiedState);
-                        transitions += 1;
-                    }
                 } else {
-                    BSet<Train_1_beebook_deterministic_MC_POR_v3::ROUTES> _trid_3 = _trid_3_ptr->second;
-                    for(const Train_1_beebook_deterministic_MC_POR_v3::ROUTES& param : _trid_3) {
-                        Train_1_beebook_deterministic_MC_POR_v3::ROUTES _tmp_1 = param;
+                    _trid_3 = _trid_3_ptr->second;
+                }
 
-                        Train_1_beebook_deterministic_MC_POR_v3 copiedState = state._copy();
-                        Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_FRONT_MOVE_1 readState = state._projected_state_for_FRONT_MOVE_1();
+                for(const Train_1_beebook_deterministic_MC_POR_v3::ROUTES& param : _trid_3) {
+                    Train_1_beebook_deterministic_MC_POR_v3::ROUTES _tmp_1 = param;
 
-                        auto _OpCache_with_parameter_FRONT_MOVE_1_ptr = _OpCache_FRONT_MOVE_1.find(param);
-                        if(_OpCache_with_parameter_FRONT_MOVE_1_ptr == _OpCache_FRONT_MOVE_1.end()) {
-                            copiedState.FRONT_MOVE_1(_tmp_1);
-                            Train_1_beebook_deterministic_MC_POR_v3::_ProjectionWrite_FRONT_MOVE_1 writeState = copiedState._update_for_FRONT_MOVE_1();
-                            std::unordered_map<Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_FRONT_MOVE_1, Train_1_beebook_deterministic_MC_POR_v3::_ProjectionWrite_FRONT_MOVE_1, Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_FRONT_MOVE_1::Hash, Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_FRONT_MOVE_1::HashEqual> _OpCache_with_parameter_FRONT_MOVE_1;
-                            _OpCache_with_parameter_FRONT_MOVE_1.insert({readState, writeState});
-                            {
-                                std::unique_lock<std::mutex> _ProjectionRead_FRONT_MOVE_1_lock(_ProjectionRead_FRONT_MOVE_1_mutex);
-                                _OpCache_FRONT_MOVE_1.insert({param, _OpCache_with_parameter_FRONT_MOVE_1});
-                            }
+                    Train_1_beebook_deterministic_MC_POR_v3 copiedState = state._copy();
+                    Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_FRONT_MOVE_1 readState = state._projected_state_for_FRONT_MOVE_1();
 
-                        } else {
-                            std::unordered_map<Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_FRONT_MOVE_1, Train_1_beebook_deterministic_MC_POR_v3::_ProjectionWrite_FRONT_MOVE_1, Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_FRONT_MOVE_1::Hash, Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_FRONT_MOVE_1::HashEqual> _OpCache_with_parameter_FRONT_MOVE_1 = _OpCache_with_parameter_FRONT_MOVE_1_ptr->second;
-                            auto writeState_ptr = _OpCache_with_parameter_FRONT_MOVE_1.find(readState);
-                            if(writeState_ptr != _OpCache_with_parameter_FRONT_MOVE_1.end()) {
-                                Train_1_beebook_deterministic_MC_POR_v3::_ProjectionWrite_FRONT_MOVE_1 writeState = writeState_ptr->second;
-                                copiedState._apply_update_for_FRONT_MOVE_1(writeState);
-                            } else {
-                                copiedState.FRONT_MOVE_1(_tmp_1);
-                                Train_1_beebook_deterministic_MC_POR_v3::_ProjectionWrite_FRONT_MOVE_1 writeState = copiedState._update_for_FRONT_MOVE_1();
-                                {
-                                    std::unique_lock<std::mutex> _ProjectionRead_FRONT_MOVE_1_lock(_ProjectionRead_FRONT_MOVE_1_mutex);
-                                    _OpCache_with_parameter_FRONT_MOVE_1.insert({readState, writeState});
-                                }
-                            }
+                    auto _OpCache_with_parameter_FRONT_MOVE_1_ptr = _OpCache_FRONT_MOVE_1.find(param);
+                    if(_OpCache_with_parameter_FRONT_MOVE_1_ptr == _OpCache_FRONT_MOVE_1.end()) {
+                        copiedState.FRONT_MOVE_1(_tmp_1);
+                        Train_1_beebook_deterministic_MC_POR_v3::_ProjectionWrite_FRONT_MOVE_1 writeState = copiedState._update_for_FRONT_MOVE_1();
+                        std::unordered_map<Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_FRONT_MOVE_1, Train_1_beebook_deterministic_MC_POR_v3::_ProjectionWrite_FRONT_MOVE_1, Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_FRONT_MOVE_1::Hash, Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_FRONT_MOVE_1::HashEqual> _OpCache_with_parameter_FRONT_MOVE_1;
+                        _OpCache_with_parameter_FRONT_MOVE_1.insert({readState, writeState});
+                        {
+                            std::unique_lock<std::mutex> _ProjectionRead_FRONT_MOVE_1_lock(_ProjectionRead_FRONT_MOVE_1_mutex);
+                            _OpCache_FRONT_MOVE_1.insert({param, _OpCache_with_parameter_FRONT_MOVE_1});
                         }
 
-                        copiedState.stateAccessedVia = "FRONT_MOVE_1";
-                        result.insert(copiedState);
+                    } else {
+                        std::unordered_map<Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_FRONT_MOVE_1, Train_1_beebook_deterministic_MC_POR_v3::_ProjectionWrite_FRONT_MOVE_1, Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_FRONT_MOVE_1::Hash, Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_FRONT_MOVE_1::HashEqual> _OpCache_with_parameter_FRONT_MOVE_1 = _OpCache_with_parameter_FRONT_MOVE_1_ptr->second;
+                        auto writeState_ptr = _OpCache_with_parameter_FRONT_MOVE_1.find(readState);
+                        if(writeState_ptr != _OpCache_with_parameter_FRONT_MOVE_1.end()) {
+                            Train_1_beebook_deterministic_MC_POR_v3::_ProjectionWrite_FRONT_MOVE_1 writeState = writeState_ptr->second;
+                            copiedState._apply_update_for_FRONT_MOVE_1(writeState);
+                        } else {
+                            copiedState.FRONT_MOVE_1(_tmp_1);
+                            Train_1_beebook_deterministic_MC_POR_v3::_ProjectionWrite_FRONT_MOVE_1 writeState = copiedState._update_for_FRONT_MOVE_1();
+                            {
+                                std::unique_lock<std::mutex> _ProjectionRead_FRONT_MOVE_1_lock(_ProjectionRead_FRONT_MOVE_1_mutex);
+                                _OpCache_with_parameter_FRONT_MOVE_1.insert({readState, writeState});
+                            }
+                        }
+                    }
+
+                    copiedState.stateAccessedVia = "FRONT_MOVE_1";
+                    result.insert(copiedState);
+                    {
+                        std::unique_lock<std::mutex> lock(mutex);
                         transitions += 1;
                     }
                 }
                 Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead__tr_FRONT_MOVE_2 read__tr_FRONT_MOVE_2_state = state._projected_state_for__tr_FRONT_MOVE_2();
+                BSet<Train_1_beebook_deterministic_MC_POR_v3::BLOCKS> _trid_4;
                 auto _trid_4_ptr = _OpCache_tr_FRONT_MOVE_2.find(read__tr_FRONT_MOVE_2_state);
                 if(_trid_4_ptr == _OpCache_tr_FRONT_MOVE_2.end()) {
-                    BSet<Train_1_beebook_deterministic_MC_POR_v3::BLOCKS> _trid_4 = state._tr_FRONT_MOVE_2();
+                    _trid_4 = state._tr_FRONT_MOVE_2();
                     {
                         std::unique_lock<std::mutex> _ProjectionRead__tr_FRONT_MOVE_2_lock(_ProjectionRead__tr_FRONT_MOVE_2_mutex);
                         _OpCache_tr_FRONT_MOVE_2.insert({read__tr_FRONT_MOVE_2_state, _trid_4});
                     }
-                    for(const Train_1_beebook_deterministic_MC_POR_v3::BLOCKS& param : _trid_4) {
-                        Train_1_beebook_deterministic_MC_POR_v3::BLOCKS _tmp_1 = param;
-
-                        Train_1_beebook_deterministic_MC_POR_v3 copiedState = state._copy();
-                        Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_FRONT_MOVE_2 readState = state._projected_state_for_FRONT_MOVE_2();
-
-                        auto _OpCache_with_parameter_FRONT_MOVE_2_ptr = _OpCache_FRONT_MOVE_2.find(param);
-                        if(_OpCache_with_parameter_FRONT_MOVE_2_ptr == _OpCache_FRONT_MOVE_2.end()) {
-                            copiedState.FRONT_MOVE_2(_tmp_1);
-                            Train_1_beebook_deterministic_MC_POR_v3::_ProjectionWrite_FRONT_MOVE_2 writeState = copiedState._update_for_FRONT_MOVE_2();
-                            std::unordered_map<Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_FRONT_MOVE_2, Train_1_beebook_deterministic_MC_POR_v3::_ProjectionWrite_FRONT_MOVE_2, Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_FRONT_MOVE_2::Hash, Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_FRONT_MOVE_2::HashEqual> _OpCache_with_parameter_FRONT_MOVE_2;
-                            _OpCache_with_parameter_FRONT_MOVE_2.insert({readState, writeState});
-                            {
-                                std::unique_lock<std::mutex> _ProjectionRead_FRONT_MOVE_2_lock(_ProjectionRead_FRONT_MOVE_2_mutex);
-                                _OpCache_FRONT_MOVE_2.insert({param, _OpCache_with_parameter_FRONT_MOVE_2});
-                            }
-
-                        } else {
-                            std::unordered_map<Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_FRONT_MOVE_2, Train_1_beebook_deterministic_MC_POR_v3::_ProjectionWrite_FRONT_MOVE_2, Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_FRONT_MOVE_2::Hash, Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_FRONT_MOVE_2::HashEqual> _OpCache_with_parameter_FRONT_MOVE_2 = _OpCache_with_parameter_FRONT_MOVE_2_ptr->second;
-                            auto writeState_ptr = _OpCache_with_parameter_FRONT_MOVE_2.find(readState);
-                            if(writeState_ptr != _OpCache_with_parameter_FRONT_MOVE_2.end()) {
-                                Train_1_beebook_deterministic_MC_POR_v3::_ProjectionWrite_FRONT_MOVE_2 writeState = writeState_ptr->second;
-                                copiedState._apply_update_for_FRONT_MOVE_2(writeState);
-                            } else {
-                                copiedState.FRONT_MOVE_2(_tmp_1);
-                                Train_1_beebook_deterministic_MC_POR_v3::_ProjectionWrite_FRONT_MOVE_2 writeState = copiedState._update_for_FRONT_MOVE_2();
-                                {
-                                    std::unique_lock<std::mutex> _ProjectionRead_FRONT_MOVE_2_lock(_ProjectionRead_FRONT_MOVE_2_mutex);
-                                    _OpCache_with_parameter_FRONT_MOVE_2.insert({readState, writeState});
-                                }
-                            }
-                        }
-
-                        copiedState.stateAccessedVia = "FRONT_MOVE_2";
-                        result.insert(copiedState);
-                        transitions += 1;
-                    }
                 } else {
-                    BSet<Train_1_beebook_deterministic_MC_POR_v3::BLOCKS> _trid_4 = _trid_4_ptr->second;
-                    for(const Train_1_beebook_deterministic_MC_POR_v3::BLOCKS& param : _trid_4) {
-                        Train_1_beebook_deterministic_MC_POR_v3::BLOCKS _tmp_1 = param;
+                    _trid_4 = _trid_4_ptr->second;
+                }
 
-                        Train_1_beebook_deterministic_MC_POR_v3 copiedState = state._copy();
-                        Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_FRONT_MOVE_2 readState = state._projected_state_for_FRONT_MOVE_2();
+                for(const Train_1_beebook_deterministic_MC_POR_v3::BLOCKS& param : _trid_4) {
+                    Train_1_beebook_deterministic_MC_POR_v3::BLOCKS _tmp_1 = param;
 
-                        auto _OpCache_with_parameter_FRONT_MOVE_2_ptr = _OpCache_FRONT_MOVE_2.find(param);
-                        if(_OpCache_with_parameter_FRONT_MOVE_2_ptr == _OpCache_FRONT_MOVE_2.end()) {
-                            copiedState.FRONT_MOVE_2(_tmp_1);
-                            Train_1_beebook_deterministic_MC_POR_v3::_ProjectionWrite_FRONT_MOVE_2 writeState = copiedState._update_for_FRONT_MOVE_2();
-                            std::unordered_map<Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_FRONT_MOVE_2, Train_1_beebook_deterministic_MC_POR_v3::_ProjectionWrite_FRONT_MOVE_2, Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_FRONT_MOVE_2::Hash, Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_FRONT_MOVE_2::HashEqual> _OpCache_with_parameter_FRONT_MOVE_2;
-                            _OpCache_with_parameter_FRONT_MOVE_2.insert({readState, writeState});
-                            {
-                                std::unique_lock<std::mutex> _ProjectionRead_FRONT_MOVE_2_lock(_ProjectionRead_FRONT_MOVE_2_mutex);
-                                _OpCache_FRONT_MOVE_2.insert({param, _OpCache_with_parameter_FRONT_MOVE_2});
-                            }
+                    Train_1_beebook_deterministic_MC_POR_v3 copiedState = state._copy();
+                    Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_FRONT_MOVE_2 readState = state._projected_state_for_FRONT_MOVE_2();
 
-                        } else {
-                            std::unordered_map<Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_FRONT_MOVE_2, Train_1_beebook_deterministic_MC_POR_v3::_ProjectionWrite_FRONT_MOVE_2, Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_FRONT_MOVE_2::Hash, Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_FRONT_MOVE_2::HashEqual> _OpCache_with_parameter_FRONT_MOVE_2 = _OpCache_with_parameter_FRONT_MOVE_2_ptr->second;
-                            auto writeState_ptr = _OpCache_with_parameter_FRONT_MOVE_2.find(readState);
-                            if(writeState_ptr != _OpCache_with_parameter_FRONT_MOVE_2.end()) {
-                                Train_1_beebook_deterministic_MC_POR_v3::_ProjectionWrite_FRONT_MOVE_2 writeState = writeState_ptr->second;
-                                copiedState._apply_update_for_FRONT_MOVE_2(writeState);
-                            } else {
-                                copiedState.FRONT_MOVE_2(_tmp_1);
-                                Train_1_beebook_deterministic_MC_POR_v3::_ProjectionWrite_FRONT_MOVE_2 writeState = copiedState._update_for_FRONT_MOVE_2();
-                                {
-                                    std::unique_lock<std::mutex> _ProjectionRead_FRONT_MOVE_2_lock(_ProjectionRead_FRONT_MOVE_2_mutex);
-                                    _OpCache_with_parameter_FRONT_MOVE_2.insert({readState, writeState});
-                                }
-                            }
+                    auto _OpCache_with_parameter_FRONT_MOVE_2_ptr = _OpCache_FRONT_MOVE_2.find(param);
+                    if(_OpCache_with_parameter_FRONT_MOVE_2_ptr == _OpCache_FRONT_MOVE_2.end()) {
+                        copiedState.FRONT_MOVE_2(_tmp_1);
+                        Train_1_beebook_deterministic_MC_POR_v3::_ProjectionWrite_FRONT_MOVE_2 writeState = copiedState._update_for_FRONT_MOVE_2();
+                        std::unordered_map<Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_FRONT_MOVE_2, Train_1_beebook_deterministic_MC_POR_v3::_ProjectionWrite_FRONT_MOVE_2, Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_FRONT_MOVE_2::Hash, Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_FRONT_MOVE_2::HashEqual> _OpCache_with_parameter_FRONT_MOVE_2;
+                        _OpCache_with_parameter_FRONT_MOVE_2.insert({readState, writeState});
+                        {
+                            std::unique_lock<std::mutex> _ProjectionRead_FRONT_MOVE_2_lock(_ProjectionRead_FRONT_MOVE_2_mutex);
+                            _OpCache_FRONT_MOVE_2.insert({param, _OpCache_with_parameter_FRONT_MOVE_2});
                         }
 
-                        copiedState.stateAccessedVia = "FRONT_MOVE_2";
-                        result.insert(copiedState);
+                    } else {
+                        std::unordered_map<Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_FRONT_MOVE_2, Train_1_beebook_deterministic_MC_POR_v3::_ProjectionWrite_FRONT_MOVE_2, Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_FRONT_MOVE_2::Hash, Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_FRONT_MOVE_2::HashEqual> _OpCache_with_parameter_FRONT_MOVE_2 = _OpCache_with_parameter_FRONT_MOVE_2_ptr->second;
+                        auto writeState_ptr = _OpCache_with_parameter_FRONT_MOVE_2.find(readState);
+                        if(writeState_ptr != _OpCache_with_parameter_FRONT_MOVE_2.end()) {
+                            Train_1_beebook_deterministic_MC_POR_v3::_ProjectionWrite_FRONT_MOVE_2 writeState = writeState_ptr->second;
+                            copiedState._apply_update_for_FRONT_MOVE_2(writeState);
+                        } else {
+                            copiedState.FRONT_MOVE_2(_tmp_1);
+                            Train_1_beebook_deterministic_MC_POR_v3::_ProjectionWrite_FRONT_MOVE_2 writeState = copiedState._update_for_FRONT_MOVE_2();
+                            {
+                                std::unique_lock<std::mutex> _ProjectionRead_FRONT_MOVE_2_lock(_ProjectionRead_FRONT_MOVE_2_mutex);
+                                _OpCache_with_parameter_FRONT_MOVE_2.insert({readState, writeState});
+                            }
+                        }
+                    }
+
+                    copiedState.stateAccessedVia = "FRONT_MOVE_2";
+                    result.insert(copiedState);
+                    {
+                        std::unique_lock<std::mutex> lock(mutex);
                         transitions += 1;
                     }
                 }
                 Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead__tr_BACK_MOVE_1 read__tr_BACK_MOVE_1_state = state._projected_state_for__tr_BACK_MOVE_1();
+                BSet<Train_1_beebook_deterministic_MC_POR_v3::BLOCKS> _trid_5;
                 auto _trid_5_ptr = _OpCache_tr_BACK_MOVE_1.find(read__tr_BACK_MOVE_1_state);
                 if(_trid_5_ptr == _OpCache_tr_BACK_MOVE_1.end()) {
-                    BSet<Train_1_beebook_deterministic_MC_POR_v3::BLOCKS> _trid_5 = state._tr_BACK_MOVE_1();
+                    _trid_5 = state._tr_BACK_MOVE_1();
                     {
                         std::unique_lock<std::mutex> _ProjectionRead__tr_BACK_MOVE_1_lock(_ProjectionRead__tr_BACK_MOVE_1_mutex);
                         _OpCache_tr_BACK_MOVE_1.insert({read__tr_BACK_MOVE_1_state, _trid_5});
                     }
-                    for(const Train_1_beebook_deterministic_MC_POR_v3::BLOCKS& param : _trid_5) {
-                        Train_1_beebook_deterministic_MC_POR_v3::BLOCKS _tmp_1 = param;
-
-                        Train_1_beebook_deterministic_MC_POR_v3 copiedState = state._copy();
-                        Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_BACK_MOVE_1 readState = state._projected_state_for_BACK_MOVE_1();
-
-                        auto _OpCache_with_parameter_BACK_MOVE_1_ptr = _OpCache_BACK_MOVE_1.find(param);
-                        if(_OpCache_with_parameter_BACK_MOVE_1_ptr == _OpCache_BACK_MOVE_1.end()) {
-                            copiedState.BACK_MOVE_1(_tmp_1);
-                            Train_1_beebook_deterministic_MC_POR_v3::_ProjectionWrite_BACK_MOVE_1 writeState = copiedState._update_for_BACK_MOVE_1();
-                            std::unordered_map<Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_BACK_MOVE_1, Train_1_beebook_deterministic_MC_POR_v3::_ProjectionWrite_BACK_MOVE_1, Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_BACK_MOVE_1::Hash, Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_BACK_MOVE_1::HashEqual> _OpCache_with_parameter_BACK_MOVE_1;
-                            _OpCache_with_parameter_BACK_MOVE_1.insert({readState, writeState});
-                            {
-                                std::unique_lock<std::mutex> _ProjectionRead_BACK_MOVE_1_lock(_ProjectionRead_BACK_MOVE_1_mutex);
-                                _OpCache_BACK_MOVE_1.insert({param, _OpCache_with_parameter_BACK_MOVE_1});
-                            }
-
-                        } else {
-                            std::unordered_map<Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_BACK_MOVE_1, Train_1_beebook_deterministic_MC_POR_v3::_ProjectionWrite_BACK_MOVE_1, Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_BACK_MOVE_1::Hash, Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_BACK_MOVE_1::HashEqual> _OpCache_with_parameter_BACK_MOVE_1 = _OpCache_with_parameter_BACK_MOVE_1_ptr->second;
-                            auto writeState_ptr = _OpCache_with_parameter_BACK_MOVE_1.find(readState);
-                            if(writeState_ptr != _OpCache_with_parameter_BACK_MOVE_1.end()) {
-                                Train_1_beebook_deterministic_MC_POR_v3::_ProjectionWrite_BACK_MOVE_1 writeState = writeState_ptr->second;
-                                copiedState._apply_update_for_BACK_MOVE_1(writeState);
-                            } else {
-                                copiedState.BACK_MOVE_1(_tmp_1);
-                                Train_1_beebook_deterministic_MC_POR_v3::_ProjectionWrite_BACK_MOVE_1 writeState = copiedState._update_for_BACK_MOVE_1();
-                                {
-                                    std::unique_lock<std::mutex> _ProjectionRead_BACK_MOVE_1_lock(_ProjectionRead_BACK_MOVE_1_mutex);
-                                    _OpCache_with_parameter_BACK_MOVE_1.insert({readState, writeState});
-                                }
-                            }
-                        }
-
-                        copiedState.stateAccessedVia = "BACK_MOVE_1";
-                        result.insert(copiedState);
-                        transitions += 1;
-                    }
                 } else {
-                    BSet<Train_1_beebook_deterministic_MC_POR_v3::BLOCKS> _trid_5 = _trid_5_ptr->second;
-                    for(const Train_1_beebook_deterministic_MC_POR_v3::BLOCKS& param : _trid_5) {
-                        Train_1_beebook_deterministic_MC_POR_v3::BLOCKS _tmp_1 = param;
+                    _trid_5 = _trid_5_ptr->second;
+                }
 
-                        Train_1_beebook_deterministic_MC_POR_v3 copiedState = state._copy();
-                        Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_BACK_MOVE_1 readState = state._projected_state_for_BACK_MOVE_1();
+                for(const Train_1_beebook_deterministic_MC_POR_v3::BLOCKS& param : _trid_5) {
+                    Train_1_beebook_deterministic_MC_POR_v3::BLOCKS _tmp_1 = param;
 
-                        auto _OpCache_with_parameter_BACK_MOVE_1_ptr = _OpCache_BACK_MOVE_1.find(param);
-                        if(_OpCache_with_parameter_BACK_MOVE_1_ptr == _OpCache_BACK_MOVE_1.end()) {
-                            copiedState.BACK_MOVE_1(_tmp_1);
-                            Train_1_beebook_deterministic_MC_POR_v3::_ProjectionWrite_BACK_MOVE_1 writeState = copiedState._update_for_BACK_MOVE_1();
-                            std::unordered_map<Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_BACK_MOVE_1, Train_1_beebook_deterministic_MC_POR_v3::_ProjectionWrite_BACK_MOVE_1, Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_BACK_MOVE_1::Hash, Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_BACK_MOVE_1::HashEqual> _OpCache_with_parameter_BACK_MOVE_1;
-                            _OpCache_with_parameter_BACK_MOVE_1.insert({readState, writeState});
-                            {
-                                std::unique_lock<std::mutex> _ProjectionRead_BACK_MOVE_1_lock(_ProjectionRead_BACK_MOVE_1_mutex);
-                                _OpCache_BACK_MOVE_1.insert({param, _OpCache_with_parameter_BACK_MOVE_1});
-                            }
+                    Train_1_beebook_deterministic_MC_POR_v3 copiedState = state._copy();
+                    Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_BACK_MOVE_1 readState = state._projected_state_for_BACK_MOVE_1();
 
-                        } else {
-                            std::unordered_map<Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_BACK_MOVE_1, Train_1_beebook_deterministic_MC_POR_v3::_ProjectionWrite_BACK_MOVE_1, Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_BACK_MOVE_1::Hash, Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_BACK_MOVE_1::HashEqual> _OpCache_with_parameter_BACK_MOVE_1 = _OpCache_with_parameter_BACK_MOVE_1_ptr->second;
-                            auto writeState_ptr = _OpCache_with_parameter_BACK_MOVE_1.find(readState);
-                            if(writeState_ptr != _OpCache_with_parameter_BACK_MOVE_1.end()) {
-                                Train_1_beebook_deterministic_MC_POR_v3::_ProjectionWrite_BACK_MOVE_1 writeState = writeState_ptr->second;
-                                copiedState._apply_update_for_BACK_MOVE_1(writeState);
-                            } else {
-                                copiedState.BACK_MOVE_1(_tmp_1);
-                                Train_1_beebook_deterministic_MC_POR_v3::_ProjectionWrite_BACK_MOVE_1 writeState = copiedState._update_for_BACK_MOVE_1();
-                                {
-                                    std::unique_lock<std::mutex> _ProjectionRead_BACK_MOVE_1_lock(_ProjectionRead_BACK_MOVE_1_mutex);
-                                    _OpCache_with_parameter_BACK_MOVE_1.insert({readState, writeState});
-                                }
-                            }
+                    auto _OpCache_with_parameter_BACK_MOVE_1_ptr = _OpCache_BACK_MOVE_1.find(param);
+                    if(_OpCache_with_parameter_BACK_MOVE_1_ptr == _OpCache_BACK_MOVE_1.end()) {
+                        copiedState.BACK_MOVE_1(_tmp_1);
+                        Train_1_beebook_deterministic_MC_POR_v3::_ProjectionWrite_BACK_MOVE_1 writeState = copiedState._update_for_BACK_MOVE_1();
+                        std::unordered_map<Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_BACK_MOVE_1, Train_1_beebook_deterministic_MC_POR_v3::_ProjectionWrite_BACK_MOVE_1, Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_BACK_MOVE_1::Hash, Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_BACK_MOVE_1::HashEqual> _OpCache_with_parameter_BACK_MOVE_1;
+                        _OpCache_with_parameter_BACK_MOVE_1.insert({readState, writeState});
+                        {
+                            std::unique_lock<std::mutex> _ProjectionRead_BACK_MOVE_1_lock(_ProjectionRead_BACK_MOVE_1_mutex);
+                            _OpCache_BACK_MOVE_1.insert({param, _OpCache_with_parameter_BACK_MOVE_1});
                         }
 
-                        copiedState.stateAccessedVia = "BACK_MOVE_1";
-                        result.insert(copiedState);
+                    } else {
+                        std::unordered_map<Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_BACK_MOVE_1, Train_1_beebook_deterministic_MC_POR_v3::_ProjectionWrite_BACK_MOVE_1, Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_BACK_MOVE_1::Hash, Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_BACK_MOVE_1::HashEqual> _OpCache_with_parameter_BACK_MOVE_1 = _OpCache_with_parameter_BACK_MOVE_1_ptr->second;
+                        auto writeState_ptr = _OpCache_with_parameter_BACK_MOVE_1.find(readState);
+                        if(writeState_ptr != _OpCache_with_parameter_BACK_MOVE_1.end()) {
+                            Train_1_beebook_deterministic_MC_POR_v3::_ProjectionWrite_BACK_MOVE_1 writeState = writeState_ptr->second;
+                            copiedState._apply_update_for_BACK_MOVE_1(writeState);
+                        } else {
+                            copiedState.BACK_MOVE_1(_tmp_1);
+                            Train_1_beebook_deterministic_MC_POR_v3::_ProjectionWrite_BACK_MOVE_1 writeState = copiedState._update_for_BACK_MOVE_1();
+                            {
+                                std::unique_lock<std::mutex> _ProjectionRead_BACK_MOVE_1_lock(_ProjectionRead_BACK_MOVE_1_mutex);
+                                _OpCache_with_parameter_BACK_MOVE_1.insert({readState, writeState});
+                            }
+                        }
+                    }
+
+                    copiedState.stateAccessedVia = "BACK_MOVE_1";
+                    result.insert(copiedState);
+                    {
+                        std::unique_lock<std::mutex> lock(mutex);
                         transitions += 1;
                     }
                 }
                 Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead__tr_BACK_MOVE_2 read__tr_BACK_MOVE_2_state = state._projected_state_for__tr_BACK_MOVE_2();
+                BSet<Train_1_beebook_deterministic_MC_POR_v3::BLOCKS> _trid_6;
                 auto _trid_6_ptr = _OpCache_tr_BACK_MOVE_2.find(read__tr_BACK_MOVE_2_state);
                 if(_trid_6_ptr == _OpCache_tr_BACK_MOVE_2.end()) {
-                    BSet<Train_1_beebook_deterministic_MC_POR_v3::BLOCKS> _trid_6 = state._tr_BACK_MOVE_2();
+                    _trid_6 = state._tr_BACK_MOVE_2();
                     {
                         std::unique_lock<std::mutex> _ProjectionRead__tr_BACK_MOVE_2_lock(_ProjectionRead__tr_BACK_MOVE_2_mutex);
                         _OpCache_tr_BACK_MOVE_2.insert({read__tr_BACK_MOVE_2_state, _trid_6});
                     }
-                    for(const Train_1_beebook_deterministic_MC_POR_v3::BLOCKS& param : _trid_6) {
-                        Train_1_beebook_deterministic_MC_POR_v3::BLOCKS _tmp_1 = param;
-
-                        Train_1_beebook_deterministic_MC_POR_v3 copiedState = state._copy();
-                        Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_BACK_MOVE_2 readState = state._projected_state_for_BACK_MOVE_2();
-
-                        auto _OpCache_with_parameter_BACK_MOVE_2_ptr = _OpCache_BACK_MOVE_2.find(param);
-                        if(_OpCache_with_parameter_BACK_MOVE_2_ptr == _OpCache_BACK_MOVE_2.end()) {
-                            copiedState.BACK_MOVE_2(_tmp_1);
-                            Train_1_beebook_deterministic_MC_POR_v3::_ProjectionWrite_BACK_MOVE_2 writeState = copiedState._update_for_BACK_MOVE_2();
-                            std::unordered_map<Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_BACK_MOVE_2, Train_1_beebook_deterministic_MC_POR_v3::_ProjectionWrite_BACK_MOVE_2, Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_BACK_MOVE_2::Hash, Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_BACK_MOVE_2::HashEqual> _OpCache_with_parameter_BACK_MOVE_2;
-                            _OpCache_with_parameter_BACK_MOVE_2.insert({readState, writeState});
-                            {
-                                std::unique_lock<std::mutex> _ProjectionRead_BACK_MOVE_2_lock(_ProjectionRead_BACK_MOVE_2_mutex);
-                                _OpCache_BACK_MOVE_2.insert({param, _OpCache_with_parameter_BACK_MOVE_2});
-                            }
-
-                        } else {
-                            std::unordered_map<Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_BACK_MOVE_2, Train_1_beebook_deterministic_MC_POR_v3::_ProjectionWrite_BACK_MOVE_2, Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_BACK_MOVE_2::Hash, Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_BACK_MOVE_2::HashEqual> _OpCache_with_parameter_BACK_MOVE_2 = _OpCache_with_parameter_BACK_MOVE_2_ptr->second;
-                            auto writeState_ptr = _OpCache_with_parameter_BACK_MOVE_2.find(readState);
-                            if(writeState_ptr != _OpCache_with_parameter_BACK_MOVE_2.end()) {
-                                Train_1_beebook_deterministic_MC_POR_v3::_ProjectionWrite_BACK_MOVE_2 writeState = writeState_ptr->second;
-                                copiedState._apply_update_for_BACK_MOVE_2(writeState);
-                            } else {
-                                copiedState.BACK_MOVE_2(_tmp_1);
-                                Train_1_beebook_deterministic_MC_POR_v3::_ProjectionWrite_BACK_MOVE_2 writeState = copiedState._update_for_BACK_MOVE_2();
-                                {
-                                    std::unique_lock<std::mutex> _ProjectionRead_BACK_MOVE_2_lock(_ProjectionRead_BACK_MOVE_2_mutex);
-                                    _OpCache_with_parameter_BACK_MOVE_2.insert({readState, writeState});
-                                }
-                            }
-                        }
-
-                        copiedState.stateAccessedVia = "BACK_MOVE_2";
-                        result.insert(copiedState);
-                        transitions += 1;
-                    }
                 } else {
-                    BSet<Train_1_beebook_deterministic_MC_POR_v3::BLOCKS> _trid_6 = _trid_6_ptr->second;
-                    for(const Train_1_beebook_deterministic_MC_POR_v3::BLOCKS& param : _trid_6) {
-                        Train_1_beebook_deterministic_MC_POR_v3::BLOCKS _tmp_1 = param;
+                    _trid_6 = _trid_6_ptr->second;
+                }
 
-                        Train_1_beebook_deterministic_MC_POR_v3 copiedState = state._copy();
-                        Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_BACK_MOVE_2 readState = state._projected_state_for_BACK_MOVE_2();
+                for(const Train_1_beebook_deterministic_MC_POR_v3::BLOCKS& param : _trid_6) {
+                    Train_1_beebook_deterministic_MC_POR_v3::BLOCKS _tmp_1 = param;
 
-                        auto _OpCache_with_parameter_BACK_MOVE_2_ptr = _OpCache_BACK_MOVE_2.find(param);
-                        if(_OpCache_with_parameter_BACK_MOVE_2_ptr == _OpCache_BACK_MOVE_2.end()) {
-                            copiedState.BACK_MOVE_2(_tmp_1);
-                            Train_1_beebook_deterministic_MC_POR_v3::_ProjectionWrite_BACK_MOVE_2 writeState = copiedState._update_for_BACK_MOVE_2();
-                            std::unordered_map<Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_BACK_MOVE_2, Train_1_beebook_deterministic_MC_POR_v3::_ProjectionWrite_BACK_MOVE_2, Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_BACK_MOVE_2::Hash, Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_BACK_MOVE_2::HashEqual> _OpCache_with_parameter_BACK_MOVE_2;
-                            _OpCache_with_parameter_BACK_MOVE_2.insert({readState, writeState});
-                            {
-                                std::unique_lock<std::mutex> _ProjectionRead_BACK_MOVE_2_lock(_ProjectionRead_BACK_MOVE_2_mutex);
-                                _OpCache_BACK_MOVE_2.insert({param, _OpCache_with_parameter_BACK_MOVE_2});
-                            }
+                    Train_1_beebook_deterministic_MC_POR_v3 copiedState = state._copy();
+                    Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_BACK_MOVE_2 readState = state._projected_state_for_BACK_MOVE_2();
 
-                        } else {
-                            std::unordered_map<Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_BACK_MOVE_2, Train_1_beebook_deterministic_MC_POR_v3::_ProjectionWrite_BACK_MOVE_2, Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_BACK_MOVE_2::Hash, Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_BACK_MOVE_2::HashEqual> _OpCache_with_parameter_BACK_MOVE_2 = _OpCache_with_parameter_BACK_MOVE_2_ptr->second;
-                            auto writeState_ptr = _OpCache_with_parameter_BACK_MOVE_2.find(readState);
-                            if(writeState_ptr != _OpCache_with_parameter_BACK_MOVE_2.end()) {
-                                Train_1_beebook_deterministic_MC_POR_v3::_ProjectionWrite_BACK_MOVE_2 writeState = writeState_ptr->second;
-                                copiedState._apply_update_for_BACK_MOVE_2(writeState);
-                            } else {
-                                copiedState.BACK_MOVE_2(_tmp_1);
-                                Train_1_beebook_deterministic_MC_POR_v3::_ProjectionWrite_BACK_MOVE_2 writeState = copiedState._update_for_BACK_MOVE_2();
-                                {
-                                    std::unique_lock<std::mutex> _ProjectionRead_BACK_MOVE_2_lock(_ProjectionRead_BACK_MOVE_2_mutex);
-                                    _OpCache_with_parameter_BACK_MOVE_2.insert({readState, writeState});
-                                }
-                            }
+                    auto _OpCache_with_parameter_BACK_MOVE_2_ptr = _OpCache_BACK_MOVE_2.find(param);
+                    if(_OpCache_with_parameter_BACK_MOVE_2_ptr == _OpCache_BACK_MOVE_2.end()) {
+                        copiedState.BACK_MOVE_2(_tmp_1);
+                        Train_1_beebook_deterministic_MC_POR_v3::_ProjectionWrite_BACK_MOVE_2 writeState = copiedState._update_for_BACK_MOVE_2();
+                        std::unordered_map<Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_BACK_MOVE_2, Train_1_beebook_deterministic_MC_POR_v3::_ProjectionWrite_BACK_MOVE_2, Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_BACK_MOVE_2::Hash, Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_BACK_MOVE_2::HashEqual> _OpCache_with_parameter_BACK_MOVE_2;
+                        _OpCache_with_parameter_BACK_MOVE_2.insert({readState, writeState});
+                        {
+                            std::unique_lock<std::mutex> _ProjectionRead_BACK_MOVE_2_lock(_ProjectionRead_BACK_MOVE_2_mutex);
+                            _OpCache_BACK_MOVE_2.insert({param, _OpCache_with_parameter_BACK_MOVE_2});
                         }
 
-                        copiedState.stateAccessedVia = "BACK_MOVE_2";
-                        result.insert(copiedState);
+                    } else {
+                        std::unordered_map<Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_BACK_MOVE_2, Train_1_beebook_deterministic_MC_POR_v3::_ProjectionWrite_BACK_MOVE_2, Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_BACK_MOVE_2::Hash, Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_BACK_MOVE_2::HashEqual> _OpCache_with_parameter_BACK_MOVE_2 = _OpCache_with_parameter_BACK_MOVE_2_ptr->second;
+                        auto writeState_ptr = _OpCache_with_parameter_BACK_MOVE_2.find(readState);
+                        if(writeState_ptr != _OpCache_with_parameter_BACK_MOVE_2.end()) {
+                            Train_1_beebook_deterministic_MC_POR_v3::_ProjectionWrite_BACK_MOVE_2 writeState = writeState_ptr->second;
+                            copiedState._apply_update_for_BACK_MOVE_2(writeState);
+                        } else {
+                            copiedState.BACK_MOVE_2(_tmp_1);
+                            Train_1_beebook_deterministic_MC_POR_v3::_ProjectionWrite_BACK_MOVE_2 writeState = copiedState._update_for_BACK_MOVE_2();
+                            {
+                                std::unique_lock<std::mutex> _ProjectionRead_BACK_MOVE_2_lock(_ProjectionRead_BACK_MOVE_2_mutex);
+                                _OpCache_with_parameter_BACK_MOVE_2.insert({readState, writeState});
+                            }
+                        }
+                    }
+
+                    copiedState.stateAccessedVia = "BACK_MOVE_2";
+                    result.insert(copiedState);
+                    {
+                        std::unique_lock<std::mutex> lock(mutex);
                         transitions += 1;
                     }
                 }
                 Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead__tr_point_positionning read__tr_point_positionning_state = state._projected_state_for__tr_point_positionning();
+                BSet<Train_1_beebook_deterministic_MC_POR_v3::ROUTES> _trid_7;
                 auto _trid_7_ptr = _OpCache_tr_point_positionning.find(read__tr_point_positionning_state);
                 if(_trid_7_ptr == _OpCache_tr_point_positionning.end()) {
-                    BSet<Train_1_beebook_deterministic_MC_POR_v3::ROUTES> _trid_7 = state._tr_point_positionning();
+                    _trid_7 = state._tr_point_positionning();
                     {
                         std::unique_lock<std::mutex> _ProjectionRead__tr_point_positionning_lock(_ProjectionRead__tr_point_positionning_mutex);
                         _OpCache_tr_point_positionning.insert({read__tr_point_positionning_state, _trid_7});
                     }
-                    for(const Train_1_beebook_deterministic_MC_POR_v3::ROUTES& param : _trid_7) {
-                        Train_1_beebook_deterministic_MC_POR_v3::ROUTES _tmp_1 = param;
-
-                        Train_1_beebook_deterministic_MC_POR_v3 copiedState = state._copy();
-                        Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_point_positionning readState = state._projected_state_for_point_positionning();
-
-                        auto _OpCache_with_parameter_point_positionning_ptr = _OpCache_point_positionning.find(param);
-                        if(_OpCache_with_parameter_point_positionning_ptr == _OpCache_point_positionning.end()) {
-                            copiedState.point_positionning(_tmp_1);
-                            Train_1_beebook_deterministic_MC_POR_v3::_ProjectionWrite_point_positionning writeState = copiedState._update_for_point_positionning();
-                            std::unordered_map<Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_point_positionning, Train_1_beebook_deterministic_MC_POR_v3::_ProjectionWrite_point_positionning, Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_point_positionning::Hash, Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_point_positionning::HashEqual> _OpCache_with_parameter_point_positionning;
-                            _OpCache_with_parameter_point_positionning.insert({readState, writeState});
-                            {
-                                std::unique_lock<std::mutex> _ProjectionRead_point_positionning_lock(_ProjectionRead_point_positionning_mutex);
-                                _OpCache_point_positionning.insert({param, _OpCache_with_parameter_point_positionning});
-                            }
-
-                        } else {
-                            std::unordered_map<Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_point_positionning, Train_1_beebook_deterministic_MC_POR_v3::_ProjectionWrite_point_positionning, Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_point_positionning::Hash, Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_point_positionning::HashEqual> _OpCache_with_parameter_point_positionning = _OpCache_with_parameter_point_positionning_ptr->second;
-                            auto writeState_ptr = _OpCache_with_parameter_point_positionning.find(readState);
-                            if(writeState_ptr != _OpCache_with_parameter_point_positionning.end()) {
-                                Train_1_beebook_deterministic_MC_POR_v3::_ProjectionWrite_point_positionning writeState = writeState_ptr->second;
-                                copiedState._apply_update_for_point_positionning(writeState);
-                            } else {
-                                copiedState.point_positionning(_tmp_1);
-                                Train_1_beebook_deterministic_MC_POR_v3::_ProjectionWrite_point_positionning writeState = copiedState._update_for_point_positionning();
-                                {
-                                    std::unique_lock<std::mutex> _ProjectionRead_point_positionning_lock(_ProjectionRead_point_positionning_mutex);
-                                    _OpCache_with_parameter_point_positionning.insert({readState, writeState});
-                                }
-                            }
-                        }
-
-                        copiedState.stateAccessedVia = "point_positionning";
-                        result.insert(copiedState);
-                        transitions += 1;
-                    }
                 } else {
-                    BSet<Train_1_beebook_deterministic_MC_POR_v3::ROUTES> _trid_7 = _trid_7_ptr->second;
-                    for(const Train_1_beebook_deterministic_MC_POR_v3::ROUTES& param : _trid_7) {
-                        Train_1_beebook_deterministic_MC_POR_v3::ROUTES _tmp_1 = param;
+                    _trid_7 = _trid_7_ptr->second;
+                }
 
-                        Train_1_beebook_deterministic_MC_POR_v3 copiedState = state._copy();
-                        Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_point_positionning readState = state._projected_state_for_point_positionning();
+                for(const Train_1_beebook_deterministic_MC_POR_v3::ROUTES& param : _trid_7) {
+                    Train_1_beebook_deterministic_MC_POR_v3::ROUTES _tmp_1 = param;
 
-                        auto _OpCache_with_parameter_point_positionning_ptr = _OpCache_point_positionning.find(param);
-                        if(_OpCache_with_parameter_point_positionning_ptr == _OpCache_point_positionning.end()) {
-                            copiedState.point_positionning(_tmp_1);
-                            Train_1_beebook_deterministic_MC_POR_v3::_ProjectionWrite_point_positionning writeState = copiedState._update_for_point_positionning();
-                            std::unordered_map<Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_point_positionning, Train_1_beebook_deterministic_MC_POR_v3::_ProjectionWrite_point_positionning, Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_point_positionning::Hash, Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_point_positionning::HashEqual> _OpCache_with_parameter_point_positionning;
-                            _OpCache_with_parameter_point_positionning.insert({readState, writeState});
-                            {
-                                std::unique_lock<std::mutex> _ProjectionRead_point_positionning_lock(_ProjectionRead_point_positionning_mutex);
-                                _OpCache_point_positionning.insert({param, _OpCache_with_parameter_point_positionning});
-                            }
+                    Train_1_beebook_deterministic_MC_POR_v3 copiedState = state._copy();
+                    Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_point_positionning readState = state._projected_state_for_point_positionning();
 
-                        } else {
-                            std::unordered_map<Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_point_positionning, Train_1_beebook_deterministic_MC_POR_v3::_ProjectionWrite_point_positionning, Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_point_positionning::Hash, Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_point_positionning::HashEqual> _OpCache_with_parameter_point_positionning = _OpCache_with_parameter_point_positionning_ptr->second;
-                            auto writeState_ptr = _OpCache_with_parameter_point_positionning.find(readState);
-                            if(writeState_ptr != _OpCache_with_parameter_point_positionning.end()) {
-                                Train_1_beebook_deterministic_MC_POR_v3::_ProjectionWrite_point_positionning writeState = writeState_ptr->second;
-                                copiedState._apply_update_for_point_positionning(writeState);
-                            } else {
-                                copiedState.point_positionning(_tmp_1);
-                                Train_1_beebook_deterministic_MC_POR_v3::_ProjectionWrite_point_positionning writeState = copiedState._update_for_point_positionning();
-                                {
-                                    std::unique_lock<std::mutex> _ProjectionRead_point_positionning_lock(_ProjectionRead_point_positionning_mutex);
-                                    _OpCache_with_parameter_point_positionning.insert({readState, writeState});
-                                }
-                            }
+                    auto _OpCache_with_parameter_point_positionning_ptr = _OpCache_point_positionning.find(param);
+                    if(_OpCache_with_parameter_point_positionning_ptr == _OpCache_point_positionning.end()) {
+                        copiedState.point_positionning(_tmp_1);
+                        Train_1_beebook_deterministic_MC_POR_v3::_ProjectionWrite_point_positionning writeState = copiedState._update_for_point_positionning();
+                        std::unordered_map<Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_point_positionning, Train_1_beebook_deterministic_MC_POR_v3::_ProjectionWrite_point_positionning, Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_point_positionning::Hash, Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_point_positionning::HashEqual> _OpCache_with_parameter_point_positionning;
+                        _OpCache_with_parameter_point_positionning.insert({readState, writeState});
+                        {
+                            std::unique_lock<std::mutex> _ProjectionRead_point_positionning_lock(_ProjectionRead_point_positionning_mutex);
+                            _OpCache_point_positionning.insert({param, _OpCache_with_parameter_point_positionning});
                         }
 
-                        copiedState.stateAccessedVia = "point_positionning";
-                        result.insert(copiedState);
+                    } else {
+                        std::unordered_map<Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_point_positionning, Train_1_beebook_deterministic_MC_POR_v3::_ProjectionWrite_point_positionning, Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_point_positionning::Hash, Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_point_positionning::HashEqual> _OpCache_with_parameter_point_positionning = _OpCache_with_parameter_point_positionning_ptr->second;
+                        auto writeState_ptr = _OpCache_with_parameter_point_positionning.find(readState);
+                        if(writeState_ptr != _OpCache_with_parameter_point_positionning.end()) {
+                            Train_1_beebook_deterministic_MC_POR_v3::_ProjectionWrite_point_positionning writeState = writeState_ptr->second;
+                            copiedState._apply_update_for_point_positionning(writeState);
+                        } else {
+                            copiedState.point_positionning(_tmp_1);
+                            Train_1_beebook_deterministic_MC_POR_v3::_ProjectionWrite_point_positionning writeState = copiedState._update_for_point_positionning();
+                            {
+                                std::unique_lock<std::mutex> _ProjectionRead_point_positionning_lock(_ProjectionRead_point_positionning_mutex);
+                                _OpCache_with_parameter_point_positionning.insert({readState, writeState});
+                            }
+                        }
+                    }
+
+                    copiedState.stateAccessedVia = "point_positionning";
+                    result.insert(copiedState);
+                    {
+                        std::unique_lock<std::mutex> lock(mutex);
                         transitions += 1;
                     }
                 }
                 Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead__tr_route_formation read__tr_route_formation_state = state._projected_state_for__tr_route_formation();
+                BSet<Train_1_beebook_deterministic_MC_POR_v3::ROUTES> _trid_8;
                 auto _trid_8_ptr = _OpCache_tr_route_formation.find(read__tr_route_formation_state);
                 if(_trid_8_ptr == _OpCache_tr_route_formation.end()) {
-                    BSet<Train_1_beebook_deterministic_MC_POR_v3::ROUTES> _trid_8 = state._tr_route_formation();
+                    _trid_8 = state._tr_route_formation();
                     {
                         std::unique_lock<std::mutex> _ProjectionRead__tr_route_formation_lock(_ProjectionRead__tr_route_formation_mutex);
                         _OpCache_tr_route_formation.insert({read__tr_route_formation_state, _trid_8});
                     }
-                    for(const Train_1_beebook_deterministic_MC_POR_v3::ROUTES& param : _trid_8) {
-                        Train_1_beebook_deterministic_MC_POR_v3::ROUTES _tmp_1 = param;
-
-                        Train_1_beebook_deterministic_MC_POR_v3 copiedState = state._copy();
-                        Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_route_formation readState = state._projected_state_for_route_formation();
-
-                        auto _OpCache_with_parameter_route_formation_ptr = _OpCache_route_formation.find(param);
-                        if(_OpCache_with_parameter_route_formation_ptr == _OpCache_route_formation.end()) {
-                            copiedState.route_formation(_tmp_1);
-                            Train_1_beebook_deterministic_MC_POR_v3::_ProjectionWrite_route_formation writeState = copiedState._update_for_route_formation();
-                            std::unordered_map<Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_route_formation, Train_1_beebook_deterministic_MC_POR_v3::_ProjectionWrite_route_formation, Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_route_formation::Hash, Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_route_formation::HashEqual> _OpCache_with_parameter_route_formation;
-                            _OpCache_with_parameter_route_formation.insert({readState, writeState});
-                            {
-                                std::unique_lock<std::mutex> _ProjectionRead_route_formation_lock(_ProjectionRead_route_formation_mutex);
-                                _OpCache_route_formation.insert({param, _OpCache_with_parameter_route_formation});
-                            }
-
-                        } else {
-                            std::unordered_map<Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_route_formation, Train_1_beebook_deterministic_MC_POR_v3::_ProjectionWrite_route_formation, Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_route_formation::Hash, Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_route_formation::HashEqual> _OpCache_with_parameter_route_formation = _OpCache_with_parameter_route_formation_ptr->second;
-                            auto writeState_ptr = _OpCache_with_parameter_route_formation.find(readState);
-                            if(writeState_ptr != _OpCache_with_parameter_route_formation.end()) {
-                                Train_1_beebook_deterministic_MC_POR_v3::_ProjectionWrite_route_formation writeState = writeState_ptr->second;
-                                copiedState._apply_update_for_route_formation(writeState);
-                            } else {
-                                copiedState.route_formation(_tmp_1);
-                                Train_1_beebook_deterministic_MC_POR_v3::_ProjectionWrite_route_formation writeState = copiedState._update_for_route_formation();
-                                {
-                                    std::unique_lock<std::mutex> _ProjectionRead_route_formation_lock(_ProjectionRead_route_formation_mutex);
-                                    _OpCache_with_parameter_route_formation.insert({readState, writeState});
-                                }
-                            }
-                        }
-
-                        copiedState.stateAccessedVia = "route_formation";
-                        result.insert(copiedState);
-                        transitions += 1;
-                    }
                 } else {
-                    BSet<Train_1_beebook_deterministic_MC_POR_v3::ROUTES> _trid_8 = _trid_8_ptr->second;
-                    for(const Train_1_beebook_deterministic_MC_POR_v3::ROUTES& param : _trid_8) {
-                        Train_1_beebook_deterministic_MC_POR_v3::ROUTES _tmp_1 = param;
+                    _trid_8 = _trid_8_ptr->second;
+                }
 
-                        Train_1_beebook_deterministic_MC_POR_v3 copiedState = state._copy();
-                        Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_route_formation readState = state._projected_state_for_route_formation();
+                for(const Train_1_beebook_deterministic_MC_POR_v3::ROUTES& param : _trid_8) {
+                    Train_1_beebook_deterministic_MC_POR_v3::ROUTES _tmp_1 = param;
 
-                        auto _OpCache_with_parameter_route_formation_ptr = _OpCache_route_formation.find(param);
-                        if(_OpCache_with_parameter_route_formation_ptr == _OpCache_route_formation.end()) {
-                            copiedState.route_formation(_tmp_1);
-                            Train_1_beebook_deterministic_MC_POR_v3::_ProjectionWrite_route_formation writeState = copiedState._update_for_route_formation();
-                            std::unordered_map<Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_route_formation, Train_1_beebook_deterministic_MC_POR_v3::_ProjectionWrite_route_formation, Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_route_formation::Hash, Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_route_formation::HashEqual> _OpCache_with_parameter_route_formation;
-                            _OpCache_with_parameter_route_formation.insert({readState, writeState});
-                            {
-                                std::unique_lock<std::mutex> _ProjectionRead_route_formation_lock(_ProjectionRead_route_formation_mutex);
-                                _OpCache_route_formation.insert({param, _OpCache_with_parameter_route_formation});
-                            }
+                    Train_1_beebook_deterministic_MC_POR_v3 copiedState = state._copy();
+                    Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_route_formation readState = state._projected_state_for_route_formation();
 
-                        } else {
-                            std::unordered_map<Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_route_formation, Train_1_beebook_deterministic_MC_POR_v3::_ProjectionWrite_route_formation, Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_route_formation::Hash, Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_route_formation::HashEqual> _OpCache_with_parameter_route_formation = _OpCache_with_parameter_route_formation_ptr->second;
-                            auto writeState_ptr = _OpCache_with_parameter_route_formation.find(readState);
-                            if(writeState_ptr != _OpCache_with_parameter_route_formation.end()) {
-                                Train_1_beebook_deterministic_MC_POR_v3::_ProjectionWrite_route_formation writeState = writeState_ptr->second;
-                                copiedState._apply_update_for_route_formation(writeState);
-                            } else {
-                                copiedState.route_formation(_tmp_1);
-                                Train_1_beebook_deterministic_MC_POR_v3::_ProjectionWrite_route_formation writeState = copiedState._update_for_route_formation();
-                                {
-                                    std::unique_lock<std::mutex> _ProjectionRead_route_formation_lock(_ProjectionRead_route_formation_mutex);
-                                    _OpCache_with_parameter_route_formation.insert({readState, writeState});
-                                }
-                            }
+                    auto _OpCache_with_parameter_route_formation_ptr = _OpCache_route_formation.find(param);
+                    if(_OpCache_with_parameter_route_formation_ptr == _OpCache_route_formation.end()) {
+                        copiedState.route_formation(_tmp_1);
+                        Train_1_beebook_deterministic_MC_POR_v3::_ProjectionWrite_route_formation writeState = copiedState._update_for_route_formation();
+                        std::unordered_map<Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_route_formation, Train_1_beebook_deterministic_MC_POR_v3::_ProjectionWrite_route_formation, Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_route_formation::Hash, Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_route_formation::HashEqual> _OpCache_with_parameter_route_formation;
+                        _OpCache_with_parameter_route_formation.insert({readState, writeState});
+                        {
+                            std::unique_lock<std::mutex> _ProjectionRead_route_formation_lock(_ProjectionRead_route_formation_mutex);
+                            _OpCache_route_formation.insert({param, _OpCache_with_parameter_route_formation});
                         }
 
-                        copiedState.stateAccessedVia = "route_formation";
-                        result.insert(copiedState);
+                    } else {
+                        std::unordered_map<Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_route_formation, Train_1_beebook_deterministic_MC_POR_v3::_ProjectionWrite_route_formation, Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_route_formation::Hash, Train_1_beebook_deterministic_MC_POR_v3::_ProjectionRead_route_formation::HashEqual> _OpCache_with_parameter_route_formation = _OpCache_with_parameter_route_formation_ptr->second;
+                        auto writeState_ptr = _OpCache_with_parameter_route_formation.find(readState);
+                        if(writeState_ptr != _OpCache_with_parameter_route_formation.end()) {
+                            Train_1_beebook_deterministic_MC_POR_v3::_ProjectionWrite_route_formation writeState = writeState_ptr->second;
+                            copiedState._apply_update_for_route_formation(writeState);
+                        } else {
+                            copiedState.route_formation(_tmp_1);
+                            Train_1_beebook_deterministic_MC_POR_v3::_ProjectionWrite_route_formation writeState = copiedState._update_for_route_formation();
+                            {
+                                std::unique_lock<std::mutex> _ProjectionRead_route_formation_lock(_ProjectionRead_route_formation_mutex);
+                                _OpCache_with_parameter_route_formation.insert({readState, writeState});
+                            }
+                        }
+                    }
+
+                    copiedState.stateAccessedVia = "route_formation";
+                    result.insert(copiedState);
+                    {
+                        std::unique_lock<std::mutex> lock(mutex);
                         transitions += 1;
                     }
                 }
@@ -4194,7 +3946,10 @@ class ModelChecker {
                     copiedState.route_reservation(_tmp_1);
                     copiedState.stateAccessedVia = "route_reservation";
                     result.insert(copiedState);
-                    transitions += 1;
+                    {
+                        std::unique_lock<std::mutex> lock(mutex);
+                        transitions += 1;
+                    }
                 }
                 BSet<Train_1_beebook_deterministic_MC_POR_v3::ROUTES> _trid_2 = state._tr_route_freeing();
                 for(const Train_1_beebook_deterministic_MC_POR_v3::ROUTES& param : _trid_2) {
@@ -4204,7 +3959,10 @@ class ModelChecker {
                     copiedState.route_freeing(_tmp_1);
                     copiedState.stateAccessedVia = "route_freeing";
                     result.insert(copiedState);
-                    transitions += 1;
+                    {
+                        std::unique_lock<std::mutex> lock(mutex);
+                        transitions += 1;
+                    }
                 }
                 BSet<Train_1_beebook_deterministic_MC_POR_v3::ROUTES> _trid_3 = state._tr_FRONT_MOVE_1();
                 for(const Train_1_beebook_deterministic_MC_POR_v3::ROUTES& param : _trid_3) {
@@ -4214,7 +3972,10 @@ class ModelChecker {
                     copiedState.FRONT_MOVE_1(_tmp_1);
                     copiedState.stateAccessedVia = "FRONT_MOVE_1";
                     result.insert(copiedState);
-                    transitions += 1;
+                    {
+                        std::unique_lock<std::mutex> lock(mutex);
+                        transitions += 1;
+                    }
                 }
                 BSet<Train_1_beebook_deterministic_MC_POR_v3::BLOCKS> _trid_4 = state._tr_FRONT_MOVE_2();
                 for(const Train_1_beebook_deterministic_MC_POR_v3::BLOCKS& param : _trid_4) {
@@ -4224,7 +3985,10 @@ class ModelChecker {
                     copiedState.FRONT_MOVE_2(_tmp_1);
                     copiedState.stateAccessedVia = "FRONT_MOVE_2";
                     result.insert(copiedState);
-                    transitions += 1;
+                    {
+                        std::unique_lock<std::mutex> lock(mutex);
+                        transitions += 1;
+                    }
                 }
                 BSet<Train_1_beebook_deterministic_MC_POR_v3::BLOCKS> _trid_5 = state._tr_BACK_MOVE_1();
                 for(const Train_1_beebook_deterministic_MC_POR_v3::BLOCKS& param : _trid_5) {
@@ -4234,7 +3998,10 @@ class ModelChecker {
                     copiedState.BACK_MOVE_1(_tmp_1);
                     copiedState.stateAccessedVia = "BACK_MOVE_1";
                     result.insert(copiedState);
-                    transitions += 1;
+                    {
+                        std::unique_lock<std::mutex> lock(mutex);
+                        transitions += 1;
+                    }
                 }
                 BSet<Train_1_beebook_deterministic_MC_POR_v3::BLOCKS> _trid_6 = state._tr_BACK_MOVE_2();
                 for(const Train_1_beebook_deterministic_MC_POR_v3::BLOCKS& param : _trid_6) {
@@ -4244,7 +4011,10 @@ class ModelChecker {
                     copiedState.BACK_MOVE_2(_tmp_1);
                     copiedState.stateAccessedVia = "BACK_MOVE_2";
                     result.insert(copiedState);
-                    transitions += 1;
+                    {
+                        std::unique_lock<std::mutex> lock(mutex);
+                        transitions += 1;
+                    }
                 }
                 BSet<Train_1_beebook_deterministic_MC_POR_v3::ROUTES> _trid_7 = state._tr_point_positionning();
                 for(const Train_1_beebook_deterministic_MC_POR_v3::ROUTES& param : _trid_7) {
@@ -4254,7 +4024,10 @@ class ModelChecker {
                     copiedState.point_positionning(_tmp_1);
                     copiedState.stateAccessedVia = "point_positionning";
                     result.insert(copiedState);
-                    transitions += 1;
+                    {
+                        std::unique_lock<std::mutex> lock(mutex);
+                        transitions += 1;
+                    }
                 }
                 BSet<Train_1_beebook_deterministic_MC_POR_v3::ROUTES> _trid_8 = state._tr_route_formation();
                 for(const Train_1_beebook_deterministic_MC_POR_v3::ROUTES& param : _trid_8) {
@@ -4264,7 +4037,10 @@ class ModelChecker {
                     copiedState.route_formation(_tmp_1);
                     copiedState.stateAccessedVia = "route_formation";
                     result.insert(copiedState);
-                    transitions += 1;
+                    {
+                        std::unique_lock<std::mutex> lock(mutex);
+                        transitions += 1;
+                    }
                 }
 
             }

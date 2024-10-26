@@ -10,7 +10,6 @@
 #include <atomic>
 #include <any>
 #include <mutex>
-#include <shared_mutex>
 #include <future>
 #include <boost/asio/post.hpp>
 #include <boost/asio/thread_pool.hpp>
@@ -1540,12 +1539,16 @@ class ModelChecker {
             states.insert(machine);
             unvisitedStates.push_back(machine);
 
-            std::atomic<bool> stopThreads(false);
+            std::atomic<bool> stopThreads;
+            stopThreads = false;
             std::atomic<int> possibleQueueChanges;
             possibleQueueChanges = 0;
 
-            while(!unvisitedStates.empty() && !stopThreads.load()) {
-                possibleQueueChanges.fetch_add(1);
+            std::atomic<bool> waitFlag;
+            waitFlag = true;
+
+            while(!unvisitedStates.empty() && !stopThreads) {
+                possibleQueueChanges += 1;
                 sort_m2_data1000_MC state = next();
                 std::packaged_task<void()> task([&, state] {
                     std::unordered_set<sort_m2_data1000_MC, sort_m2_data1000_MC::Hash, sort_m2_data1000_MC::HashEqual> nextStates = generateNextStates(state);
@@ -1566,12 +1569,14 @@ class ModelChecker {
                         }
                     }
 
-                    possibleQueueChanges.fetch_sub(1);
                     {
                         std::unique_lock<std::mutex> lock(mutex);
-                        if (!unvisitedStates.empty() || possibleQueueChanges.load() == 0) {
+                        possibleQueueChanges -= 1;
+                        int running = possibleQueueChanges;
+                        if (!unvisitedStates.empty() || running == 0) {
                             {
                                 std::unique_lock<std::mutex> lock(waitMutex);
+                                waitFlag = false;
                                 waitCV.notify_one();
                             }
                         }
@@ -1581,24 +1586,27 @@ class ModelChecker {
                     if(invariantViolated(state)) {
                         invariantViolatedBool = true;
                         counterExampleState = state;
-                        stopThreads.store(true);
+                        stopThreads = true;
                     }
 
                     if(nextStates.empty()) {
                         deadlockDetected = true;
                         counterExampleState = state;
-                        stopThreads.store(true);
+                        stopThreads = true;
                     }
 
                 });
 
+                waitFlag = true;
                 boost::asio::post(workers, std::move(task));
 
                 {
                     std::unique_lock<std::mutex> lock(waitMutex);
-                    waitCV.wait(lock, [&] {
-                        return !unvisitedStates.empty() || possibleQueueChanges == 0;
-                    });
+                    if(unvisitedStates.empty() && possibleQueueChanges > 0) {
+                        waitCV.wait(lock, [&] {
+                            return waitFlag == false;
+                        });
+                    }
                 }
             }
             workers.join();
@@ -1687,7 +1695,10 @@ class ModelChecker {
 
                     copiedState.stateAccessedVia = "progress";
                     result.insert(copiedState);
-                    transitions += 1;
+                    {
+                        std::unique_lock<std::mutex> lock(mutex);
+                        transitions += 1;
+                    }
                 }
                 sort_m2_data1000_MC::_ProjectionRead__tr_prog1 read__tr_prog1_state = state._projected_state_for__tr_prog1();
                 bool _trid_2;
@@ -1734,7 +1745,10 @@ class ModelChecker {
 
                     copiedState.stateAccessedVia = "prog1";
                     result.insert(copiedState);
-                    transitions += 1;
+                    {
+                        std::unique_lock<std::mutex> lock(mutex);
+                        transitions += 1;
+                    }
                 }
                 sort_m2_data1000_MC::_ProjectionRead__tr_prog2 read__tr_prog2_state = state._projected_state_for__tr_prog2();
                 bool _trid_3;
@@ -1781,7 +1795,10 @@ class ModelChecker {
 
                     copiedState.stateAccessedVia = "prog2";
                     result.insert(copiedState);
-                    transitions += 1;
+                    {
+                        std::unique_lock<std::mutex> lock(mutex);
+                        transitions += 1;
+                    }
                 }
                 sort_m2_data1000_MC::_ProjectionRead__tr_final_evt read__tr_final_evt_state = state._projected_state_for__tr_final_evt();
                 bool _trid_4;
@@ -1828,7 +1845,10 @@ class ModelChecker {
 
                     copiedState.stateAccessedVia = "final_evt";
                     result.insert(copiedState);
-                    transitions += 1;
+                    {
+                        std::unique_lock<std::mutex> lock(mutex);
+                        transitions += 1;
+                    }
                 }
 
             } else {
@@ -1837,28 +1857,40 @@ class ModelChecker {
                     copiedState.progress();
                     copiedState.stateAccessedVia = "progress";
                     result.insert(copiedState);
-                    transitions += 1;
+                    {
+                        std::unique_lock<std::mutex> lock(mutex);
+                        transitions += 1;
+                    }
                 }
                 if(state._tr_prog1()) {
                     sort_m2_data1000_MC copiedState = state._copy();
                     copiedState.prog1();
                     copiedState.stateAccessedVia = "prog1";
                     result.insert(copiedState);
-                    transitions += 1;
+                    {
+                        std::unique_lock<std::mutex> lock(mutex);
+                        transitions += 1;
+                    }
                 }
                 if(state._tr_prog2()) {
                     sort_m2_data1000_MC copiedState = state._copy();
                     copiedState.prog2();
                     copiedState.stateAccessedVia = "prog2";
                     result.insert(copiedState);
-                    transitions += 1;
+                    {
+                        std::unique_lock<std::mutex> lock(mutex);
+                        transitions += 1;
+                    }
                 }
                 if(state._tr_final_evt()) {
                     sort_m2_data1000_MC copiedState = state._copy();
                     copiedState.final_evt();
                     copiedState.stateAccessedVia = "final_evt";
                     result.insert(copiedState);
-                    transitions += 1;
+                    {
+                        std::unique_lock<std::mutex> lock(mutex);
+                        transitions += 1;
+                    }
                 }
 
             }

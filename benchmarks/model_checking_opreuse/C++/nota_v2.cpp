@@ -10,7 +10,6 @@
 #include <atomic>
 #include <any>
 #include <mutex>
-#include <shared_mutex>
 #include <future>
 #include <boost/asio/post.hpp>
 #include <boost/asio/thread_pool.hpp>
@@ -5261,12 +5260,16 @@ class ModelChecker {
             states.insert(machine);
             unvisitedStates.push_back(machine);
 
-            std::atomic<bool> stopThreads(false);
+            std::atomic<bool> stopThreads;
+            stopThreads = false;
             std::atomic<int> possibleQueueChanges;
             possibleQueueChanges = 0;
 
-            while(!unvisitedStates.empty() && !stopThreads.load()) {
-                possibleQueueChanges.fetch_add(1);
+            std::atomic<bool> waitFlag;
+            waitFlag = true;
+
+            while(!unvisitedStates.empty() && !stopThreads) {
+                possibleQueueChanges += 1;
                 nota_v2 state = next();
                 std::packaged_task<void()> task([&, state] {
                     std::unordered_set<nota_v2, nota_v2::Hash, nota_v2::HashEqual> nextStates = generateNextStates(state);
@@ -5287,12 +5290,14 @@ class ModelChecker {
                         }
                     }
 
-                    possibleQueueChanges.fetch_sub(1);
                     {
                         std::unique_lock<std::mutex> lock(mutex);
-                        if (!unvisitedStates.empty() || possibleQueueChanges.load() == 0) {
+                        possibleQueueChanges -= 1;
+                        int running = possibleQueueChanges;
+                        if (!unvisitedStates.empty() || running == 0) {
                             {
                                 std::unique_lock<std::mutex> lock(waitMutex);
+                                waitFlag = false;
                                 waitCV.notify_one();
                             }
                         }
@@ -5302,24 +5307,27 @@ class ModelChecker {
                     if(invariantViolated(state)) {
                         invariantViolatedBool = true;
                         counterExampleState = state;
-                        stopThreads.store(true);
+                        stopThreads = true;
                     }
 
                     if(nextStates.empty()) {
                         deadlockDetected = true;
                         counterExampleState = state;
-                        stopThreads.store(true);
+                        stopThreads = true;
                     }
 
                 });
 
+                waitFlag = true;
                 boost::asio::post(workers, std::move(task));
 
                 {
                     std::unique_lock<std::mutex> lock(waitMutex);
-                    waitCV.wait(lock, [&] {
-                        return !unvisitedStates.empty() || possibleQueueChanges == 0;
-                    });
+                    if(unvisitedStates.empty() && possibleQueueChanges > 0) {
+                        waitCV.wait(lock, [&] {
+                            return waitFlag == false;
+                        });
+                    }
                 }
             }
             workers.join();
@@ -5364,1262 +5372,779 @@ class ModelChecker {
             std::unordered_set<nota_v2, nota_v2::Hash, nota_v2::HashEqual> result = std::unordered_set<nota_v2, nota_v2::Hash, nota_v2::HashEqual>();
             if(isCaching) {
                 nota_v2::_ProjectionRead__tr_constructor_interconnectNode read__tr_constructor_interconnectNode_state = state._projected_state_for__tr_constructor_interconnectNode();
+                BSet<nota_v2::INTERCONNECTNODE> _trid_1;
                 auto _trid_1_ptr = _OpCache_tr_constructor_interconnectNode.find(read__tr_constructor_interconnectNode_state);
                 if(_trid_1_ptr == _OpCache_tr_constructor_interconnectNode.end()) {
-                    BSet<nota_v2::INTERCONNECTNODE> _trid_1 = state._tr_constructor_interconnectNode();
+                    _trid_1 = state._tr_constructor_interconnectNode();
                     {
                         std::unique_lock<std::mutex> _ProjectionRead__tr_constructor_interconnectNode_lock(_ProjectionRead__tr_constructor_interconnectNode_mutex);
                         _OpCache_tr_constructor_interconnectNode.insert({read__tr_constructor_interconnectNode_state, _trid_1});
                     }
-                    for(const nota_v2::INTERCONNECTNODE& param : _trid_1) {
-                        nota_v2::INTERCONNECTNODE _tmp_1 = param;
-
-                        nota_v2 copiedState = state._copy();
-                        nota_v2::_ProjectionRead_constructor_interconnectNode readState = state._projected_state_for_constructor_interconnectNode();
-
-                        auto _OpCache_with_parameter_constructor_interconnectNode_ptr = _OpCache_constructor_interconnectNode.find(param);
-                        if(_OpCache_with_parameter_constructor_interconnectNode_ptr == _OpCache_constructor_interconnectNode.end()) {
-                            copiedState.constructor_interconnectNode(_tmp_1);
-                            nota_v2::_ProjectionWrite_constructor_interconnectNode writeState = copiedState._update_for_constructor_interconnectNode();
-                            std::unordered_map<nota_v2::_ProjectionRead_constructor_interconnectNode, nota_v2::_ProjectionWrite_constructor_interconnectNode, nota_v2::_ProjectionRead_constructor_interconnectNode::Hash, nota_v2::_ProjectionRead_constructor_interconnectNode::HashEqual> _OpCache_with_parameter_constructor_interconnectNode;
-                            _OpCache_with_parameter_constructor_interconnectNode.insert({readState, writeState});
-                            {
-                                std::unique_lock<std::mutex> _ProjectionRead_constructor_interconnectNode_lock(_ProjectionRead_constructor_interconnectNode_mutex);
-                                _OpCache_constructor_interconnectNode.insert({param, _OpCache_with_parameter_constructor_interconnectNode});
-                            }
-
-                        } else {
-                            std::unordered_map<nota_v2::_ProjectionRead_constructor_interconnectNode, nota_v2::_ProjectionWrite_constructor_interconnectNode, nota_v2::_ProjectionRead_constructor_interconnectNode::Hash, nota_v2::_ProjectionRead_constructor_interconnectNode::HashEqual> _OpCache_with_parameter_constructor_interconnectNode = _OpCache_with_parameter_constructor_interconnectNode_ptr->second;
-                            auto writeState_ptr = _OpCache_with_parameter_constructor_interconnectNode.find(readState);
-                            if(writeState_ptr != _OpCache_with_parameter_constructor_interconnectNode.end()) {
-                                nota_v2::_ProjectionWrite_constructor_interconnectNode writeState = writeState_ptr->second;
-                                copiedState._apply_update_for_constructor_interconnectNode(writeState);
-                            } else {
-                                copiedState.constructor_interconnectNode(_tmp_1);
-                                nota_v2::_ProjectionWrite_constructor_interconnectNode writeState = copiedState._update_for_constructor_interconnectNode();
-                                {
-                                    std::unique_lock<std::mutex> _ProjectionRead_constructor_interconnectNode_lock(_ProjectionRead_constructor_interconnectNode_mutex);
-                                    _OpCache_with_parameter_constructor_interconnectNode.insert({readState, writeState});
-                                }
-                            }
-                        }
-
-                        copiedState.stateAccessedVia = "constructor_interconnectNode";
-                        result.insert(copiedState);
-                        transitions += 1;
-                    }
                 } else {
-                    BSet<nota_v2::INTERCONNECTNODE> _trid_1 = _trid_1_ptr->second;
-                    for(const nota_v2::INTERCONNECTNODE& param : _trid_1) {
-                        nota_v2::INTERCONNECTNODE _tmp_1 = param;
+                    _trid_1 = _trid_1_ptr->second;
+                }
 
-                        nota_v2 copiedState = state._copy();
-                        nota_v2::_ProjectionRead_constructor_interconnectNode readState = state._projected_state_for_constructor_interconnectNode();
+                for(const nota_v2::INTERCONNECTNODE& param : _trid_1) {
+                    nota_v2::INTERCONNECTNODE _tmp_1 = param;
 
-                        auto _OpCache_with_parameter_constructor_interconnectNode_ptr = _OpCache_constructor_interconnectNode.find(param);
-                        if(_OpCache_with_parameter_constructor_interconnectNode_ptr == _OpCache_constructor_interconnectNode.end()) {
-                            copiedState.constructor_interconnectNode(_tmp_1);
-                            nota_v2::_ProjectionWrite_constructor_interconnectNode writeState = copiedState._update_for_constructor_interconnectNode();
-                            std::unordered_map<nota_v2::_ProjectionRead_constructor_interconnectNode, nota_v2::_ProjectionWrite_constructor_interconnectNode, nota_v2::_ProjectionRead_constructor_interconnectNode::Hash, nota_v2::_ProjectionRead_constructor_interconnectNode::HashEqual> _OpCache_with_parameter_constructor_interconnectNode;
-                            _OpCache_with_parameter_constructor_interconnectNode.insert({readState, writeState});
-                            {
-                                std::unique_lock<std::mutex> _ProjectionRead_constructor_interconnectNode_lock(_ProjectionRead_constructor_interconnectNode_mutex);
-                                _OpCache_constructor_interconnectNode.insert({param, _OpCache_with_parameter_constructor_interconnectNode});
-                            }
+                    nota_v2 copiedState = state._copy();
+                    nota_v2::_ProjectionRead_constructor_interconnectNode readState = state._projected_state_for_constructor_interconnectNode();
 
-                        } else {
-                            std::unordered_map<nota_v2::_ProjectionRead_constructor_interconnectNode, nota_v2::_ProjectionWrite_constructor_interconnectNode, nota_v2::_ProjectionRead_constructor_interconnectNode::Hash, nota_v2::_ProjectionRead_constructor_interconnectNode::HashEqual> _OpCache_with_parameter_constructor_interconnectNode = _OpCache_with_parameter_constructor_interconnectNode_ptr->second;
-                            auto writeState_ptr = _OpCache_with_parameter_constructor_interconnectNode.find(readState);
-                            if(writeState_ptr != _OpCache_with_parameter_constructor_interconnectNode.end()) {
-                                nota_v2::_ProjectionWrite_constructor_interconnectNode writeState = writeState_ptr->second;
-                                copiedState._apply_update_for_constructor_interconnectNode(writeState);
-                            } else {
-                                copiedState.constructor_interconnectNode(_tmp_1);
-                                nota_v2::_ProjectionWrite_constructor_interconnectNode writeState = copiedState._update_for_constructor_interconnectNode();
-                                {
-                                    std::unique_lock<std::mutex> _ProjectionRead_constructor_interconnectNode_lock(_ProjectionRead_constructor_interconnectNode_mutex);
-                                    _OpCache_with_parameter_constructor_interconnectNode.insert({readState, writeState});
-                                }
-                            }
+                    auto _OpCache_with_parameter_constructor_interconnectNode_ptr = _OpCache_constructor_interconnectNode.find(param);
+                    if(_OpCache_with_parameter_constructor_interconnectNode_ptr == _OpCache_constructor_interconnectNode.end()) {
+                        copiedState.constructor_interconnectNode(_tmp_1);
+                        nota_v2::_ProjectionWrite_constructor_interconnectNode writeState = copiedState._update_for_constructor_interconnectNode();
+                        std::unordered_map<nota_v2::_ProjectionRead_constructor_interconnectNode, nota_v2::_ProjectionWrite_constructor_interconnectNode, nota_v2::_ProjectionRead_constructor_interconnectNode::Hash, nota_v2::_ProjectionRead_constructor_interconnectNode::HashEqual> _OpCache_with_parameter_constructor_interconnectNode;
+                        _OpCache_with_parameter_constructor_interconnectNode.insert({readState, writeState});
+                        {
+                            std::unique_lock<std::mutex> _ProjectionRead_constructor_interconnectNode_lock(_ProjectionRead_constructor_interconnectNode_mutex);
+                            _OpCache_constructor_interconnectNode.insert({param, _OpCache_with_parameter_constructor_interconnectNode});
                         }
 
-                        copiedState.stateAccessedVia = "constructor_interconnectNode";
-                        result.insert(copiedState);
+                    } else {
+                        std::unordered_map<nota_v2::_ProjectionRead_constructor_interconnectNode, nota_v2::_ProjectionWrite_constructor_interconnectNode, nota_v2::_ProjectionRead_constructor_interconnectNode::Hash, nota_v2::_ProjectionRead_constructor_interconnectNode::HashEqual> _OpCache_with_parameter_constructor_interconnectNode = _OpCache_with_parameter_constructor_interconnectNode_ptr->second;
+                        auto writeState_ptr = _OpCache_with_parameter_constructor_interconnectNode.find(readState);
+                        if(writeState_ptr != _OpCache_with_parameter_constructor_interconnectNode.end()) {
+                            nota_v2::_ProjectionWrite_constructor_interconnectNode writeState = writeState_ptr->second;
+                            copiedState._apply_update_for_constructor_interconnectNode(writeState);
+                        } else {
+                            copiedState.constructor_interconnectNode(_tmp_1);
+                            nota_v2::_ProjectionWrite_constructor_interconnectNode writeState = copiedState._update_for_constructor_interconnectNode();
+                            {
+                                std::unique_lock<std::mutex> _ProjectionRead_constructor_interconnectNode_lock(_ProjectionRead_constructor_interconnectNode_mutex);
+                                _OpCache_with_parameter_constructor_interconnectNode.insert({readState, writeState});
+                            }
+                        }
+                    }
+
+                    copiedState.stateAccessedVia = "constructor_interconnectNode";
+                    result.insert(copiedState);
+                    {
+                        std::unique_lock<std::mutex> lock(mutex);
                         transitions += 1;
                     }
                 }
                 nota_v2::_ProjectionRead__tr_constructor_resourceManager read__tr_constructor_resourceManager_state = state._projected_state_for__tr_constructor_resourceManager();
+                BSet<nota_v2::RESOURCEMANAGER> _trid_2;
                 auto _trid_2_ptr = _OpCache_tr_constructor_resourceManager.find(read__tr_constructor_resourceManager_state);
                 if(_trid_2_ptr == _OpCache_tr_constructor_resourceManager.end()) {
-                    BSet<nota_v2::RESOURCEMANAGER> _trid_2 = state._tr_constructor_resourceManager();
+                    _trid_2 = state._tr_constructor_resourceManager();
                     {
                         std::unique_lock<std::mutex> _ProjectionRead__tr_constructor_resourceManager_lock(_ProjectionRead__tr_constructor_resourceManager_mutex);
                         _OpCache_tr_constructor_resourceManager.insert({read__tr_constructor_resourceManager_state, _trid_2});
                     }
-                    for(const nota_v2::RESOURCEMANAGER& param : _trid_2) {
-                        nota_v2::RESOURCEMANAGER _tmp_1 = param;
-
-                        nota_v2 copiedState = state._copy();
-                        nota_v2::_ProjectionRead_constructor_resourceManager readState = state._projected_state_for_constructor_resourceManager();
-
-                        auto _OpCache_with_parameter_constructor_resourceManager_ptr = _OpCache_constructor_resourceManager.find(param);
-                        if(_OpCache_with_parameter_constructor_resourceManager_ptr == _OpCache_constructor_resourceManager.end()) {
-                            copiedState.constructor_resourceManager(_tmp_1);
-                            nota_v2::_ProjectionWrite_constructor_resourceManager writeState = copiedState._update_for_constructor_resourceManager();
-                            std::unordered_map<nota_v2::_ProjectionRead_constructor_resourceManager, nota_v2::_ProjectionWrite_constructor_resourceManager, nota_v2::_ProjectionRead_constructor_resourceManager::Hash, nota_v2::_ProjectionRead_constructor_resourceManager::HashEqual> _OpCache_with_parameter_constructor_resourceManager;
-                            _OpCache_with_parameter_constructor_resourceManager.insert({readState, writeState});
-                            {
-                                std::unique_lock<std::mutex> _ProjectionRead_constructor_resourceManager_lock(_ProjectionRead_constructor_resourceManager_mutex);
-                                _OpCache_constructor_resourceManager.insert({param, _OpCache_with_parameter_constructor_resourceManager});
-                            }
-
-                        } else {
-                            std::unordered_map<nota_v2::_ProjectionRead_constructor_resourceManager, nota_v2::_ProjectionWrite_constructor_resourceManager, nota_v2::_ProjectionRead_constructor_resourceManager::Hash, nota_v2::_ProjectionRead_constructor_resourceManager::HashEqual> _OpCache_with_parameter_constructor_resourceManager = _OpCache_with_parameter_constructor_resourceManager_ptr->second;
-                            auto writeState_ptr = _OpCache_with_parameter_constructor_resourceManager.find(readState);
-                            if(writeState_ptr != _OpCache_with_parameter_constructor_resourceManager.end()) {
-                                nota_v2::_ProjectionWrite_constructor_resourceManager writeState = writeState_ptr->second;
-                                copiedState._apply_update_for_constructor_resourceManager(writeState);
-                            } else {
-                                copiedState.constructor_resourceManager(_tmp_1);
-                                nota_v2::_ProjectionWrite_constructor_resourceManager writeState = copiedState._update_for_constructor_resourceManager();
-                                {
-                                    std::unique_lock<std::mutex> _ProjectionRead_constructor_resourceManager_lock(_ProjectionRead_constructor_resourceManager_mutex);
-                                    _OpCache_with_parameter_constructor_resourceManager.insert({readState, writeState});
-                                }
-                            }
-                        }
-
-                        copiedState.stateAccessedVia = "constructor_resourceManager";
-                        result.insert(copiedState);
-                        transitions += 1;
-                    }
                 } else {
-                    BSet<nota_v2::RESOURCEMANAGER> _trid_2 = _trid_2_ptr->second;
-                    for(const nota_v2::RESOURCEMANAGER& param : _trid_2) {
-                        nota_v2::RESOURCEMANAGER _tmp_1 = param;
+                    _trid_2 = _trid_2_ptr->second;
+                }
 
-                        nota_v2 copiedState = state._copy();
-                        nota_v2::_ProjectionRead_constructor_resourceManager readState = state._projected_state_for_constructor_resourceManager();
+                for(const nota_v2::RESOURCEMANAGER& param : _trid_2) {
+                    nota_v2::RESOURCEMANAGER _tmp_1 = param;
 
-                        auto _OpCache_with_parameter_constructor_resourceManager_ptr = _OpCache_constructor_resourceManager.find(param);
-                        if(_OpCache_with_parameter_constructor_resourceManager_ptr == _OpCache_constructor_resourceManager.end()) {
-                            copiedState.constructor_resourceManager(_tmp_1);
-                            nota_v2::_ProjectionWrite_constructor_resourceManager writeState = copiedState._update_for_constructor_resourceManager();
-                            std::unordered_map<nota_v2::_ProjectionRead_constructor_resourceManager, nota_v2::_ProjectionWrite_constructor_resourceManager, nota_v2::_ProjectionRead_constructor_resourceManager::Hash, nota_v2::_ProjectionRead_constructor_resourceManager::HashEqual> _OpCache_with_parameter_constructor_resourceManager;
-                            _OpCache_with_parameter_constructor_resourceManager.insert({readState, writeState});
-                            {
-                                std::unique_lock<std::mutex> _ProjectionRead_constructor_resourceManager_lock(_ProjectionRead_constructor_resourceManager_mutex);
-                                _OpCache_constructor_resourceManager.insert({param, _OpCache_with_parameter_constructor_resourceManager});
-                            }
+                    nota_v2 copiedState = state._copy();
+                    nota_v2::_ProjectionRead_constructor_resourceManager readState = state._projected_state_for_constructor_resourceManager();
 
-                        } else {
-                            std::unordered_map<nota_v2::_ProjectionRead_constructor_resourceManager, nota_v2::_ProjectionWrite_constructor_resourceManager, nota_v2::_ProjectionRead_constructor_resourceManager::Hash, nota_v2::_ProjectionRead_constructor_resourceManager::HashEqual> _OpCache_with_parameter_constructor_resourceManager = _OpCache_with_parameter_constructor_resourceManager_ptr->second;
-                            auto writeState_ptr = _OpCache_with_parameter_constructor_resourceManager.find(readState);
-                            if(writeState_ptr != _OpCache_with_parameter_constructor_resourceManager.end()) {
-                                nota_v2::_ProjectionWrite_constructor_resourceManager writeState = writeState_ptr->second;
-                                copiedState._apply_update_for_constructor_resourceManager(writeState);
-                            } else {
-                                copiedState.constructor_resourceManager(_tmp_1);
-                                nota_v2::_ProjectionWrite_constructor_resourceManager writeState = copiedState._update_for_constructor_resourceManager();
-                                {
-                                    std::unique_lock<std::mutex> _ProjectionRead_constructor_resourceManager_lock(_ProjectionRead_constructor_resourceManager_mutex);
-                                    _OpCache_with_parameter_constructor_resourceManager.insert({readState, writeState});
-                                }
-                            }
+                    auto _OpCache_with_parameter_constructor_resourceManager_ptr = _OpCache_constructor_resourceManager.find(param);
+                    if(_OpCache_with_parameter_constructor_resourceManager_ptr == _OpCache_constructor_resourceManager.end()) {
+                        copiedState.constructor_resourceManager(_tmp_1);
+                        nota_v2::_ProjectionWrite_constructor_resourceManager writeState = copiedState._update_for_constructor_resourceManager();
+                        std::unordered_map<nota_v2::_ProjectionRead_constructor_resourceManager, nota_v2::_ProjectionWrite_constructor_resourceManager, nota_v2::_ProjectionRead_constructor_resourceManager::Hash, nota_v2::_ProjectionRead_constructor_resourceManager::HashEqual> _OpCache_with_parameter_constructor_resourceManager;
+                        _OpCache_with_parameter_constructor_resourceManager.insert({readState, writeState});
+                        {
+                            std::unique_lock<std::mutex> _ProjectionRead_constructor_resourceManager_lock(_ProjectionRead_constructor_resourceManager_mutex);
+                            _OpCache_constructor_resourceManager.insert({param, _OpCache_with_parameter_constructor_resourceManager});
                         }
 
-                        copiedState.stateAccessedVia = "constructor_resourceManager";
-                        result.insert(copiedState);
+                    } else {
+                        std::unordered_map<nota_v2::_ProjectionRead_constructor_resourceManager, nota_v2::_ProjectionWrite_constructor_resourceManager, nota_v2::_ProjectionRead_constructor_resourceManager::Hash, nota_v2::_ProjectionRead_constructor_resourceManager::HashEqual> _OpCache_with_parameter_constructor_resourceManager = _OpCache_with_parameter_constructor_resourceManager_ptr->second;
+                        auto writeState_ptr = _OpCache_with_parameter_constructor_resourceManager.find(readState);
+                        if(writeState_ptr != _OpCache_with_parameter_constructor_resourceManager.end()) {
+                            nota_v2::_ProjectionWrite_constructor_resourceManager writeState = writeState_ptr->second;
+                            copiedState._apply_update_for_constructor_resourceManager(writeState);
+                        } else {
+                            copiedState.constructor_resourceManager(_tmp_1);
+                            nota_v2::_ProjectionWrite_constructor_resourceManager writeState = copiedState._update_for_constructor_resourceManager();
+                            {
+                                std::unique_lock<std::mutex> _ProjectionRead_constructor_resourceManager_lock(_ProjectionRead_constructor_resourceManager_mutex);
+                                _OpCache_with_parameter_constructor_resourceManager.insert({readState, writeState});
+                            }
+                        }
+                    }
+
+                    copiedState.stateAccessedVia = "constructor_resourceManager";
+                    result.insert(copiedState);
+                    {
+                        std::unique_lock<std::mutex> lock(mutex);
                         transitions += 1;
                     }
                 }
                 nota_v2::_ProjectionRead__tr_constructor_service read__tr_constructor_service_state = state._projected_state_for__tr_constructor_service();
+                BSet<BTuple<nota_v2::INTERCONNECTNODE, nota_v2::SERVICE >> _trid_3;
                 auto _trid_3_ptr = _OpCache_tr_constructor_service.find(read__tr_constructor_service_state);
                 if(_trid_3_ptr == _OpCache_tr_constructor_service.end()) {
-                    BSet<BTuple<nota_v2::INTERCONNECTNODE, nota_v2::SERVICE >> _trid_3 = state._tr_constructor_service();
+                    _trid_3 = state._tr_constructor_service();
                     {
                         std::unique_lock<std::mutex> _ProjectionRead__tr_constructor_service_lock(_ProjectionRead__tr_constructor_service_mutex);
                         _OpCache_tr_constructor_service.insert({read__tr_constructor_service_state, _trid_3});
                     }
-                    for(const BTuple<nota_v2::INTERCONNECTNODE, nota_v2::SERVICE >& param : _trid_3) {
-                        nota_v2::SERVICE _tmp_1 = param.projection2();
-                        nota_v2::INTERCONNECTNODE _tmp_2 = param.projection1();
-
-                        nota_v2 copiedState = state._copy();
-                        nota_v2::_ProjectionRead_constructor_service readState = state._projected_state_for_constructor_service();
-
-                        auto _OpCache_with_parameter_constructor_service_ptr = _OpCache_constructor_service.find(param);
-                        if(_OpCache_with_parameter_constructor_service_ptr == _OpCache_constructor_service.end()) {
-                            copiedState.constructor_service(_tmp_2, _tmp_1);
-                            nota_v2::_ProjectionWrite_constructor_service writeState = copiedState._update_for_constructor_service();
-                            std::unordered_map<nota_v2::_ProjectionRead_constructor_service, nota_v2::_ProjectionWrite_constructor_service, nota_v2::_ProjectionRead_constructor_service::Hash, nota_v2::_ProjectionRead_constructor_service::HashEqual> _OpCache_with_parameter_constructor_service;
-                            _OpCache_with_parameter_constructor_service.insert({readState, writeState});
-                            {
-                                std::unique_lock<std::mutex> _ProjectionRead_constructor_service_lock(_ProjectionRead_constructor_service_mutex);
-                                _OpCache_constructor_service.insert({param, _OpCache_with_parameter_constructor_service});
-                            }
-
-                        } else {
-                            std::unordered_map<nota_v2::_ProjectionRead_constructor_service, nota_v2::_ProjectionWrite_constructor_service, nota_v2::_ProjectionRead_constructor_service::Hash, nota_v2::_ProjectionRead_constructor_service::HashEqual> _OpCache_with_parameter_constructor_service = _OpCache_with_parameter_constructor_service_ptr->second;
-                            auto writeState_ptr = _OpCache_with_parameter_constructor_service.find(readState);
-                            if(writeState_ptr != _OpCache_with_parameter_constructor_service.end()) {
-                                nota_v2::_ProjectionWrite_constructor_service writeState = writeState_ptr->second;
-                                copiedState._apply_update_for_constructor_service(writeState);
-                            } else {
-                                copiedState.constructor_service(_tmp_2, _tmp_1);
-                                nota_v2::_ProjectionWrite_constructor_service writeState = copiedState._update_for_constructor_service();
-                                {
-                                    std::unique_lock<std::mutex> _ProjectionRead_constructor_service_lock(_ProjectionRead_constructor_service_mutex);
-                                    _OpCache_with_parameter_constructor_service.insert({readState, writeState});
-                                }
-                            }
-                        }
-
-                        copiedState.stateAccessedVia = "constructor_service";
-                        result.insert(copiedState);
-                        transitions += 1;
-                    }
                 } else {
-                    BSet<BTuple<nota_v2::INTERCONNECTNODE, nota_v2::SERVICE >> _trid_3 = _trid_3_ptr->second;
-                    for(const BTuple<nota_v2::INTERCONNECTNODE, nota_v2::SERVICE >& param : _trid_3) {
-                        nota_v2::SERVICE _tmp_1 = param.projection2();
-                        nota_v2::INTERCONNECTNODE _tmp_2 = param.projection1();
+                    _trid_3 = _trid_3_ptr->second;
+                }
 
-                        nota_v2 copiedState = state._copy();
-                        nota_v2::_ProjectionRead_constructor_service readState = state._projected_state_for_constructor_service();
+                for(const BTuple<nota_v2::INTERCONNECTNODE, nota_v2::SERVICE >& param : _trid_3) {
+                    nota_v2::SERVICE _tmp_1 = param.projection2();
+                    nota_v2::INTERCONNECTNODE _tmp_2 = param.projection1();
 
-                        auto _OpCache_with_parameter_constructor_service_ptr = _OpCache_constructor_service.find(param);
-                        if(_OpCache_with_parameter_constructor_service_ptr == _OpCache_constructor_service.end()) {
-                            copiedState.constructor_service(_tmp_2, _tmp_1);
-                            nota_v2::_ProjectionWrite_constructor_service writeState = copiedState._update_for_constructor_service();
-                            std::unordered_map<nota_v2::_ProjectionRead_constructor_service, nota_v2::_ProjectionWrite_constructor_service, nota_v2::_ProjectionRead_constructor_service::Hash, nota_v2::_ProjectionRead_constructor_service::HashEqual> _OpCache_with_parameter_constructor_service;
-                            _OpCache_with_parameter_constructor_service.insert({readState, writeState});
-                            {
-                                std::unique_lock<std::mutex> _ProjectionRead_constructor_service_lock(_ProjectionRead_constructor_service_mutex);
-                                _OpCache_constructor_service.insert({param, _OpCache_with_parameter_constructor_service});
-                            }
+                    nota_v2 copiedState = state._copy();
+                    nota_v2::_ProjectionRead_constructor_service readState = state._projected_state_for_constructor_service();
 
-                        } else {
-                            std::unordered_map<nota_v2::_ProjectionRead_constructor_service, nota_v2::_ProjectionWrite_constructor_service, nota_v2::_ProjectionRead_constructor_service::Hash, nota_v2::_ProjectionRead_constructor_service::HashEqual> _OpCache_with_parameter_constructor_service = _OpCache_with_parameter_constructor_service_ptr->second;
-                            auto writeState_ptr = _OpCache_with_parameter_constructor_service.find(readState);
-                            if(writeState_ptr != _OpCache_with_parameter_constructor_service.end()) {
-                                nota_v2::_ProjectionWrite_constructor_service writeState = writeState_ptr->second;
-                                copiedState._apply_update_for_constructor_service(writeState);
-                            } else {
-                                copiedState.constructor_service(_tmp_2, _tmp_1);
-                                nota_v2::_ProjectionWrite_constructor_service writeState = copiedState._update_for_constructor_service();
-                                {
-                                    std::unique_lock<std::mutex> _ProjectionRead_constructor_service_lock(_ProjectionRead_constructor_service_mutex);
-                                    _OpCache_with_parameter_constructor_service.insert({readState, writeState});
-                                }
-                            }
+                    auto _OpCache_with_parameter_constructor_service_ptr = _OpCache_constructor_service.find(param);
+                    if(_OpCache_with_parameter_constructor_service_ptr == _OpCache_constructor_service.end()) {
+                        copiedState.constructor_service(_tmp_2, _tmp_1);
+                        nota_v2::_ProjectionWrite_constructor_service writeState = copiedState._update_for_constructor_service();
+                        std::unordered_map<nota_v2::_ProjectionRead_constructor_service, nota_v2::_ProjectionWrite_constructor_service, nota_v2::_ProjectionRead_constructor_service::Hash, nota_v2::_ProjectionRead_constructor_service::HashEqual> _OpCache_with_parameter_constructor_service;
+                        _OpCache_with_parameter_constructor_service.insert({readState, writeState});
+                        {
+                            std::unique_lock<std::mutex> _ProjectionRead_constructor_service_lock(_ProjectionRead_constructor_service_mutex);
+                            _OpCache_constructor_service.insert({param, _OpCache_with_parameter_constructor_service});
                         }
 
-                        copiedState.stateAccessedVia = "constructor_service";
-                        result.insert(copiedState);
+                    } else {
+                        std::unordered_map<nota_v2::_ProjectionRead_constructor_service, nota_v2::_ProjectionWrite_constructor_service, nota_v2::_ProjectionRead_constructor_service::Hash, nota_v2::_ProjectionRead_constructor_service::HashEqual> _OpCache_with_parameter_constructor_service = _OpCache_with_parameter_constructor_service_ptr->second;
+                        auto writeState_ptr = _OpCache_with_parameter_constructor_service.find(readState);
+                        if(writeState_ptr != _OpCache_with_parameter_constructor_service.end()) {
+                            nota_v2::_ProjectionWrite_constructor_service writeState = writeState_ptr->second;
+                            copiedState._apply_update_for_constructor_service(writeState);
+                        } else {
+                            copiedState.constructor_service(_tmp_2, _tmp_1);
+                            nota_v2::_ProjectionWrite_constructor_service writeState = copiedState._update_for_constructor_service();
+                            {
+                                std::unique_lock<std::mutex> _ProjectionRead_constructor_service_lock(_ProjectionRead_constructor_service_mutex);
+                                _OpCache_with_parameter_constructor_service.insert({readState, writeState});
+                            }
+                        }
+                    }
+
+                    copiedState.stateAccessedVia = "constructor_service";
+                    result.insert(copiedState);
+                    {
+                        std::unique_lock<std::mutex> lock(mutex);
                         transitions += 1;
                     }
                 }
                 nota_v2::_ProjectionRead__tr_constructor_socket read__tr_constructor_socket_state = state._projected_state_for__tr_constructor_socket();
+                BSet<BTuple<BTuple<BTuple<nota_v2::INTERCONNECTNODE, nota_v2::SID >, nota_v2::SID >, nota_v2::SOCKET >> _trid_4;
                 auto _trid_4_ptr = _OpCache_tr_constructor_socket.find(read__tr_constructor_socket_state);
                 if(_trid_4_ptr == _OpCache_tr_constructor_socket.end()) {
-                    BSet<BTuple<BTuple<BTuple<nota_v2::INTERCONNECTNODE, nota_v2::SID >, nota_v2::SID >, nota_v2::SOCKET >> _trid_4 = state._tr_constructor_socket();
+                    _trid_4 = state._tr_constructor_socket();
                     {
                         std::unique_lock<std::mutex> _ProjectionRead__tr_constructor_socket_lock(_ProjectionRead__tr_constructor_socket_mutex);
                         _OpCache_tr_constructor_socket.insert({read__tr_constructor_socket_state, _trid_4});
                     }
-                    for(const BTuple<BTuple<BTuple<nota_v2::INTERCONNECTNODE, nota_v2::SID >, nota_v2::SID >, nota_v2::SOCKET >& param : _trid_4) {
-                        nota_v2::SOCKET _tmp_1 = param.projection2();
-                        BTuple<BTuple<nota_v2::INTERCONNECTNODE, nota_v2::SID >, nota_v2::SID > _tmp_2 = param.projection1();
-                        nota_v2::SID _tmp_3 = _tmp_2.projection2();
-                        BTuple<nota_v2::INTERCONNECTNODE, nota_v2::SID > _tmp_4 = _tmp_2.projection1();
-                        nota_v2::SID _tmp_5 = _tmp_4.projection2();
-                        nota_v2::INTERCONNECTNODE _tmp_6 = _tmp_4.projection1();
-
-                        nota_v2 copiedState = state._copy();
-                        nota_v2::_ProjectionRead_constructor_socket readState = state._projected_state_for_constructor_socket();
-
-                        auto _OpCache_with_parameter_constructor_socket_ptr = _OpCache_constructor_socket.find(param);
-                        if(_OpCache_with_parameter_constructor_socket_ptr == _OpCache_constructor_socket.end()) {
-                            copiedState.constructor_socket(_tmp_6, _tmp_5, _tmp_3, _tmp_1);
-                            nota_v2::_ProjectionWrite_constructor_socket writeState = copiedState._update_for_constructor_socket();
-                            std::unordered_map<nota_v2::_ProjectionRead_constructor_socket, nota_v2::_ProjectionWrite_constructor_socket, nota_v2::_ProjectionRead_constructor_socket::Hash, nota_v2::_ProjectionRead_constructor_socket::HashEqual> _OpCache_with_parameter_constructor_socket;
-                            _OpCache_with_parameter_constructor_socket.insert({readState, writeState});
-                            {
-                                std::unique_lock<std::mutex> _ProjectionRead_constructor_socket_lock(_ProjectionRead_constructor_socket_mutex);
-                                _OpCache_constructor_socket.insert({param, _OpCache_with_parameter_constructor_socket});
-                            }
-
-                        } else {
-                            std::unordered_map<nota_v2::_ProjectionRead_constructor_socket, nota_v2::_ProjectionWrite_constructor_socket, nota_v2::_ProjectionRead_constructor_socket::Hash, nota_v2::_ProjectionRead_constructor_socket::HashEqual> _OpCache_with_parameter_constructor_socket = _OpCache_with_parameter_constructor_socket_ptr->second;
-                            auto writeState_ptr = _OpCache_with_parameter_constructor_socket.find(readState);
-                            if(writeState_ptr != _OpCache_with_parameter_constructor_socket.end()) {
-                                nota_v2::_ProjectionWrite_constructor_socket writeState = writeState_ptr->second;
-                                copiedState._apply_update_for_constructor_socket(writeState);
-                            } else {
-                                copiedState.constructor_socket(_tmp_6, _tmp_5, _tmp_3, _tmp_1);
-                                nota_v2::_ProjectionWrite_constructor_socket writeState = copiedState._update_for_constructor_socket();
-                                {
-                                    std::unique_lock<std::mutex> _ProjectionRead_constructor_socket_lock(_ProjectionRead_constructor_socket_mutex);
-                                    _OpCache_with_parameter_constructor_socket.insert({readState, writeState});
-                                }
-                            }
-                        }
-
-                        copiedState.stateAccessedVia = "constructor_socket";
-                        result.insert(copiedState);
-                        transitions += 1;
-                    }
                 } else {
-                    BSet<BTuple<BTuple<BTuple<nota_v2::INTERCONNECTNODE, nota_v2::SID >, nota_v2::SID >, nota_v2::SOCKET >> _trid_4 = _trid_4_ptr->second;
-                    for(const BTuple<BTuple<BTuple<nota_v2::INTERCONNECTNODE, nota_v2::SID >, nota_v2::SID >, nota_v2::SOCKET >& param : _trid_4) {
-                        nota_v2::SOCKET _tmp_1 = param.projection2();
-                        BTuple<BTuple<nota_v2::INTERCONNECTNODE, nota_v2::SID >, nota_v2::SID > _tmp_2 = param.projection1();
-                        nota_v2::SID _tmp_3 = _tmp_2.projection2();
-                        BTuple<nota_v2::INTERCONNECTNODE, nota_v2::SID > _tmp_4 = _tmp_2.projection1();
-                        nota_v2::SID _tmp_5 = _tmp_4.projection2();
-                        nota_v2::INTERCONNECTNODE _tmp_6 = _tmp_4.projection1();
+                    _trid_4 = _trid_4_ptr->second;
+                }
 
-                        nota_v2 copiedState = state._copy();
-                        nota_v2::_ProjectionRead_constructor_socket readState = state._projected_state_for_constructor_socket();
+                for(const BTuple<BTuple<BTuple<nota_v2::INTERCONNECTNODE, nota_v2::SID >, nota_v2::SID >, nota_v2::SOCKET >& param : _trid_4) {
+                    nota_v2::SOCKET _tmp_1 = param.projection2();
+                    BTuple<BTuple<nota_v2::INTERCONNECTNODE, nota_v2::SID >, nota_v2::SID > _tmp_2 = param.projection1();
+                    nota_v2::SID _tmp_3 = _tmp_2.projection2();
+                    BTuple<nota_v2::INTERCONNECTNODE, nota_v2::SID > _tmp_4 = _tmp_2.projection1();
+                    nota_v2::SID _tmp_5 = _tmp_4.projection2();
+                    nota_v2::INTERCONNECTNODE _tmp_6 = _tmp_4.projection1();
 
-                        auto _OpCache_with_parameter_constructor_socket_ptr = _OpCache_constructor_socket.find(param);
-                        if(_OpCache_with_parameter_constructor_socket_ptr == _OpCache_constructor_socket.end()) {
-                            copiedState.constructor_socket(_tmp_6, _tmp_5, _tmp_3, _tmp_1);
-                            nota_v2::_ProjectionWrite_constructor_socket writeState = copiedState._update_for_constructor_socket();
-                            std::unordered_map<nota_v2::_ProjectionRead_constructor_socket, nota_v2::_ProjectionWrite_constructor_socket, nota_v2::_ProjectionRead_constructor_socket::Hash, nota_v2::_ProjectionRead_constructor_socket::HashEqual> _OpCache_with_parameter_constructor_socket;
-                            _OpCache_with_parameter_constructor_socket.insert({readState, writeState});
-                            {
-                                std::unique_lock<std::mutex> _ProjectionRead_constructor_socket_lock(_ProjectionRead_constructor_socket_mutex);
-                                _OpCache_constructor_socket.insert({param, _OpCache_with_parameter_constructor_socket});
-                            }
+                    nota_v2 copiedState = state._copy();
+                    nota_v2::_ProjectionRead_constructor_socket readState = state._projected_state_for_constructor_socket();
 
-                        } else {
-                            std::unordered_map<nota_v2::_ProjectionRead_constructor_socket, nota_v2::_ProjectionWrite_constructor_socket, nota_v2::_ProjectionRead_constructor_socket::Hash, nota_v2::_ProjectionRead_constructor_socket::HashEqual> _OpCache_with_parameter_constructor_socket = _OpCache_with_parameter_constructor_socket_ptr->second;
-                            auto writeState_ptr = _OpCache_with_parameter_constructor_socket.find(readState);
-                            if(writeState_ptr != _OpCache_with_parameter_constructor_socket.end()) {
-                                nota_v2::_ProjectionWrite_constructor_socket writeState = writeState_ptr->second;
-                                copiedState._apply_update_for_constructor_socket(writeState);
-                            } else {
-                                copiedState.constructor_socket(_tmp_6, _tmp_5, _tmp_3, _tmp_1);
-                                nota_v2::_ProjectionWrite_constructor_socket writeState = copiedState._update_for_constructor_socket();
-                                {
-                                    std::unique_lock<std::mutex> _ProjectionRead_constructor_socket_lock(_ProjectionRead_constructor_socket_mutex);
-                                    _OpCache_with_parameter_constructor_socket.insert({readState, writeState});
-                                }
-                            }
+                    auto _OpCache_with_parameter_constructor_socket_ptr = _OpCache_constructor_socket.find(param);
+                    if(_OpCache_with_parameter_constructor_socket_ptr == _OpCache_constructor_socket.end()) {
+                        copiedState.constructor_socket(_tmp_6, _tmp_5, _tmp_3, _tmp_1);
+                        nota_v2::_ProjectionWrite_constructor_socket writeState = copiedState._update_for_constructor_socket();
+                        std::unordered_map<nota_v2::_ProjectionRead_constructor_socket, nota_v2::_ProjectionWrite_constructor_socket, nota_v2::_ProjectionRead_constructor_socket::Hash, nota_v2::_ProjectionRead_constructor_socket::HashEqual> _OpCache_with_parameter_constructor_socket;
+                        _OpCache_with_parameter_constructor_socket.insert({readState, writeState});
+                        {
+                            std::unique_lock<std::mutex> _ProjectionRead_constructor_socket_lock(_ProjectionRead_constructor_socket_mutex);
+                            _OpCache_constructor_socket.insert({param, _OpCache_with_parameter_constructor_socket});
                         }
 
-                        copiedState.stateAccessedVia = "constructor_socket";
-                        result.insert(copiedState);
+                    } else {
+                        std::unordered_map<nota_v2::_ProjectionRead_constructor_socket, nota_v2::_ProjectionWrite_constructor_socket, nota_v2::_ProjectionRead_constructor_socket::Hash, nota_v2::_ProjectionRead_constructor_socket::HashEqual> _OpCache_with_parameter_constructor_socket = _OpCache_with_parameter_constructor_socket_ptr->second;
+                        auto writeState_ptr = _OpCache_with_parameter_constructor_socket.find(readState);
+                        if(writeState_ptr != _OpCache_with_parameter_constructor_socket.end()) {
+                            nota_v2::_ProjectionWrite_constructor_socket writeState = writeState_ptr->second;
+                            copiedState._apply_update_for_constructor_socket(writeState);
+                        } else {
+                            copiedState.constructor_socket(_tmp_6, _tmp_5, _tmp_3, _tmp_1);
+                            nota_v2::_ProjectionWrite_constructor_socket writeState = copiedState._update_for_constructor_socket();
+                            {
+                                std::unique_lock<std::mutex> _ProjectionRead_constructor_socket_lock(_ProjectionRead_constructor_socket_mutex);
+                                _OpCache_with_parameter_constructor_socket.insert({readState, writeState});
+                            }
+                        }
+                    }
+
+                    copiedState.stateAccessedVia = "constructor_socket";
+                    result.insert(copiedState);
+                    {
+                        std::unique_lock<std::mutex> lock(mutex);
                         transitions += 1;
                     }
                 }
                 nota_v2::_ProjectionRead__tr_rm_register read__tr_rm_register_state = state._projected_state_for__tr_rm_register();
+                BSet<BTuple<BTuple<nota_v2::RESOURCEMANAGER, nota_v2::SERVICE >, nota_v2::INTERCONNECTNODE >> _trid_5;
                 auto _trid_5_ptr = _OpCache_tr_rm_register.find(read__tr_rm_register_state);
                 if(_trid_5_ptr == _OpCache_tr_rm_register.end()) {
-                    BSet<BTuple<BTuple<nota_v2::RESOURCEMANAGER, nota_v2::SERVICE >, nota_v2::INTERCONNECTNODE >> _trid_5 = state._tr_rm_register();
+                    _trid_5 = state._tr_rm_register();
                     {
                         std::unique_lock<std::mutex> _ProjectionRead__tr_rm_register_lock(_ProjectionRead__tr_rm_register_mutex);
                         _OpCache_tr_rm_register.insert({read__tr_rm_register_state, _trid_5});
                     }
-                    for(const BTuple<BTuple<nota_v2::RESOURCEMANAGER, nota_v2::SERVICE >, nota_v2::INTERCONNECTNODE >& param : _trid_5) {
-                        nota_v2::INTERCONNECTNODE _tmp_1 = param.projection2();
-                        BTuple<nota_v2::RESOURCEMANAGER, nota_v2::SERVICE > _tmp_2 = param.projection1();
-                        nota_v2::SERVICE _tmp_3 = _tmp_2.projection2();
-                        nota_v2::RESOURCEMANAGER _tmp_4 = _tmp_2.projection1();
-
-                        nota_v2 copiedState = state._copy();
-                        nota_v2::_ProjectionRead_rm_register readState = state._projected_state_for_rm_register();
-
-                        auto _OpCache_with_parameter_rm_register_ptr = _OpCache_rm_register.find(param);
-                        if(_OpCache_with_parameter_rm_register_ptr == _OpCache_rm_register.end()) {
-                            copiedState.rm_register(_tmp_4, _tmp_3, _tmp_1);
-                            nota_v2::_ProjectionWrite_rm_register writeState = copiedState._update_for_rm_register();
-                            std::unordered_map<nota_v2::_ProjectionRead_rm_register, nota_v2::_ProjectionWrite_rm_register, nota_v2::_ProjectionRead_rm_register::Hash, nota_v2::_ProjectionRead_rm_register::HashEqual> _OpCache_with_parameter_rm_register;
-                            _OpCache_with_parameter_rm_register.insert({readState, writeState});
-                            {
-                                std::unique_lock<std::mutex> _ProjectionRead_rm_register_lock(_ProjectionRead_rm_register_mutex);
-                                _OpCache_rm_register.insert({param, _OpCache_with_parameter_rm_register});
-                            }
-
-                        } else {
-                            std::unordered_map<nota_v2::_ProjectionRead_rm_register, nota_v2::_ProjectionWrite_rm_register, nota_v2::_ProjectionRead_rm_register::Hash, nota_v2::_ProjectionRead_rm_register::HashEqual> _OpCache_with_parameter_rm_register = _OpCache_with_parameter_rm_register_ptr->second;
-                            auto writeState_ptr = _OpCache_with_parameter_rm_register.find(readState);
-                            if(writeState_ptr != _OpCache_with_parameter_rm_register.end()) {
-                                nota_v2::_ProjectionWrite_rm_register writeState = writeState_ptr->second;
-                                copiedState._apply_update_for_rm_register(writeState);
-                            } else {
-                                copiedState.rm_register(_tmp_4, _tmp_3, _tmp_1);
-                                nota_v2::_ProjectionWrite_rm_register writeState = copiedState._update_for_rm_register();
-                                {
-                                    std::unique_lock<std::mutex> _ProjectionRead_rm_register_lock(_ProjectionRead_rm_register_mutex);
-                                    _OpCache_with_parameter_rm_register.insert({readState, writeState});
-                                }
-                            }
-                        }
-
-                        copiedState.stateAccessedVia = "rm_register";
-                        result.insert(copiedState);
-                        transitions += 1;
-                    }
                 } else {
-                    BSet<BTuple<BTuple<nota_v2::RESOURCEMANAGER, nota_v2::SERVICE >, nota_v2::INTERCONNECTNODE >> _trid_5 = _trid_5_ptr->second;
-                    for(const BTuple<BTuple<nota_v2::RESOURCEMANAGER, nota_v2::SERVICE >, nota_v2::INTERCONNECTNODE >& param : _trid_5) {
-                        nota_v2::INTERCONNECTNODE _tmp_1 = param.projection2();
-                        BTuple<nota_v2::RESOURCEMANAGER, nota_v2::SERVICE > _tmp_2 = param.projection1();
-                        nota_v2::SERVICE _tmp_3 = _tmp_2.projection2();
-                        nota_v2::RESOURCEMANAGER _tmp_4 = _tmp_2.projection1();
+                    _trid_5 = _trid_5_ptr->second;
+                }
 
-                        nota_v2 copiedState = state._copy();
-                        nota_v2::_ProjectionRead_rm_register readState = state._projected_state_for_rm_register();
+                for(const BTuple<BTuple<nota_v2::RESOURCEMANAGER, nota_v2::SERVICE >, nota_v2::INTERCONNECTNODE >& param : _trid_5) {
+                    nota_v2::INTERCONNECTNODE _tmp_1 = param.projection2();
+                    BTuple<nota_v2::RESOURCEMANAGER, nota_v2::SERVICE > _tmp_2 = param.projection1();
+                    nota_v2::SERVICE _tmp_3 = _tmp_2.projection2();
+                    nota_v2::RESOURCEMANAGER _tmp_4 = _tmp_2.projection1();
 
-                        auto _OpCache_with_parameter_rm_register_ptr = _OpCache_rm_register.find(param);
-                        if(_OpCache_with_parameter_rm_register_ptr == _OpCache_rm_register.end()) {
-                            copiedState.rm_register(_tmp_4, _tmp_3, _tmp_1);
-                            nota_v2::_ProjectionWrite_rm_register writeState = copiedState._update_for_rm_register();
-                            std::unordered_map<nota_v2::_ProjectionRead_rm_register, nota_v2::_ProjectionWrite_rm_register, nota_v2::_ProjectionRead_rm_register::Hash, nota_v2::_ProjectionRead_rm_register::HashEqual> _OpCache_with_parameter_rm_register;
-                            _OpCache_with_parameter_rm_register.insert({readState, writeState});
-                            {
-                                std::unique_lock<std::mutex> _ProjectionRead_rm_register_lock(_ProjectionRead_rm_register_mutex);
-                                _OpCache_rm_register.insert({param, _OpCache_with_parameter_rm_register});
-                            }
+                    nota_v2 copiedState = state._copy();
+                    nota_v2::_ProjectionRead_rm_register readState = state._projected_state_for_rm_register();
 
-                        } else {
-                            std::unordered_map<nota_v2::_ProjectionRead_rm_register, nota_v2::_ProjectionWrite_rm_register, nota_v2::_ProjectionRead_rm_register::Hash, nota_v2::_ProjectionRead_rm_register::HashEqual> _OpCache_with_parameter_rm_register = _OpCache_with_parameter_rm_register_ptr->second;
-                            auto writeState_ptr = _OpCache_with_parameter_rm_register.find(readState);
-                            if(writeState_ptr != _OpCache_with_parameter_rm_register.end()) {
-                                nota_v2::_ProjectionWrite_rm_register writeState = writeState_ptr->second;
-                                copiedState._apply_update_for_rm_register(writeState);
-                            } else {
-                                copiedState.rm_register(_tmp_4, _tmp_3, _tmp_1);
-                                nota_v2::_ProjectionWrite_rm_register writeState = copiedState._update_for_rm_register();
-                                {
-                                    std::unique_lock<std::mutex> _ProjectionRead_rm_register_lock(_ProjectionRead_rm_register_mutex);
-                                    _OpCache_with_parameter_rm_register.insert({readState, writeState});
-                                }
-                            }
+                    auto _OpCache_with_parameter_rm_register_ptr = _OpCache_rm_register.find(param);
+                    if(_OpCache_with_parameter_rm_register_ptr == _OpCache_rm_register.end()) {
+                        copiedState.rm_register(_tmp_4, _tmp_3, _tmp_1);
+                        nota_v2::_ProjectionWrite_rm_register writeState = copiedState._update_for_rm_register();
+                        std::unordered_map<nota_v2::_ProjectionRead_rm_register, nota_v2::_ProjectionWrite_rm_register, nota_v2::_ProjectionRead_rm_register::Hash, nota_v2::_ProjectionRead_rm_register::HashEqual> _OpCache_with_parameter_rm_register;
+                        _OpCache_with_parameter_rm_register.insert({readState, writeState});
+                        {
+                            std::unique_lock<std::mutex> _ProjectionRead_rm_register_lock(_ProjectionRead_rm_register_mutex);
+                            _OpCache_rm_register.insert({param, _OpCache_with_parameter_rm_register});
                         }
 
-                        copiedState.stateAccessedVia = "rm_register";
-                        result.insert(copiedState);
+                    } else {
+                        std::unordered_map<nota_v2::_ProjectionRead_rm_register, nota_v2::_ProjectionWrite_rm_register, nota_v2::_ProjectionRead_rm_register::Hash, nota_v2::_ProjectionRead_rm_register::HashEqual> _OpCache_with_parameter_rm_register = _OpCache_with_parameter_rm_register_ptr->second;
+                        auto writeState_ptr = _OpCache_with_parameter_rm_register.find(readState);
+                        if(writeState_ptr != _OpCache_with_parameter_rm_register.end()) {
+                            nota_v2::_ProjectionWrite_rm_register writeState = writeState_ptr->second;
+                            copiedState._apply_update_for_rm_register(writeState);
+                        } else {
+                            copiedState.rm_register(_tmp_4, _tmp_3, _tmp_1);
+                            nota_v2::_ProjectionWrite_rm_register writeState = copiedState._update_for_rm_register();
+                            {
+                                std::unique_lock<std::mutex> _ProjectionRead_rm_register_lock(_ProjectionRead_rm_register_mutex);
+                                _OpCache_with_parameter_rm_register.insert({readState, writeState});
+                            }
+                        }
+                    }
+
+                    copiedState.stateAccessedVia = "rm_register";
+                    result.insert(copiedState);
+                    {
+                        std::unique_lock<std::mutex> lock(mutex);
                         transitions += 1;
                     }
                 }
                 nota_v2::_ProjectionRead__tr_rm_deregister read__tr_rm_deregister_state = state._projected_state_for__tr_rm_deregister();
+                BSet<BTuple<BTuple<nota_v2::RESOURCEMANAGER, nota_v2::SERVICE >, nota_v2::INTERCONNECTNODE >> _trid_6;
                 auto _trid_6_ptr = _OpCache_tr_rm_deregister.find(read__tr_rm_deregister_state);
                 if(_trid_6_ptr == _OpCache_tr_rm_deregister.end()) {
-                    BSet<BTuple<BTuple<nota_v2::RESOURCEMANAGER, nota_v2::SERVICE >, nota_v2::INTERCONNECTNODE >> _trid_6 = state._tr_rm_deregister();
+                    _trid_6 = state._tr_rm_deregister();
                     {
                         std::unique_lock<std::mutex> _ProjectionRead__tr_rm_deregister_lock(_ProjectionRead__tr_rm_deregister_mutex);
                         _OpCache_tr_rm_deregister.insert({read__tr_rm_deregister_state, _trid_6});
                     }
-                    for(const BTuple<BTuple<nota_v2::RESOURCEMANAGER, nota_v2::SERVICE >, nota_v2::INTERCONNECTNODE >& param : _trid_6) {
-                        nota_v2::INTERCONNECTNODE _tmp_1 = param.projection2();
-                        BTuple<nota_v2::RESOURCEMANAGER, nota_v2::SERVICE > _tmp_2 = param.projection1();
-                        nota_v2::SERVICE _tmp_3 = _tmp_2.projection2();
-                        nota_v2::RESOURCEMANAGER _tmp_4 = _tmp_2.projection1();
-
-                        nota_v2 copiedState = state._copy();
-                        nota_v2::_ProjectionRead_rm_deregister readState = state._projected_state_for_rm_deregister();
-
-                        auto _OpCache_with_parameter_rm_deregister_ptr = _OpCache_rm_deregister.find(param);
-                        if(_OpCache_with_parameter_rm_deregister_ptr == _OpCache_rm_deregister.end()) {
-                            copiedState.rm_deregister(_tmp_4, _tmp_3, _tmp_1);
-                            nota_v2::_ProjectionWrite_rm_deregister writeState = copiedState._update_for_rm_deregister();
-                            std::unordered_map<nota_v2::_ProjectionRead_rm_deregister, nota_v2::_ProjectionWrite_rm_deregister, nota_v2::_ProjectionRead_rm_deregister::Hash, nota_v2::_ProjectionRead_rm_deregister::HashEqual> _OpCache_with_parameter_rm_deregister;
-                            _OpCache_with_parameter_rm_deregister.insert({readState, writeState});
-                            {
-                                std::unique_lock<std::mutex> _ProjectionRead_rm_deregister_lock(_ProjectionRead_rm_deregister_mutex);
-                                _OpCache_rm_deregister.insert({param, _OpCache_with_parameter_rm_deregister});
-                            }
-
-                        } else {
-                            std::unordered_map<nota_v2::_ProjectionRead_rm_deregister, nota_v2::_ProjectionWrite_rm_deregister, nota_v2::_ProjectionRead_rm_deregister::Hash, nota_v2::_ProjectionRead_rm_deregister::HashEqual> _OpCache_with_parameter_rm_deregister = _OpCache_with_parameter_rm_deregister_ptr->second;
-                            auto writeState_ptr = _OpCache_with_parameter_rm_deregister.find(readState);
-                            if(writeState_ptr != _OpCache_with_parameter_rm_deregister.end()) {
-                                nota_v2::_ProjectionWrite_rm_deregister writeState = writeState_ptr->second;
-                                copiedState._apply_update_for_rm_deregister(writeState);
-                            } else {
-                                copiedState.rm_deregister(_tmp_4, _tmp_3, _tmp_1);
-                                nota_v2::_ProjectionWrite_rm_deregister writeState = copiedState._update_for_rm_deregister();
-                                {
-                                    std::unique_lock<std::mutex> _ProjectionRead_rm_deregister_lock(_ProjectionRead_rm_deregister_mutex);
-                                    _OpCache_with_parameter_rm_deregister.insert({readState, writeState});
-                                }
-                            }
-                        }
-
-                        copiedState.stateAccessedVia = "rm_deregister";
-                        result.insert(copiedState);
-                        transitions += 1;
-                    }
                 } else {
-                    BSet<BTuple<BTuple<nota_v2::RESOURCEMANAGER, nota_v2::SERVICE >, nota_v2::INTERCONNECTNODE >> _trid_6 = _trid_6_ptr->second;
-                    for(const BTuple<BTuple<nota_v2::RESOURCEMANAGER, nota_v2::SERVICE >, nota_v2::INTERCONNECTNODE >& param : _trid_6) {
-                        nota_v2::INTERCONNECTNODE _tmp_1 = param.projection2();
-                        BTuple<nota_v2::RESOURCEMANAGER, nota_v2::SERVICE > _tmp_2 = param.projection1();
-                        nota_v2::SERVICE _tmp_3 = _tmp_2.projection2();
-                        nota_v2::RESOURCEMANAGER _tmp_4 = _tmp_2.projection1();
+                    _trid_6 = _trid_6_ptr->second;
+                }
 
-                        nota_v2 copiedState = state._copy();
-                        nota_v2::_ProjectionRead_rm_deregister readState = state._projected_state_for_rm_deregister();
+                for(const BTuple<BTuple<nota_v2::RESOURCEMANAGER, nota_v2::SERVICE >, nota_v2::INTERCONNECTNODE >& param : _trid_6) {
+                    nota_v2::INTERCONNECTNODE _tmp_1 = param.projection2();
+                    BTuple<nota_v2::RESOURCEMANAGER, nota_v2::SERVICE > _tmp_2 = param.projection1();
+                    nota_v2::SERVICE _tmp_3 = _tmp_2.projection2();
+                    nota_v2::RESOURCEMANAGER _tmp_4 = _tmp_2.projection1();
 
-                        auto _OpCache_with_parameter_rm_deregister_ptr = _OpCache_rm_deregister.find(param);
-                        if(_OpCache_with_parameter_rm_deregister_ptr == _OpCache_rm_deregister.end()) {
-                            copiedState.rm_deregister(_tmp_4, _tmp_3, _tmp_1);
-                            nota_v2::_ProjectionWrite_rm_deregister writeState = copiedState._update_for_rm_deregister();
-                            std::unordered_map<nota_v2::_ProjectionRead_rm_deregister, nota_v2::_ProjectionWrite_rm_deregister, nota_v2::_ProjectionRead_rm_deregister::Hash, nota_v2::_ProjectionRead_rm_deregister::HashEqual> _OpCache_with_parameter_rm_deregister;
-                            _OpCache_with_parameter_rm_deregister.insert({readState, writeState});
-                            {
-                                std::unique_lock<std::mutex> _ProjectionRead_rm_deregister_lock(_ProjectionRead_rm_deregister_mutex);
-                                _OpCache_rm_deregister.insert({param, _OpCache_with_parameter_rm_deregister});
-                            }
+                    nota_v2 copiedState = state._copy();
+                    nota_v2::_ProjectionRead_rm_deregister readState = state._projected_state_for_rm_deregister();
 
-                        } else {
-                            std::unordered_map<nota_v2::_ProjectionRead_rm_deregister, nota_v2::_ProjectionWrite_rm_deregister, nota_v2::_ProjectionRead_rm_deregister::Hash, nota_v2::_ProjectionRead_rm_deregister::HashEqual> _OpCache_with_parameter_rm_deregister = _OpCache_with_parameter_rm_deregister_ptr->second;
-                            auto writeState_ptr = _OpCache_with_parameter_rm_deregister.find(readState);
-                            if(writeState_ptr != _OpCache_with_parameter_rm_deregister.end()) {
-                                nota_v2::_ProjectionWrite_rm_deregister writeState = writeState_ptr->second;
-                                copiedState._apply_update_for_rm_deregister(writeState);
-                            } else {
-                                copiedState.rm_deregister(_tmp_4, _tmp_3, _tmp_1);
-                                nota_v2::_ProjectionWrite_rm_deregister writeState = copiedState._update_for_rm_deregister();
-                                {
-                                    std::unique_lock<std::mutex> _ProjectionRead_rm_deregister_lock(_ProjectionRead_rm_deregister_mutex);
-                                    _OpCache_with_parameter_rm_deregister.insert({readState, writeState});
-                                }
-                            }
+                    auto _OpCache_with_parameter_rm_deregister_ptr = _OpCache_rm_deregister.find(param);
+                    if(_OpCache_with_parameter_rm_deregister_ptr == _OpCache_rm_deregister.end()) {
+                        copiedState.rm_deregister(_tmp_4, _tmp_3, _tmp_1);
+                        nota_v2::_ProjectionWrite_rm_deregister writeState = copiedState._update_for_rm_deregister();
+                        std::unordered_map<nota_v2::_ProjectionRead_rm_deregister, nota_v2::_ProjectionWrite_rm_deregister, nota_v2::_ProjectionRead_rm_deregister::Hash, nota_v2::_ProjectionRead_rm_deregister::HashEqual> _OpCache_with_parameter_rm_deregister;
+                        _OpCache_with_parameter_rm_deregister.insert({readState, writeState});
+                        {
+                            std::unique_lock<std::mutex> _ProjectionRead_rm_deregister_lock(_ProjectionRead_rm_deregister_mutex);
+                            _OpCache_rm_deregister.insert({param, _OpCache_with_parameter_rm_deregister});
                         }
 
-                        copiedState.stateAccessedVia = "rm_deregister";
-                        result.insert(copiedState);
+                    } else {
+                        std::unordered_map<nota_v2::_ProjectionRead_rm_deregister, nota_v2::_ProjectionWrite_rm_deregister, nota_v2::_ProjectionRead_rm_deregister::Hash, nota_v2::_ProjectionRead_rm_deregister::HashEqual> _OpCache_with_parameter_rm_deregister = _OpCache_with_parameter_rm_deregister_ptr->second;
+                        auto writeState_ptr = _OpCache_with_parameter_rm_deregister.find(readState);
+                        if(writeState_ptr != _OpCache_with_parameter_rm_deregister.end()) {
+                            nota_v2::_ProjectionWrite_rm_deregister writeState = writeState_ptr->second;
+                            copiedState._apply_update_for_rm_deregister(writeState);
+                        } else {
+                            copiedState.rm_deregister(_tmp_4, _tmp_3, _tmp_1);
+                            nota_v2::_ProjectionWrite_rm_deregister writeState = copiedState._update_for_rm_deregister();
+                            {
+                                std::unique_lock<std::mutex> _ProjectionRead_rm_deregister_lock(_ProjectionRead_rm_deregister_mutex);
+                                _OpCache_with_parameter_rm_deregister.insert({readState, writeState});
+                            }
+                        }
+                    }
+
+                    copiedState.stateAccessedVia = "rm_deregister";
+                    result.insert(copiedState);
+                    {
+                        std::unique_lock<std::mutex> lock(mutex);
                         transitions += 1;
                     }
                 }
                 nota_v2::_ProjectionRead__tr_rm_getSid read__tr_rm_getSid_state = state._projected_state_for__tr_rm_getSid();
+                BSet<BTuple<nota_v2::RESOURCEMANAGER, nota_v2::SERVICE >> _trid_7;
                 auto _trid_7_ptr = _OpCache_tr_rm_getSid.find(read__tr_rm_getSid_state);
                 if(_trid_7_ptr == _OpCache_tr_rm_getSid.end()) {
-                    BSet<BTuple<nota_v2::RESOURCEMANAGER, nota_v2::SERVICE >> _trid_7 = state._tr_rm_getSid();
+                    _trid_7 = state._tr_rm_getSid();
                     {
                         std::unique_lock<std::mutex> _ProjectionRead__tr_rm_getSid_lock(_ProjectionRead__tr_rm_getSid_mutex);
                         _OpCache_tr_rm_getSid.insert({read__tr_rm_getSid_state, _trid_7});
                     }
-                    for(const BTuple<nota_v2::RESOURCEMANAGER, nota_v2::SERVICE >& param : _trid_7) {
-                        nota_v2::SERVICE _tmp_1 = param.projection2();
-                        nota_v2::RESOURCEMANAGER _tmp_2 = param.projection1();
-
-                        nota_v2 copiedState = state._copy();
-                        nota_v2::_ProjectionRead_rm_getSid readState = state._projected_state_for_rm_getSid();
-
-                        auto _OpCache_with_parameter_rm_getSid_ptr = _OpCache_rm_getSid.find(param);
-                        if(_OpCache_with_parameter_rm_getSid_ptr == _OpCache_rm_getSid.end()) {
-                            copiedState.rm_getSid(_tmp_2, _tmp_1);
-                            nota_v2::_ProjectionWrite_rm_getSid writeState = copiedState._update_for_rm_getSid();
-                            std::unordered_map<nota_v2::_ProjectionRead_rm_getSid, nota_v2::_ProjectionWrite_rm_getSid, nota_v2::_ProjectionRead_rm_getSid::Hash, nota_v2::_ProjectionRead_rm_getSid::HashEqual> _OpCache_with_parameter_rm_getSid;
-                            _OpCache_with_parameter_rm_getSid.insert({readState, writeState});
-                            {
-                                std::unique_lock<std::mutex> _ProjectionRead_rm_getSid_lock(_ProjectionRead_rm_getSid_mutex);
-                                _OpCache_rm_getSid.insert({param, _OpCache_with_parameter_rm_getSid});
-                            }
-
-                        } else {
-                            std::unordered_map<nota_v2::_ProjectionRead_rm_getSid, nota_v2::_ProjectionWrite_rm_getSid, nota_v2::_ProjectionRead_rm_getSid::Hash, nota_v2::_ProjectionRead_rm_getSid::HashEqual> _OpCache_with_parameter_rm_getSid = _OpCache_with_parameter_rm_getSid_ptr->second;
-                            auto writeState_ptr = _OpCache_with_parameter_rm_getSid.find(readState);
-                            if(writeState_ptr != _OpCache_with_parameter_rm_getSid.end()) {
-                                nota_v2::_ProjectionWrite_rm_getSid writeState = writeState_ptr->second;
-                                copiedState._apply_update_for_rm_getSid(writeState);
-                            } else {
-                                copiedState.rm_getSid(_tmp_2, _tmp_1);
-                                nota_v2::_ProjectionWrite_rm_getSid writeState = copiedState._update_for_rm_getSid();
-                                {
-                                    std::unique_lock<std::mutex> _ProjectionRead_rm_getSid_lock(_ProjectionRead_rm_getSid_mutex);
-                                    _OpCache_with_parameter_rm_getSid.insert({readState, writeState});
-                                }
-                            }
-                        }
-
-                        copiedState.stateAccessedVia = "rm_getSid";
-                        result.insert(copiedState);
-                        transitions += 1;
-                    }
                 } else {
-                    BSet<BTuple<nota_v2::RESOURCEMANAGER, nota_v2::SERVICE >> _trid_7 = _trid_7_ptr->second;
-                    for(const BTuple<nota_v2::RESOURCEMANAGER, nota_v2::SERVICE >& param : _trid_7) {
-                        nota_v2::SERVICE _tmp_1 = param.projection2();
-                        nota_v2::RESOURCEMANAGER _tmp_2 = param.projection1();
+                    _trid_7 = _trid_7_ptr->second;
+                }
 
-                        nota_v2 copiedState = state._copy();
-                        nota_v2::_ProjectionRead_rm_getSid readState = state._projected_state_for_rm_getSid();
+                for(const BTuple<nota_v2::RESOURCEMANAGER, nota_v2::SERVICE >& param : _trid_7) {
+                    nota_v2::SERVICE _tmp_1 = param.projection2();
+                    nota_v2::RESOURCEMANAGER _tmp_2 = param.projection1();
 
-                        auto _OpCache_with_parameter_rm_getSid_ptr = _OpCache_rm_getSid.find(param);
-                        if(_OpCache_with_parameter_rm_getSid_ptr == _OpCache_rm_getSid.end()) {
-                            copiedState.rm_getSid(_tmp_2, _tmp_1);
-                            nota_v2::_ProjectionWrite_rm_getSid writeState = copiedState._update_for_rm_getSid();
-                            std::unordered_map<nota_v2::_ProjectionRead_rm_getSid, nota_v2::_ProjectionWrite_rm_getSid, nota_v2::_ProjectionRead_rm_getSid::Hash, nota_v2::_ProjectionRead_rm_getSid::HashEqual> _OpCache_with_parameter_rm_getSid;
-                            _OpCache_with_parameter_rm_getSid.insert({readState, writeState});
-                            {
-                                std::unique_lock<std::mutex> _ProjectionRead_rm_getSid_lock(_ProjectionRead_rm_getSid_mutex);
-                                _OpCache_rm_getSid.insert({param, _OpCache_with_parameter_rm_getSid});
-                            }
+                    nota_v2 copiedState = state._copy();
+                    nota_v2::_ProjectionRead_rm_getSid readState = state._projected_state_for_rm_getSid();
 
-                        } else {
-                            std::unordered_map<nota_v2::_ProjectionRead_rm_getSid, nota_v2::_ProjectionWrite_rm_getSid, nota_v2::_ProjectionRead_rm_getSid::Hash, nota_v2::_ProjectionRead_rm_getSid::HashEqual> _OpCache_with_parameter_rm_getSid = _OpCache_with_parameter_rm_getSid_ptr->second;
-                            auto writeState_ptr = _OpCache_with_parameter_rm_getSid.find(readState);
-                            if(writeState_ptr != _OpCache_with_parameter_rm_getSid.end()) {
-                                nota_v2::_ProjectionWrite_rm_getSid writeState = writeState_ptr->second;
-                                copiedState._apply_update_for_rm_getSid(writeState);
-                            } else {
-                                copiedState.rm_getSid(_tmp_2, _tmp_1);
-                                nota_v2::_ProjectionWrite_rm_getSid writeState = copiedState._update_for_rm_getSid();
-                                {
-                                    std::unique_lock<std::mutex> _ProjectionRead_rm_getSid_lock(_ProjectionRead_rm_getSid_mutex);
-                                    _OpCache_with_parameter_rm_getSid.insert({readState, writeState});
-                                }
-                            }
+                    auto _OpCache_with_parameter_rm_getSid_ptr = _OpCache_rm_getSid.find(param);
+                    if(_OpCache_with_parameter_rm_getSid_ptr == _OpCache_rm_getSid.end()) {
+                        copiedState.rm_getSid(_tmp_2, _tmp_1);
+                        nota_v2::_ProjectionWrite_rm_getSid writeState = copiedState._update_for_rm_getSid();
+                        std::unordered_map<nota_v2::_ProjectionRead_rm_getSid, nota_v2::_ProjectionWrite_rm_getSid, nota_v2::_ProjectionRead_rm_getSid::Hash, nota_v2::_ProjectionRead_rm_getSid::HashEqual> _OpCache_with_parameter_rm_getSid;
+                        _OpCache_with_parameter_rm_getSid.insert({readState, writeState});
+                        {
+                            std::unique_lock<std::mutex> _ProjectionRead_rm_getSid_lock(_ProjectionRead_rm_getSid_mutex);
+                            _OpCache_rm_getSid.insert({param, _OpCache_with_parameter_rm_getSid});
                         }
 
-                        copiedState.stateAccessedVia = "rm_getSid";
-                        result.insert(copiedState);
+                    } else {
+                        std::unordered_map<nota_v2::_ProjectionRead_rm_getSid, nota_v2::_ProjectionWrite_rm_getSid, nota_v2::_ProjectionRead_rm_getSid::Hash, nota_v2::_ProjectionRead_rm_getSid::HashEqual> _OpCache_with_parameter_rm_getSid = _OpCache_with_parameter_rm_getSid_ptr->second;
+                        auto writeState_ptr = _OpCache_with_parameter_rm_getSid.find(readState);
+                        if(writeState_ptr != _OpCache_with_parameter_rm_getSid.end()) {
+                            nota_v2::_ProjectionWrite_rm_getSid writeState = writeState_ptr->second;
+                            copiedState._apply_update_for_rm_getSid(writeState);
+                        } else {
+                            copiedState.rm_getSid(_tmp_2, _tmp_1);
+                            nota_v2::_ProjectionWrite_rm_getSid writeState = copiedState._update_for_rm_getSid();
+                            {
+                                std::unique_lock<std::mutex> _ProjectionRead_rm_getSid_lock(_ProjectionRead_rm_getSid_mutex);
+                                _OpCache_with_parameter_rm_getSid.insert({readState, writeState});
+                            }
+                        }
+                    }
+
+                    copiedState.stateAccessedVia = "rm_getSid";
+                    result.insert(copiedState);
+                    {
+                        std::unique_lock<std::mutex> lock(mutex);
                         transitions += 1;
                     }
                 }
                 nota_v2::_ProjectionRead__tr_rm_getSid_Not_Found read__tr_rm_getSid_Not_Found_state = state._projected_state_for__tr_rm_getSid_Not_Found();
+                BSet<BTuple<nota_v2::RESOURCEMANAGER, nota_v2::SERVICE >> _trid_8;
                 auto _trid_8_ptr = _OpCache_tr_rm_getSid_Not_Found.find(read__tr_rm_getSid_Not_Found_state);
                 if(_trid_8_ptr == _OpCache_tr_rm_getSid_Not_Found.end()) {
-                    BSet<BTuple<nota_v2::RESOURCEMANAGER, nota_v2::SERVICE >> _trid_8 = state._tr_rm_getSid_Not_Found();
+                    _trid_8 = state._tr_rm_getSid_Not_Found();
                     {
                         std::unique_lock<std::mutex> _ProjectionRead__tr_rm_getSid_Not_Found_lock(_ProjectionRead__tr_rm_getSid_Not_Found_mutex);
                         _OpCache_tr_rm_getSid_Not_Found.insert({read__tr_rm_getSid_Not_Found_state, _trid_8});
                     }
-                    for(const BTuple<nota_v2::RESOURCEMANAGER, nota_v2::SERVICE >& param : _trid_8) {
-                        nota_v2::SERVICE _tmp_1 = param.projection2();
-                        nota_v2::RESOURCEMANAGER _tmp_2 = param.projection1();
-
-                        nota_v2 copiedState = state._copy();
-                        nota_v2::_ProjectionRead_rm_getSid_Not_Found readState = state._projected_state_for_rm_getSid_Not_Found();
-
-                        auto _OpCache_with_parameter_rm_getSid_Not_Found_ptr = _OpCache_rm_getSid_Not_Found.find(param);
-                        if(_OpCache_with_parameter_rm_getSid_Not_Found_ptr == _OpCache_rm_getSid_Not_Found.end()) {
-                            copiedState.rm_getSid_Not_Found(_tmp_2, _tmp_1);
-                            nota_v2::_ProjectionWrite_rm_getSid_Not_Found writeState = copiedState._update_for_rm_getSid_Not_Found();
-                            std::unordered_map<nota_v2::_ProjectionRead_rm_getSid_Not_Found, nota_v2::_ProjectionWrite_rm_getSid_Not_Found, nota_v2::_ProjectionRead_rm_getSid_Not_Found::Hash, nota_v2::_ProjectionRead_rm_getSid_Not_Found::HashEqual> _OpCache_with_parameter_rm_getSid_Not_Found;
-                            _OpCache_with_parameter_rm_getSid_Not_Found.insert({readState, writeState});
-                            {
-                                std::unique_lock<std::mutex> _ProjectionRead_rm_getSid_Not_Found_lock(_ProjectionRead_rm_getSid_Not_Found_mutex);
-                                _OpCache_rm_getSid_Not_Found.insert({param, _OpCache_with_parameter_rm_getSid_Not_Found});
-                            }
-
-                        } else {
-                            std::unordered_map<nota_v2::_ProjectionRead_rm_getSid_Not_Found, nota_v2::_ProjectionWrite_rm_getSid_Not_Found, nota_v2::_ProjectionRead_rm_getSid_Not_Found::Hash, nota_v2::_ProjectionRead_rm_getSid_Not_Found::HashEqual> _OpCache_with_parameter_rm_getSid_Not_Found = _OpCache_with_parameter_rm_getSid_Not_Found_ptr->second;
-                            auto writeState_ptr = _OpCache_with_parameter_rm_getSid_Not_Found.find(readState);
-                            if(writeState_ptr != _OpCache_with_parameter_rm_getSid_Not_Found.end()) {
-                                nota_v2::_ProjectionWrite_rm_getSid_Not_Found writeState = writeState_ptr->second;
-                                copiedState._apply_update_for_rm_getSid_Not_Found(writeState);
-                            } else {
-                                copiedState.rm_getSid_Not_Found(_tmp_2, _tmp_1);
-                                nota_v2::_ProjectionWrite_rm_getSid_Not_Found writeState = copiedState._update_for_rm_getSid_Not_Found();
-                                {
-                                    std::unique_lock<std::mutex> _ProjectionRead_rm_getSid_Not_Found_lock(_ProjectionRead_rm_getSid_Not_Found_mutex);
-                                    _OpCache_with_parameter_rm_getSid_Not_Found.insert({readState, writeState});
-                                }
-                            }
-                        }
-
-                        copiedState.stateAccessedVia = "rm_getSid_Not_Found";
-                        result.insert(copiedState);
-                        transitions += 1;
-                    }
                 } else {
-                    BSet<BTuple<nota_v2::RESOURCEMANAGER, nota_v2::SERVICE >> _trid_8 = _trid_8_ptr->second;
-                    for(const BTuple<nota_v2::RESOURCEMANAGER, nota_v2::SERVICE >& param : _trid_8) {
-                        nota_v2::SERVICE _tmp_1 = param.projection2();
-                        nota_v2::RESOURCEMANAGER _tmp_2 = param.projection1();
+                    _trid_8 = _trid_8_ptr->second;
+                }
 
-                        nota_v2 copiedState = state._copy();
-                        nota_v2::_ProjectionRead_rm_getSid_Not_Found readState = state._projected_state_for_rm_getSid_Not_Found();
+                for(const BTuple<nota_v2::RESOURCEMANAGER, nota_v2::SERVICE >& param : _trid_8) {
+                    nota_v2::SERVICE _tmp_1 = param.projection2();
+                    nota_v2::RESOURCEMANAGER _tmp_2 = param.projection1();
 
-                        auto _OpCache_with_parameter_rm_getSid_Not_Found_ptr = _OpCache_rm_getSid_Not_Found.find(param);
-                        if(_OpCache_with_parameter_rm_getSid_Not_Found_ptr == _OpCache_rm_getSid_Not_Found.end()) {
-                            copiedState.rm_getSid_Not_Found(_tmp_2, _tmp_1);
-                            nota_v2::_ProjectionWrite_rm_getSid_Not_Found writeState = copiedState._update_for_rm_getSid_Not_Found();
-                            std::unordered_map<nota_v2::_ProjectionRead_rm_getSid_Not_Found, nota_v2::_ProjectionWrite_rm_getSid_Not_Found, nota_v2::_ProjectionRead_rm_getSid_Not_Found::Hash, nota_v2::_ProjectionRead_rm_getSid_Not_Found::HashEqual> _OpCache_with_parameter_rm_getSid_Not_Found;
-                            _OpCache_with_parameter_rm_getSid_Not_Found.insert({readState, writeState});
-                            {
-                                std::unique_lock<std::mutex> _ProjectionRead_rm_getSid_Not_Found_lock(_ProjectionRead_rm_getSid_Not_Found_mutex);
-                                _OpCache_rm_getSid_Not_Found.insert({param, _OpCache_with_parameter_rm_getSid_Not_Found});
-                            }
+                    nota_v2 copiedState = state._copy();
+                    nota_v2::_ProjectionRead_rm_getSid_Not_Found readState = state._projected_state_for_rm_getSid_Not_Found();
 
-                        } else {
-                            std::unordered_map<nota_v2::_ProjectionRead_rm_getSid_Not_Found, nota_v2::_ProjectionWrite_rm_getSid_Not_Found, nota_v2::_ProjectionRead_rm_getSid_Not_Found::Hash, nota_v2::_ProjectionRead_rm_getSid_Not_Found::HashEqual> _OpCache_with_parameter_rm_getSid_Not_Found = _OpCache_with_parameter_rm_getSid_Not_Found_ptr->second;
-                            auto writeState_ptr = _OpCache_with_parameter_rm_getSid_Not_Found.find(readState);
-                            if(writeState_ptr != _OpCache_with_parameter_rm_getSid_Not_Found.end()) {
-                                nota_v2::_ProjectionWrite_rm_getSid_Not_Found writeState = writeState_ptr->second;
-                                copiedState._apply_update_for_rm_getSid_Not_Found(writeState);
-                            } else {
-                                copiedState.rm_getSid_Not_Found(_tmp_2, _tmp_1);
-                                nota_v2::_ProjectionWrite_rm_getSid_Not_Found writeState = copiedState._update_for_rm_getSid_Not_Found();
-                                {
-                                    std::unique_lock<std::mutex> _ProjectionRead_rm_getSid_Not_Found_lock(_ProjectionRead_rm_getSid_Not_Found_mutex);
-                                    _OpCache_with_parameter_rm_getSid_Not_Found.insert({readState, writeState});
-                                }
-                            }
+                    auto _OpCache_with_parameter_rm_getSid_Not_Found_ptr = _OpCache_rm_getSid_Not_Found.find(param);
+                    if(_OpCache_with_parameter_rm_getSid_Not_Found_ptr == _OpCache_rm_getSid_Not_Found.end()) {
+                        copiedState.rm_getSid_Not_Found(_tmp_2, _tmp_1);
+                        nota_v2::_ProjectionWrite_rm_getSid_Not_Found writeState = copiedState._update_for_rm_getSid_Not_Found();
+                        std::unordered_map<nota_v2::_ProjectionRead_rm_getSid_Not_Found, nota_v2::_ProjectionWrite_rm_getSid_Not_Found, nota_v2::_ProjectionRead_rm_getSid_Not_Found::Hash, nota_v2::_ProjectionRead_rm_getSid_Not_Found::HashEqual> _OpCache_with_parameter_rm_getSid_Not_Found;
+                        _OpCache_with_parameter_rm_getSid_Not_Found.insert({readState, writeState});
+                        {
+                            std::unique_lock<std::mutex> _ProjectionRead_rm_getSid_Not_Found_lock(_ProjectionRead_rm_getSid_Not_Found_mutex);
+                            _OpCache_rm_getSid_Not_Found.insert({param, _OpCache_with_parameter_rm_getSid_Not_Found});
                         }
 
-                        copiedState.stateAccessedVia = "rm_getSid_Not_Found";
-                        result.insert(copiedState);
+                    } else {
+                        std::unordered_map<nota_v2::_ProjectionRead_rm_getSid_Not_Found, nota_v2::_ProjectionWrite_rm_getSid_Not_Found, nota_v2::_ProjectionRead_rm_getSid_Not_Found::Hash, nota_v2::_ProjectionRead_rm_getSid_Not_Found::HashEqual> _OpCache_with_parameter_rm_getSid_Not_Found = _OpCache_with_parameter_rm_getSid_Not_Found_ptr->second;
+                        auto writeState_ptr = _OpCache_with_parameter_rm_getSid_Not_Found.find(readState);
+                        if(writeState_ptr != _OpCache_with_parameter_rm_getSid_Not_Found.end()) {
+                            nota_v2::_ProjectionWrite_rm_getSid_Not_Found writeState = writeState_ptr->second;
+                            copiedState._apply_update_for_rm_getSid_Not_Found(writeState);
+                        } else {
+                            copiedState.rm_getSid_Not_Found(_tmp_2, _tmp_1);
+                            nota_v2::_ProjectionWrite_rm_getSid_Not_Found writeState = copiedState._update_for_rm_getSid_Not_Found();
+                            {
+                                std::unique_lock<std::mutex> _ProjectionRead_rm_getSid_Not_Found_lock(_ProjectionRead_rm_getSid_Not_Found_mutex);
+                                _OpCache_with_parameter_rm_getSid_Not_Found.insert({readState, writeState});
+                            }
+                        }
+                    }
+
+                    copiedState.stateAccessedVia = "rm_getSid_Not_Found";
+                    result.insert(copiedState);
+                    {
+                        std::unique_lock<std::mutex> lock(mutex);
                         transitions += 1;
                     }
                 }
                 nota_v2::_ProjectionRead__tr_in_announceResourceManager read__tr_in_announceResourceManager_state = state._projected_state_for__tr_in_announceResourceManager();
+                BSet<BTuple<nota_v2::INTERCONNECTNODE, nota_v2::RESOURCEMANAGER >> _trid_9;
                 auto _trid_9_ptr = _OpCache_tr_in_announceResourceManager.find(read__tr_in_announceResourceManager_state);
                 if(_trid_9_ptr == _OpCache_tr_in_announceResourceManager.end()) {
-                    BSet<BTuple<nota_v2::INTERCONNECTNODE, nota_v2::RESOURCEMANAGER >> _trid_9 = state._tr_in_announceResourceManager();
+                    _trid_9 = state._tr_in_announceResourceManager();
                     {
                         std::unique_lock<std::mutex> _ProjectionRead__tr_in_announceResourceManager_lock(_ProjectionRead__tr_in_announceResourceManager_mutex);
                         _OpCache_tr_in_announceResourceManager.insert({read__tr_in_announceResourceManager_state, _trid_9});
                     }
-                    for(const BTuple<nota_v2::INTERCONNECTNODE, nota_v2::RESOURCEMANAGER >& param : _trid_9) {
-                        nota_v2::RESOURCEMANAGER _tmp_1 = param.projection2();
-                        nota_v2::INTERCONNECTNODE _tmp_2 = param.projection1();
-
-                        nota_v2 copiedState = state._copy();
-                        nota_v2::_ProjectionRead_in_announceResourceManager readState = state._projected_state_for_in_announceResourceManager();
-
-                        auto _OpCache_with_parameter_in_announceResourceManager_ptr = _OpCache_in_announceResourceManager.find(param);
-                        if(_OpCache_with_parameter_in_announceResourceManager_ptr == _OpCache_in_announceResourceManager.end()) {
-                            copiedState.in_announceResourceManager(_tmp_2, _tmp_1);
-                            nota_v2::_ProjectionWrite_in_announceResourceManager writeState = copiedState._update_for_in_announceResourceManager();
-                            std::unordered_map<nota_v2::_ProjectionRead_in_announceResourceManager, nota_v2::_ProjectionWrite_in_announceResourceManager, nota_v2::_ProjectionRead_in_announceResourceManager::Hash, nota_v2::_ProjectionRead_in_announceResourceManager::HashEqual> _OpCache_with_parameter_in_announceResourceManager;
-                            _OpCache_with_parameter_in_announceResourceManager.insert({readState, writeState});
-                            {
-                                std::unique_lock<std::mutex> _ProjectionRead_in_announceResourceManager_lock(_ProjectionRead_in_announceResourceManager_mutex);
-                                _OpCache_in_announceResourceManager.insert({param, _OpCache_with_parameter_in_announceResourceManager});
-                            }
-
-                        } else {
-                            std::unordered_map<nota_v2::_ProjectionRead_in_announceResourceManager, nota_v2::_ProjectionWrite_in_announceResourceManager, nota_v2::_ProjectionRead_in_announceResourceManager::Hash, nota_v2::_ProjectionRead_in_announceResourceManager::HashEqual> _OpCache_with_parameter_in_announceResourceManager = _OpCache_with_parameter_in_announceResourceManager_ptr->second;
-                            auto writeState_ptr = _OpCache_with_parameter_in_announceResourceManager.find(readState);
-                            if(writeState_ptr != _OpCache_with_parameter_in_announceResourceManager.end()) {
-                                nota_v2::_ProjectionWrite_in_announceResourceManager writeState = writeState_ptr->second;
-                                copiedState._apply_update_for_in_announceResourceManager(writeState);
-                            } else {
-                                copiedState.in_announceResourceManager(_tmp_2, _tmp_1);
-                                nota_v2::_ProjectionWrite_in_announceResourceManager writeState = copiedState._update_for_in_announceResourceManager();
-                                {
-                                    std::unique_lock<std::mutex> _ProjectionRead_in_announceResourceManager_lock(_ProjectionRead_in_announceResourceManager_mutex);
-                                    _OpCache_with_parameter_in_announceResourceManager.insert({readState, writeState});
-                                }
-                            }
-                        }
-
-                        copiedState.stateAccessedVia = "in_announceResourceManager";
-                        result.insert(copiedState);
-                        transitions += 1;
-                    }
                 } else {
-                    BSet<BTuple<nota_v2::INTERCONNECTNODE, nota_v2::RESOURCEMANAGER >> _trid_9 = _trid_9_ptr->second;
-                    for(const BTuple<nota_v2::INTERCONNECTNODE, nota_v2::RESOURCEMANAGER >& param : _trid_9) {
-                        nota_v2::RESOURCEMANAGER _tmp_1 = param.projection2();
-                        nota_v2::INTERCONNECTNODE _tmp_2 = param.projection1();
+                    _trid_9 = _trid_9_ptr->second;
+                }
 
-                        nota_v2 copiedState = state._copy();
-                        nota_v2::_ProjectionRead_in_announceResourceManager readState = state._projected_state_for_in_announceResourceManager();
+                for(const BTuple<nota_v2::INTERCONNECTNODE, nota_v2::RESOURCEMANAGER >& param : _trid_9) {
+                    nota_v2::RESOURCEMANAGER _tmp_1 = param.projection2();
+                    nota_v2::INTERCONNECTNODE _tmp_2 = param.projection1();
 
-                        auto _OpCache_with_parameter_in_announceResourceManager_ptr = _OpCache_in_announceResourceManager.find(param);
-                        if(_OpCache_with_parameter_in_announceResourceManager_ptr == _OpCache_in_announceResourceManager.end()) {
-                            copiedState.in_announceResourceManager(_tmp_2, _tmp_1);
-                            nota_v2::_ProjectionWrite_in_announceResourceManager writeState = copiedState._update_for_in_announceResourceManager();
-                            std::unordered_map<nota_v2::_ProjectionRead_in_announceResourceManager, nota_v2::_ProjectionWrite_in_announceResourceManager, nota_v2::_ProjectionRead_in_announceResourceManager::Hash, nota_v2::_ProjectionRead_in_announceResourceManager::HashEqual> _OpCache_with_parameter_in_announceResourceManager;
-                            _OpCache_with_parameter_in_announceResourceManager.insert({readState, writeState});
-                            {
-                                std::unique_lock<std::mutex> _ProjectionRead_in_announceResourceManager_lock(_ProjectionRead_in_announceResourceManager_mutex);
-                                _OpCache_in_announceResourceManager.insert({param, _OpCache_with_parameter_in_announceResourceManager});
-                            }
+                    nota_v2 copiedState = state._copy();
+                    nota_v2::_ProjectionRead_in_announceResourceManager readState = state._projected_state_for_in_announceResourceManager();
 
-                        } else {
-                            std::unordered_map<nota_v2::_ProjectionRead_in_announceResourceManager, nota_v2::_ProjectionWrite_in_announceResourceManager, nota_v2::_ProjectionRead_in_announceResourceManager::Hash, nota_v2::_ProjectionRead_in_announceResourceManager::HashEqual> _OpCache_with_parameter_in_announceResourceManager = _OpCache_with_parameter_in_announceResourceManager_ptr->second;
-                            auto writeState_ptr = _OpCache_with_parameter_in_announceResourceManager.find(readState);
-                            if(writeState_ptr != _OpCache_with_parameter_in_announceResourceManager.end()) {
-                                nota_v2::_ProjectionWrite_in_announceResourceManager writeState = writeState_ptr->second;
-                                copiedState._apply_update_for_in_announceResourceManager(writeState);
-                            } else {
-                                copiedState.in_announceResourceManager(_tmp_2, _tmp_1);
-                                nota_v2::_ProjectionWrite_in_announceResourceManager writeState = copiedState._update_for_in_announceResourceManager();
-                                {
-                                    std::unique_lock<std::mutex> _ProjectionRead_in_announceResourceManager_lock(_ProjectionRead_in_announceResourceManager_mutex);
-                                    _OpCache_with_parameter_in_announceResourceManager.insert({readState, writeState});
-                                }
-                            }
+                    auto _OpCache_with_parameter_in_announceResourceManager_ptr = _OpCache_in_announceResourceManager.find(param);
+                    if(_OpCache_with_parameter_in_announceResourceManager_ptr == _OpCache_in_announceResourceManager.end()) {
+                        copiedState.in_announceResourceManager(_tmp_2, _tmp_1);
+                        nota_v2::_ProjectionWrite_in_announceResourceManager writeState = copiedState._update_for_in_announceResourceManager();
+                        std::unordered_map<nota_v2::_ProjectionRead_in_announceResourceManager, nota_v2::_ProjectionWrite_in_announceResourceManager, nota_v2::_ProjectionRead_in_announceResourceManager::Hash, nota_v2::_ProjectionRead_in_announceResourceManager::HashEqual> _OpCache_with_parameter_in_announceResourceManager;
+                        _OpCache_with_parameter_in_announceResourceManager.insert({readState, writeState});
+                        {
+                            std::unique_lock<std::mutex> _ProjectionRead_in_announceResourceManager_lock(_ProjectionRead_in_announceResourceManager_mutex);
+                            _OpCache_in_announceResourceManager.insert({param, _OpCache_with_parameter_in_announceResourceManager});
                         }
 
-                        copiedState.stateAccessedVia = "in_announceResourceManager";
-                        result.insert(copiedState);
+                    } else {
+                        std::unordered_map<nota_v2::_ProjectionRead_in_announceResourceManager, nota_v2::_ProjectionWrite_in_announceResourceManager, nota_v2::_ProjectionRead_in_announceResourceManager::Hash, nota_v2::_ProjectionRead_in_announceResourceManager::HashEqual> _OpCache_with_parameter_in_announceResourceManager = _OpCache_with_parameter_in_announceResourceManager_ptr->second;
+                        auto writeState_ptr = _OpCache_with_parameter_in_announceResourceManager.find(readState);
+                        if(writeState_ptr != _OpCache_with_parameter_in_announceResourceManager.end()) {
+                            nota_v2::_ProjectionWrite_in_announceResourceManager writeState = writeState_ptr->second;
+                            copiedState._apply_update_for_in_announceResourceManager(writeState);
+                        } else {
+                            copiedState.in_announceResourceManager(_tmp_2, _tmp_1);
+                            nota_v2::_ProjectionWrite_in_announceResourceManager writeState = copiedState._update_for_in_announceResourceManager();
+                            {
+                                std::unique_lock<std::mutex> _ProjectionRead_in_announceResourceManager_lock(_ProjectionRead_in_announceResourceManager_mutex);
+                                _OpCache_with_parameter_in_announceResourceManager.insert({readState, writeState});
+                            }
+                        }
+                    }
+
+                    copiedState.stateAccessedVia = "in_announceResourceManager";
+                    result.insert(copiedState);
+                    {
+                        std::unique_lock<std::mutex> lock(mutex);
                         transitions += 1;
                     }
                 }
                 nota_v2::_ProjectionRead__tr_in_register_success read__tr_in_register_success_state = state._projected_state_for__tr_in_register_success();
+                BSet<BTuple<BTuple<nota_v2::INTERCONNECTNODE, nota_v2::SERVICE >, nota_v2::SID >> _trid_10;
                 auto _trid_10_ptr = _OpCache_tr_in_register_success.find(read__tr_in_register_success_state);
                 if(_trid_10_ptr == _OpCache_tr_in_register_success.end()) {
-                    BSet<BTuple<BTuple<nota_v2::INTERCONNECTNODE, nota_v2::SERVICE >, nota_v2::SID >> _trid_10 = state._tr_in_register_success();
+                    _trid_10 = state._tr_in_register_success();
                     {
                         std::unique_lock<std::mutex> _ProjectionRead__tr_in_register_success_lock(_ProjectionRead__tr_in_register_success_mutex);
                         _OpCache_tr_in_register_success.insert({read__tr_in_register_success_state, _trid_10});
                     }
-                    for(const BTuple<BTuple<nota_v2::INTERCONNECTNODE, nota_v2::SERVICE >, nota_v2::SID >& param : _trid_10) {
-                        nota_v2::SID _tmp_1 = param.projection2();
-                        BTuple<nota_v2::INTERCONNECTNODE, nota_v2::SERVICE > _tmp_2 = param.projection1();
-                        nota_v2::SERVICE _tmp_3 = _tmp_2.projection2();
-                        nota_v2::INTERCONNECTNODE _tmp_4 = _tmp_2.projection1();
-
-                        nota_v2 copiedState = state._copy();
-                        nota_v2::_ProjectionRead_in_register_success readState = state._projected_state_for_in_register_success();
-
-                        auto _OpCache_with_parameter_in_register_success_ptr = _OpCache_in_register_success.find(param);
-                        if(_OpCache_with_parameter_in_register_success_ptr == _OpCache_in_register_success.end()) {
-                            copiedState.in_register_success(_tmp_4, _tmp_3, _tmp_1);
-                            nota_v2::_ProjectionWrite_in_register_success writeState = copiedState._update_for_in_register_success();
-                            std::unordered_map<nota_v2::_ProjectionRead_in_register_success, nota_v2::_ProjectionWrite_in_register_success, nota_v2::_ProjectionRead_in_register_success::Hash, nota_v2::_ProjectionRead_in_register_success::HashEqual> _OpCache_with_parameter_in_register_success;
-                            _OpCache_with_parameter_in_register_success.insert({readState, writeState});
-                            {
-                                std::unique_lock<std::mutex> _ProjectionRead_in_register_success_lock(_ProjectionRead_in_register_success_mutex);
-                                _OpCache_in_register_success.insert({param, _OpCache_with_parameter_in_register_success});
-                            }
-
-                        } else {
-                            std::unordered_map<nota_v2::_ProjectionRead_in_register_success, nota_v2::_ProjectionWrite_in_register_success, nota_v2::_ProjectionRead_in_register_success::Hash, nota_v2::_ProjectionRead_in_register_success::HashEqual> _OpCache_with_parameter_in_register_success = _OpCache_with_parameter_in_register_success_ptr->second;
-                            auto writeState_ptr = _OpCache_with_parameter_in_register_success.find(readState);
-                            if(writeState_ptr != _OpCache_with_parameter_in_register_success.end()) {
-                                nota_v2::_ProjectionWrite_in_register_success writeState = writeState_ptr->second;
-                                copiedState._apply_update_for_in_register_success(writeState);
-                            } else {
-                                copiedState.in_register_success(_tmp_4, _tmp_3, _tmp_1);
-                                nota_v2::_ProjectionWrite_in_register_success writeState = copiedState._update_for_in_register_success();
-                                {
-                                    std::unique_lock<std::mutex> _ProjectionRead_in_register_success_lock(_ProjectionRead_in_register_success_mutex);
-                                    _OpCache_with_parameter_in_register_success.insert({readState, writeState});
-                                }
-                            }
-                        }
-
-                        copiedState.stateAccessedVia = "in_register_success";
-                        result.insert(copiedState);
-                        transitions += 1;
-                    }
                 } else {
-                    BSet<BTuple<BTuple<nota_v2::INTERCONNECTNODE, nota_v2::SERVICE >, nota_v2::SID >> _trid_10 = _trid_10_ptr->second;
-                    for(const BTuple<BTuple<nota_v2::INTERCONNECTNODE, nota_v2::SERVICE >, nota_v2::SID >& param : _trid_10) {
-                        nota_v2::SID _tmp_1 = param.projection2();
-                        BTuple<nota_v2::INTERCONNECTNODE, nota_v2::SERVICE > _tmp_2 = param.projection1();
-                        nota_v2::SERVICE _tmp_3 = _tmp_2.projection2();
-                        nota_v2::INTERCONNECTNODE _tmp_4 = _tmp_2.projection1();
+                    _trid_10 = _trid_10_ptr->second;
+                }
 
-                        nota_v2 copiedState = state._copy();
-                        nota_v2::_ProjectionRead_in_register_success readState = state._projected_state_for_in_register_success();
+                for(const BTuple<BTuple<nota_v2::INTERCONNECTNODE, nota_v2::SERVICE >, nota_v2::SID >& param : _trid_10) {
+                    nota_v2::SID _tmp_1 = param.projection2();
+                    BTuple<nota_v2::INTERCONNECTNODE, nota_v2::SERVICE > _tmp_2 = param.projection1();
+                    nota_v2::SERVICE _tmp_3 = _tmp_2.projection2();
+                    nota_v2::INTERCONNECTNODE _tmp_4 = _tmp_2.projection1();
 
-                        auto _OpCache_with_parameter_in_register_success_ptr = _OpCache_in_register_success.find(param);
-                        if(_OpCache_with_parameter_in_register_success_ptr == _OpCache_in_register_success.end()) {
-                            copiedState.in_register_success(_tmp_4, _tmp_3, _tmp_1);
-                            nota_v2::_ProjectionWrite_in_register_success writeState = copiedState._update_for_in_register_success();
-                            std::unordered_map<nota_v2::_ProjectionRead_in_register_success, nota_v2::_ProjectionWrite_in_register_success, nota_v2::_ProjectionRead_in_register_success::Hash, nota_v2::_ProjectionRead_in_register_success::HashEqual> _OpCache_with_parameter_in_register_success;
-                            _OpCache_with_parameter_in_register_success.insert({readState, writeState});
-                            {
-                                std::unique_lock<std::mutex> _ProjectionRead_in_register_success_lock(_ProjectionRead_in_register_success_mutex);
-                                _OpCache_in_register_success.insert({param, _OpCache_with_parameter_in_register_success});
-                            }
+                    nota_v2 copiedState = state._copy();
+                    nota_v2::_ProjectionRead_in_register_success readState = state._projected_state_for_in_register_success();
 
-                        } else {
-                            std::unordered_map<nota_v2::_ProjectionRead_in_register_success, nota_v2::_ProjectionWrite_in_register_success, nota_v2::_ProjectionRead_in_register_success::Hash, nota_v2::_ProjectionRead_in_register_success::HashEqual> _OpCache_with_parameter_in_register_success = _OpCache_with_parameter_in_register_success_ptr->second;
-                            auto writeState_ptr = _OpCache_with_parameter_in_register_success.find(readState);
-                            if(writeState_ptr != _OpCache_with_parameter_in_register_success.end()) {
-                                nota_v2::_ProjectionWrite_in_register_success writeState = writeState_ptr->second;
-                                copiedState._apply_update_for_in_register_success(writeState);
-                            } else {
-                                copiedState.in_register_success(_tmp_4, _tmp_3, _tmp_1);
-                                nota_v2::_ProjectionWrite_in_register_success writeState = copiedState._update_for_in_register_success();
-                                {
-                                    std::unique_lock<std::mutex> _ProjectionRead_in_register_success_lock(_ProjectionRead_in_register_success_mutex);
-                                    _OpCache_with_parameter_in_register_success.insert({readState, writeState});
-                                }
-                            }
+                    auto _OpCache_with_parameter_in_register_success_ptr = _OpCache_in_register_success.find(param);
+                    if(_OpCache_with_parameter_in_register_success_ptr == _OpCache_in_register_success.end()) {
+                        copiedState.in_register_success(_tmp_4, _tmp_3, _tmp_1);
+                        nota_v2::_ProjectionWrite_in_register_success writeState = copiedState._update_for_in_register_success();
+                        std::unordered_map<nota_v2::_ProjectionRead_in_register_success, nota_v2::_ProjectionWrite_in_register_success, nota_v2::_ProjectionRead_in_register_success::Hash, nota_v2::_ProjectionRead_in_register_success::HashEqual> _OpCache_with_parameter_in_register_success;
+                        _OpCache_with_parameter_in_register_success.insert({readState, writeState});
+                        {
+                            std::unique_lock<std::mutex> _ProjectionRead_in_register_success_lock(_ProjectionRead_in_register_success_mutex);
+                            _OpCache_in_register_success.insert({param, _OpCache_with_parameter_in_register_success});
                         }
 
-                        copiedState.stateAccessedVia = "in_register_success";
-                        result.insert(copiedState);
+                    } else {
+                        std::unordered_map<nota_v2::_ProjectionRead_in_register_success, nota_v2::_ProjectionWrite_in_register_success, nota_v2::_ProjectionRead_in_register_success::Hash, nota_v2::_ProjectionRead_in_register_success::HashEqual> _OpCache_with_parameter_in_register_success = _OpCache_with_parameter_in_register_success_ptr->second;
+                        auto writeState_ptr = _OpCache_with_parameter_in_register_success.find(readState);
+                        if(writeState_ptr != _OpCache_with_parameter_in_register_success.end()) {
+                            nota_v2::_ProjectionWrite_in_register_success writeState = writeState_ptr->second;
+                            copiedState._apply_update_for_in_register_success(writeState);
+                        } else {
+                            copiedState.in_register_success(_tmp_4, _tmp_3, _tmp_1);
+                            nota_v2::_ProjectionWrite_in_register_success writeState = copiedState._update_for_in_register_success();
+                            {
+                                std::unique_lock<std::mutex> _ProjectionRead_in_register_success_lock(_ProjectionRead_in_register_success_mutex);
+                                _OpCache_with_parameter_in_register_success.insert({readState, writeState});
+                            }
+                        }
+                    }
+
+                    copiedState.stateAccessedVia = "in_register_success";
+                    result.insert(copiedState);
+                    {
+                        std::unique_lock<std::mutex> lock(mutex);
                         transitions += 1;
                     }
                 }
                 nota_v2::_ProjectionRead__tr_in_register_failed read__tr_in_register_failed_state = state._projected_state_for__tr_in_register_failed();
+                BSet<BTuple<nota_v2::INTERCONNECTNODE, nota_v2::SERVICE >> _trid_11;
                 auto _trid_11_ptr = _OpCache_tr_in_register_failed.find(read__tr_in_register_failed_state);
                 if(_trid_11_ptr == _OpCache_tr_in_register_failed.end()) {
-                    BSet<BTuple<nota_v2::INTERCONNECTNODE, nota_v2::SERVICE >> _trid_11 = state._tr_in_register_failed();
+                    _trid_11 = state._tr_in_register_failed();
                     {
                         std::unique_lock<std::mutex> _ProjectionRead__tr_in_register_failed_lock(_ProjectionRead__tr_in_register_failed_mutex);
                         _OpCache_tr_in_register_failed.insert({read__tr_in_register_failed_state, _trid_11});
                     }
-                    for(const BTuple<nota_v2::INTERCONNECTNODE, nota_v2::SERVICE >& param : _trid_11) {
-                        nota_v2::SERVICE _tmp_1 = param.projection2();
-                        nota_v2::INTERCONNECTNODE _tmp_2 = param.projection1();
-
-                        nota_v2 copiedState = state._copy();
-                        nota_v2::_ProjectionRead_in_register_failed readState = state._projected_state_for_in_register_failed();
-
-                        auto _OpCache_with_parameter_in_register_failed_ptr = _OpCache_in_register_failed.find(param);
-                        if(_OpCache_with_parameter_in_register_failed_ptr == _OpCache_in_register_failed.end()) {
-                            copiedState.in_register_failed(_tmp_2, _tmp_1);
-                            nota_v2::_ProjectionWrite_in_register_failed writeState = copiedState._update_for_in_register_failed();
-                            std::unordered_map<nota_v2::_ProjectionRead_in_register_failed, nota_v2::_ProjectionWrite_in_register_failed, nota_v2::_ProjectionRead_in_register_failed::Hash, nota_v2::_ProjectionRead_in_register_failed::HashEqual> _OpCache_with_parameter_in_register_failed;
-                            _OpCache_with_parameter_in_register_failed.insert({readState, writeState});
-                            {
-                                std::unique_lock<std::mutex> _ProjectionRead_in_register_failed_lock(_ProjectionRead_in_register_failed_mutex);
-                                _OpCache_in_register_failed.insert({param, _OpCache_with_parameter_in_register_failed});
-                            }
-
-                        } else {
-                            std::unordered_map<nota_v2::_ProjectionRead_in_register_failed, nota_v2::_ProjectionWrite_in_register_failed, nota_v2::_ProjectionRead_in_register_failed::Hash, nota_v2::_ProjectionRead_in_register_failed::HashEqual> _OpCache_with_parameter_in_register_failed = _OpCache_with_parameter_in_register_failed_ptr->second;
-                            auto writeState_ptr = _OpCache_with_parameter_in_register_failed.find(readState);
-                            if(writeState_ptr != _OpCache_with_parameter_in_register_failed.end()) {
-                                nota_v2::_ProjectionWrite_in_register_failed writeState = writeState_ptr->second;
-                                copiedState._apply_update_for_in_register_failed(writeState);
-                            } else {
-                                copiedState.in_register_failed(_tmp_2, _tmp_1);
-                                nota_v2::_ProjectionWrite_in_register_failed writeState = copiedState._update_for_in_register_failed();
-                                {
-                                    std::unique_lock<std::mutex> _ProjectionRead_in_register_failed_lock(_ProjectionRead_in_register_failed_mutex);
-                                    _OpCache_with_parameter_in_register_failed.insert({readState, writeState});
-                                }
-                            }
-                        }
-
-                        copiedState.stateAccessedVia = "in_register_failed";
-                        result.insert(copiedState);
-                        transitions += 1;
-                    }
                 } else {
-                    BSet<BTuple<nota_v2::INTERCONNECTNODE, nota_v2::SERVICE >> _trid_11 = _trid_11_ptr->second;
-                    for(const BTuple<nota_v2::INTERCONNECTNODE, nota_v2::SERVICE >& param : _trid_11) {
-                        nota_v2::SERVICE _tmp_1 = param.projection2();
-                        nota_v2::INTERCONNECTNODE _tmp_2 = param.projection1();
+                    _trid_11 = _trid_11_ptr->second;
+                }
 
-                        nota_v2 copiedState = state._copy();
-                        nota_v2::_ProjectionRead_in_register_failed readState = state._projected_state_for_in_register_failed();
+                for(const BTuple<nota_v2::INTERCONNECTNODE, nota_v2::SERVICE >& param : _trid_11) {
+                    nota_v2::SERVICE _tmp_1 = param.projection2();
+                    nota_v2::INTERCONNECTNODE _tmp_2 = param.projection1();
 
-                        auto _OpCache_with_parameter_in_register_failed_ptr = _OpCache_in_register_failed.find(param);
-                        if(_OpCache_with_parameter_in_register_failed_ptr == _OpCache_in_register_failed.end()) {
-                            copiedState.in_register_failed(_tmp_2, _tmp_1);
-                            nota_v2::_ProjectionWrite_in_register_failed writeState = copiedState._update_for_in_register_failed();
-                            std::unordered_map<nota_v2::_ProjectionRead_in_register_failed, nota_v2::_ProjectionWrite_in_register_failed, nota_v2::_ProjectionRead_in_register_failed::Hash, nota_v2::_ProjectionRead_in_register_failed::HashEqual> _OpCache_with_parameter_in_register_failed;
-                            _OpCache_with_parameter_in_register_failed.insert({readState, writeState});
-                            {
-                                std::unique_lock<std::mutex> _ProjectionRead_in_register_failed_lock(_ProjectionRead_in_register_failed_mutex);
-                                _OpCache_in_register_failed.insert({param, _OpCache_with_parameter_in_register_failed});
-                            }
+                    nota_v2 copiedState = state._copy();
+                    nota_v2::_ProjectionRead_in_register_failed readState = state._projected_state_for_in_register_failed();
 
-                        } else {
-                            std::unordered_map<nota_v2::_ProjectionRead_in_register_failed, nota_v2::_ProjectionWrite_in_register_failed, nota_v2::_ProjectionRead_in_register_failed::Hash, nota_v2::_ProjectionRead_in_register_failed::HashEqual> _OpCache_with_parameter_in_register_failed = _OpCache_with_parameter_in_register_failed_ptr->second;
-                            auto writeState_ptr = _OpCache_with_parameter_in_register_failed.find(readState);
-                            if(writeState_ptr != _OpCache_with_parameter_in_register_failed.end()) {
-                                nota_v2::_ProjectionWrite_in_register_failed writeState = writeState_ptr->second;
-                                copiedState._apply_update_for_in_register_failed(writeState);
-                            } else {
-                                copiedState.in_register_failed(_tmp_2, _tmp_1);
-                                nota_v2::_ProjectionWrite_in_register_failed writeState = copiedState._update_for_in_register_failed();
-                                {
-                                    std::unique_lock<std::mutex> _ProjectionRead_in_register_failed_lock(_ProjectionRead_in_register_failed_mutex);
-                                    _OpCache_with_parameter_in_register_failed.insert({readState, writeState});
-                                }
-                            }
+                    auto _OpCache_with_parameter_in_register_failed_ptr = _OpCache_in_register_failed.find(param);
+                    if(_OpCache_with_parameter_in_register_failed_ptr == _OpCache_in_register_failed.end()) {
+                        copiedState.in_register_failed(_tmp_2, _tmp_1);
+                        nota_v2::_ProjectionWrite_in_register_failed writeState = copiedState._update_for_in_register_failed();
+                        std::unordered_map<nota_v2::_ProjectionRead_in_register_failed, nota_v2::_ProjectionWrite_in_register_failed, nota_v2::_ProjectionRead_in_register_failed::Hash, nota_v2::_ProjectionRead_in_register_failed::HashEqual> _OpCache_with_parameter_in_register_failed;
+                        _OpCache_with_parameter_in_register_failed.insert({readState, writeState});
+                        {
+                            std::unique_lock<std::mutex> _ProjectionRead_in_register_failed_lock(_ProjectionRead_in_register_failed_mutex);
+                            _OpCache_in_register_failed.insert({param, _OpCache_with_parameter_in_register_failed});
                         }
 
-                        copiedState.stateAccessedVia = "in_register_failed";
-                        result.insert(copiedState);
+                    } else {
+                        std::unordered_map<nota_v2::_ProjectionRead_in_register_failed, nota_v2::_ProjectionWrite_in_register_failed, nota_v2::_ProjectionRead_in_register_failed::Hash, nota_v2::_ProjectionRead_in_register_failed::HashEqual> _OpCache_with_parameter_in_register_failed = _OpCache_with_parameter_in_register_failed_ptr->second;
+                        auto writeState_ptr = _OpCache_with_parameter_in_register_failed.find(readState);
+                        if(writeState_ptr != _OpCache_with_parameter_in_register_failed.end()) {
+                            nota_v2::_ProjectionWrite_in_register_failed writeState = writeState_ptr->second;
+                            copiedState._apply_update_for_in_register_failed(writeState);
+                        } else {
+                            copiedState.in_register_failed(_tmp_2, _tmp_1);
+                            nota_v2::_ProjectionWrite_in_register_failed writeState = copiedState._update_for_in_register_failed();
+                            {
+                                std::unique_lock<std::mutex> _ProjectionRead_in_register_failed_lock(_ProjectionRead_in_register_failed_mutex);
+                                _OpCache_with_parameter_in_register_failed.insert({readState, writeState});
+                            }
+                        }
+                    }
+
+                    copiedState.stateAccessedVia = "in_register_failed";
+                    result.insert(copiedState);
+                    {
+                        std::unique_lock<std::mutex> lock(mutex);
                         transitions += 1;
                     }
                 }
                 nota_v2::_ProjectionRead__tr_in_requestTargetSocket_Granted read__tr_in_requestTargetSocket_Granted_state = state._projected_state_for__tr_in_requestTargetSocket_Granted();
+                BSet<BTuple<BTuple<BTuple<BTuple<BTuple<nota_v2::INTERCONNECTNODE, nota_v2::INTERCONNECTNODE >, nota_v2::SOCKET >, nota_v2::SID >, nota_v2::SID >, nota_v2::SOCKET >> _trid_12;
                 auto _trid_12_ptr = _OpCache_tr_in_requestTargetSocket_Granted.find(read__tr_in_requestTargetSocket_Granted_state);
                 if(_trid_12_ptr == _OpCache_tr_in_requestTargetSocket_Granted.end()) {
-                    BSet<BTuple<BTuple<BTuple<BTuple<BTuple<nota_v2::INTERCONNECTNODE, nota_v2::INTERCONNECTNODE >, nota_v2::SOCKET >, nota_v2::SID >, nota_v2::SID >, nota_v2::SOCKET >> _trid_12 = state._tr_in_requestTargetSocket_Granted();
+                    _trid_12 = state._tr_in_requestTargetSocket_Granted();
                     {
                         std::unique_lock<std::mutex> _ProjectionRead__tr_in_requestTargetSocket_Granted_lock(_ProjectionRead__tr_in_requestTargetSocket_Granted_mutex);
                         _OpCache_tr_in_requestTargetSocket_Granted.insert({read__tr_in_requestTargetSocket_Granted_state, _trid_12});
                     }
-                    for(const BTuple<BTuple<BTuple<BTuple<BTuple<nota_v2::INTERCONNECTNODE, nota_v2::INTERCONNECTNODE >, nota_v2::SOCKET >, nota_v2::SID >, nota_v2::SID >, nota_v2::SOCKET >& param : _trid_12) {
-                        nota_v2::SOCKET _tmp_1 = param.projection2();
-                        BTuple<BTuple<BTuple<BTuple<nota_v2::INTERCONNECTNODE, nota_v2::INTERCONNECTNODE >, nota_v2::SOCKET >, nota_v2::SID >, nota_v2::SID > _tmp_2 = param.projection1();
-                        nota_v2::SID _tmp_3 = _tmp_2.projection2();
-                        BTuple<BTuple<BTuple<nota_v2::INTERCONNECTNODE, nota_v2::INTERCONNECTNODE >, nota_v2::SOCKET >, nota_v2::SID > _tmp_4 = _tmp_2.projection1();
-                        nota_v2::SID _tmp_5 = _tmp_4.projection2();
-                        BTuple<BTuple<nota_v2::INTERCONNECTNODE, nota_v2::INTERCONNECTNODE >, nota_v2::SOCKET > _tmp_6 = _tmp_4.projection1();
-                        nota_v2::SOCKET _tmp_7 = _tmp_6.projection2();
-                        BTuple<nota_v2::INTERCONNECTNODE, nota_v2::INTERCONNECTNODE > _tmp_8 = _tmp_6.projection1();
-                        nota_v2::INTERCONNECTNODE _tmp_9 = _tmp_8.projection2();
-                        nota_v2::INTERCONNECTNODE _tmp_10 = _tmp_8.projection1();
-
-                        nota_v2 copiedState = state._copy();
-                        nota_v2::_ProjectionRead_in_requestTargetSocket_Granted readState = state._projected_state_for_in_requestTargetSocket_Granted();
-
-                        auto _OpCache_with_parameter_in_requestTargetSocket_Granted_ptr = _OpCache_in_requestTargetSocket_Granted.find(param);
-                        if(_OpCache_with_parameter_in_requestTargetSocket_Granted_ptr == _OpCache_in_requestTargetSocket_Granted.end()) {
-                            copiedState.in_requestTargetSocket_Granted(_tmp_10, _tmp_9, _tmp_7, _tmp_5, _tmp_3, _tmp_1);
-                            nota_v2::_ProjectionWrite_in_requestTargetSocket_Granted writeState = copiedState._update_for_in_requestTargetSocket_Granted();
-                            std::unordered_map<nota_v2::_ProjectionRead_in_requestTargetSocket_Granted, nota_v2::_ProjectionWrite_in_requestTargetSocket_Granted, nota_v2::_ProjectionRead_in_requestTargetSocket_Granted::Hash, nota_v2::_ProjectionRead_in_requestTargetSocket_Granted::HashEqual> _OpCache_with_parameter_in_requestTargetSocket_Granted;
-                            _OpCache_with_parameter_in_requestTargetSocket_Granted.insert({readState, writeState});
-                            {
-                                std::unique_lock<std::mutex> _ProjectionRead_in_requestTargetSocket_Granted_lock(_ProjectionRead_in_requestTargetSocket_Granted_mutex);
-                                _OpCache_in_requestTargetSocket_Granted.insert({param, _OpCache_with_parameter_in_requestTargetSocket_Granted});
-                            }
-
-                        } else {
-                            std::unordered_map<nota_v2::_ProjectionRead_in_requestTargetSocket_Granted, nota_v2::_ProjectionWrite_in_requestTargetSocket_Granted, nota_v2::_ProjectionRead_in_requestTargetSocket_Granted::Hash, nota_v2::_ProjectionRead_in_requestTargetSocket_Granted::HashEqual> _OpCache_with_parameter_in_requestTargetSocket_Granted = _OpCache_with_parameter_in_requestTargetSocket_Granted_ptr->second;
-                            auto writeState_ptr = _OpCache_with_parameter_in_requestTargetSocket_Granted.find(readState);
-                            if(writeState_ptr != _OpCache_with_parameter_in_requestTargetSocket_Granted.end()) {
-                                nota_v2::_ProjectionWrite_in_requestTargetSocket_Granted writeState = writeState_ptr->second;
-                                copiedState._apply_update_for_in_requestTargetSocket_Granted(writeState);
-                            } else {
-                                copiedState.in_requestTargetSocket_Granted(_tmp_10, _tmp_9, _tmp_7, _tmp_5, _tmp_3, _tmp_1);
-                                nota_v2::_ProjectionWrite_in_requestTargetSocket_Granted writeState = copiedState._update_for_in_requestTargetSocket_Granted();
-                                {
-                                    std::unique_lock<std::mutex> _ProjectionRead_in_requestTargetSocket_Granted_lock(_ProjectionRead_in_requestTargetSocket_Granted_mutex);
-                                    _OpCache_with_parameter_in_requestTargetSocket_Granted.insert({readState, writeState});
-                                }
-                            }
-                        }
-
-                        copiedState.stateAccessedVia = "in_requestTargetSocket_Granted";
-                        result.insert(copiedState);
-                        transitions += 1;
-                    }
                 } else {
-                    BSet<BTuple<BTuple<BTuple<BTuple<BTuple<nota_v2::INTERCONNECTNODE, nota_v2::INTERCONNECTNODE >, nota_v2::SOCKET >, nota_v2::SID >, nota_v2::SID >, nota_v2::SOCKET >> _trid_12 = _trid_12_ptr->second;
-                    for(const BTuple<BTuple<BTuple<BTuple<BTuple<nota_v2::INTERCONNECTNODE, nota_v2::INTERCONNECTNODE >, nota_v2::SOCKET >, nota_v2::SID >, nota_v2::SID >, nota_v2::SOCKET >& param : _trid_12) {
-                        nota_v2::SOCKET _tmp_1 = param.projection2();
-                        BTuple<BTuple<BTuple<BTuple<nota_v2::INTERCONNECTNODE, nota_v2::INTERCONNECTNODE >, nota_v2::SOCKET >, nota_v2::SID >, nota_v2::SID > _tmp_2 = param.projection1();
-                        nota_v2::SID _tmp_3 = _tmp_2.projection2();
-                        BTuple<BTuple<BTuple<nota_v2::INTERCONNECTNODE, nota_v2::INTERCONNECTNODE >, nota_v2::SOCKET >, nota_v2::SID > _tmp_4 = _tmp_2.projection1();
-                        nota_v2::SID _tmp_5 = _tmp_4.projection2();
-                        BTuple<BTuple<nota_v2::INTERCONNECTNODE, nota_v2::INTERCONNECTNODE >, nota_v2::SOCKET > _tmp_6 = _tmp_4.projection1();
-                        nota_v2::SOCKET _tmp_7 = _tmp_6.projection2();
-                        BTuple<nota_v2::INTERCONNECTNODE, nota_v2::INTERCONNECTNODE > _tmp_8 = _tmp_6.projection1();
-                        nota_v2::INTERCONNECTNODE _tmp_9 = _tmp_8.projection2();
-                        nota_v2::INTERCONNECTNODE _tmp_10 = _tmp_8.projection1();
+                    _trid_12 = _trid_12_ptr->second;
+                }
 
-                        nota_v2 copiedState = state._copy();
-                        nota_v2::_ProjectionRead_in_requestTargetSocket_Granted readState = state._projected_state_for_in_requestTargetSocket_Granted();
+                for(const BTuple<BTuple<BTuple<BTuple<BTuple<nota_v2::INTERCONNECTNODE, nota_v2::INTERCONNECTNODE >, nota_v2::SOCKET >, nota_v2::SID >, nota_v2::SID >, nota_v2::SOCKET >& param : _trid_12) {
+                    nota_v2::SOCKET _tmp_1 = param.projection2();
+                    BTuple<BTuple<BTuple<BTuple<nota_v2::INTERCONNECTNODE, nota_v2::INTERCONNECTNODE >, nota_v2::SOCKET >, nota_v2::SID >, nota_v2::SID > _tmp_2 = param.projection1();
+                    nota_v2::SID _tmp_3 = _tmp_2.projection2();
+                    BTuple<BTuple<BTuple<nota_v2::INTERCONNECTNODE, nota_v2::INTERCONNECTNODE >, nota_v2::SOCKET >, nota_v2::SID > _tmp_4 = _tmp_2.projection1();
+                    nota_v2::SID _tmp_5 = _tmp_4.projection2();
+                    BTuple<BTuple<nota_v2::INTERCONNECTNODE, nota_v2::INTERCONNECTNODE >, nota_v2::SOCKET > _tmp_6 = _tmp_4.projection1();
+                    nota_v2::SOCKET _tmp_7 = _tmp_6.projection2();
+                    BTuple<nota_v2::INTERCONNECTNODE, nota_v2::INTERCONNECTNODE > _tmp_8 = _tmp_6.projection1();
+                    nota_v2::INTERCONNECTNODE _tmp_9 = _tmp_8.projection2();
+                    nota_v2::INTERCONNECTNODE _tmp_10 = _tmp_8.projection1();
 
-                        auto _OpCache_with_parameter_in_requestTargetSocket_Granted_ptr = _OpCache_in_requestTargetSocket_Granted.find(param);
-                        if(_OpCache_with_parameter_in_requestTargetSocket_Granted_ptr == _OpCache_in_requestTargetSocket_Granted.end()) {
-                            copiedState.in_requestTargetSocket_Granted(_tmp_10, _tmp_9, _tmp_7, _tmp_5, _tmp_3, _tmp_1);
-                            nota_v2::_ProjectionWrite_in_requestTargetSocket_Granted writeState = copiedState._update_for_in_requestTargetSocket_Granted();
-                            std::unordered_map<nota_v2::_ProjectionRead_in_requestTargetSocket_Granted, nota_v2::_ProjectionWrite_in_requestTargetSocket_Granted, nota_v2::_ProjectionRead_in_requestTargetSocket_Granted::Hash, nota_v2::_ProjectionRead_in_requestTargetSocket_Granted::HashEqual> _OpCache_with_parameter_in_requestTargetSocket_Granted;
-                            _OpCache_with_parameter_in_requestTargetSocket_Granted.insert({readState, writeState});
-                            {
-                                std::unique_lock<std::mutex> _ProjectionRead_in_requestTargetSocket_Granted_lock(_ProjectionRead_in_requestTargetSocket_Granted_mutex);
-                                _OpCache_in_requestTargetSocket_Granted.insert({param, _OpCache_with_parameter_in_requestTargetSocket_Granted});
-                            }
+                    nota_v2 copiedState = state._copy();
+                    nota_v2::_ProjectionRead_in_requestTargetSocket_Granted readState = state._projected_state_for_in_requestTargetSocket_Granted();
 
-                        } else {
-                            std::unordered_map<nota_v2::_ProjectionRead_in_requestTargetSocket_Granted, nota_v2::_ProjectionWrite_in_requestTargetSocket_Granted, nota_v2::_ProjectionRead_in_requestTargetSocket_Granted::Hash, nota_v2::_ProjectionRead_in_requestTargetSocket_Granted::HashEqual> _OpCache_with_parameter_in_requestTargetSocket_Granted = _OpCache_with_parameter_in_requestTargetSocket_Granted_ptr->second;
-                            auto writeState_ptr = _OpCache_with_parameter_in_requestTargetSocket_Granted.find(readState);
-                            if(writeState_ptr != _OpCache_with_parameter_in_requestTargetSocket_Granted.end()) {
-                                nota_v2::_ProjectionWrite_in_requestTargetSocket_Granted writeState = writeState_ptr->second;
-                                copiedState._apply_update_for_in_requestTargetSocket_Granted(writeState);
-                            } else {
-                                copiedState.in_requestTargetSocket_Granted(_tmp_10, _tmp_9, _tmp_7, _tmp_5, _tmp_3, _tmp_1);
-                                nota_v2::_ProjectionWrite_in_requestTargetSocket_Granted writeState = copiedState._update_for_in_requestTargetSocket_Granted();
-                                {
-                                    std::unique_lock<std::mutex> _ProjectionRead_in_requestTargetSocket_Granted_lock(_ProjectionRead_in_requestTargetSocket_Granted_mutex);
-                                    _OpCache_with_parameter_in_requestTargetSocket_Granted.insert({readState, writeState});
-                                }
-                            }
+                    auto _OpCache_with_parameter_in_requestTargetSocket_Granted_ptr = _OpCache_in_requestTargetSocket_Granted.find(param);
+                    if(_OpCache_with_parameter_in_requestTargetSocket_Granted_ptr == _OpCache_in_requestTargetSocket_Granted.end()) {
+                        copiedState.in_requestTargetSocket_Granted(_tmp_10, _tmp_9, _tmp_7, _tmp_5, _tmp_3, _tmp_1);
+                        nota_v2::_ProjectionWrite_in_requestTargetSocket_Granted writeState = copiedState._update_for_in_requestTargetSocket_Granted();
+                        std::unordered_map<nota_v2::_ProjectionRead_in_requestTargetSocket_Granted, nota_v2::_ProjectionWrite_in_requestTargetSocket_Granted, nota_v2::_ProjectionRead_in_requestTargetSocket_Granted::Hash, nota_v2::_ProjectionRead_in_requestTargetSocket_Granted::HashEqual> _OpCache_with_parameter_in_requestTargetSocket_Granted;
+                        _OpCache_with_parameter_in_requestTargetSocket_Granted.insert({readState, writeState});
+                        {
+                            std::unique_lock<std::mutex> _ProjectionRead_in_requestTargetSocket_Granted_lock(_ProjectionRead_in_requestTargetSocket_Granted_mutex);
+                            _OpCache_in_requestTargetSocket_Granted.insert({param, _OpCache_with_parameter_in_requestTargetSocket_Granted});
                         }
 
-                        copiedState.stateAccessedVia = "in_requestTargetSocket_Granted";
-                        result.insert(copiedState);
+                    } else {
+                        std::unordered_map<nota_v2::_ProjectionRead_in_requestTargetSocket_Granted, nota_v2::_ProjectionWrite_in_requestTargetSocket_Granted, nota_v2::_ProjectionRead_in_requestTargetSocket_Granted::Hash, nota_v2::_ProjectionRead_in_requestTargetSocket_Granted::HashEqual> _OpCache_with_parameter_in_requestTargetSocket_Granted = _OpCache_with_parameter_in_requestTargetSocket_Granted_ptr->second;
+                        auto writeState_ptr = _OpCache_with_parameter_in_requestTargetSocket_Granted.find(readState);
+                        if(writeState_ptr != _OpCache_with_parameter_in_requestTargetSocket_Granted.end()) {
+                            nota_v2::_ProjectionWrite_in_requestTargetSocket_Granted writeState = writeState_ptr->second;
+                            copiedState._apply_update_for_in_requestTargetSocket_Granted(writeState);
+                        } else {
+                            copiedState.in_requestTargetSocket_Granted(_tmp_10, _tmp_9, _tmp_7, _tmp_5, _tmp_3, _tmp_1);
+                            nota_v2::_ProjectionWrite_in_requestTargetSocket_Granted writeState = copiedState._update_for_in_requestTargetSocket_Granted();
+                            {
+                                std::unique_lock<std::mutex> _ProjectionRead_in_requestTargetSocket_Granted_lock(_ProjectionRead_in_requestTargetSocket_Granted_mutex);
+                                _OpCache_with_parameter_in_requestTargetSocket_Granted.insert({readState, writeState});
+                            }
+                        }
+                    }
+
+                    copiedState.stateAccessedVia = "in_requestTargetSocket_Granted";
+                    result.insert(copiedState);
+                    {
+                        std::unique_lock<std::mutex> lock(mutex);
                         transitions += 1;
                     }
                 }
                 nota_v2::_ProjectionRead__tr_in_requestTargetSocket_NotGranted read__tr_in_requestTargetSocket_NotGranted_state = state._projected_state_for__tr_in_requestTargetSocket_NotGranted();
+                BSet<BTuple<BTuple<BTuple<BTuple<nota_v2::INTERCONNECTNODE, nota_v2::INTERCONNECTNODE >, nota_v2::SOCKET >, nota_v2::SID >, nota_v2::SID >> _trid_13;
                 auto _trid_13_ptr = _OpCache_tr_in_requestTargetSocket_NotGranted.find(read__tr_in_requestTargetSocket_NotGranted_state);
                 if(_trid_13_ptr == _OpCache_tr_in_requestTargetSocket_NotGranted.end()) {
-                    BSet<BTuple<BTuple<BTuple<BTuple<nota_v2::INTERCONNECTNODE, nota_v2::INTERCONNECTNODE >, nota_v2::SOCKET >, nota_v2::SID >, nota_v2::SID >> _trid_13 = state._tr_in_requestTargetSocket_NotGranted();
+                    _trid_13 = state._tr_in_requestTargetSocket_NotGranted();
                     {
                         std::unique_lock<std::mutex> _ProjectionRead__tr_in_requestTargetSocket_NotGranted_lock(_ProjectionRead__tr_in_requestTargetSocket_NotGranted_mutex);
                         _OpCache_tr_in_requestTargetSocket_NotGranted.insert({read__tr_in_requestTargetSocket_NotGranted_state, _trid_13});
                     }
-                    for(const BTuple<BTuple<BTuple<BTuple<nota_v2::INTERCONNECTNODE, nota_v2::INTERCONNECTNODE >, nota_v2::SOCKET >, nota_v2::SID >, nota_v2::SID >& param : _trid_13) {
-                        nota_v2::SID _tmp_1 = param.projection2();
-                        BTuple<BTuple<BTuple<nota_v2::INTERCONNECTNODE, nota_v2::INTERCONNECTNODE >, nota_v2::SOCKET >, nota_v2::SID > _tmp_2 = param.projection1();
-                        nota_v2::SID _tmp_3 = _tmp_2.projection2();
-                        BTuple<BTuple<nota_v2::INTERCONNECTNODE, nota_v2::INTERCONNECTNODE >, nota_v2::SOCKET > _tmp_4 = _tmp_2.projection1();
-                        nota_v2::SOCKET _tmp_5 = _tmp_4.projection2();
-                        BTuple<nota_v2::INTERCONNECTNODE, nota_v2::INTERCONNECTNODE > _tmp_6 = _tmp_4.projection1();
-                        nota_v2::INTERCONNECTNODE _tmp_7 = _tmp_6.projection2();
-                        nota_v2::INTERCONNECTNODE _tmp_8 = _tmp_6.projection1();
-
-                        nota_v2 copiedState = state._copy();
-                        nota_v2::_ProjectionRead_in_requestTargetSocket_NotGranted readState = state._projected_state_for_in_requestTargetSocket_NotGranted();
-
-                        auto _OpCache_with_parameter_in_requestTargetSocket_NotGranted_ptr = _OpCache_in_requestTargetSocket_NotGranted.find(param);
-                        if(_OpCache_with_parameter_in_requestTargetSocket_NotGranted_ptr == _OpCache_in_requestTargetSocket_NotGranted.end()) {
-                            copiedState.in_requestTargetSocket_NotGranted(_tmp_8, _tmp_7, _tmp_5, _tmp_3, _tmp_1);
-                            nota_v2::_ProjectionWrite_in_requestTargetSocket_NotGranted writeState = copiedState._update_for_in_requestTargetSocket_NotGranted();
-                            std::unordered_map<nota_v2::_ProjectionRead_in_requestTargetSocket_NotGranted, nota_v2::_ProjectionWrite_in_requestTargetSocket_NotGranted, nota_v2::_ProjectionRead_in_requestTargetSocket_NotGranted::Hash, nota_v2::_ProjectionRead_in_requestTargetSocket_NotGranted::HashEqual> _OpCache_with_parameter_in_requestTargetSocket_NotGranted;
-                            _OpCache_with_parameter_in_requestTargetSocket_NotGranted.insert({readState, writeState});
-                            {
-                                std::unique_lock<std::mutex> _ProjectionRead_in_requestTargetSocket_NotGranted_lock(_ProjectionRead_in_requestTargetSocket_NotGranted_mutex);
-                                _OpCache_in_requestTargetSocket_NotGranted.insert({param, _OpCache_with_parameter_in_requestTargetSocket_NotGranted});
-                            }
-
-                        } else {
-                            std::unordered_map<nota_v2::_ProjectionRead_in_requestTargetSocket_NotGranted, nota_v2::_ProjectionWrite_in_requestTargetSocket_NotGranted, nota_v2::_ProjectionRead_in_requestTargetSocket_NotGranted::Hash, nota_v2::_ProjectionRead_in_requestTargetSocket_NotGranted::HashEqual> _OpCache_with_parameter_in_requestTargetSocket_NotGranted = _OpCache_with_parameter_in_requestTargetSocket_NotGranted_ptr->second;
-                            auto writeState_ptr = _OpCache_with_parameter_in_requestTargetSocket_NotGranted.find(readState);
-                            if(writeState_ptr != _OpCache_with_parameter_in_requestTargetSocket_NotGranted.end()) {
-                                nota_v2::_ProjectionWrite_in_requestTargetSocket_NotGranted writeState = writeState_ptr->second;
-                                copiedState._apply_update_for_in_requestTargetSocket_NotGranted(writeState);
-                            } else {
-                                copiedState.in_requestTargetSocket_NotGranted(_tmp_8, _tmp_7, _tmp_5, _tmp_3, _tmp_1);
-                                nota_v2::_ProjectionWrite_in_requestTargetSocket_NotGranted writeState = copiedState._update_for_in_requestTargetSocket_NotGranted();
-                                {
-                                    std::unique_lock<std::mutex> _ProjectionRead_in_requestTargetSocket_NotGranted_lock(_ProjectionRead_in_requestTargetSocket_NotGranted_mutex);
-                                    _OpCache_with_parameter_in_requestTargetSocket_NotGranted.insert({readState, writeState});
-                                }
-                            }
-                        }
-
-                        copiedState.stateAccessedVia = "in_requestTargetSocket_NotGranted";
-                        result.insert(copiedState);
-                        transitions += 1;
-                    }
                 } else {
-                    BSet<BTuple<BTuple<BTuple<BTuple<nota_v2::INTERCONNECTNODE, nota_v2::INTERCONNECTNODE >, nota_v2::SOCKET >, nota_v2::SID >, nota_v2::SID >> _trid_13 = _trid_13_ptr->second;
-                    for(const BTuple<BTuple<BTuple<BTuple<nota_v2::INTERCONNECTNODE, nota_v2::INTERCONNECTNODE >, nota_v2::SOCKET >, nota_v2::SID >, nota_v2::SID >& param : _trid_13) {
-                        nota_v2::SID _tmp_1 = param.projection2();
-                        BTuple<BTuple<BTuple<nota_v2::INTERCONNECTNODE, nota_v2::INTERCONNECTNODE >, nota_v2::SOCKET >, nota_v2::SID > _tmp_2 = param.projection1();
-                        nota_v2::SID _tmp_3 = _tmp_2.projection2();
-                        BTuple<BTuple<nota_v2::INTERCONNECTNODE, nota_v2::INTERCONNECTNODE >, nota_v2::SOCKET > _tmp_4 = _tmp_2.projection1();
-                        nota_v2::SOCKET _tmp_5 = _tmp_4.projection2();
-                        BTuple<nota_v2::INTERCONNECTNODE, nota_v2::INTERCONNECTNODE > _tmp_6 = _tmp_4.projection1();
-                        nota_v2::INTERCONNECTNODE _tmp_7 = _tmp_6.projection2();
-                        nota_v2::INTERCONNECTNODE _tmp_8 = _tmp_6.projection1();
+                    _trid_13 = _trid_13_ptr->second;
+                }
 
-                        nota_v2 copiedState = state._copy();
-                        nota_v2::_ProjectionRead_in_requestTargetSocket_NotGranted readState = state._projected_state_for_in_requestTargetSocket_NotGranted();
+                for(const BTuple<BTuple<BTuple<BTuple<nota_v2::INTERCONNECTNODE, nota_v2::INTERCONNECTNODE >, nota_v2::SOCKET >, nota_v2::SID >, nota_v2::SID >& param : _trid_13) {
+                    nota_v2::SID _tmp_1 = param.projection2();
+                    BTuple<BTuple<BTuple<nota_v2::INTERCONNECTNODE, nota_v2::INTERCONNECTNODE >, nota_v2::SOCKET >, nota_v2::SID > _tmp_2 = param.projection1();
+                    nota_v2::SID _tmp_3 = _tmp_2.projection2();
+                    BTuple<BTuple<nota_v2::INTERCONNECTNODE, nota_v2::INTERCONNECTNODE >, nota_v2::SOCKET > _tmp_4 = _tmp_2.projection1();
+                    nota_v2::SOCKET _tmp_5 = _tmp_4.projection2();
+                    BTuple<nota_v2::INTERCONNECTNODE, nota_v2::INTERCONNECTNODE > _tmp_6 = _tmp_4.projection1();
+                    nota_v2::INTERCONNECTNODE _tmp_7 = _tmp_6.projection2();
+                    nota_v2::INTERCONNECTNODE _tmp_8 = _tmp_6.projection1();
 
-                        auto _OpCache_with_parameter_in_requestTargetSocket_NotGranted_ptr = _OpCache_in_requestTargetSocket_NotGranted.find(param);
-                        if(_OpCache_with_parameter_in_requestTargetSocket_NotGranted_ptr == _OpCache_in_requestTargetSocket_NotGranted.end()) {
-                            copiedState.in_requestTargetSocket_NotGranted(_tmp_8, _tmp_7, _tmp_5, _tmp_3, _tmp_1);
-                            nota_v2::_ProjectionWrite_in_requestTargetSocket_NotGranted writeState = copiedState._update_for_in_requestTargetSocket_NotGranted();
-                            std::unordered_map<nota_v2::_ProjectionRead_in_requestTargetSocket_NotGranted, nota_v2::_ProjectionWrite_in_requestTargetSocket_NotGranted, nota_v2::_ProjectionRead_in_requestTargetSocket_NotGranted::Hash, nota_v2::_ProjectionRead_in_requestTargetSocket_NotGranted::HashEqual> _OpCache_with_parameter_in_requestTargetSocket_NotGranted;
-                            _OpCache_with_parameter_in_requestTargetSocket_NotGranted.insert({readState, writeState});
-                            {
-                                std::unique_lock<std::mutex> _ProjectionRead_in_requestTargetSocket_NotGranted_lock(_ProjectionRead_in_requestTargetSocket_NotGranted_mutex);
-                                _OpCache_in_requestTargetSocket_NotGranted.insert({param, _OpCache_with_parameter_in_requestTargetSocket_NotGranted});
-                            }
+                    nota_v2 copiedState = state._copy();
+                    nota_v2::_ProjectionRead_in_requestTargetSocket_NotGranted readState = state._projected_state_for_in_requestTargetSocket_NotGranted();
 
-                        } else {
-                            std::unordered_map<nota_v2::_ProjectionRead_in_requestTargetSocket_NotGranted, nota_v2::_ProjectionWrite_in_requestTargetSocket_NotGranted, nota_v2::_ProjectionRead_in_requestTargetSocket_NotGranted::Hash, nota_v2::_ProjectionRead_in_requestTargetSocket_NotGranted::HashEqual> _OpCache_with_parameter_in_requestTargetSocket_NotGranted = _OpCache_with_parameter_in_requestTargetSocket_NotGranted_ptr->second;
-                            auto writeState_ptr = _OpCache_with_parameter_in_requestTargetSocket_NotGranted.find(readState);
-                            if(writeState_ptr != _OpCache_with_parameter_in_requestTargetSocket_NotGranted.end()) {
-                                nota_v2::_ProjectionWrite_in_requestTargetSocket_NotGranted writeState = writeState_ptr->second;
-                                copiedState._apply_update_for_in_requestTargetSocket_NotGranted(writeState);
-                            } else {
-                                copiedState.in_requestTargetSocket_NotGranted(_tmp_8, _tmp_7, _tmp_5, _tmp_3, _tmp_1);
-                                nota_v2::_ProjectionWrite_in_requestTargetSocket_NotGranted writeState = copiedState._update_for_in_requestTargetSocket_NotGranted();
-                                {
-                                    std::unique_lock<std::mutex> _ProjectionRead_in_requestTargetSocket_NotGranted_lock(_ProjectionRead_in_requestTargetSocket_NotGranted_mutex);
-                                    _OpCache_with_parameter_in_requestTargetSocket_NotGranted.insert({readState, writeState});
-                                }
-                            }
+                    auto _OpCache_with_parameter_in_requestTargetSocket_NotGranted_ptr = _OpCache_in_requestTargetSocket_NotGranted.find(param);
+                    if(_OpCache_with_parameter_in_requestTargetSocket_NotGranted_ptr == _OpCache_in_requestTargetSocket_NotGranted.end()) {
+                        copiedState.in_requestTargetSocket_NotGranted(_tmp_8, _tmp_7, _tmp_5, _tmp_3, _tmp_1);
+                        nota_v2::_ProjectionWrite_in_requestTargetSocket_NotGranted writeState = copiedState._update_for_in_requestTargetSocket_NotGranted();
+                        std::unordered_map<nota_v2::_ProjectionRead_in_requestTargetSocket_NotGranted, nota_v2::_ProjectionWrite_in_requestTargetSocket_NotGranted, nota_v2::_ProjectionRead_in_requestTargetSocket_NotGranted::Hash, nota_v2::_ProjectionRead_in_requestTargetSocket_NotGranted::HashEqual> _OpCache_with_parameter_in_requestTargetSocket_NotGranted;
+                        _OpCache_with_parameter_in_requestTargetSocket_NotGranted.insert({readState, writeState});
+                        {
+                            std::unique_lock<std::mutex> _ProjectionRead_in_requestTargetSocket_NotGranted_lock(_ProjectionRead_in_requestTargetSocket_NotGranted_mutex);
+                            _OpCache_in_requestTargetSocket_NotGranted.insert({param, _OpCache_with_parameter_in_requestTargetSocket_NotGranted});
                         }
 
-                        copiedState.stateAccessedVia = "in_requestTargetSocket_NotGranted";
-                        result.insert(copiedState);
+                    } else {
+                        std::unordered_map<nota_v2::_ProjectionRead_in_requestTargetSocket_NotGranted, nota_v2::_ProjectionWrite_in_requestTargetSocket_NotGranted, nota_v2::_ProjectionRead_in_requestTargetSocket_NotGranted::Hash, nota_v2::_ProjectionRead_in_requestTargetSocket_NotGranted::HashEqual> _OpCache_with_parameter_in_requestTargetSocket_NotGranted = _OpCache_with_parameter_in_requestTargetSocket_NotGranted_ptr->second;
+                        auto writeState_ptr = _OpCache_with_parameter_in_requestTargetSocket_NotGranted.find(readState);
+                        if(writeState_ptr != _OpCache_with_parameter_in_requestTargetSocket_NotGranted.end()) {
+                            nota_v2::_ProjectionWrite_in_requestTargetSocket_NotGranted writeState = writeState_ptr->second;
+                            copiedState._apply_update_for_in_requestTargetSocket_NotGranted(writeState);
+                        } else {
+                            copiedState.in_requestTargetSocket_NotGranted(_tmp_8, _tmp_7, _tmp_5, _tmp_3, _tmp_1);
+                            nota_v2::_ProjectionWrite_in_requestTargetSocket_NotGranted writeState = copiedState._update_for_in_requestTargetSocket_NotGranted();
+                            {
+                                std::unique_lock<std::mutex> _ProjectionRead_in_requestTargetSocket_NotGranted_lock(_ProjectionRead_in_requestTargetSocket_NotGranted_mutex);
+                                _OpCache_with_parameter_in_requestTargetSocket_NotGranted.insert({readState, writeState});
+                            }
+                        }
+                    }
+
+                    copiedState.stateAccessedVia = "in_requestTargetSocket_NotGranted";
+                    result.insert(copiedState);
+                    {
+                        std::unique_lock<std::mutex> lock(mutex);
                         transitions += 1;
                     }
                 }
                 nota_v2::_ProjectionRead__tr_svc_register read__tr_svc_register_state = state._projected_state_for__tr_svc_register();
+                BSet<nota_v2::SERVICE> _trid_14;
                 auto _trid_14_ptr = _OpCache_tr_svc_register.find(read__tr_svc_register_state);
                 if(_trid_14_ptr == _OpCache_tr_svc_register.end()) {
-                    BSet<nota_v2::SERVICE> _trid_14 = state._tr_svc_register();
+                    _trid_14 = state._tr_svc_register();
                     {
                         std::unique_lock<std::mutex> _ProjectionRead__tr_svc_register_lock(_ProjectionRead__tr_svc_register_mutex);
                         _OpCache_tr_svc_register.insert({read__tr_svc_register_state, _trid_14});
                     }
-                    for(const nota_v2::SERVICE& param : _trid_14) {
-                        nota_v2::SERVICE _tmp_1 = param;
-
-                        nota_v2 copiedState = state._copy();
-                        nota_v2::_ProjectionRead_svc_register readState = state._projected_state_for_svc_register();
-
-                        auto _OpCache_with_parameter_svc_register_ptr = _OpCache_svc_register.find(param);
-                        if(_OpCache_with_parameter_svc_register_ptr == _OpCache_svc_register.end()) {
-                            copiedState.svc_register(_tmp_1);
-                            nota_v2::_ProjectionWrite_svc_register writeState = copiedState._update_for_svc_register();
-                            std::unordered_map<nota_v2::_ProjectionRead_svc_register, nota_v2::_ProjectionWrite_svc_register, nota_v2::_ProjectionRead_svc_register::Hash, nota_v2::_ProjectionRead_svc_register::HashEqual> _OpCache_with_parameter_svc_register;
-                            _OpCache_with_parameter_svc_register.insert({readState, writeState});
-                            {
-                                std::unique_lock<std::mutex> _ProjectionRead_svc_register_lock(_ProjectionRead_svc_register_mutex);
-                                _OpCache_svc_register.insert({param, _OpCache_with_parameter_svc_register});
-                            }
-
-                        } else {
-                            std::unordered_map<nota_v2::_ProjectionRead_svc_register, nota_v2::_ProjectionWrite_svc_register, nota_v2::_ProjectionRead_svc_register::Hash, nota_v2::_ProjectionRead_svc_register::HashEqual> _OpCache_with_parameter_svc_register = _OpCache_with_parameter_svc_register_ptr->second;
-                            auto writeState_ptr = _OpCache_with_parameter_svc_register.find(readState);
-                            if(writeState_ptr != _OpCache_with_parameter_svc_register.end()) {
-                                nota_v2::_ProjectionWrite_svc_register writeState = writeState_ptr->second;
-                                copiedState._apply_update_for_svc_register(writeState);
-                            } else {
-                                copiedState.svc_register(_tmp_1);
-                                nota_v2::_ProjectionWrite_svc_register writeState = copiedState._update_for_svc_register();
-                                {
-                                    std::unique_lock<std::mutex> _ProjectionRead_svc_register_lock(_ProjectionRead_svc_register_mutex);
-                                    _OpCache_with_parameter_svc_register.insert({readState, writeState});
-                                }
-                            }
-                        }
-
-                        copiedState.stateAccessedVia = "svc_register";
-                        result.insert(copiedState);
-                        transitions += 1;
-                    }
                 } else {
-                    BSet<nota_v2::SERVICE> _trid_14 = _trid_14_ptr->second;
-                    for(const nota_v2::SERVICE& param : _trid_14) {
-                        nota_v2::SERVICE _tmp_1 = param;
+                    _trid_14 = _trid_14_ptr->second;
+                }
 
-                        nota_v2 copiedState = state._copy();
-                        nota_v2::_ProjectionRead_svc_register readState = state._projected_state_for_svc_register();
+                for(const nota_v2::SERVICE& param : _trid_14) {
+                    nota_v2::SERVICE _tmp_1 = param;
 
-                        auto _OpCache_with_parameter_svc_register_ptr = _OpCache_svc_register.find(param);
-                        if(_OpCache_with_parameter_svc_register_ptr == _OpCache_svc_register.end()) {
-                            copiedState.svc_register(_tmp_1);
-                            nota_v2::_ProjectionWrite_svc_register writeState = copiedState._update_for_svc_register();
-                            std::unordered_map<nota_v2::_ProjectionRead_svc_register, nota_v2::_ProjectionWrite_svc_register, nota_v2::_ProjectionRead_svc_register::Hash, nota_v2::_ProjectionRead_svc_register::HashEqual> _OpCache_with_parameter_svc_register;
-                            _OpCache_with_parameter_svc_register.insert({readState, writeState});
-                            {
-                                std::unique_lock<std::mutex> _ProjectionRead_svc_register_lock(_ProjectionRead_svc_register_mutex);
-                                _OpCache_svc_register.insert({param, _OpCache_with_parameter_svc_register});
-                            }
+                    nota_v2 copiedState = state._copy();
+                    nota_v2::_ProjectionRead_svc_register readState = state._projected_state_for_svc_register();
 
-                        } else {
-                            std::unordered_map<nota_v2::_ProjectionRead_svc_register, nota_v2::_ProjectionWrite_svc_register, nota_v2::_ProjectionRead_svc_register::Hash, nota_v2::_ProjectionRead_svc_register::HashEqual> _OpCache_with_parameter_svc_register = _OpCache_with_parameter_svc_register_ptr->second;
-                            auto writeState_ptr = _OpCache_with_parameter_svc_register.find(readState);
-                            if(writeState_ptr != _OpCache_with_parameter_svc_register.end()) {
-                                nota_v2::_ProjectionWrite_svc_register writeState = writeState_ptr->second;
-                                copiedState._apply_update_for_svc_register(writeState);
-                            } else {
-                                copiedState.svc_register(_tmp_1);
-                                nota_v2::_ProjectionWrite_svc_register writeState = copiedState._update_for_svc_register();
-                                {
-                                    std::unique_lock<std::mutex> _ProjectionRead_svc_register_lock(_ProjectionRead_svc_register_mutex);
-                                    _OpCache_with_parameter_svc_register.insert({readState, writeState});
-                                }
-                            }
+                    auto _OpCache_with_parameter_svc_register_ptr = _OpCache_svc_register.find(param);
+                    if(_OpCache_with_parameter_svc_register_ptr == _OpCache_svc_register.end()) {
+                        copiedState.svc_register(_tmp_1);
+                        nota_v2::_ProjectionWrite_svc_register writeState = copiedState._update_for_svc_register();
+                        std::unordered_map<nota_v2::_ProjectionRead_svc_register, nota_v2::_ProjectionWrite_svc_register, nota_v2::_ProjectionRead_svc_register::Hash, nota_v2::_ProjectionRead_svc_register::HashEqual> _OpCache_with_parameter_svc_register;
+                        _OpCache_with_parameter_svc_register.insert({readState, writeState});
+                        {
+                            std::unique_lock<std::mutex> _ProjectionRead_svc_register_lock(_ProjectionRead_svc_register_mutex);
+                            _OpCache_svc_register.insert({param, _OpCache_with_parameter_svc_register});
                         }
 
-                        copiedState.stateAccessedVia = "svc_register";
-                        result.insert(copiedState);
+                    } else {
+                        std::unordered_map<nota_v2::_ProjectionRead_svc_register, nota_v2::_ProjectionWrite_svc_register, nota_v2::_ProjectionRead_svc_register::Hash, nota_v2::_ProjectionRead_svc_register::HashEqual> _OpCache_with_parameter_svc_register = _OpCache_with_parameter_svc_register_ptr->second;
+                        auto writeState_ptr = _OpCache_with_parameter_svc_register.find(readState);
+                        if(writeState_ptr != _OpCache_with_parameter_svc_register.end()) {
+                            nota_v2::_ProjectionWrite_svc_register writeState = writeState_ptr->second;
+                            copiedState._apply_update_for_svc_register(writeState);
+                        } else {
+                            copiedState.svc_register(_tmp_1);
+                            nota_v2::_ProjectionWrite_svc_register writeState = copiedState._update_for_svc_register();
+                            {
+                                std::unique_lock<std::mutex> _ProjectionRead_svc_register_lock(_ProjectionRead_svc_register_mutex);
+                                _OpCache_with_parameter_svc_register.insert({readState, writeState});
+                            }
+                        }
+                    }
+
+                    copiedState.stateAccessedVia = "svc_register";
+                    result.insert(copiedState);
+                    {
+                        std::unique_lock<std::mutex> lock(mutex);
                         transitions += 1;
                     }
                 }
@@ -6633,7 +6158,10 @@ class ModelChecker {
                     copiedState.constructor_interconnectNode(_tmp_1);
                     copiedState.stateAccessedVia = "constructor_interconnectNode";
                     result.insert(copiedState);
-                    transitions += 1;
+                    {
+                        std::unique_lock<std::mutex> lock(mutex);
+                        transitions += 1;
+                    }
                 }
                 BSet<nota_v2::RESOURCEMANAGER> _trid_2 = state._tr_constructor_resourceManager();
                 for(const nota_v2::RESOURCEMANAGER& param : _trid_2) {
@@ -6643,7 +6171,10 @@ class ModelChecker {
                     copiedState.constructor_resourceManager(_tmp_1);
                     copiedState.stateAccessedVia = "constructor_resourceManager";
                     result.insert(copiedState);
-                    transitions += 1;
+                    {
+                        std::unique_lock<std::mutex> lock(mutex);
+                        transitions += 1;
+                    }
                 }
                 BSet<BTuple<nota_v2::INTERCONNECTNODE, nota_v2::SERVICE >> _trid_3 = state._tr_constructor_service();
                 for(const BTuple<nota_v2::INTERCONNECTNODE, nota_v2::SERVICE >& param : _trid_3) {
@@ -6654,7 +6185,10 @@ class ModelChecker {
                     copiedState.constructor_service(_tmp_2, _tmp_1);
                     copiedState.stateAccessedVia = "constructor_service";
                     result.insert(copiedState);
-                    transitions += 1;
+                    {
+                        std::unique_lock<std::mutex> lock(mutex);
+                        transitions += 1;
+                    }
                 }
                 BSet<BTuple<BTuple<BTuple<nota_v2::INTERCONNECTNODE, nota_v2::SID >, nota_v2::SID >, nota_v2::SOCKET >> _trid_4 = state._tr_constructor_socket();
                 for(const BTuple<BTuple<BTuple<nota_v2::INTERCONNECTNODE, nota_v2::SID >, nota_v2::SID >, nota_v2::SOCKET >& param : _trid_4) {
@@ -6669,7 +6203,10 @@ class ModelChecker {
                     copiedState.constructor_socket(_tmp_6, _tmp_5, _tmp_3, _tmp_1);
                     copiedState.stateAccessedVia = "constructor_socket";
                     result.insert(copiedState);
-                    transitions += 1;
+                    {
+                        std::unique_lock<std::mutex> lock(mutex);
+                        transitions += 1;
+                    }
                 }
                 BSet<BTuple<BTuple<nota_v2::RESOURCEMANAGER, nota_v2::SERVICE >, nota_v2::INTERCONNECTNODE >> _trid_5 = state._tr_rm_register();
                 for(const BTuple<BTuple<nota_v2::RESOURCEMANAGER, nota_v2::SERVICE >, nota_v2::INTERCONNECTNODE >& param : _trid_5) {
@@ -6682,7 +6219,10 @@ class ModelChecker {
                     copiedState.rm_register(_tmp_4, _tmp_3, _tmp_1);
                     copiedState.stateAccessedVia = "rm_register";
                     result.insert(copiedState);
-                    transitions += 1;
+                    {
+                        std::unique_lock<std::mutex> lock(mutex);
+                        transitions += 1;
+                    }
                 }
                 BSet<BTuple<BTuple<nota_v2::RESOURCEMANAGER, nota_v2::SERVICE >, nota_v2::INTERCONNECTNODE >> _trid_6 = state._tr_rm_deregister();
                 for(const BTuple<BTuple<nota_v2::RESOURCEMANAGER, nota_v2::SERVICE >, nota_v2::INTERCONNECTNODE >& param : _trid_6) {
@@ -6695,7 +6235,10 @@ class ModelChecker {
                     copiedState.rm_deregister(_tmp_4, _tmp_3, _tmp_1);
                     copiedState.stateAccessedVia = "rm_deregister";
                     result.insert(copiedState);
-                    transitions += 1;
+                    {
+                        std::unique_lock<std::mutex> lock(mutex);
+                        transitions += 1;
+                    }
                 }
                 BSet<BTuple<nota_v2::RESOURCEMANAGER, nota_v2::SERVICE >> _trid_7 = state._tr_rm_getSid();
                 for(const BTuple<nota_v2::RESOURCEMANAGER, nota_v2::SERVICE >& param : _trid_7) {
@@ -6706,7 +6249,10 @@ class ModelChecker {
                     copiedState.rm_getSid(_tmp_2, _tmp_1);
                     copiedState.stateAccessedVia = "rm_getSid";
                     result.insert(copiedState);
-                    transitions += 1;
+                    {
+                        std::unique_lock<std::mutex> lock(mutex);
+                        transitions += 1;
+                    }
                 }
                 BSet<BTuple<nota_v2::RESOURCEMANAGER, nota_v2::SERVICE >> _trid_8 = state._tr_rm_getSid_Not_Found();
                 for(const BTuple<nota_v2::RESOURCEMANAGER, nota_v2::SERVICE >& param : _trid_8) {
@@ -6717,7 +6263,10 @@ class ModelChecker {
                     copiedState.rm_getSid_Not_Found(_tmp_2, _tmp_1);
                     copiedState.stateAccessedVia = "rm_getSid_Not_Found";
                     result.insert(copiedState);
-                    transitions += 1;
+                    {
+                        std::unique_lock<std::mutex> lock(mutex);
+                        transitions += 1;
+                    }
                 }
                 BSet<BTuple<nota_v2::INTERCONNECTNODE, nota_v2::RESOURCEMANAGER >> _trid_9 = state._tr_in_announceResourceManager();
                 for(const BTuple<nota_v2::INTERCONNECTNODE, nota_v2::RESOURCEMANAGER >& param : _trid_9) {
@@ -6728,7 +6277,10 @@ class ModelChecker {
                     copiedState.in_announceResourceManager(_tmp_2, _tmp_1);
                     copiedState.stateAccessedVia = "in_announceResourceManager";
                     result.insert(copiedState);
-                    transitions += 1;
+                    {
+                        std::unique_lock<std::mutex> lock(mutex);
+                        transitions += 1;
+                    }
                 }
                 BSet<BTuple<BTuple<nota_v2::INTERCONNECTNODE, nota_v2::SERVICE >, nota_v2::SID >> _trid_10 = state._tr_in_register_success();
                 for(const BTuple<BTuple<nota_v2::INTERCONNECTNODE, nota_v2::SERVICE >, nota_v2::SID >& param : _trid_10) {
@@ -6741,7 +6293,10 @@ class ModelChecker {
                     copiedState.in_register_success(_tmp_4, _tmp_3, _tmp_1);
                     copiedState.stateAccessedVia = "in_register_success";
                     result.insert(copiedState);
-                    transitions += 1;
+                    {
+                        std::unique_lock<std::mutex> lock(mutex);
+                        transitions += 1;
+                    }
                 }
                 BSet<BTuple<nota_v2::INTERCONNECTNODE, nota_v2::SERVICE >> _trid_11 = state._tr_in_register_failed();
                 for(const BTuple<nota_v2::INTERCONNECTNODE, nota_v2::SERVICE >& param : _trid_11) {
@@ -6752,7 +6307,10 @@ class ModelChecker {
                     copiedState.in_register_failed(_tmp_2, _tmp_1);
                     copiedState.stateAccessedVia = "in_register_failed";
                     result.insert(copiedState);
-                    transitions += 1;
+                    {
+                        std::unique_lock<std::mutex> lock(mutex);
+                        transitions += 1;
+                    }
                 }
                 BSet<BTuple<BTuple<BTuple<BTuple<BTuple<nota_v2::INTERCONNECTNODE, nota_v2::INTERCONNECTNODE >, nota_v2::SOCKET >, nota_v2::SID >, nota_v2::SID >, nota_v2::SOCKET >> _trid_12 = state._tr_in_requestTargetSocket_Granted();
                 for(const BTuple<BTuple<BTuple<BTuple<BTuple<nota_v2::INTERCONNECTNODE, nota_v2::INTERCONNECTNODE >, nota_v2::SOCKET >, nota_v2::SID >, nota_v2::SID >, nota_v2::SOCKET >& param : _trid_12) {
@@ -6771,7 +6329,10 @@ class ModelChecker {
                     copiedState.in_requestTargetSocket_Granted(_tmp_10, _tmp_9, _tmp_7, _tmp_5, _tmp_3, _tmp_1);
                     copiedState.stateAccessedVia = "in_requestTargetSocket_Granted";
                     result.insert(copiedState);
-                    transitions += 1;
+                    {
+                        std::unique_lock<std::mutex> lock(mutex);
+                        transitions += 1;
+                    }
                 }
                 BSet<BTuple<BTuple<BTuple<BTuple<nota_v2::INTERCONNECTNODE, nota_v2::INTERCONNECTNODE >, nota_v2::SOCKET >, nota_v2::SID >, nota_v2::SID >> _trid_13 = state._tr_in_requestTargetSocket_NotGranted();
                 for(const BTuple<BTuple<BTuple<BTuple<nota_v2::INTERCONNECTNODE, nota_v2::INTERCONNECTNODE >, nota_v2::SOCKET >, nota_v2::SID >, nota_v2::SID >& param : _trid_13) {
@@ -6788,7 +6349,10 @@ class ModelChecker {
                     copiedState.in_requestTargetSocket_NotGranted(_tmp_8, _tmp_7, _tmp_5, _tmp_3, _tmp_1);
                     copiedState.stateAccessedVia = "in_requestTargetSocket_NotGranted";
                     result.insert(copiedState);
-                    transitions += 1;
+                    {
+                        std::unique_lock<std::mutex> lock(mutex);
+                        transitions += 1;
+                    }
                 }
                 BSet<nota_v2::SERVICE> _trid_14 = state._tr_svc_register();
                 for(const nota_v2::SERVICE& param : _trid_14) {
@@ -6798,7 +6362,10 @@ class ModelChecker {
                     copiedState.svc_register(_tmp_1);
                     copiedState.stateAccessedVia = "svc_register";
                     result.insert(copiedState);
-                    transitions += 1;
+                    {
+                        std::unique_lock<std::mutex> lock(mutex);
+                        transitions += 1;
+                    }
                 }
 
             }

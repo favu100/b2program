@@ -1660,9 +1660,6 @@ void modelCheckMultiThreaded(boost::asio::thread_pool& workers) {
     std::atomic\<int> possibleQueueChanges;
     possibleQueueChanges = 0;
 
-    std::atomic\<bool> waitFlag;
-    waitFlag = true;
-
     while(!unvisitedStates.empty() && !stopThreads) {
         possibleQueueChanges += 1;
         <machine> state = next();
@@ -1692,7 +1689,6 @@ void modelCheckMultiThreaded(boost::asio::thread_pool& workers) {
                 if (!unvisitedStates.empty() || running == 0) {
                     {
                         std::unique_lock\<std::mutex> lock(waitMutex);
-                        waitFlag = false;
                         waitCV.notify_all();
                     }
                 }
@@ -1713,16 +1709,13 @@ void modelCheckMultiThreaded(boost::asio::thread_pool& workers) {
 
         });
 
-        waitFlag = true;
         boost::asio::post(workers, std::move(task));
 
         {
             std::unique_lock\<std::mutex> lock(waitMutex);
-            if(unvisitedStates.empty() && possibleQueueChanges > 0) {
-                waitCV.wait(lock, [&] {
-                    return waitFlag == false;
-                });
-            }
+            waitCV.wait(lock, [&] {
+                return !unvisitedStates.empty() || possibleQueueChanges == 0;
+            });
         }
     }
     workers.join();

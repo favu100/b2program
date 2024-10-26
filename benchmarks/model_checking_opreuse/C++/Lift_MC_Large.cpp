@@ -760,26 +760,31 @@ class ModelChecker {
         Lift_MC_Large next() {
             {
                 std::unique_lock<std::mutex> lock(mutex);
-                Lift_MC_Large state;
                 switch(type) {
                     case Lift_MC_Large::BFS: {
-                        state = unvisitedStates.front();
+                        Lift_MC_Large state = unvisitedStates.front();
                         unvisitedStates.pop_front();
+                        return state;
                     }
                     case Lift_MC_Large::DFS: {
-                        state = unvisitedStates.back();
+                        Lift_MC_Large state = unvisitedStates.back();
                         unvisitedStates.pop_back();
+                        return state;
                     }
                     case Lift_MC_Large::MIXED: {
                         if(unvisitedStates.size() % 2 == 0) {
-                            state = unvisitedStates.front();
+                            Lift_MC_Large state = unvisitedStates.front();
                             unvisitedStates.pop_front();
+                            return state;
                         } else {
-                            state = unvisitedStates.back();
+                            Lift_MC_Large state = unvisitedStates.back();
                             unvisitedStates.pop_back();
+                            return state;
                         }
                     }
                 }
+                Lift_MC_Large state = unvisitedStates.front();
+                unvisitedStates.pop_front();
                 return state;
             };
         }

@@ -3636,26 +3636,31 @@ class ModelChecker {
         prob_oneway8seq next() {
             {
                 std::unique_lock<std::mutex> lock(mutex);
-                prob_oneway8seq state;
                 switch(type) {
                     case prob_oneway8seq::BFS: {
-                        state = unvisitedStates.front();
+                        prob_oneway8seq state = unvisitedStates.front();
                         unvisitedStates.pop_front();
+                        return state;
                     }
                     case prob_oneway8seq::DFS: {
-                        state = unvisitedStates.back();
+                        prob_oneway8seq state = unvisitedStates.back();
                         unvisitedStates.pop_back();
+                        return state;
                     }
                     case prob_oneway8seq::MIXED: {
                         if(unvisitedStates.size() % 2 == 0) {
-                            state = unvisitedStates.front();
+                            prob_oneway8seq state = unvisitedStates.front();
                             unvisitedStates.pop_front();
+                            return state;
                         } else {
-                            state = unvisitedStates.back();
+                            prob_oneway8seq state = unvisitedStates.back();
                             unvisitedStates.pop_back();
+                            return state;
                         }
                     }
                 }
+                prob_oneway8seq state = unvisitedStates.front();
+                unvisitedStates.pop_front();
                 return state;
             };
         }

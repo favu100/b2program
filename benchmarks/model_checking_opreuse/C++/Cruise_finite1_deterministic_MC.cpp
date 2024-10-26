@@ -8690,26 +8690,31 @@ class ModelChecker {
         Cruise_finite1_deterministic_MC next() {
             {
                 std::unique_lock<std::mutex> lock(mutex);
-                Cruise_finite1_deterministic_MC state;
                 switch(type) {
                     case Cruise_finite1_deterministic_MC::BFS: {
-                        state = unvisitedStates.front();
+                        Cruise_finite1_deterministic_MC state = unvisitedStates.front();
                         unvisitedStates.pop_front();
+                        return state;
                     }
                     case Cruise_finite1_deterministic_MC::DFS: {
-                        state = unvisitedStates.back();
+                        Cruise_finite1_deterministic_MC state = unvisitedStates.back();
                         unvisitedStates.pop_back();
+                        return state;
                     }
                     case Cruise_finite1_deterministic_MC::MIXED: {
                         if(unvisitedStates.size() % 2 == 0) {
-                            state = unvisitedStates.front();
+                            Cruise_finite1_deterministic_MC state = unvisitedStates.front();
                             unvisitedStates.pop_front();
+                            return state;
                         } else {
-                            state = unvisitedStates.back();
+                            Cruise_finite1_deterministic_MC state = unvisitedStates.back();
                             unvisitedStates.pop_back();
+                            return state;
                         }
                     }
                 }
+                Cruise_finite1_deterministic_MC state = unvisitedStates.front();
+                unvisitedStates.pop_front();
                 return state;
             };
         }

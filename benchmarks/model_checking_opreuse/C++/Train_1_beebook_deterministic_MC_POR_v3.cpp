@@ -3482,26 +3482,31 @@ class ModelChecker {
         Train_1_beebook_deterministic_MC_POR_v3 next() {
             {
                 std::unique_lock<std::mutex> lock(mutex);
-                Train_1_beebook_deterministic_MC_POR_v3 state;
                 switch(type) {
                     case Train_1_beebook_deterministic_MC_POR_v3::BFS: {
-                        state = unvisitedStates.front();
+                        Train_1_beebook_deterministic_MC_POR_v3 state = unvisitedStates.front();
                         unvisitedStates.pop_front();
+                        return state;
                     }
                     case Train_1_beebook_deterministic_MC_POR_v3::DFS: {
-                        state = unvisitedStates.back();
+                        Train_1_beebook_deterministic_MC_POR_v3 state = unvisitedStates.back();
                         unvisitedStates.pop_back();
+                        return state;
                     }
                     case Train_1_beebook_deterministic_MC_POR_v3::MIXED: {
                         if(unvisitedStates.size() % 2 == 0) {
-                            state = unvisitedStates.front();
+                            Train_1_beebook_deterministic_MC_POR_v3 state = unvisitedStates.front();
                             unvisitedStates.pop_front();
+                            return state;
                         } else {
-                            state = unvisitedStates.back();
+                            Train_1_beebook_deterministic_MC_POR_v3 state = unvisitedStates.back();
                             unvisitedStates.pop_back();
+                            return state;
                         }
                     }
                 }
+                Train_1_beebook_deterministic_MC_POR_v3 state = unvisitedStates.front();
+                unvisitedStates.pop_front();
                 return state;
             };
         }

@@ -590,26 +590,31 @@ class ModelChecker {
         QueensWithEvents_4 next() {
             {
                 std::unique_lock<std::mutex> lock(mutex);
-                QueensWithEvents_4 state;
                 switch(type) {
                     case QueensWithEvents_4::BFS: {
-                        state = unvisitedStates.front();
+                        QueensWithEvents_4 state = unvisitedStates.front();
                         unvisitedStates.pop_front();
+                        return state;
                     }
                     case QueensWithEvents_4::DFS: {
-                        state = unvisitedStates.back();
+                        QueensWithEvents_4 state = unvisitedStates.back();
                         unvisitedStates.pop_back();
+                        return state;
                     }
                     case QueensWithEvents_4::MIXED: {
                         if(unvisitedStates.size() % 2 == 0) {
-                            state = unvisitedStates.front();
+                            QueensWithEvents_4 state = unvisitedStates.front();
                             unvisitedStates.pop_front();
+                            return state;
                         } else {
-                            state = unvisitedStates.back();
+                            QueensWithEvents_4 state = unvisitedStates.back();
                             unvisitedStates.pop_back();
+                            return state;
                         }
                     }
                 }
+                QueensWithEvents_4 state = unvisitedStates.front();
+                unvisitedStates.pop_front();
                 return state;
             };
         }

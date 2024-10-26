@@ -5677,26 +5677,31 @@ class ModelChecker {
         obsw_M001_2 next() {
             {
                 std::unique_lock<std::mutex> lock(mutex);
-                obsw_M001_2 state;
                 switch(type) {
                     case obsw_M001_2::BFS: {
-                        state = unvisitedStates.front();
+                        obsw_M001_2 state = unvisitedStates.front();
                         unvisitedStates.pop_front();
+                        return state;
                     }
                     case obsw_M001_2::DFS: {
-                        state = unvisitedStates.back();
+                        obsw_M001_2 state = unvisitedStates.back();
                         unvisitedStates.pop_back();
+                        return state;
                     }
                     case obsw_M001_2::MIXED: {
                         if(unvisitedStates.size() % 2 == 0) {
-                            state = unvisitedStates.front();
+                            obsw_M001_2 state = unvisitedStates.front();
                             unvisitedStates.pop_front();
+                            return state;
                         } else {
-                            state = unvisitedStates.back();
+                            obsw_M001_2 state = unvisitedStates.back();
                             unvisitedStates.pop_back();
+                            return state;
                         }
                     }
                 }
+                obsw_M001_2 state = unvisitedStates.front();
+                unvisitedStates.pop_front();
                 return state;
             };
         }

@@ -1620,26 +1620,31 @@ class ModelChecker {
         sort_m2_data1000_MC next() {
             {
                 std::unique_lock<std::mutex> lock(mutex);
-                sort_m2_data1000_MC state;
                 switch(type) {
                     case sort_m2_data1000_MC::BFS: {
-                        state = unvisitedStates.front();
+                        sort_m2_data1000_MC state = unvisitedStates.front();
                         unvisitedStates.pop_front();
+                        return state;
                     }
                     case sort_m2_data1000_MC::DFS: {
-                        state = unvisitedStates.back();
+                        sort_m2_data1000_MC state = unvisitedStates.back();
                         unvisitedStates.pop_back();
+                        return state;
                     }
                     case sort_m2_data1000_MC::MIXED: {
                         if(unvisitedStates.size() % 2 == 0) {
-                            state = unvisitedStates.front();
+                            sort_m2_data1000_MC state = unvisitedStates.front();
                             unvisitedStates.pop_front();
+                            return state;
                         } else {
-                            state = unvisitedStates.back();
+                            sort_m2_data1000_MC state = unvisitedStates.back();
                             unvisitedStates.pop_back();
+                            return state;
                         }
                     }
                 }
+                sort_m2_data1000_MC state = unvisitedStates.front();
+                unvisitedStates.pop_front();
                 return state;
             };
         }

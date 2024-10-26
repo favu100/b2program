@@ -10553,26 +10553,31 @@ class ModelChecker {
         LandingGear_R6 next() {
             {
                 std::unique_lock<std::mutex> lock(mutex);
-                LandingGear_R6 state;
                 switch(type) {
                     case LandingGear_R6::BFS: {
-                        state = unvisitedStates.front();
+                        LandingGear_R6 state = unvisitedStates.front();
                         unvisitedStates.pop_front();
+                        return state;
                     }
                     case LandingGear_R6::DFS: {
-                        state = unvisitedStates.back();
+                        LandingGear_R6 state = unvisitedStates.back();
                         unvisitedStates.pop_back();
+                        return state;
                     }
                     case LandingGear_R6::MIXED: {
                         if(unvisitedStates.size() % 2 == 0) {
-                            state = unvisitedStates.front();
+                            LandingGear_R6 state = unvisitedStates.front();
                             unvisitedStates.pop_front();
+                            return state;
                         } else {
-                            state = unvisitedStates.back();
+                            LandingGear_R6 state = unvisitedStates.back();
                             unvisitedStates.pop_back();
+                            return state;
                         }
                     }
                 }
+                LandingGear_R6 state = unvisitedStates.front();
+                unvisitedStates.pop_front();
                 return state;
             };
         }

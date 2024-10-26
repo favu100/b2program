@@ -5341,26 +5341,31 @@ class ModelChecker {
         nota_v2 next() {
             {
                 std::unique_lock<std::mutex> lock(mutex);
-                nota_v2 state;
                 switch(type) {
                     case nota_v2::BFS: {
-                        state = unvisitedStates.front();
+                        nota_v2 state = unvisitedStates.front();
                         unvisitedStates.pop_front();
+                        return state;
                     }
                     case nota_v2::DFS: {
-                        state = unvisitedStates.back();
+                        nota_v2 state = unvisitedStates.back();
                         unvisitedStates.pop_back();
+                        return state;
                     }
                     case nota_v2::MIXED: {
                         if(unvisitedStates.size() % 2 == 0) {
-                            state = unvisitedStates.front();
+                            nota_v2 state = unvisitedStates.front();
                             unvisitedStates.pop_front();
+                            return state;
                         } else {
-                            state = unvisitedStates.back();
+                            nota_v2 state = unvisitedStates.back();
                             unvisitedStates.pop_back();
+                            return state;
                         }
                     }
                 }
+                nota_v2 state = unvisitedStates.front();
+                unvisitedStates.pop_front();
                 return state;
             };
         }

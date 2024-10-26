@@ -6181,26 +6181,31 @@ class ModelChecker {
         CAN_BUS_tlc next() {
             {
                 std::unique_lock<std::mutex> lock(mutex);
-                CAN_BUS_tlc state;
                 switch(type) {
                     case CAN_BUS_tlc::BFS: {
-                        state = unvisitedStates.front();
+                        CAN_BUS_tlc state = unvisitedStates.front();
                         unvisitedStates.pop_front();
+                        return state;
                     }
                     case CAN_BUS_tlc::DFS: {
-                        state = unvisitedStates.back();
+                        CAN_BUS_tlc state = unvisitedStates.back();
                         unvisitedStates.pop_back();
+                        return state;
                     }
                     case CAN_BUS_tlc::MIXED: {
                         if(unvisitedStates.size() % 2 == 0) {
-                            state = unvisitedStates.front();
+                            CAN_BUS_tlc state = unvisitedStates.front();
                             unvisitedStates.pop_front();
+                            return state;
                         } else {
-                            state = unvisitedStates.back();
+                            CAN_BUS_tlc state = unvisitedStates.back();
                             unvisitedStates.pop_back();
+                            return state;
                         }
                     }
                 }
+                CAN_BUS_tlc state = unvisitedStates.front();
+                unvisitedStates.pop_front();
                 return state;
             };
         }

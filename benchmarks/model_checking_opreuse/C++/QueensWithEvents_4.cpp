@@ -538,9 +538,12 @@ class ModelChecker {
 
                     possibleQueueChanges.fetch_sub(1);
                     {
-                        std::unique_lock<std::mutex> lock(waitMutex);
+                        std::unique_lock<std::mutex> lock(mutex);
                         if (!unvisitedStates.empty() || possibleQueueChanges.load() == 0) {
-                            waitCV.notify_one();
+                            {
+                                std::unique_lock<std::mutex> lock(waitMutex);
+                                waitCV.notify_one();
+                            }
                         }
                     }
 

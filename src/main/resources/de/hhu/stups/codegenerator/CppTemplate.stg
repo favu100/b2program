@@ -23,8 +23,6 @@ machine(forModelChecking, imports, includedMachines, machine, structs, constants
 #include \<future>
 #include \<boost/asio/post.hpp>
 #include \<boost/asio/thread_pool.hpp>
-#include \<boost/any.hpp>
-#include \<boost/optional.hpp>
 <endif>
 <if(useBigInteger)>
 #include \<btypes_big_integer/BUtils.hpp>
@@ -1608,7 +1606,7 @@ void modelCheck() {
     if (threads \<= 1) {
         modelCheckSingleThreaded();
     } else {
-        boost::asio::thread_pool workers(threads); // threads indicates the number of workers (without the coordinator)
+        boost::asio::thread_pool workers(threads-1); // threads indicates the number of workers (without the coordinator)
         modelCheckMultiThreaded(workers);
     }
 }

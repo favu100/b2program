@@ -1124,7 +1124,7 @@ model_check_transition(machine, hasParameters, tupleType, transitionIdentifier, 
 <machine>::_ProjectionRead_<evalTransitions> read_<evalTransitions>_state = state._projected_state_for_<evalTransitions>();
 auto <transitionIdentifier>_ptr = _OpCache<evalTransitions>.find(read_<evalTransitions>_state);
 if(<transitionIdentifier>_ptr == _OpCache<evalTransitions>.end()) {
-    BSet\<<tupleType>\> <transitionIdentifier> = <transitionIdentifier> = state.<evalTransitions>();
+    BSet\<<tupleType>\> <transitionIdentifier> = state.<evalTransitions>();
     {
         std::unique_lock\<std::mutex> _ProjectionRead_<evalTransitions>_lock(_ProjectionRead_<evalTransitions>_mutex);
         _OpCache<evalTransitions>.insert({read_<evalTransitions>_state, <transitionIdentifier>});
@@ -1133,7 +1133,7 @@ if(<transitionIdentifier>_ptr == _OpCache<evalTransitions>.end()) {
         <execTransitions>
     }
 } else {
-    BSet\<<tupleType>\> <transitionIdentifier> = <transitionIdentifier> = <transitionIdentifier>_ptr->second;
+    BSet\<<tupleType>\> <transitionIdentifier> = <transitionIdentifier>_ptr->second;
     for(const <tupleType>& param : <transitionIdentifier>) {
         <execTransitions>
     }

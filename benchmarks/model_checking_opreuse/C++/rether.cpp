@@ -2384,728 +2384,648 @@ class ModelChecker {
             std::unordered_set<rether, rether::Hash, rether::HashEqual> result = std::unordered_set<rether, rether::Hash, rether::HashEqual>();
             if(isCaching) {
                 rether::_ProjectionRead__tr_elapse_time read__tr_elapse_time_state = state._projected_state_for__tr_elapse_time();
-                auto _trid_1_ptr = _OpCache_tr_elapse_time.find(read__tr_elapse_time_state);
-                if(_trid_1_ptr == _OpCache_tr_elapse_time.end()) {
-                    BSet<BTuple<rether::Slots, rether::Slots >> _trid_1 = state._tr_elapse_time();
-                    {
-                        std::unique_lock<std::mutex> _ProjectionRead__tr_elapse_time_lock(_ProjectionRead__tr_elapse_time_mutex);
+                {
+                    std::unique_lock<std::mutex> _ProjectionRead__tr_elapse_time_lock(_ProjectionRead__tr_elapse_time_mutex);
+                    auto _trid_1_ptr = _OpCache_tr_elapse_time.find(read__tr_elapse_time_state);
+                    if(_trid_1_ptr == _OpCache_tr_elapse_time.end()) {
+                        BSet<BTuple<rether::Slots, rether::Slots >> _trid_1 = state._tr_elapse_time();
                         _OpCache_tr_elapse_time.insert({read__tr_elapse_time_state, _trid_1});
-                    }
-                    for(const BTuple<rether::Slots, rether::Slots >& param : _trid_1) {
-                        rether::Slots _tmp_1 = param.projection2();
-                        rether::Slots _tmp_2 = param.projection1();
+                        for(const BTuple<rether::Slots, rether::Slots >& param : _trid_1) {
+                            rether::Slots _tmp_1 = param.projection2();
+                            rether::Slots _tmp_2 = param.projection1();
 
-                        rether copiedState = state._copy();
-                        rether::_ProjectionRead_elapse_time readState = state._projected_state_for_elapse_time();
-
-                        auto _OpCache_with_parameter_elapse_time_ptr = _OpCache_elapse_time.find(param);
-                        if(_OpCache_with_parameter_elapse_time_ptr == _OpCache_elapse_time.end()) {
+                            rether copiedState = state._copy();
+                            rether::_ProjectionRead_elapse_time readState = state._projected_state_for_elapse_time();
                             {
                                 std::unique_lock<std::mutex> _ProjectionRead_elapse_time_lock(_ProjectionRead_elapse_time_mutex);
-                                copiedState.elapse_time(_tmp_2, _tmp_1);
-                                rether::_ProjectionWrite_elapse_time writeState = copiedState._update_for_elapse_time();
-                                std::unordered_map<rether::_ProjectionRead_elapse_time, rether::_ProjectionWrite_elapse_time, rether::_ProjectionRead_elapse_time::Hash, rether::_ProjectionRead_elapse_time::HashEqual> _OpCache_with_parameter_elapse_time = std::unordered_map<rether::_ProjectionRead_elapse_time, rether::_ProjectionWrite_elapse_time, rether::_ProjectionRead_elapse_time::Hash, rether::_ProjectionRead_elapse_time::HashEqual>();
-                                _OpCache_with_parameter_elapse_time.insert({readState, writeState});
-                                _OpCache_elapse_time.insert({param, _OpCache_with_parameter_elapse_time});
-                            }
-                        } else {
-                            {
-                                std::unique_lock<std::mutex> _ProjectionRead_elapse_time_lock(_ProjectionRead_elapse_time_mutex);
-                                std::unordered_map<rether::_ProjectionRead_elapse_time, rether::_ProjectionWrite_elapse_time, rether::_ProjectionRead_elapse_time::Hash, rether::_ProjectionRead_elapse_time::HashEqual> _OpCache_with_parameter_elapse_time = _OpCache_with_parameter_elapse_time_ptr->second;
-                                auto writeState_ptr = _OpCache_with_parameter_elapse_time.find(readState);
-                                if(writeState_ptr != _OpCache_with_parameter_elapse_time.end()) {
-                                    rether::_ProjectionWrite_elapse_time writeState = writeState_ptr->second;
-                                    copiedState._apply_update_for_elapse_time(writeState);
-                                } else {
+                                auto _OpCache_with_parameter_elapse_time_ptr = _OpCache_elapse_time.find(param);
+                                if(_OpCache_with_parameter_elapse_time_ptr == _OpCache_elapse_time.end()) {
                                     copiedState.elapse_time(_tmp_2, _tmp_1);
                                     rether::_ProjectionWrite_elapse_time writeState = copiedState._update_for_elapse_time();
+                                    std::unordered_map<rether::_ProjectionRead_elapse_time, rether::_ProjectionWrite_elapse_time, rether::_ProjectionRead_elapse_time::Hash, rether::_ProjectionRead_elapse_time::HashEqual> _OpCache_with_parameter_elapse_time = std::unordered_map<rether::_ProjectionRead_elapse_time, rether::_ProjectionWrite_elapse_time, rether::_ProjectionRead_elapse_time::Hash, rether::_ProjectionRead_elapse_time::HashEqual>();
                                     _OpCache_with_parameter_elapse_time.insert({readState, writeState});
+                                    _OpCache_elapse_time.insert({param, _OpCache_with_parameter_elapse_time});
+                                } else {
+                                    std::unordered_map<rether::_ProjectionRead_elapse_time, rether::_ProjectionWrite_elapse_time, rether::_ProjectionRead_elapse_time::Hash, rether::_ProjectionRead_elapse_time::HashEqual> _OpCache_with_parameter_elapse_time = _OpCache_with_parameter_elapse_time_ptr->second;
+                                    auto writeState_ptr = _OpCache_with_parameter_elapse_time.find(readState);
+                                    if(writeState_ptr != _OpCache_with_parameter_elapse_time.end()) {
+                                        rether::_ProjectionWrite_elapse_time writeState = writeState_ptr->second;
+                                        copiedState._apply_update_for_elapse_time(writeState);
+                                    } else {
+                                        copiedState.elapse_time(_tmp_2, _tmp_1);
+                                        rether::_ProjectionWrite_elapse_time writeState = copiedState._update_for_elapse_time();
+                                        _OpCache_with_parameter_elapse_time.insert({readState, writeState});
+                                    }
                                 }
                             }
-                        }
-
-                        copiedState.stateAccessedVia = "elapse_time";
-                        result.insert(copiedState);
-                        {
-                            std::unique_lock<std::mutex> lock(mutex);
-                            transitions += 1;
-                        }
-                    }
-                } else {
-                    BSet<BTuple<rether::Slots, rether::Slots >> _trid_1 = _trid_1_ptr->second;
-                    for(const BTuple<rether::Slots, rether::Slots >& param : _trid_1) {
-                        rether::Slots _tmp_1 = param.projection2();
-                        rether::Slots _tmp_2 = param.projection1();
-
-                        rether copiedState = state._copy();
-                        rether::_ProjectionRead_elapse_time readState = state._projected_state_for_elapse_time();
-
-                        auto _OpCache_with_parameter_elapse_time_ptr = _OpCache_elapse_time.find(param);
-                        if(_OpCache_with_parameter_elapse_time_ptr == _OpCache_elapse_time.end()) {
+                            copiedState.stateAccessedVia = "elapse_time";
+                            result.insert(copiedState);
                             {
-                                std::unique_lock<std::mutex> _ProjectionRead_elapse_time_lock(_ProjectionRead_elapse_time_mutex);
-                                copiedState.elapse_time(_tmp_2, _tmp_1);
-                                rether::_ProjectionWrite_elapse_time writeState = copiedState._update_for_elapse_time();
-                                std::unordered_map<rether::_ProjectionRead_elapse_time, rether::_ProjectionWrite_elapse_time, rether::_ProjectionRead_elapse_time::Hash, rether::_ProjectionRead_elapse_time::HashEqual> _OpCache_with_parameter_elapse_time = std::unordered_map<rether::_ProjectionRead_elapse_time, rether::_ProjectionWrite_elapse_time, rether::_ProjectionRead_elapse_time::Hash, rether::_ProjectionRead_elapse_time::HashEqual>();
-                                _OpCache_with_parameter_elapse_time.insert({readState, writeState});
-                                _OpCache_elapse_time.insert({param, _OpCache_with_parameter_elapse_time});
+                                std::unique_lock<std::mutex> lock(mutex);
+                                transitions += 1;
                             }
-                        } else {
+                        }
+                    } else {
+                        BSet<BTuple<rether::Slots, rether::Slots >> _trid_1 = _trid_1_ptr->second;
+                        for(const BTuple<rether::Slots, rether::Slots >& param : _trid_1) {
+                            rether::Slots _tmp_1 = param.projection2();
+                            rether::Slots _tmp_2 = param.projection1();
+
+                            rether copiedState = state._copy();
+                            rether::_ProjectionRead_elapse_time readState = state._projected_state_for_elapse_time();
                             {
                                 std::unique_lock<std::mutex> _ProjectionRead_elapse_time_lock(_ProjectionRead_elapse_time_mutex);
-                                std::unordered_map<rether::_ProjectionRead_elapse_time, rether::_ProjectionWrite_elapse_time, rether::_ProjectionRead_elapse_time::Hash, rether::_ProjectionRead_elapse_time::HashEqual> _OpCache_with_parameter_elapse_time = _OpCache_with_parameter_elapse_time_ptr->second;
-                                auto writeState_ptr = _OpCache_with_parameter_elapse_time.find(readState);
-                                if(writeState_ptr != _OpCache_with_parameter_elapse_time.end()) {
-                                    rether::_ProjectionWrite_elapse_time writeState = writeState_ptr->second;
-                                    copiedState._apply_update_for_elapse_time(writeState);
-                                } else {
+                                auto _OpCache_with_parameter_elapse_time_ptr = _OpCache_elapse_time.find(param);
+                                if(_OpCache_with_parameter_elapse_time_ptr == _OpCache_elapse_time.end()) {
                                     copiedState.elapse_time(_tmp_2, _tmp_1);
                                     rether::_ProjectionWrite_elapse_time writeState = copiedState._update_for_elapse_time();
+                                    std::unordered_map<rether::_ProjectionRead_elapse_time, rether::_ProjectionWrite_elapse_time, rether::_ProjectionRead_elapse_time::Hash, rether::_ProjectionRead_elapse_time::HashEqual> _OpCache_with_parameter_elapse_time = std::unordered_map<rether::_ProjectionRead_elapse_time, rether::_ProjectionWrite_elapse_time, rether::_ProjectionRead_elapse_time::Hash, rether::_ProjectionRead_elapse_time::HashEqual>();
                                     _OpCache_with_parameter_elapse_time.insert({readState, writeState});
+                                    _OpCache_elapse_time.insert({param, _OpCache_with_parameter_elapse_time});
+                                } else {
+                                    std::unordered_map<rether::_ProjectionRead_elapse_time, rether::_ProjectionWrite_elapse_time, rether::_ProjectionRead_elapse_time::Hash, rether::_ProjectionRead_elapse_time::HashEqual> _OpCache_with_parameter_elapse_time = _OpCache_with_parameter_elapse_time_ptr->second;
+                                    auto writeState_ptr = _OpCache_with_parameter_elapse_time.find(readState);
+                                    if(writeState_ptr != _OpCache_with_parameter_elapse_time.end()) {
+                                        rether::_ProjectionWrite_elapse_time writeState = writeState_ptr->second;
+                                        copiedState._apply_update_for_elapse_time(writeState);
+                                    } else {
+                                        copiedState.elapse_time(_tmp_2, _tmp_1);
+                                        rether::_ProjectionWrite_elapse_time writeState = copiedState._update_for_elapse_time();
+                                        _OpCache_with_parameter_elapse_time.insert({readState, writeState});
+                                    }
                                 }
                             }
-                        }
-
-                        copiedState.stateAccessedVia = "elapse_time";
-                        result.insert(copiedState);
-                        {
-                            std::unique_lock<std::mutex> lock(mutex);
-                            transitions += 1;
+                            copiedState.stateAccessedVia = "elapse_time";
+                            result.insert(copiedState);
+                            {
+                                std::unique_lock<std::mutex> lock(mutex);
+                                transitions += 1;
+                            }
                         }
                     }
                 }
                 rether::_ProjectionRead__tr_reserve read__tr_reserve_state = state._projected_state_for__tr_reserve();
-                auto _trid_2_ptr = _OpCache_tr_reserve.find(read__tr_reserve_state);
-                if(_trid_2_ptr == _OpCache_tr_reserve.end()) {
-                    BSet<BTuple<rether::Nodes, rether::Slots >> _trid_2 = state._tr_reserve();
-                    {
-                        std::unique_lock<std::mutex> _ProjectionRead__tr_reserve_lock(_ProjectionRead__tr_reserve_mutex);
+                {
+                    std::unique_lock<std::mutex> _ProjectionRead__tr_reserve_lock(_ProjectionRead__tr_reserve_mutex);
+                    auto _trid_2_ptr = _OpCache_tr_reserve.find(read__tr_reserve_state);
+                    if(_trid_2_ptr == _OpCache_tr_reserve.end()) {
+                        BSet<BTuple<rether::Nodes, rether::Slots >> _trid_2 = state._tr_reserve();
                         _OpCache_tr_reserve.insert({read__tr_reserve_state, _trid_2});
-                    }
-                    for(const BTuple<rether::Nodes, rether::Slots >& param : _trid_2) {
-                        rether::Slots _tmp_1 = param.projection2();
-                        rether::Nodes _tmp_2 = param.projection1();
+                        for(const BTuple<rether::Nodes, rether::Slots >& param : _trid_2) {
+                            rether::Slots _tmp_1 = param.projection2();
+                            rether::Nodes _tmp_2 = param.projection1();
 
-                        rether copiedState = state._copy();
-                        rether::_ProjectionRead_reserve readState = state._projected_state_for_reserve();
-
-                        auto _OpCache_with_parameter_reserve_ptr = _OpCache_reserve.find(param);
-                        if(_OpCache_with_parameter_reserve_ptr == _OpCache_reserve.end()) {
+                            rether copiedState = state._copy();
+                            rether::_ProjectionRead_reserve readState = state._projected_state_for_reserve();
                             {
                                 std::unique_lock<std::mutex> _ProjectionRead_reserve_lock(_ProjectionRead_reserve_mutex);
-                                copiedState.reserve(_tmp_2, _tmp_1);
-                                rether::_ProjectionWrite_reserve writeState = copiedState._update_for_reserve();
-                                std::unordered_map<rether::_ProjectionRead_reserve, rether::_ProjectionWrite_reserve, rether::_ProjectionRead_reserve::Hash, rether::_ProjectionRead_reserve::HashEqual> _OpCache_with_parameter_reserve = std::unordered_map<rether::_ProjectionRead_reserve, rether::_ProjectionWrite_reserve, rether::_ProjectionRead_reserve::Hash, rether::_ProjectionRead_reserve::HashEqual>();
-                                _OpCache_with_parameter_reserve.insert({readState, writeState});
-                                _OpCache_reserve.insert({param, _OpCache_with_parameter_reserve});
-                            }
-                        } else {
-                            {
-                                std::unique_lock<std::mutex> _ProjectionRead_reserve_lock(_ProjectionRead_reserve_mutex);
-                                std::unordered_map<rether::_ProjectionRead_reserve, rether::_ProjectionWrite_reserve, rether::_ProjectionRead_reserve::Hash, rether::_ProjectionRead_reserve::HashEqual> _OpCache_with_parameter_reserve = _OpCache_with_parameter_reserve_ptr->second;
-                                auto writeState_ptr = _OpCache_with_parameter_reserve.find(readState);
-                                if(writeState_ptr != _OpCache_with_parameter_reserve.end()) {
-                                    rether::_ProjectionWrite_reserve writeState = writeState_ptr->second;
-                                    copiedState._apply_update_for_reserve(writeState);
-                                } else {
+                                auto _OpCache_with_parameter_reserve_ptr = _OpCache_reserve.find(param);
+                                if(_OpCache_with_parameter_reserve_ptr == _OpCache_reserve.end()) {
                                     copiedState.reserve(_tmp_2, _tmp_1);
                                     rether::_ProjectionWrite_reserve writeState = copiedState._update_for_reserve();
+                                    std::unordered_map<rether::_ProjectionRead_reserve, rether::_ProjectionWrite_reserve, rether::_ProjectionRead_reserve::Hash, rether::_ProjectionRead_reserve::HashEqual> _OpCache_with_parameter_reserve = std::unordered_map<rether::_ProjectionRead_reserve, rether::_ProjectionWrite_reserve, rether::_ProjectionRead_reserve::Hash, rether::_ProjectionRead_reserve::HashEqual>();
                                     _OpCache_with_parameter_reserve.insert({readState, writeState});
+                                    _OpCache_reserve.insert({param, _OpCache_with_parameter_reserve});
+                                } else {
+                                    std::unordered_map<rether::_ProjectionRead_reserve, rether::_ProjectionWrite_reserve, rether::_ProjectionRead_reserve::Hash, rether::_ProjectionRead_reserve::HashEqual> _OpCache_with_parameter_reserve = _OpCache_with_parameter_reserve_ptr->second;
+                                    auto writeState_ptr = _OpCache_with_parameter_reserve.find(readState);
+                                    if(writeState_ptr != _OpCache_with_parameter_reserve.end()) {
+                                        rether::_ProjectionWrite_reserve writeState = writeState_ptr->second;
+                                        copiedState._apply_update_for_reserve(writeState);
+                                    } else {
+                                        copiedState.reserve(_tmp_2, _tmp_1);
+                                        rether::_ProjectionWrite_reserve writeState = copiedState._update_for_reserve();
+                                        _OpCache_with_parameter_reserve.insert({readState, writeState});
+                                    }
                                 }
                             }
-                        }
-
-                        copiedState.stateAccessedVia = "reserve";
-                        result.insert(copiedState);
-                        {
-                            std::unique_lock<std::mutex> lock(mutex);
-                            transitions += 1;
-                        }
-                    }
-                } else {
-                    BSet<BTuple<rether::Nodes, rether::Slots >> _trid_2 = _trid_2_ptr->second;
-                    for(const BTuple<rether::Nodes, rether::Slots >& param : _trid_2) {
-                        rether::Slots _tmp_1 = param.projection2();
-                        rether::Nodes _tmp_2 = param.projection1();
-
-                        rether copiedState = state._copy();
-                        rether::_ProjectionRead_reserve readState = state._projected_state_for_reserve();
-
-                        auto _OpCache_with_parameter_reserve_ptr = _OpCache_reserve.find(param);
-                        if(_OpCache_with_parameter_reserve_ptr == _OpCache_reserve.end()) {
+                            copiedState.stateAccessedVia = "reserve";
+                            result.insert(copiedState);
                             {
-                                std::unique_lock<std::mutex> _ProjectionRead_reserve_lock(_ProjectionRead_reserve_mutex);
-                                copiedState.reserve(_tmp_2, _tmp_1);
-                                rether::_ProjectionWrite_reserve writeState = copiedState._update_for_reserve();
-                                std::unordered_map<rether::_ProjectionRead_reserve, rether::_ProjectionWrite_reserve, rether::_ProjectionRead_reserve::Hash, rether::_ProjectionRead_reserve::HashEqual> _OpCache_with_parameter_reserve = std::unordered_map<rether::_ProjectionRead_reserve, rether::_ProjectionWrite_reserve, rether::_ProjectionRead_reserve::Hash, rether::_ProjectionRead_reserve::HashEqual>();
-                                _OpCache_with_parameter_reserve.insert({readState, writeState});
-                                _OpCache_reserve.insert({param, _OpCache_with_parameter_reserve});
+                                std::unique_lock<std::mutex> lock(mutex);
+                                transitions += 1;
                             }
-                        } else {
+                        }
+                    } else {
+                        BSet<BTuple<rether::Nodes, rether::Slots >> _trid_2 = _trid_2_ptr->second;
+                        for(const BTuple<rether::Nodes, rether::Slots >& param : _trid_2) {
+                            rether::Slots _tmp_1 = param.projection2();
+                            rether::Nodes _tmp_2 = param.projection1();
+
+                            rether copiedState = state._copy();
+                            rether::_ProjectionRead_reserve readState = state._projected_state_for_reserve();
                             {
                                 std::unique_lock<std::mutex> _ProjectionRead_reserve_lock(_ProjectionRead_reserve_mutex);
-                                std::unordered_map<rether::_ProjectionRead_reserve, rether::_ProjectionWrite_reserve, rether::_ProjectionRead_reserve::Hash, rether::_ProjectionRead_reserve::HashEqual> _OpCache_with_parameter_reserve = _OpCache_with_parameter_reserve_ptr->second;
-                                auto writeState_ptr = _OpCache_with_parameter_reserve.find(readState);
-                                if(writeState_ptr != _OpCache_with_parameter_reserve.end()) {
-                                    rether::_ProjectionWrite_reserve writeState = writeState_ptr->second;
-                                    copiedState._apply_update_for_reserve(writeState);
-                                } else {
+                                auto _OpCache_with_parameter_reserve_ptr = _OpCache_reserve.find(param);
+                                if(_OpCache_with_parameter_reserve_ptr == _OpCache_reserve.end()) {
                                     copiedState.reserve(_tmp_2, _tmp_1);
                                     rether::_ProjectionWrite_reserve writeState = copiedState._update_for_reserve();
+                                    std::unordered_map<rether::_ProjectionRead_reserve, rether::_ProjectionWrite_reserve, rether::_ProjectionRead_reserve::Hash, rether::_ProjectionRead_reserve::HashEqual> _OpCache_with_parameter_reserve = std::unordered_map<rether::_ProjectionRead_reserve, rether::_ProjectionWrite_reserve, rether::_ProjectionRead_reserve::Hash, rether::_ProjectionRead_reserve::HashEqual>();
                                     _OpCache_with_parameter_reserve.insert({readState, writeState});
+                                    _OpCache_reserve.insert({param, _OpCache_with_parameter_reserve});
+                                } else {
+                                    std::unordered_map<rether::_ProjectionRead_reserve, rether::_ProjectionWrite_reserve, rether::_ProjectionRead_reserve::Hash, rether::_ProjectionRead_reserve::HashEqual> _OpCache_with_parameter_reserve = _OpCache_with_parameter_reserve_ptr->second;
+                                    auto writeState_ptr = _OpCache_with_parameter_reserve.find(readState);
+                                    if(writeState_ptr != _OpCache_with_parameter_reserve.end()) {
+                                        rether::_ProjectionWrite_reserve writeState = writeState_ptr->second;
+                                        copiedState._apply_update_for_reserve(writeState);
+                                    } else {
+                                        copiedState.reserve(_tmp_2, _tmp_1);
+                                        rether::_ProjectionWrite_reserve writeState = copiedState._update_for_reserve();
+                                        _OpCache_with_parameter_reserve.insert({readState, writeState});
+                                    }
                                 }
                             }
-                        }
-
-                        copiedState.stateAccessedVia = "reserve";
-                        result.insert(copiedState);
-                        {
-                            std::unique_lock<std::mutex> lock(mutex);
-                            transitions += 1;
+                            copiedState.stateAccessedVia = "reserve";
+                            result.insert(copiedState);
+                            {
+                                std::unique_lock<std::mutex> lock(mutex);
+                                transitions += 1;
+                            }
                         }
                     }
                 }
                 rether::_ProjectionRead__tr_release read__tr_release_state = state._projected_state_for__tr_release();
-                auto _trid_3_ptr = _OpCache_tr_release.find(read__tr_release_state);
-                if(_trid_3_ptr == _OpCache_tr_release.end()) {
-                    BSet<BTuple<rether::Nodes, rether::Slots >> _trid_3 = state._tr_release();
-                    {
-                        std::unique_lock<std::mutex> _ProjectionRead__tr_release_lock(_ProjectionRead__tr_release_mutex);
+                {
+                    std::unique_lock<std::mutex> _ProjectionRead__tr_release_lock(_ProjectionRead__tr_release_mutex);
+                    auto _trid_3_ptr = _OpCache_tr_release.find(read__tr_release_state);
+                    if(_trid_3_ptr == _OpCache_tr_release.end()) {
+                        BSet<BTuple<rether::Nodes, rether::Slots >> _trid_3 = state._tr_release();
                         _OpCache_tr_release.insert({read__tr_release_state, _trid_3});
-                    }
-                    for(const BTuple<rether::Nodes, rether::Slots >& param : _trid_3) {
-                        rether::Slots _tmp_1 = param.projection2();
-                        rether::Nodes _tmp_2 = param.projection1();
+                        for(const BTuple<rether::Nodes, rether::Slots >& param : _trid_3) {
+                            rether::Slots _tmp_1 = param.projection2();
+                            rether::Nodes _tmp_2 = param.projection1();
 
-                        rether copiedState = state._copy();
-                        rether::_ProjectionRead_release readState = state._projected_state_for_release();
-
-                        auto _OpCache_with_parameter_release_ptr = _OpCache_release.find(param);
-                        if(_OpCache_with_parameter_release_ptr == _OpCache_release.end()) {
+                            rether copiedState = state._copy();
+                            rether::_ProjectionRead_release readState = state._projected_state_for_release();
                             {
                                 std::unique_lock<std::mutex> _ProjectionRead_release_lock(_ProjectionRead_release_mutex);
-                                copiedState.release(_tmp_2, _tmp_1);
-                                rether::_ProjectionWrite_release writeState = copiedState._update_for_release();
-                                std::unordered_map<rether::_ProjectionRead_release, rether::_ProjectionWrite_release, rether::_ProjectionRead_release::Hash, rether::_ProjectionRead_release::HashEqual> _OpCache_with_parameter_release = std::unordered_map<rether::_ProjectionRead_release, rether::_ProjectionWrite_release, rether::_ProjectionRead_release::Hash, rether::_ProjectionRead_release::HashEqual>();
-                                _OpCache_with_parameter_release.insert({readState, writeState});
-                                _OpCache_release.insert({param, _OpCache_with_parameter_release});
-                            }
-                        } else {
-                            {
-                                std::unique_lock<std::mutex> _ProjectionRead_release_lock(_ProjectionRead_release_mutex);
-                                std::unordered_map<rether::_ProjectionRead_release, rether::_ProjectionWrite_release, rether::_ProjectionRead_release::Hash, rether::_ProjectionRead_release::HashEqual> _OpCache_with_parameter_release = _OpCache_with_parameter_release_ptr->second;
-                                auto writeState_ptr = _OpCache_with_parameter_release.find(readState);
-                                if(writeState_ptr != _OpCache_with_parameter_release.end()) {
-                                    rether::_ProjectionWrite_release writeState = writeState_ptr->second;
-                                    copiedState._apply_update_for_release(writeState);
-                                } else {
+                                auto _OpCache_with_parameter_release_ptr = _OpCache_release.find(param);
+                                if(_OpCache_with_parameter_release_ptr == _OpCache_release.end()) {
                                     copiedState.release(_tmp_2, _tmp_1);
                                     rether::_ProjectionWrite_release writeState = copiedState._update_for_release();
+                                    std::unordered_map<rether::_ProjectionRead_release, rether::_ProjectionWrite_release, rether::_ProjectionRead_release::Hash, rether::_ProjectionRead_release::HashEqual> _OpCache_with_parameter_release = std::unordered_map<rether::_ProjectionRead_release, rether::_ProjectionWrite_release, rether::_ProjectionRead_release::Hash, rether::_ProjectionRead_release::HashEqual>();
                                     _OpCache_with_parameter_release.insert({readState, writeState});
+                                    _OpCache_release.insert({param, _OpCache_with_parameter_release});
+                                } else {
+                                    std::unordered_map<rether::_ProjectionRead_release, rether::_ProjectionWrite_release, rether::_ProjectionRead_release::Hash, rether::_ProjectionRead_release::HashEqual> _OpCache_with_parameter_release = _OpCache_with_parameter_release_ptr->second;
+                                    auto writeState_ptr = _OpCache_with_parameter_release.find(readState);
+                                    if(writeState_ptr != _OpCache_with_parameter_release.end()) {
+                                        rether::_ProjectionWrite_release writeState = writeState_ptr->second;
+                                        copiedState._apply_update_for_release(writeState);
+                                    } else {
+                                        copiedState.release(_tmp_2, _tmp_1);
+                                        rether::_ProjectionWrite_release writeState = copiedState._update_for_release();
+                                        _OpCache_with_parameter_release.insert({readState, writeState});
+                                    }
                                 }
                             }
-                        }
-
-                        copiedState.stateAccessedVia = "release";
-                        result.insert(copiedState);
-                        {
-                            std::unique_lock<std::mutex> lock(mutex);
-                            transitions += 1;
-                        }
-                    }
-                } else {
-                    BSet<BTuple<rether::Nodes, rether::Slots >> _trid_3 = _trid_3_ptr->second;
-                    for(const BTuple<rether::Nodes, rether::Slots >& param : _trid_3) {
-                        rether::Slots _tmp_1 = param.projection2();
-                        rether::Nodes _tmp_2 = param.projection1();
-
-                        rether copiedState = state._copy();
-                        rether::_ProjectionRead_release readState = state._projected_state_for_release();
-
-                        auto _OpCache_with_parameter_release_ptr = _OpCache_release.find(param);
-                        if(_OpCache_with_parameter_release_ptr == _OpCache_release.end()) {
+                            copiedState.stateAccessedVia = "release";
+                            result.insert(copiedState);
                             {
-                                std::unique_lock<std::mutex> _ProjectionRead_release_lock(_ProjectionRead_release_mutex);
-                                copiedState.release(_tmp_2, _tmp_1);
-                                rether::_ProjectionWrite_release writeState = copiedState._update_for_release();
-                                std::unordered_map<rether::_ProjectionRead_release, rether::_ProjectionWrite_release, rether::_ProjectionRead_release::Hash, rether::_ProjectionRead_release::HashEqual> _OpCache_with_parameter_release = std::unordered_map<rether::_ProjectionRead_release, rether::_ProjectionWrite_release, rether::_ProjectionRead_release::Hash, rether::_ProjectionRead_release::HashEqual>();
-                                _OpCache_with_parameter_release.insert({readState, writeState});
-                                _OpCache_release.insert({param, _OpCache_with_parameter_release});
+                                std::unique_lock<std::mutex> lock(mutex);
+                                transitions += 1;
                             }
-                        } else {
+                        }
+                    } else {
+                        BSet<BTuple<rether::Nodes, rether::Slots >> _trid_3 = _trid_3_ptr->second;
+                        for(const BTuple<rether::Nodes, rether::Slots >& param : _trid_3) {
+                            rether::Slots _tmp_1 = param.projection2();
+                            rether::Nodes _tmp_2 = param.projection1();
+
+                            rether copiedState = state._copy();
+                            rether::_ProjectionRead_release readState = state._projected_state_for_release();
                             {
                                 std::unique_lock<std::mutex> _ProjectionRead_release_lock(_ProjectionRead_release_mutex);
-                                std::unordered_map<rether::_ProjectionRead_release, rether::_ProjectionWrite_release, rether::_ProjectionRead_release::Hash, rether::_ProjectionRead_release::HashEqual> _OpCache_with_parameter_release = _OpCache_with_parameter_release_ptr->second;
-                                auto writeState_ptr = _OpCache_with_parameter_release.find(readState);
-                                if(writeState_ptr != _OpCache_with_parameter_release.end()) {
-                                    rether::_ProjectionWrite_release writeState = writeState_ptr->second;
-                                    copiedState._apply_update_for_release(writeState);
-                                } else {
+                                auto _OpCache_with_parameter_release_ptr = _OpCache_release.find(param);
+                                if(_OpCache_with_parameter_release_ptr == _OpCache_release.end()) {
                                     copiedState.release(_tmp_2, _tmp_1);
                                     rether::_ProjectionWrite_release writeState = copiedState._update_for_release();
+                                    std::unordered_map<rether::_ProjectionRead_release, rether::_ProjectionWrite_release, rether::_ProjectionRead_release::Hash, rether::_ProjectionRead_release::HashEqual> _OpCache_with_parameter_release = std::unordered_map<rether::_ProjectionRead_release, rether::_ProjectionWrite_release, rether::_ProjectionRead_release::Hash, rether::_ProjectionRead_release::HashEqual>();
                                     _OpCache_with_parameter_release.insert({readState, writeState});
+                                    _OpCache_release.insert({param, _OpCache_with_parameter_release});
+                                } else {
+                                    std::unordered_map<rether::_ProjectionRead_release, rether::_ProjectionWrite_release, rether::_ProjectionRead_release::Hash, rether::_ProjectionRead_release::HashEqual> _OpCache_with_parameter_release = _OpCache_with_parameter_release_ptr->second;
+                                    auto writeState_ptr = _OpCache_with_parameter_release.find(readState);
+                                    if(writeState_ptr != _OpCache_with_parameter_release.end()) {
+                                        rether::_ProjectionWrite_release writeState = writeState_ptr->second;
+                                        copiedState._apply_update_for_release(writeState);
+                                    } else {
+                                        copiedState.release(_tmp_2, _tmp_1);
+                                        rether::_ProjectionWrite_release writeState = copiedState._update_for_release();
+                                        _OpCache_with_parameter_release.insert({readState, writeState});
+                                    }
                                 }
                             }
-                        }
-
-                        copiedState.stateAccessedVia = "release";
-                        result.insert(copiedState);
-                        {
-                            std::unique_lock<std::mutex> lock(mutex);
-                            transitions += 1;
+                            copiedState.stateAccessedVia = "release";
+                            result.insert(copiedState);
+                            {
+                                std::unique_lock<std::mutex> lock(mutex);
+                                transitions += 1;
+                            }
                         }
                     }
                 }
                 rether::_ProjectionRead__tr_grant read__tr_grant_state = state._projected_state_for__tr_grant();
-                auto _trid_4_ptr = _OpCache_tr_grant.find(read__tr_grant_state);
-                if(_trid_4_ptr == _OpCache_tr_grant.end()) {
-                    BSet<BTuple<rether::Nodes, rether::Slots >> _trid_4 = state._tr_grant();
-                    {
-                        std::unique_lock<std::mutex> _ProjectionRead__tr_grant_lock(_ProjectionRead__tr_grant_mutex);
+                {
+                    std::unique_lock<std::mutex> _ProjectionRead__tr_grant_lock(_ProjectionRead__tr_grant_mutex);
+                    auto _trid_4_ptr = _OpCache_tr_grant.find(read__tr_grant_state);
+                    if(_trid_4_ptr == _OpCache_tr_grant.end()) {
+                        BSet<BTuple<rether::Nodes, rether::Slots >> _trid_4 = state._tr_grant();
                         _OpCache_tr_grant.insert({read__tr_grant_state, _trid_4});
-                    }
-                    for(const BTuple<rether::Nodes, rether::Slots >& param : _trid_4) {
-                        rether::Slots _tmp_1 = param.projection2();
-                        rether::Nodes _tmp_2 = param.projection1();
+                        for(const BTuple<rether::Nodes, rether::Slots >& param : _trid_4) {
+                            rether::Slots _tmp_1 = param.projection2();
+                            rether::Nodes _tmp_2 = param.projection1();
 
-                        rether copiedState = state._copy();
-                        rether::_ProjectionRead_grant readState = state._projected_state_for_grant();
-
-                        auto _OpCache_with_parameter_grant_ptr = _OpCache_grant.find(param);
-                        if(_OpCache_with_parameter_grant_ptr == _OpCache_grant.end()) {
+                            rether copiedState = state._copy();
+                            rether::_ProjectionRead_grant readState = state._projected_state_for_grant();
                             {
                                 std::unique_lock<std::mutex> _ProjectionRead_grant_lock(_ProjectionRead_grant_mutex);
-                                copiedState.grant(_tmp_2, _tmp_1);
-                                rether::_ProjectionWrite_grant writeState = copiedState._update_for_grant();
-                                std::unordered_map<rether::_ProjectionRead_grant, rether::_ProjectionWrite_grant, rether::_ProjectionRead_grant::Hash, rether::_ProjectionRead_grant::HashEqual> _OpCache_with_parameter_grant = std::unordered_map<rether::_ProjectionRead_grant, rether::_ProjectionWrite_grant, rether::_ProjectionRead_grant::Hash, rether::_ProjectionRead_grant::HashEqual>();
-                                _OpCache_with_parameter_grant.insert({readState, writeState});
-                                _OpCache_grant.insert({param, _OpCache_with_parameter_grant});
-                            }
-                        } else {
-                            {
-                                std::unique_lock<std::mutex> _ProjectionRead_grant_lock(_ProjectionRead_grant_mutex);
-                                std::unordered_map<rether::_ProjectionRead_grant, rether::_ProjectionWrite_grant, rether::_ProjectionRead_grant::Hash, rether::_ProjectionRead_grant::HashEqual> _OpCache_with_parameter_grant = _OpCache_with_parameter_grant_ptr->second;
-                                auto writeState_ptr = _OpCache_with_parameter_grant.find(readState);
-                                if(writeState_ptr != _OpCache_with_parameter_grant.end()) {
-                                    rether::_ProjectionWrite_grant writeState = writeState_ptr->second;
-                                    copiedState._apply_update_for_grant(writeState);
-                                } else {
+                                auto _OpCache_with_parameter_grant_ptr = _OpCache_grant.find(param);
+                                if(_OpCache_with_parameter_grant_ptr == _OpCache_grant.end()) {
                                     copiedState.grant(_tmp_2, _tmp_1);
                                     rether::_ProjectionWrite_grant writeState = copiedState._update_for_grant();
+                                    std::unordered_map<rether::_ProjectionRead_grant, rether::_ProjectionWrite_grant, rether::_ProjectionRead_grant::Hash, rether::_ProjectionRead_grant::HashEqual> _OpCache_with_parameter_grant = std::unordered_map<rether::_ProjectionRead_grant, rether::_ProjectionWrite_grant, rether::_ProjectionRead_grant::Hash, rether::_ProjectionRead_grant::HashEqual>();
                                     _OpCache_with_parameter_grant.insert({readState, writeState});
+                                    _OpCache_grant.insert({param, _OpCache_with_parameter_grant});
+                                } else {
+                                    std::unordered_map<rether::_ProjectionRead_grant, rether::_ProjectionWrite_grant, rether::_ProjectionRead_grant::Hash, rether::_ProjectionRead_grant::HashEqual> _OpCache_with_parameter_grant = _OpCache_with_parameter_grant_ptr->second;
+                                    auto writeState_ptr = _OpCache_with_parameter_grant.find(readState);
+                                    if(writeState_ptr != _OpCache_with_parameter_grant.end()) {
+                                        rether::_ProjectionWrite_grant writeState = writeState_ptr->second;
+                                        copiedState._apply_update_for_grant(writeState);
+                                    } else {
+                                        copiedState.grant(_tmp_2, _tmp_1);
+                                        rether::_ProjectionWrite_grant writeState = copiedState._update_for_grant();
+                                        _OpCache_with_parameter_grant.insert({readState, writeState});
+                                    }
                                 }
                             }
-                        }
-
-                        copiedState.stateAccessedVia = "grant";
-                        result.insert(copiedState);
-                        {
-                            std::unique_lock<std::mutex> lock(mutex);
-                            transitions += 1;
-                        }
-                    }
-                } else {
-                    BSet<BTuple<rether::Nodes, rether::Slots >> _trid_4 = _trid_4_ptr->second;
-                    for(const BTuple<rether::Nodes, rether::Slots >& param : _trid_4) {
-                        rether::Slots _tmp_1 = param.projection2();
-                        rether::Nodes _tmp_2 = param.projection1();
-
-                        rether copiedState = state._copy();
-                        rether::_ProjectionRead_grant readState = state._projected_state_for_grant();
-
-                        auto _OpCache_with_parameter_grant_ptr = _OpCache_grant.find(param);
-                        if(_OpCache_with_parameter_grant_ptr == _OpCache_grant.end()) {
+                            copiedState.stateAccessedVia = "grant";
+                            result.insert(copiedState);
                             {
-                                std::unique_lock<std::mutex> _ProjectionRead_grant_lock(_ProjectionRead_grant_mutex);
-                                copiedState.grant(_tmp_2, _tmp_1);
-                                rether::_ProjectionWrite_grant writeState = copiedState._update_for_grant();
-                                std::unordered_map<rether::_ProjectionRead_grant, rether::_ProjectionWrite_grant, rether::_ProjectionRead_grant::Hash, rether::_ProjectionRead_grant::HashEqual> _OpCache_with_parameter_grant = std::unordered_map<rether::_ProjectionRead_grant, rether::_ProjectionWrite_grant, rether::_ProjectionRead_grant::Hash, rether::_ProjectionRead_grant::HashEqual>();
-                                _OpCache_with_parameter_grant.insert({readState, writeState});
-                                _OpCache_grant.insert({param, _OpCache_with_parameter_grant});
+                                std::unique_lock<std::mutex> lock(mutex);
+                                transitions += 1;
                             }
-                        } else {
+                        }
+                    } else {
+                        BSet<BTuple<rether::Nodes, rether::Slots >> _trid_4 = _trid_4_ptr->second;
+                        for(const BTuple<rether::Nodes, rether::Slots >& param : _trid_4) {
+                            rether::Slots _tmp_1 = param.projection2();
+                            rether::Nodes _tmp_2 = param.projection1();
+
+                            rether copiedState = state._copy();
+                            rether::_ProjectionRead_grant readState = state._projected_state_for_grant();
                             {
                                 std::unique_lock<std::mutex> _ProjectionRead_grant_lock(_ProjectionRead_grant_mutex);
-                                std::unordered_map<rether::_ProjectionRead_grant, rether::_ProjectionWrite_grant, rether::_ProjectionRead_grant::Hash, rether::_ProjectionRead_grant::HashEqual> _OpCache_with_parameter_grant = _OpCache_with_parameter_grant_ptr->second;
-                                auto writeState_ptr = _OpCache_with_parameter_grant.find(readState);
-                                if(writeState_ptr != _OpCache_with_parameter_grant.end()) {
-                                    rether::_ProjectionWrite_grant writeState = writeState_ptr->second;
-                                    copiedState._apply_update_for_grant(writeState);
-                                } else {
+                                auto _OpCache_with_parameter_grant_ptr = _OpCache_grant.find(param);
+                                if(_OpCache_with_parameter_grant_ptr == _OpCache_grant.end()) {
                                     copiedState.grant(_tmp_2, _tmp_1);
                                     rether::_ProjectionWrite_grant writeState = copiedState._update_for_grant();
+                                    std::unordered_map<rether::_ProjectionRead_grant, rether::_ProjectionWrite_grant, rether::_ProjectionRead_grant::Hash, rether::_ProjectionRead_grant::HashEqual> _OpCache_with_parameter_grant = std::unordered_map<rether::_ProjectionRead_grant, rether::_ProjectionWrite_grant, rether::_ProjectionRead_grant::Hash, rether::_ProjectionRead_grant::HashEqual>();
                                     _OpCache_with_parameter_grant.insert({readState, writeState});
+                                    _OpCache_grant.insert({param, _OpCache_with_parameter_grant});
+                                } else {
+                                    std::unordered_map<rether::_ProjectionRead_grant, rether::_ProjectionWrite_grant, rether::_ProjectionRead_grant::Hash, rether::_ProjectionRead_grant::HashEqual> _OpCache_with_parameter_grant = _OpCache_with_parameter_grant_ptr->second;
+                                    auto writeState_ptr = _OpCache_with_parameter_grant.find(readState);
+                                    if(writeState_ptr != _OpCache_with_parameter_grant.end()) {
+                                        rether::_ProjectionWrite_grant writeState = writeState_ptr->second;
+                                        copiedState._apply_update_for_grant(writeState);
+                                    } else {
+                                        copiedState.grant(_tmp_2, _tmp_1);
+                                        rether::_ProjectionWrite_grant writeState = copiedState._update_for_grant();
+                                        _OpCache_with_parameter_grant.insert({readState, writeState});
+                                    }
                                 }
                             }
-                        }
-
-                        copiedState.stateAccessedVia = "grant";
-                        result.insert(copiedState);
-                        {
-                            std::unique_lock<std::mutex> lock(mutex);
-                            transitions += 1;
+                            copiedState.stateAccessedVia = "grant";
+                            result.insert(copiedState);
+                            {
+                                std::unique_lock<std::mutex> lock(mutex);
+                                transitions += 1;
+                            }
                         }
                     }
                 }
                 rether::_ProjectionRead__tr_no_grant read__tr_no_grant_state = state._projected_state_for__tr_no_grant();
-                auto _trid_5_ptr = _OpCache_tr_no_grant.find(read__tr_no_grant_state);
-                if(_trid_5_ptr == _OpCache_tr_no_grant.end()) {
-                    BSet<BTuple<rether::Nodes, rether::Slots >> _trid_5 = state._tr_no_grant();
-                    {
-                        std::unique_lock<std::mutex> _ProjectionRead__tr_no_grant_lock(_ProjectionRead__tr_no_grant_mutex);
+                {
+                    std::unique_lock<std::mutex> _ProjectionRead__tr_no_grant_lock(_ProjectionRead__tr_no_grant_mutex);
+                    auto _trid_5_ptr = _OpCache_tr_no_grant.find(read__tr_no_grant_state);
+                    if(_trid_5_ptr == _OpCache_tr_no_grant.end()) {
+                        BSet<BTuple<rether::Nodes, rether::Slots >> _trid_5 = state._tr_no_grant();
                         _OpCache_tr_no_grant.insert({read__tr_no_grant_state, _trid_5});
-                    }
-                    for(const BTuple<rether::Nodes, rether::Slots >& param : _trid_5) {
-                        rether::Slots _tmp_1 = param.projection2();
-                        rether::Nodes _tmp_2 = param.projection1();
+                        for(const BTuple<rether::Nodes, rether::Slots >& param : _trid_5) {
+                            rether::Slots _tmp_1 = param.projection2();
+                            rether::Nodes _tmp_2 = param.projection1();
 
-                        rether copiedState = state._copy();
-                        rether::_ProjectionRead_no_grant readState = state._projected_state_for_no_grant();
-
-                        auto _OpCache_with_parameter_no_grant_ptr = _OpCache_no_grant.find(param);
-                        if(_OpCache_with_parameter_no_grant_ptr == _OpCache_no_grant.end()) {
+                            rether copiedState = state._copy();
+                            rether::_ProjectionRead_no_grant readState = state._projected_state_for_no_grant();
                             {
                                 std::unique_lock<std::mutex> _ProjectionRead_no_grant_lock(_ProjectionRead_no_grant_mutex);
-                                copiedState.no_grant(_tmp_2, _tmp_1);
-                                rether::_ProjectionWrite_no_grant writeState = copiedState._update_for_no_grant();
-                                std::unordered_map<rether::_ProjectionRead_no_grant, rether::_ProjectionWrite_no_grant, rether::_ProjectionRead_no_grant::Hash, rether::_ProjectionRead_no_grant::HashEqual> _OpCache_with_parameter_no_grant = std::unordered_map<rether::_ProjectionRead_no_grant, rether::_ProjectionWrite_no_grant, rether::_ProjectionRead_no_grant::Hash, rether::_ProjectionRead_no_grant::HashEqual>();
-                                _OpCache_with_parameter_no_grant.insert({readState, writeState});
-                                _OpCache_no_grant.insert({param, _OpCache_with_parameter_no_grant});
-                            }
-                        } else {
-                            {
-                                std::unique_lock<std::mutex> _ProjectionRead_no_grant_lock(_ProjectionRead_no_grant_mutex);
-                                std::unordered_map<rether::_ProjectionRead_no_grant, rether::_ProjectionWrite_no_grant, rether::_ProjectionRead_no_grant::Hash, rether::_ProjectionRead_no_grant::HashEqual> _OpCache_with_parameter_no_grant = _OpCache_with_parameter_no_grant_ptr->second;
-                                auto writeState_ptr = _OpCache_with_parameter_no_grant.find(readState);
-                                if(writeState_ptr != _OpCache_with_parameter_no_grant.end()) {
-                                    rether::_ProjectionWrite_no_grant writeState = writeState_ptr->second;
-                                    copiedState._apply_update_for_no_grant(writeState);
-                                } else {
+                                auto _OpCache_with_parameter_no_grant_ptr = _OpCache_no_grant.find(param);
+                                if(_OpCache_with_parameter_no_grant_ptr == _OpCache_no_grant.end()) {
                                     copiedState.no_grant(_tmp_2, _tmp_1);
                                     rether::_ProjectionWrite_no_grant writeState = copiedState._update_for_no_grant();
+                                    std::unordered_map<rether::_ProjectionRead_no_grant, rether::_ProjectionWrite_no_grant, rether::_ProjectionRead_no_grant::Hash, rether::_ProjectionRead_no_grant::HashEqual> _OpCache_with_parameter_no_grant = std::unordered_map<rether::_ProjectionRead_no_grant, rether::_ProjectionWrite_no_grant, rether::_ProjectionRead_no_grant::Hash, rether::_ProjectionRead_no_grant::HashEqual>();
                                     _OpCache_with_parameter_no_grant.insert({readState, writeState});
+                                    _OpCache_no_grant.insert({param, _OpCache_with_parameter_no_grant});
+                                } else {
+                                    std::unordered_map<rether::_ProjectionRead_no_grant, rether::_ProjectionWrite_no_grant, rether::_ProjectionRead_no_grant::Hash, rether::_ProjectionRead_no_grant::HashEqual> _OpCache_with_parameter_no_grant = _OpCache_with_parameter_no_grant_ptr->second;
+                                    auto writeState_ptr = _OpCache_with_parameter_no_grant.find(readState);
+                                    if(writeState_ptr != _OpCache_with_parameter_no_grant.end()) {
+                                        rether::_ProjectionWrite_no_grant writeState = writeState_ptr->second;
+                                        copiedState._apply_update_for_no_grant(writeState);
+                                    } else {
+                                        copiedState.no_grant(_tmp_2, _tmp_1);
+                                        rether::_ProjectionWrite_no_grant writeState = copiedState._update_for_no_grant();
+                                        _OpCache_with_parameter_no_grant.insert({readState, writeState});
+                                    }
                                 }
                             }
-                        }
-
-                        copiedState.stateAccessedVia = "no_grant";
-                        result.insert(copiedState);
-                        {
-                            std::unique_lock<std::mutex> lock(mutex);
-                            transitions += 1;
-                        }
-                    }
-                } else {
-                    BSet<BTuple<rether::Nodes, rether::Slots >> _trid_5 = _trid_5_ptr->second;
-                    for(const BTuple<rether::Nodes, rether::Slots >& param : _trid_5) {
-                        rether::Slots _tmp_1 = param.projection2();
-                        rether::Nodes _tmp_2 = param.projection1();
-
-                        rether copiedState = state._copy();
-                        rether::_ProjectionRead_no_grant readState = state._projected_state_for_no_grant();
-
-                        auto _OpCache_with_parameter_no_grant_ptr = _OpCache_no_grant.find(param);
-                        if(_OpCache_with_parameter_no_grant_ptr == _OpCache_no_grant.end()) {
+                            copiedState.stateAccessedVia = "no_grant";
+                            result.insert(copiedState);
                             {
-                                std::unique_lock<std::mutex> _ProjectionRead_no_grant_lock(_ProjectionRead_no_grant_mutex);
-                                copiedState.no_grant(_tmp_2, _tmp_1);
-                                rether::_ProjectionWrite_no_grant writeState = copiedState._update_for_no_grant();
-                                std::unordered_map<rether::_ProjectionRead_no_grant, rether::_ProjectionWrite_no_grant, rether::_ProjectionRead_no_grant::Hash, rether::_ProjectionRead_no_grant::HashEqual> _OpCache_with_parameter_no_grant = std::unordered_map<rether::_ProjectionRead_no_grant, rether::_ProjectionWrite_no_grant, rether::_ProjectionRead_no_grant::Hash, rether::_ProjectionRead_no_grant::HashEqual>();
-                                _OpCache_with_parameter_no_grant.insert({readState, writeState});
-                                _OpCache_no_grant.insert({param, _OpCache_with_parameter_no_grant});
+                                std::unique_lock<std::mutex> lock(mutex);
+                                transitions += 1;
                             }
-                        } else {
+                        }
+                    } else {
+                        BSet<BTuple<rether::Nodes, rether::Slots >> _trid_5 = _trid_5_ptr->second;
+                        for(const BTuple<rether::Nodes, rether::Slots >& param : _trid_5) {
+                            rether::Slots _tmp_1 = param.projection2();
+                            rether::Nodes _tmp_2 = param.projection1();
+
+                            rether copiedState = state._copy();
+                            rether::_ProjectionRead_no_grant readState = state._projected_state_for_no_grant();
                             {
                                 std::unique_lock<std::mutex> _ProjectionRead_no_grant_lock(_ProjectionRead_no_grant_mutex);
-                                std::unordered_map<rether::_ProjectionRead_no_grant, rether::_ProjectionWrite_no_grant, rether::_ProjectionRead_no_grant::Hash, rether::_ProjectionRead_no_grant::HashEqual> _OpCache_with_parameter_no_grant = _OpCache_with_parameter_no_grant_ptr->second;
-                                auto writeState_ptr = _OpCache_with_parameter_no_grant.find(readState);
-                                if(writeState_ptr != _OpCache_with_parameter_no_grant.end()) {
-                                    rether::_ProjectionWrite_no_grant writeState = writeState_ptr->second;
-                                    copiedState._apply_update_for_no_grant(writeState);
-                                } else {
+                                auto _OpCache_with_parameter_no_grant_ptr = _OpCache_no_grant.find(param);
+                                if(_OpCache_with_parameter_no_grant_ptr == _OpCache_no_grant.end()) {
                                     copiedState.no_grant(_tmp_2, _tmp_1);
                                     rether::_ProjectionWrite_no_grant writeState = copiedState._update_for_no_grant();
+                                    std::unordered_map<rether::_ProjectionRead_no_grant, rether::_ProjectionWrite_no_grant, rether::_ProjectionRead_no_grant::Hash, rether::_ProjectionRead_no_grant::HashEqual> _OpCache_with_parameter_no_grant = std::unordered_map<rether::_ProjectionRead_no_grant, rether::_ProjectionWrite_no_grant, rether::_ProjectionRead_no_grant::Hash, rether::_ProjectionRead_no_grant::HashEqual>();
                                     _OpCache_with_parameter_no_grant.insert({readState, writeState});
+                                    _OpCache_no_grant.insert({param, _OpCache_with_parameter_no_grant});
+                                } else {
+                                    std::unordered_map<rether::_ProjectionRead_no_grant, rether::_ProjectionWrite_no_grant, rether::_ProjectionRead_no_grant::Hash, rether::_ProjectionRead_no_grant::HashEqual> _OpCache_with_parameter_no_grant = _OpCache_with_parameter_no_grant_ptr->second;
+                                    auto writeState_ptr = _OpCache_with_parameter_no_grant.find(readState);
+                                    if(writeState_ptr != _OpCache_with_parameter_no_grant.end()) {
+                                        rether::_ProjectionWrite_no_grant writeState = writeState_ptr->second;
+                                        copiedState._apply_update_for_no_grant(writeState);
+                                    } else {
+                                        copiedState.no_grant(_tmp_2, _tmp_1);
+                                        rether::_ProjectionWrite_no_grant writeState = copiedState._update_for_no_grant();
+                                        _OpCache_with_parameter_no_grant.insert({readState, writeState});
+                                    }
                                 }
                             }
-                        }
-
-                        copiedState.stateAccessedVia = "no_grant";
-                        result.insert(copiedState);
-                        {
-                            std::unique_lock<std::mutex> lock(mutex);
-                            transitions += 1;
+                            copiedState.stateAccessedVia = "no_grant";
+                            result.insert(copiedState);
+                            {
+                                std::unique_lock<std::mutex> lock(mutex);
+                                transitions += 1;
+                            }
                         }
                     }
                 }
                 rether::_ProjectionRead__tr_use_RT_Slot read__tr_use_RT_Slot_state = state._projected_state_for__tr_use_RT_Slot();
-                auto _trid_6_ptr = _OpCache_tr_use_RT_Slot.find(read__tr_use_RT_Slot_state);
-                if(_trid_6_ptr == _OpCache_tr_use_RT_Slot.end()) {
-                    BSet<BTuple<rether::Nodes, rether::Slots >> _trid_6 = state._tr_use_RT_Slot();
-                    {
-                        std::unique_lock<std::mutex> _ProjectionRead__tr_use_RT_Slot_lock(_ProjectionRead__tr_use_RT_Slot_mutex);
+                {
+                    std::unique_lock<std::mutex> _ProjectionRead__tr_use_RT_Slot_lock(_ProjectionRead__tr_use_RT_Slot_mutex);
+                    auto _trid_6_ptr = _OpCache_tr_use_RT_Slot.find(read__tr_use_RT_Slot_state);
+                    if(_trid_6_ptr == _OpCache_tr_use_RT_Slot.end()) {
+                        BSet<BTuple<rether::Nodes, rether::Slots >> _trid_6 = state._tr_use_RT_Slot();
                         _OpCache_tr_use_RT_Slot.insert({read__tr_use_RT_Slot_state, _trid_6});
-                    }
-                    for(const BTuple<rether::Nodes, rether::Slots >& param : _trid_6) {
-                        rether::Slots _tmp_1 = param.projection2();
-                        rether::Nodes _tmp_2 = param.projection1();
+                        for(const BTuple<rether::Nodes, rether::Slots >& param : _trid_6) {
+                            rether::Slots _tmp_1 = param.projection2();
+                            rether::Nodes _tmp_2 = param.projection1();
 
-                        rether copiedState = state._copy();
-                        rether::_ProjectionRead_use_RT_Slot readState = state._projected_state_for_use_RT_Slot();
-
-                        auto _OpCache_with_parameter_use_RT_Slot_ptr = _OpCache_use_RT_Slot.find(param);
-                        if(_OpCache_with_parameter_use_RT_Slot_ptr == _OpCache_use_RT_Slot.end()) {
+                            rether copiedState = state._copy();
+                            rether::_ProjectionRead_use_RT_Slot readState = state._projected_state_for_use_RT_Slot();
                             {
                                 std::unique_lock<std::mutex> _ProjectionRead_use_RT_Slot_lock(_ProjectionRead_use_RT_Slot_mutex);
-                                copiedState.use_RT_Slot(_tmp_2, _tmp_1);
-                                rether::_ProjectionWrite_use_RT_Slot writeState = copiedState._update_for_use_RT_Slot();
-                                std::unordered_map<rether::_ProjectionRead_use_RT_Slot, rether::_ProjectionWrite_use_RT_Slot, rether::_ProjectionRead_use_RT_Slot::Hash, rether::_ProjectionRead_use_RT_Slot::HashEqual> _OpCache_with_parameter_use_RT_Slot = std::unordered_map<rether::_ProjectionRead_use_RT_Slot, rether::_ProjectionWrite_use_RT_Slot, rether::_ProjectionRead_use_RT_Slot::Hash, rether::_ProjectionRead_use_RT_Slot::HashEqual>();
-                                _OpCache_with_parameter_use_RT_Slot.insert({readState, writeState});
-                                _OpCache_use_RT_Slot.insert({param, _OpCache_with_parameter_use_RT_Slot});
-                            }
-                        } else {
-                            {
-                                std::unique_lock<std::mutex> _ProjectionRead_use_RT_Slot_lock(_ProjectionRead_use_RT_Slot_mutex);
-                                std::unordered_map<rether::_ProjectionRead_use_RT_Slot, rether::_ProjectionWrite_use_RT_Slot, rether::_ProjectionRead_use_RT_Slot::Hash, rether::_ProjectionRead_use_RT_Slot::HashEqual> _OpCache_with_parameter_use_RT_Slot = _OpCache_with_parameter_use_RT_Slot_ptr->second;
-                                auto writeState_ptr = _OpCache_with_parameter_use_RT_Slot.find(readState);
-                                if(writeState_ptr != _OpCache_with_parameter_use_RT_Slot.end()) {
-                                    rether::_ProjectionWrite_use_RT_Slot writeState = writeState_ptr->second;
-                                    copiedState._apply_update_for_use_RT_Slot(writeState);
-                                } else {
+                                auto _OpCache_with_parameter_use_RT_Slot_ptr = _OpCache_use_RT_Slot.find(param);
+                                if(_OpCache_with_parameter_use_RT_Slot_ptr == _OpCache_use_RT_Slot.end()) {
                                     copiedState.use_RT_Slot(_tmp_2, _tmp_1);
                                     rether::_ProjectionWrite_use_RT_Slot writeState = copiedState._update_for_use_RT_Slot();
+                                    std::unordered_map<rether::_ProjectionRead_use_RT_Slot, rether::_ProjectionWrite_use_RT_Slot, rether::_ProjectionRead_use_RT_Slot::Hash, rether::_ProjectionRead_use_RT_Slot::HashEqual> _OpCache_with_parameter_use_RT_Slot = std::unordered_map<rether::_ProjectionRead_use_RT_Slot, rether::_ProjectionWrite_use_RT_Slot, rether::_ProjectionRead_use_RT_Slot::Hash, rether::_ProjectionRead_use_RT_Slot::HashEqual>();
                                     _OpCache_with_parameter_use_RT_Slot.insert({readState, writeState});
+                                    _OpCache_use_RT_Slot.insert({param, _OpCache_with_parameter_use_RT_Slot});
+                                } else {
+                                    std::unordered_map<rether::_ProjectionRead_use_RT_Slot, rether::_ProjectionWrite_use_RT_Slot, rether::_ProjectionRead_use_RT_Slot::Hash, rether::_ProjectionRead_use_RT_Slot::HashEqual> _OpCache_with_parameter_use_RT_Slot = _OpCache_with_parameter_use_RT_Slot_ptr->second;
+                                    auto writeState_ptr = _OpCache_with_parameter_use_RT_Slot.find(readState);
+                                    if(writeState_ptr != _OpCache_with_parameter_use_RT_Slot.end()) {
+                                        rether::_ProjectionWrite_use_RT_Slot writeState = writeState_ptr->second;
+                                        copiedState._apply_update_for_use_RT_Slot(writeState);
+                                    } else {
+                                        copiedState.use_RT_Slot(_tmp_2, _tmp_1);
+                                        rether::_ProjectionWrite_use_RT_Slot writeState = copiedState._update_for_use_RT_Slot();
+                                        _OpCache_with_parameter_use_RT_Slot.insert({readState, writeState});
+                                    }
                                 }
                             }
-                        }
-
-                        copiedState.stateAccessedVia = "use_RT_Slot";
-                        result.insert(copiedState);
-                        {
-                            std::unique_lock<std::mutex> lock(mutex);
-                            transitions += 1;
-                        }
-                    }
-                } else {
-                    BSet<BTuple<rether::Nodes, rether::Slots >> _trid_6 = _trid_6_ptr->second;
-                    for(const BTuple<rether::Nodes, rether::Slots >& param : _trid_6) {
-                        rether::Slots _tmp_1 = param.projection2();
-                        rether::Nodes _tmp_2 = param.projection1();
-
-                        rether copiedState = state._copy();
-                        rether::_ProjectionRead_use_RT_Slot readState = state._projected_state_for_use_RT_Slot();
-
-                        auto _OpCache_with_parameter_use_RT_Slot_ptr = _OpCache_use_RT_Slot.find(param);
-                        if(_OpCache_with_parameter_use_RT_Slot_ptr == _OpCache_use_RT_Slot.end()) {
+                            copiedState.stateAccessedVia = "use_RT_Slot";
+                            result.insert(copiedState);
                             {
-                                std::unique_lock<std::mutex> _ProjectionRead_use_RT_Slot_lock(_ProjectionRead_use_RT_Slot_mutex);
-                                copiedState.use_RT_Slot(_tmp_2, _tmp_1);
-                                rether::_ProjectionWrite_use_RT_Slot writeState = copiedState._update_for_use_RT_Slot();
-                                std::unordered_map<rether::_ProjectionRead_use_RT_Slot, rether::_ProjectionWrite_use_RT_Slot, rether::_ProjectionRead_use_RT_Slot::Hash, rether::_ProjectionRead_use_RT_Slot::HashEqual> _OpCache_with_parameter_use_RT_Slot = std::unordered_map<rether::_ProjectionRead_use_RT_Slot, rether::_ProjectionWrite_use_RT_Slot, rether::_ProjectionRead_use_RT_Slot::Hash, rether::_ProjectionRead_use_RT_Slot::HashEqual>();
-                                _OpCache_with_parameter_use_RT_Slot.insert({readState, writeState});
-                                _OpCache_use_RT_Slot.insert({param, _OpCache_with_parameter_use_RT_Slot});
+                                std::unique_lock<std::mutex> lock(mutex);
+                                transitions += 1;
                             }
-                        } else {
+                        }
+                    } else {
+                        BSet<BTuple<rether::Nodes, rether::Slots >> _trid_6 = _trid_6_ptr->second;
+                        for(const BTuple<rether::Nodes, rether::Slots >& param : _trid_6) {
+                            rether::Slots _tmp_1 = param.projection2();
+                            rether::Nodes _tmp_2 = param.projection1();
+
+                            rether copiedState = state._copy();
+                            rether::_ProjectionRead_use_RT_Slot readState = state._projected_state_for_use_RT_Slot();
                             {
                                 std::unique_lock<std::mutex> _ProjectionRead_use_RT_Slot_lock(_ProjectionRead_use_RT_Slot_mutex);
-                                std::unordered_map<rether::_ProjectionRead_use_RT_Slot, rether::_ProjectionWrite_use_RT_Slot, rether::_ProjectionRead_use_RT_Slot::Hash, rether::_ProjectionRead_use_RT_Slot::HashEqual> _OpCache_with_parameter_use_RT_Slot = _OpCache_with_parameter_use_RT_Slot_ptr->second;
-                                auto writeState_ptr = _OpCache_with_parameter_use_RT_Slot.find(readState);
-                                if(writeState_ptr != _OpCache_with_parameter_use_RT_Slot.end()) {
-                                    rether::_ProjectionWrite_use_RT_Slot writeState = writeState_ptr->second;
-                                    copiedState._apply_update_for_use_RT_Slot(writeState);
-                                } else {
+                                auto _OpCache_with_parameter_use_RT_Slot_ptr = _OpCache_use_RT_Slot.find(param);
+                                if(_OpCache_with_parameter_use_RT_Slot_ptr == _OpCache_use_RT_Slot.end()) {
                                     copiedState.use_RT_Slot(_tmp_2, _tmp_1);
                                     rether::_ProjectionWrite_use_RT_Slot writeState = copiedState._update_for_use_RT_Slot();
+                                    std::unordered_map<rether::_ProjectionRead_use_RT_Slot, rether::_ProjectionWrite_use_RT_Slot, rether::_ProjectionRead_use_RT_Slot::Hash, rether::_ProjectionRead_use_RT_Slot::HashEqual> _OpCache_with_parameter_use_RT_Slot = std::unordered_map<rether::_ProjectionRead_use_RT_Slot, rether::_ProjectionWrite_use_RT_Slot, rether::_ProjectionRead_use_RT_Slot::Hash, rether::_ProjectionRead_use_RT_Slot::HashEqual>();
                                     _OpCache_with_parameter_use_RT_Slot.insert({readState, writeState});
+                                    _OpCache_use_RT_Slot.insert({param, _OpCache_with_parameter_use_RT_Slot});
+                                } else {
+                                    std::unordered_map<rether::_ProjectionRead_use_RT_Slot, rether::_ProjectionWrite_use_RT_Slot, rether::_ProjectionRead_use_RT_Slot::Hash, rether::_ProjectionRead_use_RT_Slot::HashEqual> _OpCache_with_parameter_use_RT_Slot = _OpCache_with_parameter_use_RT_Slot_ptr->second;
+                                    auto writeState_ptr = _OpCache_with_parameter_use_RT_Slot.find(readState);
+                                    if(writeState_ptr != _OpCache_with_parameter_use_RT_Slot.end()) {
+                                        rether::_ProjectionWrite_use_RT_Slot writeState = writeState_ptr->second;
+                                        copiedState._apply_update_for_use_RT_Slot(writeState);
+                                    } else {
+                                        copiedState.use_RT_Slot(_tmp_2, _tmp_1);
+                                        rether::_ProjectionWrite_use_RT_Slot writeState = copiedState._update_for_use_RT_Slot();
+                                        _OpCache_with_parameter_use_RT_Slot.insert({readState, writeState});
+                                    }
                                 }
                             }
-                        }
-
-                        copiedState.stateAccessedVia = "use_RT_Slot";
-                        result.insert(copiedState);
-                        {
-                            std::unique_lock<std::mutex> lock(mutex);
-                            transitions += 1;
+                            copiedState.stateAccessedVia = "use_RT_Slot";
+                            result.insert(copiedState);
+                            {
+                                std::unique_lock<std::mutex> lock(mutex);
+                                transitions += 1;
+                            }
                         }
                     }
                 }
                 rether::_ProjectionRead__tr_use_NRT_Slot read__tr_use_NRT_Slot_state = state._projected_state_for__tr_use_NRT_Slot();
-                auto _trid_7_ptr = _OpCache_tr_use_NRT_Slot.find(read__tr_use_NRT_Slot_state);
-                if(_trid_7_ptr == _OpCache_tr_use_NRT_Slot.end()) {
-                    BSet<BTuple<rether::Nodes, rether::Slots >> _trid_7 = state._tr_use_NRT_Slot();
-                    {
-                        std::unique_lock<std::mutex> _ProjectionRead__tr_use_NRT_Slot_lock(_ProjectionRead__tr_use_NRT_Slot_mutex);
+                {
+                    std::unique_lock<std::mutex> _ProjectionRead__tr_use_NRT_Slot_lock(_ProjectionRead__tr_use_NRT_Slot_mutex);
+                    auto _trid_7_ptr = _OpCache_tr_use_NRT_Slot.find(read__tr_use_NRT_Slot_state);
+                    if(_trid_7_ptr == _OpCache_tr_use_NRT_Slot.end()) {
+                        BSet<BTuple<rether::Nodes, rether::Slots >> _trid_7 = state._tr_use_NRT_Slot();
                         _OpCache_tr_use_NRT_Slot.insert({read__tr_use_NRT_Slot_state, _trid_7});
-                    }
-                    for(const BTuple<rether::Nodes, rether::Slots >& param : _trid_7) {
-                        rether::Slots _tmp_1 = param.projection2();
-                        rether::Nodes _tmp_2 = param.projection1();
+                        for(const BTuple<rether::Nodes, rether::Slots >& param : _trid_7) {
+                            rether::Slots _tmp_1 = param.projection2();
+                            rether::Nodes _tmp_2 = param.projection1();
 
-                        rether copiedState = state._copy();
-                        rether::_ProjectionRead_use_NRT_Slot readState = state._projected_state_for_use_NRT_Slot();
-
-                        auto _OpCache_with_parameter_use_NRT_Slot_ptr = _OpCache_use_NRT_Slot.find(param);
-                        if(_OpCache_with_parameter_use_NRT_Slot_ptr == _OpCache_use_NRT_Slot.end()) {
+                            rether copiedState = state._copy();
+                            rether::_ProjectionRead_use_NRT_Slot readState = state._projected_state_for_use_NRT_Slot();
                             {
                                 std::unique_lock<std::mutex> _ProjectionRead_use_NRT_Slot_lock(_ProjectionRead_use_NRT_Slot_mutex);
-                                copiedState.use_NRT_Slot(_tmp_2, _tmp_1);
-                                rether::_ProjectionWrite_use_NRT_Slot writeState = copiedState._update_for_use_NRT_Slot();
-                                std::unordered_map<rether::_ProjectionRead_use_NRT_Slot, rether::_ProjectionWrite_use_NRT_Slot, rether::_ProjectionRead_use_NRT_Slot::Hash, rether::_ProjectionRead_use_NRT_Slot::HashEqual> _OpCache_with_parameter_use_NRT_Slot = std::unordered_map<rether::_ProjectionRead_use_NRT_Slot, rether::_ProjectionWrite_use_NRT_Slot, rether::_ProjectionRead_use_NRT_Slot::Hash, rether::_ProjectionRead_use_NRT_Slot::HashEqual>();
-                                _OpCache_with_parameter_use_NRT_Slot.insert({readState, writeState});
-                                _OpCache_use_NRT_Slot.insert({param, _OpCache_with_parameter_use_NRT_Slot});
-                            }
-                        } else {
-                            {
-                                std::unique_lock<std::mutex> _ProjectionRead_use_NRT_Slot_lock(_ProjectionRead_use_NRT_Slot_mutex);
-                                std::unordered_map<rether::_ProjectionRead_use_NRT_Slot, rether::_ProjectionWrite_use_NRT_Slot, rether::_ProjectionRead_use_NRT_Slot::Hash, rether::_ProjectionRead_use_NRT_Slot::HashEqual> _OpCache_with_parameter_use_NRT_Slot = _OpCache_with_parameter_use_NRT_Slot_ptr->second;
-                                auto writeState_ptr = _OpCache_with_parameter_use_NRT_Slot.find(readState);
-                                if(writeState_ptr != _OpCache_with_parameter_use_NRT_Slot.end()) {
-                                    rether::_ProjectionWrite_use_NRT_Slot writeState = writeState_ptr->second;
-                                    copiedState._apply_update_for_use_NRT_Slot(writeState);
-                                } else {
+                                auto _OpCache_with_parameter_use_NRT_Slot_ptr = _OpCache_use_NRT_Slot.find(param);
+                                if(_OpCache_with_parameter_use_NRT_Slot_ptr == _OpCache_use_NRT_Slot.end()) {
                                     copiedState.use_NRT_Slot(_tmp_2, _tmp_1);
                                     rether::_ProjectionWrite_use_NRT_Slot writeState = copiedState._update_for_use_NRT_Slot();
+                                    std::unordered_map<rether::_ProjectionRead_use_NRT_Slot, rether::_ProjectionWrite_use_NRT_Slot, rether::_ProjectionRead_use_NRT_Slot::Hash, rether::_ProjectionRead_use_NRT_Slot::HashEqual> _OpCache_with_parameter_use_NRT_Slot = std::unordered_map<rether::_ProjectionRead_use_NRT_Slot, rether::_ProjectionWrite_use_NRT_Slot, rether::_ProjectionRead_use_NRT_Slot::Hash, rether::_ProjectionRead_use_NRT_Slot::HashEqual>();
                                     _OpCache_with_parameter_use_NRT_Slot.insert({readState, writeState});
+                                    _OpCache_use_NRT_Slot.insert({param, _OpCache_with_parameter_use_NRT_Slot});
+                                } else {
+                                    std::unordered_map<rether::_ProjectionRead_use_NRT_Slot, rether::_ProjectionWrite_use_NRT_Slot, rether::_ProjectionRead_use_NRT_Slot::Hash, rether::_ProjectionRead_use_NRT_Slot::HashEqual> _OpCache_with_parameter_use_NRT_Slot = _OpCache_with_parameter_use_NRT_Slot_ptr->second;
+                                    auto writeState_ptr = _OpCache_with_parameter_use_NRT_Slot.find(readState);
+                                    if(writeState_ptr != _OpCache_with_parameter_use_NRT_Slot.end()) {
+                                        rether::_ProjectionWrite_use_NRT_Slot writeState = writeState_ptr->second;
+                                        copiedState._apply_update_for_use_NRT_Slot(writeState);
+                                    } else {
+                                        copiedState.use_NRT_Slot(_tmp_2, _tmp_1);
+                                        rether::_ProjectionWrite_use_NRT_Slot writeState = copiedState._update_for_use_NRT_Slot();
+                                        _OpCache_with_parameter_use_NRT_Slot.insert({readState, writeState});
+                                    }
                                 }
                             }
-                        }
-
-                        copiedState.stateAccessedVia = "use_NRT_Slot";
-                        result.insert(copiedState);
-                        {
-                            std::unique_lock<std::mutex> lock(mutex);
-                            transitions += 1;
-                        }
-                    }
-                } else {
-                    BSet<BTuple<rether::Nodes, rether::Slots >> _trid_7 = _trid_7_ptr->second;
-                    for(const BTuple<rether::Nodes, rether::Slots >& param : _trid_7) {
-                        rether::Slots _tmp_1 = param.projection2();
-                        rether::Nodes _tmp_2 = param.projection1();
-
-                        rether copiedState = state._copy();
-                        rether::_ProjectionRead_use_NRT_Slot readState = state._projected_state_for_use_NRT_Slot();
-
-                        auto _OpCache_with_parameter_use_NRT_Slot_ptr = _OpCache_use_NRT_Slot.find(param);
-                        if(_OpCache_with_parameter_use_NRT_Slot_ptr == _OpCache_use_NRT_Slot.end()) {
+                            copiedState.stateAccessedVia = "use_NRT_Slot";
+                            result.insert(copiedState);
                             {
-                                std::unique_lock<std::mutex> _ProjectionRead_use_NRT_Slot_lock(_ProjectionRead_use_NRT_Slot_mutex);
-                                copiedState.use_NRT_Slot(_tmp_2, _tmp_1);
-                                rether::_ProjectionWrite_use_NRT_Slot writeState = copiedState._update_for_use_NRT_Slot();
-                                std::unordered_map<rether::_ProjectionRead_use_NRT_Slot, rether::_ProjectionWrite_use_NRT_Slot, rether::_ProjectionRead_use_NRT_Slot::Hash, rether::_ProjectionRead_use_NRT_Slot::HashEqual> _OpCache_with_parameter_use_NRT_Slot = std::unordered_map<rether::_ProjectionRead_use_NRT_Slot, rether::_ProjectionWrite_use_NRT_Slot, rether::_ProjectionRead_use_NRT_Slot::Hash, rether::_ProjectionRead_use_NRT_Slot::HashEqual>();
-                                _OpCache_with_parameter_use_NRT_Slot.insert({readState, writeState});
-                                _OpCache_use_NRT_Slot.insert({param, _OpCache_with_parameter_use_NRT_Slot});
+                                std::unique_lock<std::mutex> lock(mutex);
+                                transitions += 1;
                             }
-                        } else {
+                        }
+                    } else {
+                        BSet<BTuple<rether::Nodes, rether::Slots >> _trid_7 = _trid_7_ptr->second;
+                        for(const BTuple<rether::Nodes, rether::Slots >& param : _trid_7) {
+                            rether::Slots _tmp_1 = param.projection2();
+                            rether::Nodes _tmp_2 = param.projection1();
+
+                            rether copiedState = state._copy();
+                            rether::_ProjectionRead_use_NRT_Slot readState = state._projected_state_for_use_NRT_Slot();
                             {
                                 std::unique_lock<std::mutex> _ProjectionRead_use_NRT_Slot_lock(_ProjectionRead_use_NRT_Slot_mutex);
-                                std::unordered_map<rether::_ProjectionRead_use_NRT_Slot, rether::_ProjectionWrite_use_NRT_Slot, rether::_ProjectionRead_use_NRT_Slot::Hash, rether::_ProjectionRead_use_NRT_Slot::HashEqual> _OpCache_with_parameter_use_NRT_Slot = _OpCache_with_parameter_use_NRT_Slot_ptr->second;
-                                auto writeState_ptr = _OpCache_with_parameter_use_NRT_Slot.find(readState);
-                                if(writeState_ptr != _OpCache_with_parameter_use_NRT_Slot.end()) {
-                                    rether::_ProjectionWrite_use_NRT_Slot writeState = writeState_ptr->second;
-                                    copiedState._apply_update_for_use_NRT_Slot(writeState);
-                                } else {
+                                auto _OpCache_with_parameter_use_NRT_Slot_ptr = _OpCache_use_NRT_Slot.find(param);
+                                if(_OpCache_with_parameter_use_NRT_Slot_ptr == _OpCache_use_NRT_Slot.end()) {
                                     copiedState.use_NRT_Slot(_tmp_2, _tmp_1);
                                     rether::_ProjectionWrite_use_NRT_Slot writeState = copiedState._update_for_use_NRT_Slot();
+                                    std::unordered_map<rether::_ProjectionRead_use_NRT_Slot, rether::_ProjectionWrite_use_NRT_Slot, rether::_ProjectionRead_use_NRT_Slot::Hash, rether::_ProjectionRead_use_NRT_Slot::HashEqual> _OpCache_with_parameter_use_NRT_Slot = std::unordered_map<rether::_ProjectionRead_use_NRT_Slot, rether::_ProjectionWrite_use_NRT_Slot, rether::_ProjectionRead_use_NRT_Slot::Hash, rether::_ProjectionRead_use_NRT_Slot::HashEqual>();
                                     _OpCache_with_parameter_use_NRT_Slot.insert({readState, writeState});
+                                    _OpCache_use_NRT_Slot.insert({param, _OpCache_with_parameter_use_NRT_Slot});
+                                } else {
+                                    std::unordered_map<rether::_ProjectionRead_use_NRT_Slot, rether::_ProjectionWrite_use_NRT_Slot, rether::_ProjectionRead_use_NRT_Slot::Hash, rether::_ProjectionRead_use_NRT_Slot::HashEqual> _OpCache_with_parameter_use_NRT_Slot = _OpCache_with_parameter_use_NRT_Slot_ptr->second;
+                                    auto writeState_ptr = _OpCache_with_parameter_use_NRT_Slot.find(readState);
+                                    if(writeState_ptr != _OpCache_with_parameter_use_NRT_Slot.end()) {
+                                        rether::_ProjectionWrite_use_NRT_Slot writeState = writeState_ptr->second;
+                                        copiedState._apply_update_for_use_NRT_Slot(writeState);
+                                    } else {
+                                        copiedState.use_NRT_Slot(_tmp_2, _tmp_1);
+                                        rether::_ProjectionWrite_use_NRT_Slot writeState = copiedState._update_for_use_NRT_Slot();
+                                        _OpCache_with_parameter_use_NRT_Slot.insert({readState, writeState});
+                                    }
                                 }
                             }
-                        }
-
-                        copiedState.stateAccessedVia = "use_NRT_Slot";
-                        result.insert(copiedState);
-                        {
-                            std::unique_lock<std::mutex> lock(mutex);
-                            transitions += 1;
+                            copiedState.stateAccessedVia = "use_NRT_Slot";
+                            result.insert(copiedState);
+                            {
+                                std::unique_lock<std::mutex> lock(mutex);
+                                transitions += 1;
+                            }
                         }
                     }
                 }
                 rether::_ProjectionRead__tr_pass_token read__tr_pass_token_state = state._projected_state_for__tr_pass_token();
-                auto _trid_8_ptr = _OpCache_tr_pass_token.find(read__tr_pass_token_state);
-                if(_trid_8_ptr == _OpCache_tr_pass_token.end()) {
-                    BSet<rether::Nodes> _trid_8 = state._tr_pass_token();
-                    {
-                        std::unique_lock<std::mutex> _ProjectionRead__tr_pass_token_lock(_ProjectionRead__tr_pass_token_mutex);
+                {
+                    std::unique_lock<std::mutex> _ProjectionRead__tr_pass_token_lock(_ProjectionRead__tr_pass_token_mutex);
+                    auto _trid_8_ptr = _OpCache_tr_pass_token.find(read__tr_pass_token_state);
+                    if(_trid_8_ptr == _OpCache_tr_pass_token.end()) {
+                        BSet<rether::Nodes> _trid_8 = state._tr_pass_token();
                         _OpCache_tr_pass_token.insert({read__tr_pass_token_state, _trid_8});
-                    }
-                    for(const rether::Nodes& param : _trid_8) {
-                        rether::Nodes _tmp_1 = param;
+                        for(const rether::Nodes& param : _trid_8) {
+                            rether::Nodes _tmp_1 = param;
 
-                        rether copiedState = state._copy();
-                        rether::_ProjectionRead_pass_token readState = state._projected_state_for_pass_token();
-
-                        auto _OpCache_with_parameter_pass_token_ptr = _OpCache_pass_token.find(param);
-                        if(_OpCache_with_parameter_pass_token_ptr == _OpCache_pass_token.end()) {
+                            rether copiedState = state._copy();
+                            rether::_ProjectionRead_pass_token readState = state._projected_state_for_pass_token();
                             {
                                 std::unique_lock<std::mutex> _ProjectionRead_pass_token_lock(_ProjectionRead_pass_token_mutex);
-                                copiedState.pass_token(_tmp_1);
-                                rether::_ProjectionWrite_pass_token writeState = copiedState._update_for_pass_token();
-                                std::unordered_map<rether::_ProjectionRead_pass_token, rether::_ProjectionWrite_pass_token, rether::_ProjectionRead_pass_token::Hash, rether::_ProjectionRead_pass_token::HashEqual> _OpCache_with_parameter_pass_token = std::unordered_map<rether::_ProjectionRead_pass_token, rether::_ProjectionWrite_pass_token, rether::_ProjectionRead_pass_token::Hash, rether::_ProjectionRead_pass_token::HashEqual>();
-                                _OpCache_with_parameter_pass_token.insert({readState, writeState});
-                                _OpCache_pass_token.insert({param, _OpCache_with_parameter_pass_token});
-                            }
-                        } else {
-                            {
-                                std::unique_lock<std::mutex> _ProjectionRead_pass_token_lock(_ProjectionRead_pass_token_mutex);
-                                std::unordered_map<rether::_ProjectionRead_pass_token, rether::_ProjectionWrite_pass_token, rether::_ProjectionRead_pass_token::Hash, rether::_ProjectionRead_pass_token::HashEqual> _OpCache_with_parameter_pass_token = _OpCache_with_parameter_pass_token_ptr->second;
-                                auto writeState_ptr = _OpCache_with_parameter_pass_token.find(readState);
-                                if(writeState_ptr != _OpCache_with_parameter_pass_token.end()) {
-                                    rether::_ProjectionWrite_pass_token writeState = writeState_ptr->second;
-                                    copiedState._apply_update_for_pass_token(writeState);
-                                } else {
+                                auto _OpCache_with_parameter_pass_token_ptr = _OpCache_pass_token.find(param);
+                                if(_OpCache_with_parameter_pass_token_ptr == _OpCache_pass_token.end()) {
                                     copiedState.pass_token(_tmp_1);
                                     rether::_ProjectionWrite_pass_token writeState = copiedState._update_for_pass_token();
+                                    std::unordered_map<rether::_ProjectionRead_pass_token, rether::_ProjectionWrite_pass_token, rether::_ProjectionRead_pass_token::Hash, rether::_ProjectionRead_pass_token::HashEqual> _OpCache_with_parameter_pass_token = std::unordered_map<rether::_ProjectionRead_pass_token, rether::_ProjectionWrite_pass_token, rether::_ProjectionRead_pass_token::Hash, rether::_ProjectionRead_pass_token::HashEqual>();
                                     _OpCache_with_parameter_pass_token.insert({readState, writeState});
+                                    _OpCache_pass_token.insert({param, _OpCache_with_parameter_pass_token});
+                                } else {
+                                    std::unordered_map<rether::_ProjectionRead_pass_token, rether::_ProjectionWrite_pass_token, rether::_ProjectionRead_pass_token::Hash, rether::_ProjectionRead_pass_token::HashEqual> _OpCache_with_parameter_pass_token = _OpCache_with_parameter_pass_token_ptr->second;
+                                    auto writeState_ptr = _OpCache_with_parameter_pass_token.find(readState);
+                                    if(writeState_ptr != _OpCache_with_parameter_pass_token.end()) {
+                                        rether::_ProjectionWrite_pass_token writeState = writeState_ptr->second;
+                                        copiedState._apply_update_for_pass_token(writeState);
+                                    } else {
+                                        copiedState.pass_token(_tmp_1);
+                                        rether::_ProjectionWrite_pass_token writeState = copiedState._update_for_pass_token();
+                                        _OpCache_with_parameter_pass_token.insert({readState, writeState});
+                                    }
                                 }
                             }
-                        }
-
-                        copiedState.stateAccessedVia = "pass_token";
-                        result.insert(copiedState);
-                        {
-                            std::unique_lock<std::mutex> lock(mutex);
-                            transitions += 1;
-                        }
-                    }
-                } else {
-                    BSet<rether::Nodes> _trid_8 = _trid_8_ptr->second;
-                    for(const rether::Nodes& param : _trid_8) {
-                        rether::Nodes _tmp_1 = param;
-
-                        rether copiedState = state._copy();
-                        rether::_ProjectionRead_pass_token readState = state._projected_state_for_pass_token();
-
-                        auto _OpCache_with_parameter_pass_token_ptr = _OpCache_pass_token.find(param);
-                        if(_OpCache_with_parameter_pass_token_ptr == _OpCache_pass_token.end()) {
+                            copiedState.stateAccessedVia = "pass_token";
+                            result.insert(copiedState);
                             {
-                                std::unique_lock<std::mutex> _ProjectionRead_pass_token_lock(_ProjectionRead_pass_token_mutex);
-                                copiedState.pass_token(_tmp_1);
-                                rether::_ProjectionWrite_pass_token writeState = copiedState._update_for_pass_token();
-                                std::unordered_map<rether::_ProjectionRead_pass_token, rether::_ProjectionWrite_pass_token, rether::_ProjectionRead_pass_token::Hash, rether::_ProjectionRead_pass_token::HashEqual> _OpCache_with_parameter_pass_token = std::unordered_map<rether::_ProjectionRead_pass_token, rether::_ProjectionWrite_pass_token, rether::_ProjectionRead_pass_token::Hash, rether::_ProjectionRead_pass_token::HashEqual>();
-                                _OpCache_with_parameter_pass_token.insert({readState, writeState});
-                                _OpCache_pass_token.insert({param, _OpCache_with_parameter_pass_token});
+                                std::unique_lock<std::mutex> lock(mutex);
+                                transitions += 1;
                             }
-                        } else {
+                        }
+                    } else {
+                        BSet<rether::Nodes> _trid_8 = _trid_8_ptr->second;
+                        for(const rether::Nodes& param : _trid_8) {
+                            rether::Nodes _tmp_1 = param;
+
+                            rether copiedState = state._copy();
+                            rether::_ProjectionRead_pass_token readState = state._projected_state_for_pass_token();
                             {
                                 std::unique_lock<std::mutex> _ProjectionRead_pass_token_lock(_ProjectionRead_pass_token_mutex);
-                                std::unordered_map<rether::_ProjectionRead_pass_token, rether::_ProjectionWrite_pass_token, rether::_ProjectionRead_pass_token::Hash, rether::_ProjectionRead_pass_token::HashEqual> _OpCache_with_parameter_pass_token = _OpCache_with_parameter_pass_token_ptr->second;
-                                auto writeState_ptr = _OpCache_with_parameter_pass_token.find(readState);
-                                if(writeState_ptr != _OpCache_with_parameter_pass_token.end()) {
-                                    rether::_ProjectionWrite_pass_token writeState = writeState_ptr->second;
-                                    copiedState._apply_update_for_pass_token(writeState);
-                                } else {
+                                auto _OpCache_with_parameter_pass_token_ptr = _OpCache_pass_token.find(param);
+                                if(_OpCache_with_parameter_pass_token_ptr == _OpCache_pass_token.end()) {
                                     copiedState.pass_token(_tmp_1);
                                     rether::_ProjectionWrite_pass_token writeState = copiedState._update_for_pass_token();
+                                    std::unordered_map<rether::_ProjectionRead_pass_token, rether::_ProjectionWrite_pass_token, rether::_ProjectionRead_pass_token::Hash, rether::_ProjectionRead_pass_token::HashEqual> _OpCache_with_parameter_pass_token = std::unordered_map<rether::_ProjectionRead_pass_token, rether::_ProjectionWrite_pass_token, rether::_ProjectionRead_pass_token::Hash, rether::_ProjectionRead_pass_token::HashEqual>();
                                     _OpCache_with_parameter_pass_token.insert({readState, writeState});
+                                    _OpCache_pass_token.insert({param, _OpCache_with_parameter_pass_token});
+                                } else {
+                                    std::unordered_map<rether::_ProjectionRead_pass_token, rether::_ProjectionWrite_pass_token, rether::_ProjectionRead_pass_token::Hash, rether::_ProjectionRead_pass_token::HashEqual> _OpCache_with_parameter_pass_token = _OpCache_with_parameter_pass_token_ptr->second;
+                                    auto writeState_ptr = _OpCache_with_parameter_pass_token.find(readState);
+                                    if(writeState_ptr != _OpCache_with_parameter_pass_token.end()) {
+                                        rether::_ProjectionWrite_pass_token writeState = writeState_ptr->second;
+                                        copiedState._apply_update_for_pass_token(writeState);
+                                    } else {
+                                        copiedState.pass_token(_tmp_1);
+                                        rether::_ProjectionWrite_pass_token writeState = copiedState._update_for_pass_token();
+                                        _OpCache_with_parameter_pass_token.insert({readState, writeState});
+                                    }
                                 }
                             }
-                        }
-
-                        copiedState.stateAccessedVia = "pass_token";
-                        result.insert(copiedState);
-                        {
-                            std::unique_lock<std::mutex> lock(mutex);
-                            transitions += 1;
+                            copiedState.stateAccessedVia = "pass_token";
+                            result.insert(copiedState);
+                            {
+                                std::unique_lock<std::mutex> lock(mutex);
+                                transitions += 1;
+                            }
                         }
                     }
                 }

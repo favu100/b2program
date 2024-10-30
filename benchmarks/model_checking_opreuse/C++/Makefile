@@ -12,19 +12,19 @@ CPPC ?= clang++
 IMMERFLAGS=-DIMMER_NO_THREAD_SAFETY
 CPPFLAGS ?= -std=c++14 -O1 -flto -mtune=native -fbracket-depth=1000
 STRATEGY=mixed
-THREADS=1
-CACHING=false
+THREADS=8
+CACHING=true
 OUTPUT=runtimes.txt
 
 %.exec : %.cpp
 	$(CPPC) $(CPPFLAGS) -o $@ $<
 
 % : %.exec
-	timeout 60m gtime -f "%C %E %M" -ao $(OUTPUT) ./$< $(STRATEGY) $(THREADS) $(CACHING)
-	timeout 60m gtime -f "%C %E %M" -ao $(OUTPUT) ./$< $(STRATEGY) $(THREADS) $(CACHING)
-	timeout 60m gtime -f "%C %E %M" -ao $(OUTPUT) ./$< $(STRATEGY) $(THREADS) $(CACHING)
-	timeout 60m gtime -f "%C %E %M" -ao $(OUTPUT) ./$< $(STRATEGY) $(THREADS) $(CACHING)
-	timeout 60m gtime -f "%C %E %M" -ao $(OUTPUT) ./$< $(STRATEGY) $(THREADS) $(CACHING)
+	-timeout 60m gtime -f "%C %E %M" -ao $(OUTPUT) ./$< $(STRATEGY) $(THREADS) $(CACHING)
+	-timeout 60m gtime -f "%C %E %M" -ao $(OUTPUT) ./$< $(STRATEGY) $(THREADS) $(CACHING)
+	-timeout 60m gtime -f "%C %E %M" -ao $(OUTPUT) ./$< $(STRATEGY) $(THREADS) $(CACHING)
+	-timeout 60m gtime -f "%C %E %M" -ao $(OUTPUT) ./$< $(STRATEGY) $(THREADS) $(CACHING)	
+	-timeout 60m gtime -f "%C %E %M" -ao $(OUTPUT) ./$< $(STRATEGY) $(THREADS) $(CACHING)
 
 clean:
 	rm -f *.exec

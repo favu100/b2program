@@ -10585,33 +10585,29 @@ class ModelChecker {
             if(isCaching) {
                 LandingGear_R6::_ProjectionRead__tr_begin_flying read__tr_begin_flying_state = state._projected_state_for__tr_begin_flying();
                 bool _trid_1 = false;
-                auto _obj__trid_1_ptr = _OpCache_tr_begin_flying.find(read__tr_begin_flying_state);
-                if(_obj__trid_1_ptr == _OpCache_tr_begin_flying.end()) {
-                    _trid_1 = state._tr_begin_flying();
-                    {
-                        std::unique_lock<std::mutex> _ProjectionRead__tr_begin_flying_lock(_ProjectionRead__tr_begin_flying_mutex);
+                {
+                    std::unique_lock<std::mutex> _ProjectionRead__tr_begin_flying_lock(_ProjectionRead__tr_begin_flying_mutex);
+                    auto _obj__trid_1_ptr = _OpCache_tr_begin_flying.find(read__tr_begin_flying_state);
+                    if(_obj__trid_1_ptr == _OpCache_tr_begin_flying.end()) {
+                        _trid_1 = state._tr_begin_flying();
                         _OpCache_tr_begin_flying.insert({read__tr_begin_flying_state, _trid_1});
+                    } else {
+                        _trid_1 = _obj__trid_1_ptr->second;
                     }
-                } else {
-                    _trid_1 = _obj__trid_1_ptr->second;
                 }
                 if(_trid_1) {
                     LandingGear_R6 copiedState = state._copy();
                     LandingGear_R6::_ProjectionRead_begin_flying readState = state._projected_state_for_begin_flying();
-
-                    auto _OpCache_with_parameter_begin_flying_ptr = _OpCache_begin_flying.find(_trid_1);
-                    if(_OpCache_with_parameter_begin_flying_ptr == _OpCache_begin_flying.end()) {
-                        {
-                            std::unique_lock<std::mutex> _ProjectionRead_begin_flying_lock(_ProjectionRead_begin_flying_mutex);
+                    {
+                        std::unique_lock<std::mutex> _ProjectionRead_begin_flying_lock(_ProjectionRead_begin_flying_mutex);
+                        auto _OpCache_with_parameter_begin_flying_ptr = _OpCache_begin_flying.find(_trid_1);
+                        if(_OpCache_with_parameter_begin_flying_ptr == _OpCache_begin_flying.end()) {
                             copiedState.begin_flying();
                             LandingGear_R6::_ProjectionWrite_begin_flying writeState = copiedState._update_for_begin_flying();
                             std::unordered_map<LandingGear_R6::_ProjectionRead_begin_flying, LandingGear_R6::_ProjectionWrite_begin_flying, LandingGear_R6::_ProjectionRead_begin_flying::Hash, LandingGear_R6::_ProjectionRead_begin_flying::HashEqual> _OpCache_with_parameter_begin_flying = std::unordered_map<LandingGear_R6::_ProjectionRead_begin_flying, LandingGear_R6::_ProjectionWrite_begin_flying, LandingGear_R6::_ProjectionRead_begin_flying::Hash, LandingGear_R6::_ProjectionRead_begin_flying::HashEqual>();
                             _OpCache_with_parameter_begin_flying.insert({readState, writeState});
                             _OpCache_begin_flying.insert({_trid_1, _OpCache_with_parameter_begin_flying});
-                        }
-                    } else {
-                        {
-                            std::unique_lock<std::mutex> _ProjectionRead_begin_flying_lock(_ProjectionRead_begin_flying_mutex);
+                        } else {
                             std::unordered_map<LandingGear_R6::_ProjectionRead_begin_flying, LandingGear_R6::_ProjectionWrite_begin_flying, LandingGear_R6::_ProjectionRead_begin_flying::Hash, LandingGear_R6::_ProjectionRead_begin_flying::HashEqual> _OpCache_with_parameter_begin_flying = _OpCache_with_parameter_begin_flying_ptr->second;
                             auto writeState_ptr = _OpCache_with_parameter_begin_flying.find(readState);
                             if(writeState_ptr != _OpCache_with_parameter_begin_flying.end()) {
@@ -10624,7 +10620,6 @@ class ModelChecker {
                             }
                         }
                     }
-
                     copiedState.stateAccessedVia = "begin_flying";
                     result.insert(copiedState);
                     {
@@ -10634,33 +10629,29 @@ class ModelChecker {
                 }
                 LandingGear_R6::_ProjectionRead__tr_land_plane read__tr_land_plane_state = state._projected_state_for__tr_land_plane();
                 bool _trid_2 = false;
-                auto _obj__trid_2_ptr = _OpCache_tr_land_plane.find(read__tr_land_plane_state);
-                if(_obj__trid_2_ptr == _OpCache_tr_land_plane.end()) {
-                    _trid_2 = state._tr_land_plane();
-                    {
-                        std::unique_lock<std::mutex> _ProjectionRead__tr_land_plane_lock(_ProjectionRead__tr_land_plane_mutex);
+                {
+                    std::unique_lock<std::mutex> _ProjectionRead__tr_land_plane_lock(_ProjectionRead__tr_land_plane_mutex);
+                    auto _obj__trid_2_ptr = _OpCache_tr_land_plane.find(read__tr_land_plane_state);
+                    if(_obj__trid_2_ptr == _OpCache_tr_land_plane.end()) {
+                        _trid_2 = state._tr_land_plane();
                         _OpCache_tr_land_plane.insert({read__tr_land_plane_state, _trid_2});
+                    } else {
+                        _trid_2 = _obj__trid_2_ptr->second;
                     }
-                } else {
-                    _trid_2 = _obj__trid_2_ptr->second;
                 }
                 if(_trid_2) {
                     LandingGear_R6 copiedState = state._copy();
                     LandingGear_R6::_ProjectionRead_land_plane readState = state._projected_state_for_land_plane();
-
-                    auto _OpCache_with_parameter_land_plane_ptr = _OpCache_land_plane.find(_trid_2);
-                    if(_OpCache_with_parameter_land_plane_ptr == _OpCache_land_plane.end()) {
-                        {
-                            std::unique_lock<std::mutex> _ProjectionRead_land_plane_lock(_ProjectionRead_land_plane_mutex);
+                    {
+                        std::unique_lock<std::mutex> _ProjectionRead_land_plane_lock(_ProjectionRead_land_plane_mutex);
+                        auto _OpCache_with_parameter_land_plane_ptr = _OpCache_land_plane.find(_trid_2);
+                        if(_OpCache_with_parameter_land_plane_ptr == _OpCache_land_plane.end()) {
                             copiedState.land_plane();
                             LandingGear_R6::_ProjectionWrite_land_plane writeState = copiedState._update_for_land_plane();
                             std::unordered_map<LandingGear_R6::_ProjectionRead_land_plane, LandingGear_R6::_ProjectionWrite_land_plane, LandingGear_R6::_ProjectionRead_land_plane::Hash, LandingGear_R6::_ProjectionRead_land_plane::HashEqual> _OpCache_with_parameter_land_plane = std::unordered_map<LandingGear_R6::_ProjectionRead_land_plane, LandingGear_R6::_ProjectionWrite_land_plane, LandingGear_R6::_ProjectionRead_land_plane::Hash, LandingGear_R6::_ProjectionRead_land_plane::HashEqual>();
                             _OpCache_with_parameter_land_plane.insert({readState, writeState});
                             _OpCache_land_plane.insert({_trid_2, _OpCache_with_parameter_land_plane});
-                        }
-                    } else {
-                        {
-                            std::unique_lock<std::mutex> _ProjectionRead_land_plane_lock(_ProjectionRead_land_plane_mutex);
+                        } else {
                             std::unordered_map<LandingGear_R6::_ProjectionRead_land_plane, LandingGear_R6::_ProjectionWrite_land_plane, LandingGear_R6::_ProjectionRead_land_plane::Hash, LandingGear_R6::_ProjectionRead_land_plane::HashEqual> _OpCache_with_parameter_land_plane = _OpCache_with_parameter_land_plane_ptr->second;
                             auto writeState_ptr = _OpCache_with_parameter_land_plane.find(readState);
                             if(writeState_ptr != _OpCache_with_parameter_land_plane.end()) {
@@ -10673,7 +10664,6 @@ class ModelChecker {
                             }
                         }
                     }
-
                     copiedState.stateAccessedVia = "land_plane";
                     result.insert(copiedState);
                     {
@@ -10683,33 +10673,29 @@ class ModelChecker {
                 }
                 LandingGear_R6::_ProjectionRead__tr_open_valve_door_open read__tr_open_valve_door_open_state = state._projected_state_for__tr_open_valve_door_open();
                 bool _trid_3 = false;
-                auto _obj__trid_3_ptr = _OpCache_tr_open_valve_door_open.find(read__tr_open_valve_door_open_state);
-                if(_obj__trid_3_ptr == _OpCache_tr_open_valve_door_open.end()) {
-                    _trid_3 = state._tr_open_valve_door_open();
-                    {
-                        std::unique_lock<std::mutex> _ProjectionRead__tr_open_valve_door_open_lock(_ProjectionRead__tr_open_valve_door_open_mutex);
+                {
+                    std::unique_lock<std::mutex> _ProjectionRead__tr_open_valve_door_open_lock(_ProjectionRead__tr_open_valve_door_open_mutex);
+                    auto _obj__trid_3_ptr = _OpCache_tr_open_valve_door_open.find(read__tr_open_valve_door_open_state);
+                    if(_obj__trid_3_ptr == _OpCache_tr_open_valve_door_open.end()) {
+                        _trid_3 = state._tr_open_valve_door_open();
                         _OpCache_tr_open_valve_door_open.insert({read__tr_open_valve_door_open_state, _trid_3});
+                    } else {
+                        _trid_3 = _obj__trid_3_ptr->second;
                     }
-                } else {
-                    _trid_3 = _obj__trid_3_ptr->second;
                 }
                 if(_trid_3) {
                     LandingGear_R6 copiedState = state._copy();
                     LandingGear_R6::_ProjectionRead_open_valve_door_open readState = state._projected_state_for_open_valve_door_open();
-
-                    auto _OpCache_with_parameter_open_valve_door_open_ptr = _OpCache_open_valve_door_open.find(_trid_3);
-                    if(_OpCache_with_parameter_open_valve_door_open_ptr == _OpCache_open_valve_door_open.end()) {
-                        {
-                            std::unique_lock<std::mutex> _ProjectionRead_open_valve_door_open_lock(_ProjectionRead_open_valve_door_open_mutex);
+                    {
+                        std::unique_lock<std::mutex> _ProjectionRead_open_valve_door_open_lock(_ProjectionRead_open_valve_door_open_mutex);
+                        auto _OpCache_with_parameter_open_valve_door_open_ptr = _OpCache_open_valve_door_open.find(_trid_3);
+                        if(_OpCache_with_parameter_open_valve_door_open_ptr == _OpCache_open_valve_door_open.end()) {
                             copiedState.open_valve_door_open();
                             LandingGear_R6::_ProjectionWrite_open_valve_door_open writeState = copiedState._update_for_open_valve_door_open();
                             std::unordered_map<LandingGear_R6::_ProjectionRead_open_valve_door_open, LandingGear_R6::_ProjectionWrite_open_valve_door_open, LandingGear_R6::_ProjectionRead_open_valve_door_open::Hash, LandingGear_R6::_ProjectionRead_open_valve_door_open::HashEqual> _OpCache_with_parameter_open_valve_door_open = std::unordered_map<LandingGear_R6::_ProjectionRead_open_valve_door_open, LandingGear_R6::_ProjectionWrite_open_valve_door_open, LandingGear_R6::_ProjectionRead_open_valve_door_open::Hash, LandingGear_R6::_ProjectionRead_open_valve_door_open::HashEqual>();
                             _OpCache_with_parameter_open_valve_door_open.insert({readState, writeState});
                             _OpCache_open_valve_door_open.insert({_trid_3, _OpCache_with_parameter_open_valve_door_open});
-                        }
-                    } else {
-                        {
-                            std::unique_lock<std::mutex> _ProjectionRead_open_valve_door_open_lock(_ProjectionRead_open_valve_door_open_mutex);
+                        } else {
                             std::unordered_map<LandingGear_R6::_ProjectionRead_open_valve_door_open, LandingGear_R6::_ProjectionWrite_open_valve_door_open, LandingGear_R6::_ProjectionRead_open_valve_door_open::Hash, LandingGear_R6::_ProjectionRead_open_valve_door_open::HashEqual> _OpCache_with_parameter_open_valve_door_open = _OpCache_with_parameter_open_valve_door_open_ptr->second;
                             auto writeState_ptr = _OpCache_with_parameter_open_valve_door_open.find(readState);
                             if(writeState_ptr != _OpCache_with_parameter_open_valve_door_open.end()) {
@@ -10722,7 +10708,6 @@ class ModelChecker {
                             }
                         }
                     }
-
                     copiedState.stateAccessedVia = "open_valve_door_open";
                     result.insert(copiedState);
                     {
@@ -10732,33 +10717,29 @@ class ModelChecker {
                 }
                 LandingGear_R6::_ProjectionRead__tr_close_valve_door_open read__tr_close_valve_door_open_state = state._projected_state_for__tr_close_valve_door_open();
                 bool _trid_4 = false;
-                auto _obj__trid_4_ptr = _OpCache_tr_close_valve_door_open.find(read__tr_close_valve_door_open_state);
-                if(_obj__trid_4_ptr == _OpCache_tr_close_valve_door_open.end()) {
-                    _trid_4 = state._tr_close_valve_door_open();
-                    {
-                        std::unique_lock<std::mutex> _ProjectionRead__tr_close_valve_door_open_lock(_ProjectionRead__tr_close_valve_door_open_mutex);
+                {
+                    std::unique_lock<std::mutex> _ProjectionRead__tr_close_valve_door_open_lock(_ProjectionRead__tr_close_valve_door_open_mutex);
+                    auto _obj__trid_4_ptr = _OpCache_tr_close_valve_door_open.find(read__tr_close_valve_door_open_state);
+                    if(_obj__trid_4_ptr == _OpCache_tr_close_valve_door_open.end()) {
+                        _trid_4 = state._tr_close_valve_door_open();
                         _OpCache_tr_close_valve_door_open.insert({read__tr_close_valve_door_open_state, _trid_4});
+                    } else {
+                        _trid_4 = _obj__trid_4_ptr->second;
                     }
-                } else {
-                    _trid_4 = _obj__trid_4_ptr->second;
                 }
                 if(_trid_4) {
                     LandingGear_R6 copiedState = state._copy();
                     LandingGear_R6::_ProjectionRead_close_valve_door_open readState = state._projected_state_for_close_valve_door_open();
-
-                    auto _OpCache_with_parameter_close_valve_door_open_ptr = _OpCache_close_valve_door_open.find(_trid_4);
-                    if(_OpCache_with_parameter_close_valve_door_open_ptr == _OpCache_close_valve_door_open.end()) {
-                        {
-                            std::unique_lock<std::mutex> _ProjectionRead_close_valve_door_open_lock(_ProjectionRead_close_valve_door_open_mutex);
+                    {
+                        std::unique_lock<std::mutex> _ProjectionRead_close_valve_door_open_lock(_ProjectionRead_close_valve_door_open_mutex);
+                        auto _OpCache_with_parameter_close_valve_door_open_ptr = _OpCache_close_valve_door_open.find(_trid_4);
+                        if(_OpCache_with_parameter_close_valve_door_open_ptr == _OpCache_close_valve_door_open.end()) {
                             copiedState.close_valve_door_open();
                             LandingGear_R6::_ProjectionWrite_close_valve_door_open writeState = copiedState._update_for_close_valve_door_open();
                             std::unordered_map<LandingGear_R6::_ProjectionRead_close_valve_door_open, LandingGear_R6::_ProjectionWrite_close_valve_door_open, LandingGear_R6::_ProjectionRead_close_valve_door_open::Hash, LandingGear_R6::_ProjectionRead_close_valve_door_open::HashEqual> _OpCache_with_parameter_close_valve_door_open = std::unordered_map<LandingGear_R6::_ProjectionRead_close_valve_door_open, LandingGear_R6::_ProjectionWrite_close_valve_door_open, LandingGear_R6::_ProjectionRead_close_valve_door_open::Hash, LandingGear_R6::_ProjectionRead_close_valve_door_open::HashEqual>();
                             _OpCache_with_parameter_close_valve_door_open.insert({readState, writeState});
                             _OpCache_close_valve_door_open.insert({_trid_4, _OpCache_with_parameter_close_valve_door_open});
-                        }
-                    } else {
-                        {
-                            std::unique_lock<std::mutex> _ProjectionRead_close_valve_door_open_lock(_ProjectionRead_close_valve_door_open_mutex);
+                        } else {
                             std::unordered_map<LandingGear_R6::_ProjectionRead_close_valve_door_open, LandingGear_R6::_ProjectionWrite_close_valve_door_open, LandingGear_R6::_ProjectionRead_close_valve_door_open::Hash, LandingGear_R6::_ProjectionRead_close_valve_door_open::HashEqual> _OpCache_with_parameter_close_valve_door_open = _OpCache_with_parameter_close_valve_door_open_ptr->second;
                             auto writeState_ptr = _OpCache_with_parameter_close_valve_door_open.find(readState);
                             if(writeState_ptr != _OpCache_with_parameter_close_valve_door_open.end()) {
@@ -10771,7 +10752,6 @@ class ModelChecker {
                             }
                         }
                     }
-
                     copiedState.stateAccessedVia = "close_valve_door_open";
                     result.insert(copiedState);
                     {
@@ -10781,33 +10761,29 @@ class ModelChecker {
                 }
                 LandingGear_R6::_ProjectionRead__tr_open_valve_door_close read__tr_open_valve_door_close_state = state._projected_state_for__tr_open_valve_door_close();
                 bool _trid_5 = false;
-                auto _obj__trid_5_ptr = _OpCache_tr_open_valve_door_close.find(read__tr_open_valve_door_close_state);
-                if(_obj__trid_5_ptr == _OpCache_tr_open_valve_door_close.end()) {
-                    _trid_5 = state._tr_open_valve_door_close();
-                    {
-                        std::unique_lock<std::mutex> _ProjectionRead__tr_open_valve_door_close_lock(_ProjectionRead__tr_open_valve_door_close_mutex);
+                {
+                    std::unique_lock<std::mutex> _ProjectionRead__tr_open_valve_door_close_lock(_ProjectionRead__tr_open_valve_door_close_mutex);
+                    auto _obj__trid_5_ptr = _OpCache_tr_open_valve_door_close.find(read__tr_open_valve_door_close_state);
+                    if(_obj__trid_5_ptr == _OpCache_tr_open_valve_door_close.end()) {
+                        _trid_5 = state._tr_open_valve_door_close();
                         _OpCache_tr_open_valve_door_close.insert({read__tr_open_valve_door_close_state, _trid_5});
+                    } else {
+                        _trid_5 = _obj__trid_5_ptr->second;
                     }
-                } else {
-                    _trid_5 = _obj__trid_5_ptr->second;
                 }
                 if(_trid_5) {
                     LandingGear_R6 copiedState = state._copy();
                     LandingGear_R6::_ProjectionRead_open_valve_door_close readState = state._projected_state_for_open_valve_door_close();
-
-                    auto _OpCache_with_parameter_open_valve_door_close_ptr = _OpCache_open_valve_door_close.find(_trid_5);
-                    if(_OpCache_with_parameter_open_valve_door_close_ptr == _OpCache_open_valve_door_close.end()) {
-                        {
-                            std::unique_lock<std::mutex> _ProjectionRead_open_valve_door_close_lock(_ProjectionRead_open_valve_door_close_mutex);
+                    {
+                        std::unique_lock<std::mutex> _ProjectionRead_open_valve_door_close_lock(_ProjectionRead_open_valve_door_close_mutex);
+                        auto _OpCache_with_parameter_open_valve_door_close_ptr = _OpCache_open_valve_door_close.find(_trid_5);
+                        if(_OpCache_with_parameter_open_valve_door_close_ptr == _OpCache_open_valve_door_close.end()) {
                             copiedState.open_valve_door_close();
                             LandingGear_R6::_ProjectionWrite_open_valve_door_close writeState = copiedState._update_for_open_valve_door_close();
                             std::unordered_map<LandingGear_R6::_ProjectionRead_open_valve_door_close, LandingGear_R6::_ProjectionWrite_open_valve_door_close, LandingGear_R6::_ProjectionRead_open_valve_door_close::Hash, LandingGear_R6::_ProjectionRead_open_valve_door_close::HashEqual> _OpCache_with_parameter_open_valve_door_close = std::unordered_map<LandingGear_R6::_ProjectionRead_open_valve_door_close, LandingGear_R6::_ProjectionWrite_open_valve_door_close, LandingGear_R6::_ProjectionRead_open_valve_door_close::Hash, LandingGear_R6::_ProjectionRead_open_valve_door_close::HashEqual>();
                             _OpCache_with_parameter_open_valve_door_close.insert({readState, writeState});
                             _OpCache_open_valve_door_close.insert({_trid_5, _OpCache_with_parameter_open_valve_door_close});
-                        }
-                    } else {
-                        {
-                            std::unique_lock<std::mutex> _ProjectionRead_open_valve_door_close_lock(_ProjectionRead_open_valve_door_close_mutex);
+                        } else {
                             std::unordered_map<LandingGear_R6::_ProjectionRead_open_valve_door_close, LandingGear_R6::_ProjectionWrite_open_valve_door_close, LandingGear_R6::_ProjectionRead_open_valve_door_close::Hash, LandingGear_R6::_ProjectionRead_open_valve_door_close::HashEqual> _OpCache_with_parameter_open_valve_door_close = _OpCache_with_parameter_open_valve_door_close_ptr->second;
                             auto writeState_ptr = _OpCache_with_parameter_open_valve_door_close.find(readState);
                             if(writeState_ptr != _OpCache_with_parameter_open_valve_door_close.end()) {
@@ -10820,7 +10796,6 @@ class ModelChecker {
                             }
                         }
                     }
-
                     copiedState.stateAccessedVia = "open_valve_door_close";
                     result.insert(copiedState);
                     {
@@ -10830,33 +10805,29 @@ class ModelChecker {
                 }
                 LandingGear_R6::_ProjectionRead__tr_close_valve_door_close read__tr_close_valve_door_close_state = state._projected_state_for__tr_close_valve_door_close();
                 bool _trid_6 = false;
-                auto _obj__trid_6_ptr = _OpCache_tr_close_valve_door_close.find(read__tr_close_valve_door_close_state);
-                if(_obj__trid_6_ptr == _OpCache_tr_close_valve_door_close.end()) {
-                    _trid_6 = state._tr_close_valve_door_close();
-                    {
-                        std::unique_lock<std::mutex> _ProjectionRead__tr_close_valve_door_close_lock(_ProjectionRead__tr_close_valve_door_close_mutex);
+                {
+                    std::unique_lock<std::mutex> _ProjectionRead__tr_close_valve_door_close_lock(_ProjectionRead__tr_close_valve_door_close_mutex);
+                    auto _obj__trid_6_ptr = _OpCache_tr_close_valve_door_close.find(read__tr_close_valve_door_close_state);
+                    if(_obj__trid_6_ptr == _OpCache_tr_close_valve_door_close.end()) {
+                        _trid_6 = state._tr_close_valve_door_close();
                         _OpCache_tr_close_valve_door_close.insert({read__tr_close_valve_door_close_state, _trid_6});
+                    } else {
+                        _trid_6 = _obj__trid_6_ptr->second;
                     }
-                } else {
-                    _trid_6 = _obj__trid_6_ptr->second;
                 }
                 if(_trid_6) {
                     LandingGear_R6 copiedState = state._copy();
                     LandingGear_R6::_ProjectionRead_close_valve_door_close readState = state._projected_state_for_close_valve_door_close();
-
-                    auto _OpCache_with_parameter_close_valve_door_close_ptr = _OpCache_close_valve_door_close.find(_trid_6);
-                    if(_OpCache_with_parameter_close_valve_door_close_ptr == _OpCache_close_valve_door_close.end()) {
-                        {
-                            std::unique_lock<std::mutex> _ProjectionRead_close_valve_door_close_lock(_ProjectionRead_close_valve_door_close_mutex);
+                    {
+                        std::unique_lock<std::mutex> _ProjectionRead_close_valve_door_close_lock(_ProjectionRead_close_valve_door_close_mutex);
+                        auto _OpCache_with_parameter_close_valve_door_close_ptr = _OpCache_close_valve_door_close.find(_trid_6);
+                        if(_OpCache_with_parameter_close_valve_door_close_ptr == _OpCache_close_valve_door_close.end()) {
                             copiedState.close_valve_door_close();
                             LandingGear_R6::_ProjectionWrite_close_valve_door_close writeState = copiedState._update_for_close_valve_door_close();
                             std::unordered_map<LandingGear_R6::_ProjectionRead_close_valve_door_close, LandingGear_R6::_ProjectionWrite_close_valve_door_close, LandingGear_R6::_ProjectionRead_close_valve_door_close::Hash, LandingGear_R6::_ProjectionRead_close_valve_door_close::HashEqual> _OpCache_with_parameter_close_valve_door_close = std::unordered_map<LandingGear_R6::_ProjectionRead_close_valve_door_close, LandingGear_R6::_ProjectionWrite_close_valve_door_close, LandingGear_R6::_ProjectionRead_close_valve_door_close::Hash, LandingGear_R6::_ProjectionRead_close_valve_door_close::HashEqual>();
                             _OpCache_with_parameter_close_valve_door_close.insert({readState, writeState});
                             _OpCache_close_valve_door_close.insert({_trid_6, _OpCache_with_parameter_close_valve_door_close});
-                        }
-                    } else {
-                        {
-                            std::unique_lock<std::mutex> _ProjectionRead_close_valve_door_close_lock(_ProjectionRead_close_valve_door_close_mutex);
+                        } else {
                             std::unordered_map<LandingGear_R6::_ProjectionRead_close_valve_door_close, LandingGear_R6::_ProjectionWrite_close_valve_door_close, LandingGear_R6::_ProjectionRead_close_valve_door_close::Hash, LandingGear_R6::_ProjectionRead_close_valve_door_close::HashEqual> _OpCache_with_parameter_close_valve_door_close = _OpCache_with_parameter_close_valve_door_close_ptr->second;
                             auto writeState_ptr = _OpCache_with_parameter_close_valve_door_close.find(readState);
                             if(writeState_ptr != _OpCache_with_parameter_close_valve_door_close.end()) {
@@ -10869,7 +10840,6 @@ class ModelChecker {
                             }
                         }
                     }
-
                     copiedState.stateAccessedVia = "close_valve_door_close";
                     result.insert(copiedState);
                     {
@@ -10879,33 +10849,29 @@ class ModelChecker {
                 }
                 LandingGear_R6::_ProjectionRead__tr_open_valve_retract_gear read__tr_open_valve_retract_gear_state = state._projected_state_for__tr_open_valve_retract_gear();
                 bool _trid_7 = false;
-                auto _obj__trid_7_ptr = _OpCache_tr_open_valve_retract_gear.find(read__tr_open_valve_retract_gear_state);
-                if(_obj__trid_7_ptr == _OpCache_tr_open_valve_retract_gear.end()) {
-                    _trid_7 = state._tr_open_valve_retract_gear();
-                    {
-                        std::unique_lock<std::mutex> _ProjectionRead__tr_open_valve_retract_gear_lock(_ProjectionRead__tr_open_valve_retract_gear_mutex);
+                {
+                    std::unique_lock<std::mutex> _ProjectionRead__tr_open_valve_retract_gear_lock(_ProjectionRead__tr_open_valve_retract_gear_mutex);
+                    auto _obj__trid_7_ptr = _OpCache_tr_open_valve_retract_gear.find(read__tr_open_valve_retract_gear_state);
+                    if(_obj__trid_7_ptr == _OpCache_tr_open_valve_retract_gear.end()) {
+                        _trid_7 = state._tr_open_valve_retract_gear();
                         _OpCache_tr_open_valve_retract_gear.insert({read__tr_open_valve_retract_gear_state, _trid_7});
+                    } else {
+                        _trid_7 = _obj__trid_7_ptr->second;
                     }
-                } else {
-                    _trid_7 = _obj__trid_7_ptr->second;
                 }
                 if(_trid_7) {
                     LandingGear_R6 copiedState = state._copy();
                     LandingGear_R6::_ProjectionRead_open_valve_retract_gear readState = state._projected_state_for_open_valve_retract_gear();
-
-                    auto _OpCache_with_parameter_open_valve_retract_gear_ptr = _OpCache_open_valve_retract_gear.find(_trid_7);
-                    if(_OpCache_with_parameter_open_valve_retract_gear_ptr == _OpCache_open_valve_retract_gear.end()) {
-                        {
-                            std::unique_lock<std::mutex> _ProjectionRead_open_valve_retract_gear_lock(_ProjectionRead_open_valve_retract_gear_mutex);
+                    {
+                        std::unique_lock<std::mutex> _ProjectionRead_open_valve_retract_gear_lock(_ProjectionRead_open_valve_retract_gear_mutex);
+                        auto _OpCache_with_parameter_open_valve_retract_gear_ptr = _OpCache_open_valve_retract_gear.find(_trid_7);
+                        if(_OpCache_with_parameter_open_valve_retract_gear_ptr == _OpCache_open_valve_retract_gear.end()) {
                             copiedState.open_valve_retract_gear();
                             LandingGear_R6::_ProjectionWrite_open_valve_retract_gear writeState = copiedState._update_for_open_valve_retract_gear();
                             std::unordered_map<LandingGear_R6::_ProjectionRead_open_valve_retract_gear, LandingGear_R6::_ProjectionWrite_open_valve_retract_gear, LandingGear_R6::_ProjectionRead_open_valve_retract_gear::Hash, LandingGear_R6::_ProjectionRead_open_valve_retract_gear::HashEqual> _OpCache_with_parameter_open_valve_retract_gear = std::unordered_map<LandingGear_R6::_ProjectionRead_open_valve_retract_gear, LandingGear_R6::_ProjectionWrite_open_valve_retract_gear, LandingGear_R6::_ProjectionRead_open_valve_retract_gear::Hash, LandingGear_R6::_ProjectionRead_open_valve_retract_gear::HashEqual>();
                             _OpCache_with_parameter_open_valve_retract_gear.insert({readState, writeState});
                             _OpCache_open_valve_retract_gear.insert({_trid_7, _OpCache_with_parameter_open_valve_retract_gear});
-                        }
-                    } else {
-                        {
-                            std::unique_lock<std::mutex> _ProjectionRead_open_valve_retract_gear_lock(_ProjectionRead_open_valve_retract_gear_mutex);
+                        } else {
                             std::unordered_map<LandingGear_R6::_ProjectionRead_open_valve_retract_gear, LandingGear_R6::_ProjectionWrite_open_valve_retract_gear, LandingGear_R6::_ProjectionRead_open_valve_retract_gear::Hash, LandingGear_R6::_ProjectionRead_open_valve_retract_gear::HashEqual> _OpCache_with_parameter_open_valve_retract_gear = _OpCache_with_parameter_open_valve_retract_gear_ptr->second;
                             auto writeState_ptr = _OpCache_with_parameter_open_valve_retract_gear.find(readState);
                             if(writeState_ptr != _OpCache_with_parameter_open_valve_retract_gear.end()) {
@@ -10918,7 +10884,6 @@ class ModelChecker {
                             }
                         }
                     }
-
                     copiedState.stateAccessedVia = "open_valve_retract_gear";
                     result.insert(copiedState);
                     {
@@ -10928,33 +10893,29 @@ class ModelChecker {
                 }
                 LandingGear_R6::_ProjectionRead__tr_close_valve_retract_gear read__tr_close_valve_retract_gear_state = state._projected_state_for__tr_close_valve_retract_gear();
                 bool _trid_8 = false;
-                auto _obj__trid_8_ptr = _OpCache_tr_close_valve_retract_gear.find(read__tr_close_valve_retract_gear_state);
-                if(_obj__trid_8_ptr == _OpCache_tr_close_valve_retract_gear.end()) {
-                    _trid_8 = state._tr_close_valve_retract_gear();
-                    {
-                        std::unique_lock<std::mutex> _ProjectionRead__tr_close_valve_retract_gear_lock(_ProjectionRead__tr_close_valve_retract_gear_mutex);
+                {
+                    std::unique_lock<std::mutex> _ProjectionRead__tr_close_valve_retract_gear_lock(_ProjectionRead__tr_close_valve_retract_gear_mutex);
+                    auto _obj__trid_8_ptr = _OpCache_tr_close_valve_retract_gear.find(read__tr_close_valve_retract_gear_state);
+                    if(_obj__trid_8_ptr == _OpCache_tr_close_valve_retract_gear.end()) {
+                        _trid_8 = state._tr_close_valve_retract_gear();
                         _OpCache_tr_close_valve_retract_gear.insert({read__tr_close_valve_retract_gear_state, _trid_8});
+                    } else {
+                        _trid_8 = _obj__trid_8_ptr->second;
                     }
-                } else {
-                    _trid_8 = _obj__trid_8_ptr->second;
                 }
                 if(_trid_8) {
                     LandingGear_R6 copiedState = state._copy();
                     LandingGear_R6::_ProjectionRead_close_valve_retract_gear readState = state._projected_state_for_close_valve_retract_gear();
-
-                    auto _OpCache_with_parameter_close_valve_retract_gear_ptr = _OpCache_close_valve_retract_gear.find(_trid_8);
-                    if(_OpCache_with_parameter_close_valve_retract_gear_ptr == _OpCache_close_valve_retract_gear.end()) {
-                        {
-                            std::unique_lock<std::mutex> _ProjectionRead_close_valve_retract_gear_lock(_ProjectionRead_close_valve_retract_gear_mutex);
+                    {
+                        std::unique_lock<std::mutex> _ProjectionRead_close_valve_retract_gear_lock(_ProjectionRead_close_valve_retract_gear_mutex);
+                        auto _OpCache_with_parameter_close_valve_retract_gear_ptr = _OpCache_close_valve_retract_gear.find(_trid_8);
+                        if(_OpCache_with_parameter_close_valve_retract_gear_ptr == _OpCache_close_valve_retract_gear.end()) {
                             copiedState.close_valve_retract_gear();
                             LandingGear_R6::_ProjectionWrite_close_valve_retract_gear writeState = copiedState._update_for_close_valve_retract_gear();
                             std::unordered_map<LandingGear_R6::_ProjectionRead_close_valve_retract_gear, LandingGear_R6::_ProjectionWrite_close_valve_retract_gear, LandingGear_R6::_ProjectionRead_close_valve_retract_gear::Hash, LandingGear_R6::_ProjectionRead_close_valve_retract_gear::HashEqual> _OpCache_with_parameter_close_valve_retract_gear = std::unordered_map<LandingGear_R6::_ProjectionRead_close_valve_retract_gear, LandingGear_R6::_ProjectionWrite_close_valve_retract_gear, LandingGear_R6::_ProjectionRead_close_valve_retract_gear::Hash, LandingGear_R6::_ProjectionRead_close_valve_retract_gear::HashEqual>();
                             _OpCache_with_parameter_close_valve_retract_gear.insert({readState, writeState});
                             _OpCache_close_valve_retract_gear.insert({_trid_8, _OpCache_with_parameter_close_valve_retract_gear});
-                        }
-                    } else {
-                        {
-                            std::unique_lock<std::mutex> _ProjectionRead_close_valve_retract_gear_lock(_ProjectionRead_close_valve_retract_gear_mutex);
+                        } else {
                             std::unordered_map<LandingGear_R6::_ProjectionRead_close_valve_retract_gear, LandingGear_R6::_ProjectionWrite_close_valve_retract_gear, LandingGear_R6::_ProjectionRead_close_valve_retract_gear::Hash, LandingGear_R6::_ProjectionRead_close_valve_retract_gear::HashEqual> _OpCache_with_parameter_close_valve_retract_gear = _OpCache_with_parameter_close_valve_retract_gear_ptr->second;
                             auto writeState_ptr = _OpCache_with_parameter_close_valve_retract_gear.find(readState);
                             if(writeState_ptr != _OpCache_with_parameter_close_valve_retract_gear.end()) {
@@ -10967,7 +10928,6 @@ class ModelChecker {
                             }
                         }
                     }
-
                     copiedState.stateAccessedVia = "close_valve_retract_gear";
                     result.insert(copiedState);
                     {
@@ -10977,33 +10937,29 @@ class ModelChecker {
                 }
                 LandingGear_R6::_ProjectionRead__tr_open_valve_extend_gear read__tr_open_valve_extend_gear_state = state._projected_state_for__tr_open_valve_extend_gear();
                 bool _trid_9 = false;
-                auto _obj__trid_9_ptr = _OpCache_tr_open_valve_extend_gear.find(read__tr_open_valve_extend_gear_state);
-                if(_obj__trid_9_ptr == _OpCache_tr_open_valve_extend_gear.end()) {
-                    _trid_9 = state._tr_open_valve_extend_gear();
-                    {
-                        std::unique_lock<std::mutex> _ProjectionRead__tr_open_valve_extend_gear_lock(_ProjectionRead__tr_open_valve_extend_gear_mutex);
+                {
+                    std::unique_lock<std::mutex> _ProjectionRead__tr_open_valve_extend_gear_lock(_ProjectionRead__tr_open_valve_extend_gear_mutex);
+                    auto _obj__trid_9_ptr = _OpCache_tr_open_valve_extend_gear.find(read__tr_open_valve_extend_gear_state);
+                    if(_obj__trid_9_ptr == _OpCache_tr_open_valve_extend_gear.end()) {
+                        _trid_9 = state._tr_open_valve_extend_gear();
                         _OpCache_tr_open_valve_extend_gear.insert({read__tr_open_valve_extend_gear_state, _trid_9});
+                    } else {
+                        _trid_9 = _obj__trid_9_ptr->second;
                     }
-                } else {
-                    _trid_9 = _obj__trid_9_ptr->second;
                 }
                 if(_trid_9) {
                     LandingGear_R6 copiedState = state._copy();
                     LandingGear_R6::_ProjectionRead_open_valve_extend_gear readState = state._projected_state_for_open_valve_extend_gear();
-
-                    auto _OpCache_with_parameter_open_valve_extend_gear_ptr = _OpCache_open_valve_extend_gear.find(_trid_9);
-                    if(_OpCache_with_parameter_open_valve_extend_gear_ptr == _OpCache_open_valve_extend_gear.end()) {
-                        {
-                            std::unique_lock<std::mutex> _ProjectionRead_open_valve_extend_gear_lock(_ProjectionRead_open_valve_extend_gear_mutex);
+                    {
+                        std::unique_lock<std::mutex> _ProjectionRead_open_valve_extend_gear_lock(_ProjectionRead_open_valve_extend_gear_mutex);
+                        auto _OpCache_with_parameter_open_valve_extend_gear_ptr = _OpCache_open_valve_extend_gear.find(_trid_9);
+                        if(_OpCache_with_parameter_open_valve_extend_gear_ptr == _OpCache_open_valve_extend_gear.end()) {
                             copiedState.open_valve_extend_gear();
                             LandingGear_R6::_ProjectionWrite_open_valve_extend_gear writeState = copiedState._update_for_open_valve_extend_gear();
                             std::unordered_map<LandingGear_R6::_ProjectionRead_open_valve_extend_gear, LandingGear_R6::_ProjectionWrite_open_valve_extend_gear, LandingGear_R6::_ProjectionRead_open_valve_extend_gear::Hash, LandingGear_R6::_ProjectionRead_open_valve_extend_gear::HashEqual> _OpCache_with_parameter_open_valve_extend_gear = std::unordered_map<LandingGear_R6::_ProjectionRead_open_valve_extend_gear, LandingGear_R6::_ProjectionWrite_open_valve_extend_gear, LandingGear_R6::_ProjectionRead_open_valve_extend_gear::Hash, LandingGear_R6::_ProjectionRead_open_valve_extend_gear::HashEqual>();
                             _OpCache_with_parameter_open_valve_extend_gear.insert({readState, writeState});
                             _OpCache_open_valve_extend_gear.insert({_trid_9, _OpCache_with_parameter_open_valve_extend_gear});
-                        }
-                    } else {
-                        {
-                            std::unique_lock<std::mutex> _ProjectionRead_open_valve_extend_gear_lock(_ProjectionRead_open_valve_extend_gear_mutex);
+                        } else {
                             std::unordered_map<LandingGear_R6::_ProjectionRead_open_valve_extend_gear, LandingGear_R6::_ProjectionWrite_open_valve_extend_gear, LandingGear_R6::_ProjectionRead_open_valve_extend_gear::Hash, LandingGear_R6::_ProjectionRead_open_valve_extend_gear::HashEqual> _OpCache_with_parameter_open_valve_extend_gear = _OpCache_with_parameter_open_valve_extend_gear_ptr->second;
                             auto writeState_ptr = _OpCache_with_parameter_open_valve_extend_gear.find(readState);
                             if(writeState_ptr != _OpCache_with_parameter_open_valve_extend_gear.end()) {
@@ -11016,7 +10972,6 @@ class ModelChecker {
                             }
                         }
                     }
-
                     copiedState.stateAccessedVia = "open_valve_extend_gear";
                     result.insert(copiedState);
                     {
@@ -11026,33 +10981,29 @@ class ModelChecker {
                 }
                 LandingGear_R6::_ProjectionRead__tr_close_valve_extend_gear read__tr_close_valve_extend_gear_state = state._projected_state_for__tr_close_valve_extend_gear();
                 bool _trid_10 = false;
-                auto _obj__trid_10_ptr = _OpCache_tr_close_valve_extend_gear.find(read__tr_close_valve_extend_gear_state);
-                if(_obj__trid_10_ptr == _OpCache_tr_close_valve_extend_gear.end()) {
-                    _trid_10 = state._tr_close_valve_extend_gear();
-                    {
-                        std::unique_lock<std::mutex> _ProjectionRead__tr_close_valve_extend_gear_lock(_ProjectionRead__tr_close_valve_extend_gear_mutex);
+                {
+                    std::unique_lock<std::mutex> _ProjectionRead__tr_close_valve_extend_gear_lock(_ProjectionRead__tr_close_valve_extend_gear_mutex);
+                    auto _obj__trid_10_ptr = _OpCache_tr_close_valve_extend_gear.find(read__tr_close_valve_extend_gear_state);
+                    if(_obj__trid_10_ptr == _OpCache_tr_close_valve_extend_gear.end()) {
+                        _trid_10 = state._tr_close_valve_extend_gear();
                         _OpCache_tr_close_valve_extend_gear.insert({read__tr_close_valve_extend_gear_state, _trid_10});
+                    } else {
+                        _trid_10 = _obj__trid_10_ptr->second;
                     }
-                } else {
-                    _trid_10 = _obj__trid_10_ptr->second;
                 }
                 if(_trid_10) {
                     LandingGear_R6 copiedState = state._copy();
                     LandingGear_R6::_ProjectionRead_close_valve_extend_gear readState = state._projected_state_for_close_valve_extend_gear();
-
-                    auto _OpCache_with_parameter_close_valve_extend_gear_ptr = _OpCache_close_valve_extend_gear.find(_trid_10);
-                    if(_OpCache_with_parameter_close_valve_extend_gear_ptr == _OpCache_close_valve_extend_gear.end()) {
-                        {
-                            std::unique_lock<std::mutex> _ProjectionRead_close_valve_extend_gear_lock(_ProjectionRead_close_valve_extend_gear_mutex);
+                    {
+                        std::unique_lock<std::mutex> _ProjectionRead_close_valve_extend_gear_lock(_ProjectionRead_close_valve_extend_gear_mutex);
+                        auto _OpCache_with_parameter_close_valve_extend_gear_ptr = _OpCache_close_valve_extend_gear.find(_trid_10);
+                        if(_OpCache_with_parameter_close_valve_extend_gear_ptr == _OpCache_close_valve_extend_gear.end()) {
                             copiedState.close_valve_extend_gear();
                             LandingGear_R6::_ProjectionWrite_close_valve_extend_gear writeState = copiedState._update_for_close_valve_extend_gear();
                             std::unordered_map<LandingGear_R6::_ProjectionRead_close_valve_extend_gear, LandingGear_R6::_ProjectionWrite_close_valve_extend_gear, LandingGear_R6::_ProjectionRead_close_valve_extend_gear::Hash, LandingGear_R6::_ProjectionRead_close_valve_extend_gear::HashEqual> _OpCache_with_parameter_close_valve_extend_gear = std::unordered_map<LandingGear_R6::_ProjectionRead_close_valve_extend_gear, LandingGear_R6::_ProjectionWrite_close_valve_extend_gear, LandingGear_R6::_ProjectionRead_close_valve_extend_gear::Hash, LandingGear_R6::_ProjectionRead_close_valve_extend_gear::HashEqual>();
                             _OpCache_with_parameter_close_valve_extend_gear.insert({readState, writeState});
                             _OpCache_close_valve_extend_gear.insert({_trid_10, _OpCache_with_parameter_close_valve_extend_gear});
-                        }
-                    } else {
-                        {
-                            std::unique_lock<std::mutex> _ProjectionRead_close_valve_extend_gear_lock(_ProjectionRead_close_valve_extend_gear_mutex);
+                        } else {
                             std::unordered_map<LandingGear_R6::_ProjectionRead_close_valve_extend_gear, LandingGear_R6::_ProjectionWrite_close_valve_extend_gear, LandingGear_R6::_ProjectionRead_close_valve_extend_gear::Hash, LandingGear_R6::_ProjectionRead_close_valve_extend_gear::HashEqual> _OpCache_with_parameter_close_valve_extend_gear = _OpCache_with_parameter_close_valve_extend_gear_ptr->second;
                             auto writeState_ptr = _OpCache_with_parameter_close_valve_extend_gear.find(readState);
                             if(writeState_ptr != _OpCache_with_parameter_close_valve_extend_gear.end()) {
@@ -11065,7 +11016,6 @@ class ModelChecker {
                             }
                         }
                     }
-
                     copiedState.stateAccessedVia = "close_valve_extend_gear";
                     result.insert(copiedState);
                     {
@@ -11075,33 +11025,29 @@ class ModelChecker {
                 }
                 LandingGear_R6::_ProjectionRead__tr_con_stimulate_open_door_valve read__tr_con_stimulate_open_door_valve_state = state._projected_state_for__tr_con_stimulate_open_door_valve();
                 bool _trid_11 = false;
-                auto _obj__trid_11_ptr = _OpCache_tr_con_stimulate_open_door_valve.find(read__tr_con_stimulate_open_door_valve_state);
-                if(_obj__trid_11_ptr == _OpCache_tr_con_stimulate_open_door_valve.end()) {
-                    _trid_11 = state._tr_con_stimulate_open_door_valve();
-                    {
-                        std::unique_lock<std::mutex> _ProjectionRead__tr_con_stimulate_open_door_valve_lock(_ProjectionRead__tr_con_stimulate_open_door_valve_mutex);
+                {
+                    std::unique_lock<std::mutex> _ProjectionRead__tr_con_stimulate_open_door_valve_lock(_ProjectionRead__tr_con_stimulate_open_door_valve_mutex);
+                    auto _obj__trid_11_ptr = _OpCache_tr_con_stimulate_open_door_valve.find(read__tr_con_stimulate_open_door_valve_state);
+                    if(_obj__trid_11_ptr == _OpCache_tr_con_stimulate_open_door_valve.end()) {
+                        _trid_11 = state._tr_con_stimulate_open_door_valve();
                         _OpCache_tr_con_stimulate_open_door_valve.insert({read__tr_con_stimulate_open_door_valve_state, _trid_11});
+                    } else {
+                        _trid_11 = _obj__trid_11_ptr->second;
                     }
-                } else {
-                    _trid_11 = _obj__trid_11_ptr->second;
                 }
                 if(_trid_11) {
                     LandingGear_R6 copiedState = state._copy();
                     LandingGear_R6::_ProjectionRead_con_stimulate_open_door_valve readState = state._projected_state_for_con_stimulate_open_door_valve();
-
-                    auto _OpCache_with_parameter_con_stimulate_open_door_valve_ptr = _OpCache_con_stimulate_open_door_valve.find(_trid_11);
-                    if(_OpCache_with_parameter_con_stimulate_open_door_valve_ptr == _OpCache_con_stimulate_open_door_valve.end()) {
-                        {
-                            std::unique_lock<std::mutex> _ProjectionRead_con_stimulate_open_door_valve_lock(_ProjectionRead_con_stimulate_open_door_valve_mutex);
+                    {
+                        std::unique_lock<std::mutex> _ProjectionRead_con_stimulate_open_door_valve_lock(_ProjectionRead_con_stimulate_open_door_valve_mutex);
+                        auto _OpCache_with_parameter_con_stimulate_open_door_valve_ptr = _OpCache_con_stimulate_open_door_valve.find(_trid_11);
+                        if(_OpCache_with_parameter_con_stimulate_open_door_valve_ptr == _OpCache_con_stimulate_open_door_valve.end()) {
                             copiedState.con_stimulate_open_door_valve();
                             LandingGear_R6::_ProjectionWrite_con_stimulate_open_door_valve writeState = copiedState._update_for_con_stimulate_open_door_valve();
                             std::unordered_map<LandingGear_R6::_ProjectionRead_con_stimulate_open_door_valve, LandingGear_R6::_ProjectionWrite_con_stimulate_open_door_valve, LandingGear_R6::_ProjectionRead_con_stimulate_open_door_valve::Hash, LandingGear_R6::_ProjectionRead_con_stimulate_open_door_valve::HashEqual> _OpCache_with_parameter_con_stimulate_open_door_valve = std::unordered_map<LandingGear_R6::_ProjectionRead_con_stimulate_open_door_valve, LandingGear_R6::_ProjectionWrite_con_stimulate_open_door_valve, LandingGear_R6::_ProjectionRead_con_stimulate_open_door_valve::Hash, LandingGear_R6::_ProjectionRead_con_stimulate_open_door_valve::HashEqual>();
                             _OpCache_with_parameter_con_stimulate_open_door_valve.insert({readState, writeState});
                             _OpCache_con_stimulate_open_door_valve.insert({_trid_11, _OpCache_with_parameter_con_stimulate_open_door_valve});
-                        }
-                    } else {
-                        {
-                            std::unique_lock<std::mutex> _ProjectionRead_con_stimulate_open_door_valve_lock(_ProjectionRead_con_stimulate_open_door_valve_mutex);
+                        } else {
                             std::unordered_map<LandingGear_R6::_ProjectionRead_con_stimulate_open_door_valve, LandingGear_R6::_ProjectionWrite_con_stimulate_open_door_valve, LandingGear_R6::_ProjectionRead_con_stimulate_open_door_valve::Hash, LandingGear_R6::_ProjectionRead_con_stimulate_open_door_valve::HashEqual> _OpCache_with_parameter_con_stimulate_open_door_valve = _OpCache_with_parameter_con_stimulate_open_door_valve_ptr->second;
                             auto writeState_ptr = _OpCache_with_parameter_con_stimulate_open_door_valve.find(readState);
                             if(writeState_ptr != _OpCache_with_parameter_con_stimulate_open_door_valve.end()) {
@@ -11114,7 +11060,6 @@ class ModelChecker {
                             }
                         }
                     }
-
                     copiedState.stateAccessedVia = "con_stimulate_open_door_valve";
                     result.insert(copiedState);
                     {
@@ -11124,33 +11069,29 @@ class ModelChecker {
                 }
                 LandingGear_R6::_ProjectionRead__tr_con_stop_stimulate_open_door_valve read__tr_con_stop_stimulate_open_door_valve_state = state._projected_state_for__tr_con_stop_stimulate_open_door_valve();
                 bool _trid_12 = false;
-                auto _obj__trid_12_ptr = _OpCache_tr_con_stop_stimulate_open_door_valve.find(read__tr_con_stop_stimulate_open_door_valve_state);
-                if(_obj__trid_12_ptr == _OpCache_tr_con_stop_stimulate_open_door_valve.end()) {
-                    _trid_12 = state._tr_con_stop_stimulate_open_door_valve();
-                    {
-                        std::unique_lock<std::mutex> _ProjectionRead__tr_con_stop_stimulate_open_door_valve_lock(_ProjectionRead__tr_con_stop_stimulate_open_door_valve_mutex);
+                {
+                    std::unique_lock<std::mutex> _ProjectionRead__tr_con_stop_stimulate_open_door_valve_lock(_ProjectionRead__tr_con_stop_stimulate_open_door_valve_mutex);
+                    auto _obj__trid_12_ptr = _OpCache_tr_con_stop_stimulate_open_door_valve.find(read__tr_con_stop_stimulate_open_door_valve_state);
+                    if(_obj__trid_12_ptr == _OpCache_tr_con_stop_stimulate_open_door_valve.end()) {
+                        _trid_12 = state._tr_con_stop_stimulate_open_door_valve();
                         _OpCache_tr_con_stop_stimulate_open_door_valve.insert({read__tr_con_stop_stimulate_open_door_valve_state, _trid_12});
+                    } else {
+                        _trid_12 = _obj__trid_12_ptr->second;
                     }
-                } else {
-                    _trid_12 = _obj__trid_12_ptr->second;
                 }
                 if(_trid_12) {
                     LandingGear_R6 copiedState = state._copy();
                     LandingGear_R6::_ProjectionRead_con_stop_stimulate_open_door_valve readState = state._projected_state_for_con_stop_stimulate_open_door_valve();
-
-                    auto _OpCache_with_parameter_con_stop_stimulate_open_door_valve_ptr = _OpCache_con_stop_stimulate_open_door_valve.find(_trid_12);
-                    if(_OpCache_with_parameter_con_stop_stimulate_open_door_valve_ptr == _OpCache_con_stop_stimulate_open_door_valve.end()) {
-                        {
-                            std::unique_lock<std::mutex> _ProjectionRead_con_stop_stimulate_open_door_valve_lock(_ProjectionRead_con_stop_stimulate_open_door_valve_mutex);
+                    {
+                        std::unique_lock<std::mutex> _ProjectionRead_con_stop_stimulate_open_door_valve_lock(_ProjectionRead_con_stop_stimulate_open_door_valve_mutex);
+                        auto _OpCache_with_parameter_con_stop_stimulate_open_door_valve_ptr = _OpCache_con_stop_stimulate_open_door_valve.find(_trid_12);
+                        if(_OpCache_with_parameter_con_stop_stimulate_open_door_valve_ptr == _OpCache_con_stop_stimulate_open_door_valve.end()) {
                             copiedState.con_stop_stimulate_open_door_valve();
                             LandingGear_R6::_ProjectionWrite_con_stop_stimulate_open_door_valve writeState = copiedState._update_for_con_stop_stimulate_open_door_valve();
                             std::unordered_map<LandingGear_R6::_ProjectionRead_con_stop_stimulate_open_door_valve, LandingGear_R6::_ProjectionWrite_con_stop_stimulate_open_door_valve, LandingGear_R6::_ProjectionRead_con_stop_stimulate_open_door_valve::Hash, LandingGear_R6::_ProjectionRead_con_stop_stimulate_open_door_valve::HashEqual> _OpCache_with_parameter_con_stop_stimulate_open_door_valve = std::unordered_map<LandingGear_R6::_ProjectionRead_con_stop_stimulate_open_door_valve, LandingGear_R6::_ProjectionWrite_con_stop_stimulate_open_door_valve, LandingGear_R6::_ProjectionRead_con_stop_stimulate_open_door_valve::Hash, LandingGear_R6::_ProjectionRead_con_stop_stimulate_open_door_valve::HashEqual>();
                             _OpCache_with_parameter_con_stop_stimulate_open_door_valve.insert({readState, writeState});
                             _OpCache_con_stop_stimulate_open_door_valve.insert({_trid_12, _OpCache_with_parameter_con_stop_stimulate_open_door_valve});
-                        }
-                    } else {
-                        {
-                            std::unique_lock<std::mutex> _ProjectionRead_con_stop_stimulate_open_door_valve_lock(_ProjectionRead_con_stop_stimulate_open_door_valve_mutex);
+                        } else {
                             std::unordered_map<LandingGear_R6::_ProjectionRead_con_stop_stimulate_open_door_valve, LandingGear_R6::_ProjectionWrite_con_stop_stimulate_open_door_valve, LandingGear_R6::_ProjectionRead_con_stop_stimulate_open_door_valve::Hash, LandingGear_R6::_ProjectionRead_con_stop_stimulate_open_door_valve::HashEqual> _OpCache_with_parameter_con_stop_stimulate_open_door_valve = _OpCache_with_parameter_con_stop_stimulate_open_door_valve_ptr->second;
                             auto writeState_ptr = _OpCache_with_parameter_con_stop_stimulate_open_door_valve.find(readState);
                             if(writeState_ptr != _OpCache_with_parameter_con_stop_stimulate_open_door_valve.end()) {
@@ -11163,7 +11104,6 @@ class ModelChecker {
                             }
                         }
                     }
-
                     copiedState.stateAccessedVia = "con_stop_stimulate_open_door_valve";
                     result.insert(copiedState);
                     {
@@ -11173,33 +11113,29 @@ class ModelChecker {
                 }
                 LandingGear_R6::_ProjectionRead__tr_con_stimulate_close_door_valve read__tr_con_stimulate_close_door_valve_state = state._projected_state_for__tr_con_stimulate_close_door_valve();
                 bool _trid_13 = false;
-                auto _obj__trid_13_ptr = _OpCache_tr_con_stimulate_close_door_valve.find(read__tr_con_stimulate_close_door_valve_state);
-                if(_obj__trid_13_ptr == _OpCache_tr_con_stimulate_close_door_valve.end()) {
-                    _trid_13 = state._tr_con_stimulate_close_door_valve();
-                    {
-                        std::unique_lock<std::mutex> _ProjectionRead__tr_con_stimulate_close_door_valve_lock(_ProjectionRead__tr_con_stimulate_close_door_valve_mutex);
+                {
+                    std::unique_lock<std::mutex> _ProjectionRead__tr_con_stimulate_close_door_valve_lock(_ProjectionRead__tr_con_stimulate_close_door_valve_mutex);
+                    auto _obj__trid_13_ptr = _OpCache_tr_con_stimulate_close_door_valve.find(read__tr_con_stimulate_close_door_valve_state);
+                    if(_obj__trid_13_ptr == _OpCache_tr_con_stimulate_close_door_valve.end()) {
+                        _trid_13 = state._tr_con_stimulate_close_door_valve();
                         _OpCache_tr_con_stimulate_close_door_valve.insert({read__tr_con_stimulate_close_door_valve_state, _trid_13});
+                    } else {
+                        _trid_13 = _obj__trid_13_ptr->second;
                     }
-                } else {
-                    _trid_13 = _obj__trid_13_ptr->second;
                 }
                 if(_trid_13) {
                     LandingGear_R6 copiedState = state._copy();
                     LandingGear_R6::_ProjectionRead_con_stimulate_close_door_valve readState = state._projected_state_for_con_stimulate_close_door_valve();
-
-                    auto _OpCache_with_parameter_con_stimulate_close_door_valve_ptr = _OpCache_con_stimulate_close_door_valve.find(_trid_13);
-                    if(_OpCache_with_parameter_con_stimulate_close_door_valve_ptr == _OpCache_con_stimulate_close_door_valve.end()) {
-                        {
-                            std::unique_lock<std::mutex> _ProjectionRead_con_stimulate_close_door_valve_lock(_ProjectionRead_con_stimulate_close_door_valve_mutex);
+                    {
+                        std::unique_lock<std::mutex> _ProjectionRead_con_stimulate_close_door_valve_lock(_ProjectionRead_con_stimulate_close_door_valve_mutex);
+                        auto _OpCache_with_parameter_con_stimulate_close_door_valve_ptr = _OpCache_con_stimulate_close_door_valve.find(_trid_13);
+                        if(_OpCache_with_parameter_con_stimulate_close_door_valve_ptr == _OpCache_con_stimulate_close_door_valve.end()) {
                             copiedState.con_stimulate_close_door_valve();
                             LandingGear_R6::_ProjectionWrite_con_stimulate_close_door_valve writeState = copiedState._update_for_con_stimulate_close_door_valve();
                             std::unordered_map<LandingGear_R6::_ProjectionRead_con_stimulate_close_door_valve, LandingGear_R6::_ProjectionWrite_con_stimulate_close_door_valve, LandingGear_R6::_ProjectionRead_con_stimulate_close_door_valve::Hash, LandingGear_R6::_ProjectionRead_con_stimulate_close_door_valve::HashEqual> _OpCache_with_parameter_con_stimulate_close_door_valve = std::unordered_map<LandingGear_R6::_ProjectionRead_con_stimulate_close_door_valve, LandingGear_R6::_ProjectionWrite_con_stimulate_close_door_valve, LandingGear_R6::_ProjectionRead_con_stimulate_close_door_valve::Hash, LandingGear_R6::_ProjectionRead_con_stimulate_close_door_valve::HashEqual>();
                             _OpCache_with_parameter_con_stimulate_close_door_valve.insert({readState, writeState});
                             _OpCache_con_stimulate_close_door_valve.insert({_trid_13, _OpCache_with_parameter_con_stimulate_close_door_valve});
-                        }
-                    } else {
-                        {
-                            std::unique_lock<std::mutex> _ProjectionRead_con_stimulate_close_door_valve_lock(_ProjectionRead_con_stimulate_close_door_valve_mutex);
+                        } else {
                             std::unordered_map<LandingGear_R6::_ProjectionRead_con_stimulate_close_door_valve, LandingGear_R6::_ProjectionWrite_con_stimulate_close_door_valve, LandingGear_R6::_ProjectionRead_con_stimulate_close_door_valve::Hash, LandingGear_R6::_ProjectionRead_con_stimulate_close_door_valve::HashEqual> _OpCache_with_parameter_con_stimulate_close_door_valve = _OpCache_with_parameter_con_stimulate_close_door_valve_ptr->second;
                             auto writeState_ptr = _OpCache_with_parameter_con_stimulate_close_door_valve.find(readState);
                             if(writeState_ptr != _OpCache_with_parameter_con_stimulate_close_door_valve.end()) {
@@ -11212,7 +11148,6 @@ class ModelChecker {
                             }
                         }
                     }
-
                     copiedState.stateAccessedVia = "con_stimulate_close_door_valve";
                     result.insert(copiedState);
                     {
@@ -11222,33 +11157,29 @@ class ModelChecker {
                 }
                 LandingGear_R6::_ProjectionRead__tr_con_stop_stimulate_close_door_valve read__tr_con_stop_stimulate_close_door_valve_state = state._projected_state_for__tr_con_stop_stimulate_close_door_valve();
                 bool _trid_14 = false;
-                auto _obj__trid_14_ptr = _OpCache_tr_con_stop_stimulate_close_door_valve.find(read__tr_con_stop_stimulate_close_door_valve_state);
-                if(_obj__trid_14_ptr == _OpCache_tr_con_stop_stimulate_close_door_valve.end()) {
-                    _trid_14 = state._tr_con_stop_stimulate_close_door_valve();
-                    {
-                        std::unique_lock<std::mutex> _ProjectionRead__tr_con_stop_stimulate_close_door_valve_lock(_ProjectionRead__tr_con_stop_stimulate_close_door_valve_mutex);
+                {
+                    std::unique_lock<std::mutex> _ProjectionRead__tr_con_stop_stimulate_close_door_valve_lock(_ProjectionRead__tr_con_stop_stimulate_close_door_valve_mutex);
+                    auto _obj__trid_14_ptr = _OpCache_tr_con_stop_stimulate_close_door_valve.find(read__tr_con_stop_stimulate_close_door_valve_state);
+                    if(_obj__trid_14_ptr == _OpCache_tr_con_stop_stimulate_close_door_valve.end()) {
+                        _trid_14 = state._tr_con_stop_stimulate_close_door_valve();
                         _OpCache_tr_con_stop_stimulate_close_door_valve.insert({read__tr_con_stop_stimulate_close_door_valve_state, _trid_14});
+                    } else {
+                        _trid_14 = _obj__trid_14_ptr->second;
                     }
-                } else {
-                    _trid_14 = _obj__trid_14_ptr->second;
                 }
                 if(_trid_14) {
                     LandingGear_R6 copiedState = state._copy();
                     LandingGear_R6::_ProjectionRead_con_stop_stimulate_close_door_valve readState = state._projected_state_for_con_stop_stimulate_close_door_valve();
-
-                    auto _OpCache_with_parameter_con_stop_stimulate_close_door_valve_ptr = _OpCache_con_stop_stimulate_close_door_valve.find(_trid_14);
-                    if(_OpCache_with_parameter_con_stop_stimulate_close_door_valve_ptr == _OpCache_con_stop_stimulate_close_door_valve.end()) {
-                        {
-                            std::unique_lock<std::mutex> _ProjectionRead_con_stop_stimulate_close_door_valve_lock(_ProjectionRead_con_stop_stimulate_close_door_valve_mutex);
+                    {
+                        std::unique_lock<std::mutex> _ProjectionRead_con_stop_stimulate_close_door_valve_lock(_ProjectionRead_con_stop_stimulate_close_door_valve_mutex);
+                        auto _OpCache_with_parameter_con_stop_stimulate_close_door_valve_ptr = _OpCache_con_stop_stimulate_close_door_valve.find(_trid_14);
+                        if(_OpCache_with_parameter_con_stop_stimulate_close_door_valve_ptr == _OpCache_con_stop_stimulate_close_door_valve.end()) {
                             copiedState.con_stop_stimulate_close_door_valve();
                             LandingGear_R6::_ProjectionWrite_con_stop_stimulate_close_door_valve writeState = copiedState._update_for_con_stop_stimulate_close_door_valve();
                             std::unordered_map<LandingGear_R6::_ProjectionRead_con_stop_stimulate_close_door_valve, LandingGear_R6::_ProjectionWrite_con_stop_stimulate_close_door_valve, LandingGear_R6::_ProjectionRead_con_stop_stimulate_close_door_valve::Hash, LandingGear_R6::_ProjectionRead_con_stop_stimulate_close_door_valve::HashEqual> _OpCache_with_parameter_con_stop_stimulate_close_door_valve = std::unordered_map<LandingGear_R6::_ProjectionRead_con_stop_stimulate_close_door_valve, LandingGear_R6::_ProjectionWrite_con_stop_stimulate_close_door_valve, LandingGear_R6::_ProjectionRead_con_stop_stimulate_close_door_valve::Hash, LandingGear_R6::_ProjectionRead_con_stop_stimulate_close_door_valve::HashEqual>();
                             _OpCache_with_parameter_con_stop_stimulate_close_door_valve.insert({readState, writeState});
                             _OpCache_con_stop_stimulate_close_door_valve.insert({_trid_14, _OpCache_with_parameter_con_stop_stimulate_close_door_valve});
-                        }
-                    } else {
-                        {
-                            std::unique_lock<std::mutex> _ProjectionRead_con_stop_stimulate_close_door_valve_lock(_ProjectionRead_con_stop_stimulate_close_door_valve_mutex);
+                        } else {
                             std::unordered_map<LandingGear_R6::_ProjectionRead_con_stop_stimulate_close_door_valve, LandingGear_R6::_ProjectionWrite_con_stop_stimulate_close_door_valve, LandingGear_R6::_ProjectionRead_con_stop_stimulate_close_door_valve::Hash, LandingGear_R6::_ProjectionRead_con_stop_stimulate_close_door_valve::HashEqual> _OpCache_with_parameter_con_stop_stimulate_close_door_valve = _OpCache_with_parameter_con_stop_stimulate_close_door_valve_ptr->second;
                             auto writeState_ptr = _OpCache_with_parameter_con_stop_stimulate_close_door_valve.find(readState);
                             if(writeState_ptr != _OpCache_with_parameter_con_stop_stimulate_close_door_valve.end()) {
@@ -11261,7 +11192,6 @@ class ModelChecker {
                             }
                         }
                     }
-
                     copiedState.stateAccessedVia = "con_stop_stimulate_close_door_valve";
                     result.insert(copiedState);
                     {
@@ -11271,33 +11201,29 @@ class ModelChecker {
                 }
                 LandingGear_R6::_ProjectionRead__tr_con_stimulate_retract_gear_valve read__tr_con_stimulate_retract_gear_valve_state = state._projected_state_for__tr_con_stimulate_retract_gear_valve();
                 bool _trid_15 = false;
-                auto _obj__trid_15_ptr = _OpCache_tr_con_stimulate_retract_gear_valve.find(read__tr_con_stimulate_retract_gear_valve_state);
-                if(_obj__trid_15_ptr == _OpCache_tr_con_stimulate_retract_gear_valve.end()) {
-                    _trid_15 = state._tr_con_stimulate_retract_gear_valve();
-                    {
-                        std::unique_lock<std::mutex> _ProjectionRead__tr_con_stimulate_retract_gear_valve_lock(_ProjectionRead__tr_con_stimulate_retract_gear_valve_mutex);
+                {
+                    std::unique_lock<std::mutex> _ProjectionRead__tr_con_stimulate_retract_gear_valve_lock(_ProjectionRead__tr_con_stimulate_retract_gear_valve_mutex);
+                    auto _obj__trid_15_ptr = _OpCache_tr_con_stimulate_retract_gear_valve.find(read__tr_con_stimulate_retract_gear_valve_state);
+                    if(_obj__trid_15_ptr == _OpCache_tr_con_stimulate_retract_gear_valve.end()) {
+                        _trid_15 = state._tr_con_stimulate_retract_gear_valve();
                         _OpCache_tr_con_stimulate_retract_gear_valve.insert({read__tr_con_stimulate_retract_gear_valve_state, _trid_15});
+                    } else {
+                        _trid_15 = _obj__trid_15_ptr->second;
                     }
-                } else {
-                    _trid_15 = _obj__trid_15_ptr->second;
                 }
                 if(_trid_15) {
                     LandingGear_R6 copiedState = state._copy();
                     LandingGear_R6::_ProjectionRead_con_stimulate_retract_gear_valve readState = state._projected_state_for_con_stimulate_retract_gear_valve();
-
-                    auto _OpCache_with_parameter_con_stimulate_retract_gear_valve_ptr = _OpCache_con_stimulate_retract_gear_valve.find(_trid_15);
-                    if(_OpCache_with_parameter_con_stimulate_retract_gear_valve_ptr == _OpCache_con_stimulate_retract_gear_valve.end()) {
-                        {
-                            std::unique_lock<std::mutex> _ProjectionRead_con_stimulate_retract_gear_valve_lock(_ProjectionRead_con_stimulate_retract_gear_valve_mutex);
+                    {
+                        std::unique_lock<std::mutex> _ProjectionRead_con_stimulate_retract_gear_valve_lock(_ProjectionRead_con_stimulate_retract_gear_valve_mutex);
+                        auto _OpCache_with_parameter_con_stimulate_retract_gear_valve_ptr = _OpCache_con_stimulate_retract_gear_valve.find(_trid_15);
+                        if(_OpCache_with_parameter_con_stimulate_retract_gear_valve_ptr == _OpCache_con_stimulate_retract_gear_valve.end()) {
                             copiedState.con_stimulate_retract_gear_valve();
                             LandingGear_R6::_ProjectionWrite_con_stimulate_retract_gear_valve writeState = copiedState._update_for_con_stimulate_retract_gear_valve();
                             std::unordered_map<LandingGear_R6::_ProjectionRead_con_stimulate_retract_gear_valve, LandingGear_R6::_ProjectionWrite_con_stimulate_retract_gear_valve, LandingGear_R6::_ProjectionRead_con_stimulate_retract_gear_valve::Hash, LandingGear_R6::_ProjectionRead_con_stimulate_retract_gear_valve::HashEqual> _OpCache_with_parameter_con_stimulate_retract_gear_valve = std::unordered_map<LandingGear_R6::_ProjectionRead_con_stimulate_retract_gear_valve, LandingGear_R6::_ProjectionWrite_con_stimulate_retract_gear_valve, LandingGear_R6::_ProjectionRead_con_stimulate_retract_gear_valve::Hash, LandingGear_R6::_ProjectionRead_con_stimulate_retract_gear_valve::HashEqual>();
                             _OpCache_with_parameter_con_stimulate_retract_gear_valve.insert({readState, writeState});
                             _OpCache_con_stimulate_retract_gear_valve.insert({_trid_15, _OpCache_with_parameter_con_stimulate_retract_gear_valve});
-                        }
-                    } else {
-                        {
-                            std::unique_lock<std::mutex> _ProjectionRead_con_stimulate_retract_gear_valve_lock(_ProjectionRead_con_stimulate_retract_gear_valve_mutex);
+                        } else {
                             std::unordered_map<LandingGear_R6::_ProjectionRead_con_stimulate_retract_gear_valve, LandingGear_R6::_ProjectionWrite_con_stimulate_retract_gear_valve, LandingGear_R6::_ProjectionRead_con_stimulate_retract_gear_valve::Hash, LandingGear_R6::_ProjectionRead_con_stimulate_retract_gear_valve::HashEqual> _OpCache_with_parameter_con_stimulate_retract_gear_valve = _OpCache_with_parameter_con_stimulate_retract_gear_valve_ptr->second;
                             auto writeState_ptr = _OpCache_with_parameter_con_stimulate_retract_gear_valve.find(readState);
                             if(writeState_ptr != _OpCache_with_parameter_con_stimulate_retract_gear_valve.end()) {
@@ -11310,7 +11236,6 @@ class ModelChecker {
                             }
                         }
                     }
-
                     copiedState.stateAccessedVia = "con_stimulate_retract_gear_valve";
                     result.insert(copiedState);
                     {
@@ -11320,33 +11245,29 @@ class ModelChecker {
                 }
                 LandingGear_R6::_ProjectionRead__tr_con_stop_stimulate_retract_gear_valve read__tr_con_stop_stimulate_retract_gear_valve_state = state._projected_state_for__tr_con_stop_stimulate_retract_gear_valve();
                 bool _trid_16 = false;
-                auto _obj__trid_16_ptr = _OpCache_tr_con_stop_stimulate_retract_gear_valve.find(read__tr_con_stop_stimulate_retract_gear_valve_state);
-                if(_obj__trid_16_ptr == _OpCache_tr_con_stop_stimulate_retract_gear_valve.end()) {
-                    _trid_16 = state._tr_con_stop_stimulate_retract_gear_valve();
-                    {
-                        std::unique_lock<std::mutex> _ProjectionRead__tr_con_stop_stimulate_retract_gear_valve_lock(_ProjectionRead__tr_con_stop_stimulate_retract_gear_valve_mutex);
+                {
+                    std::unique_lock<std::mutex> _ProjectionRead__tr_con_stop_stimulate_retract_gear_valve_lock(_ProjectionRead__tr_con_stop_stimulate_retract_gear_valve_mutex);
+                    auto _obj__trid_16_ptr = _OpCache_tr_con_stop_stimulate_retract_gear_valve.find(read__tr_con_stop_stimulate_retract_gear_valve_state);
+                    if(_obj__trid_16_ptr == _OpCache_tr_con_stop_stimulate_retract_gear_valve.end()) {
+                        _trid_16 = state._tr_con_stop_stimulate_retract_gear_valve();
                         _OpCache_tr_con_stop_stimulate_retract_gear_valve.insert({read__tr_con_stop_stimulate_retract_gear_valve_state, _trid_16});
+                    } else {
+                        _trid_16 = _obj__trid_16_ptr->second;
                     }
-                } else {
-                    _trid_16 = _obj__trid_16_ptr->second;
                 }
                 if(_trid_16) {
                     LandingGear_R6 copiedState = state._copy();
                     LandingGear_R6::_ProjectionRead_con_stop_stimulate_retract_gear_valve readState = state._projected_state_for_con_stop_stimulate_retract_gear_valve();
-
-                    auto _OpCache_with_parameter_con_stop_stimulate_retract_gear_valve_ptr = _OpCache_con_stop_stimulate_retract_gear_valve.find(_trid_16);
-                    if(_OpCache_with_parameter_con_stop_stimulate_retract_gear_valve_ptr == _OpCache_con_stop_stimulate_retract_gear_valve.end()) {
-                        {
-                            std::unique_lock<std::mutex> _ProjectionRead_con_stop_stimulate_retract_gear_valve_lock(_ProjectionRead_con_stop_stimulate_retract_gear_valve_mutex);
+                    {
+                        std::unique_lock<std::mutex> _ProjectionRead_con_stop_stimulate_retract_gear_valve_lock(_ProjectionRead_con_stop_stimulate_retract_gear_valve_mutex);
+                        auto _OpCache_with_parameter_con_stop_stimulate_retract_gear_valve_ptr = _OpCache_con_stop_stimulate_retract_gear_valve.find(_trid_16);
+                        if(_OpCache_with_parameter_con_stop_stimulate_retract_gear_valve_ptr == _OpCache_con_stop_stimulate_retract_gear_valve.end()) {
                             copiedState.con_stop_stimulate_retract_gear_valve();
                             LandingGear_R6::_ProjectionWrite_con_stop_stimulate_retract_gear_valve writeState = copiedState._update_for_con_stop_stimulate_retract_gear_valve();
                             std::unordered_map<LandingGear_R6::_ProjectionRead_con_stop_stimulate_retract_gear_valve, LandingGear_R6::_ProjectionWrite_con_stop_stimulate_retract_gear_valve, LandingGear_R6::_ProjectionRead_con_stop_stimulate_retract_gear_valve::Hash, LandingGear_R6::_ProjectionRead_con_stop_stimulate_retract_gear_valve::HashEqual> _OpCache_with_parameter_con_stop_stimulate_retract_gear_valve = std::unordered_map<LandingGear_R6::_ProjectionRead_con_stop_stimulate_retract_gear_valve, LandingGear_R6::_ProjectionWrite_con_stop_stimulate_retract_gear_valve, LandingGear_R6::_ProjectionRead_con_stop_stimulate_retract_gear_valve::Hash, LandingGear_R6::_ProjectionRead_con_stop_stimulate_retract_gear_valve::HashEqual>();
                             _OpCache_with_parameter_con_stop_stimulate_retract_gear_valve.insert({readState, writeState});
                             _OpCache_con_stop_stimulate_retract_gear_valve.insert({_trid_16, _OpCache_with_parameter_con_stop_stimulate_retract_gear_valve});
-                        }
-                    } else {
-                        {
-                            std::unique_lock<std::mutex> _ProjectionRead_con_stop_stimulate_retract_gear_valve_lock(_ProjectionRead_con_stop_stimulate_retract_gear_valve_mutex);
+                        } else {
                             std::unordered_map<LandingGear_R6::_ProjectionRead_con_stop_stimulate_retract_gear_valve, LandingGear_R6::_ProjectionWrite_con_stop_stimulate_retract_gear_valve, LandingGear_R6::_ProjectionRead_con_stop_stimulate_retract_gear_valve::Hash, LandingGear_R6::_ProjectionRead_con_stop_stimulate_retract_gear_valve::HashEqual> _OpCache_with_parameter_con_stop_stimulate_retract_gear_valve = _OpCache_with_parameter_con_stop_stimulate_retract_gear_valve_ptr->second;
                             auto writeState_ptr = _OpCache_with_parameter_con_stop_stimulate_retract_gear_valve.find(readState);
                             if(writeState_ptr != _OpCache_with_parameter_con_stop_stimulate_retract_gear_valve.end()) {
@@ -11359,7 +11280,6 @@ class ModelChecker {
                             }
                         }
                     }
-
                     copiedState.stateAccessedVia = "con_stop_stimulate_retract_gear_valve";
                     result.insert(copiedState);
                     {
@@ -11369,33 +11289,29 @@ class ModelChecker {
                 }
                 LandingGear_R6::_ProjectionRead__tr_con_stimulate_extend_gear_valve read__tr_con_stimulate_extend_gear_valve_state = state._projected_state_for__tr_con_stimulate_extend_gear_valve();
                 bool _trid_17 = false;
-                auto _obj__trid_17_ptr = _OpCache_tr_con_stimulate_extend_gear_valve.find(read__tr_con_stimulate_extend_gear_valve_state);
-                if(_obj__trid_17_ptr == _OpCache_tr_con_stimulate_extend_gear_valve.end()) {
-                    _trid_17 = state._tr_con_stimulate_extend_gear_valve();
-                    {
-                        std::unique_lock<std::mutex> _ProjectionRead__tr_con_stimulate_extend_gear_valve_lock(_ProjectionRead__tr_con_stimulate_extend_gear_valve_mutex);
+                {
+                    std::unique_lock<std::mutex> _ProjectionRead__tr_con_stimulate_extend_gear_valve_lock(_ProjectionRead__tr_con_stimulate_extend_gear_valve_mutex);
+                    auto _obj__trid_17_ptr = _OpCache_tr_con_stimulate_extend_gear_valve.find(read__tr_con_stimulate_extend_gear_valve_state);
+                    if(_obj__trid_17_ptr == _OpCache_tr_con_stimulate_extend_gear_valve.end()) {
+                        _trid_17 = state._tr_con_stimulate_extend_gear_valve();
                         _OpCache_tr_con_stimulate_extend_gear_valve.insert({read__tr_con_stimulate_extend_gear_valve_state, _trid_17});
+                    } else {
+                        _trid_17 = _obj__trid_17_ptr->second;
                     }
-                } else {
-                    _trid_17 = _obj__trid_17_ptr->second;
                 }
                 if(_trid_17) {
                     LandingGear_R6 copiedState = state._copy();
                     LandingGear_R6::_ProjectionRead_con_stimulate_extend_gear_valve readState = state._projected_state_for_con_stimulate_extend_gear_valve();
-
-                    auto _OpCache_with_parameter_con_stimulate_extend_gear_valve_ptr = _OpCache_con_stimulate_extend_gear_valve.find(_trid_17);
-                    if(_OpCache_with_parameter_con_stimulate_extend_gear_valve_ptr == _OpCache_con_stimulate_extend_gear_valve.end()) {
-                        {
-                            std::unique_lock<std::mutex> _ProjectionRead_con_stimulate_extend_gear_valve_lock(_ProjectionRead_con_stimulate_extend_gear_valve_mutex);
+                    {
+                        std::unique_lock<std::mutex> _ProjectionRead_con_stimulate_extend_gear_valve_lock(_ProjectionRead_con_stimulate_extend_gear_valve_mutex);
+                        auto _OpCache_with_parameter_con_stimulate_extend_gear_valve_ptr = _OpCache_con_stimulate_extend_gear_valve.find(_trid_17);
+                        if(_OpCache_with_parameter_con_stimulate_extend_gear_valve_ptr == _OpCache_con_stimulate_extend_gear_valve.end()) {
                             copiedState.con_stimulate_extend_gear_valve();
                             LandingGear_R6::_ProjectionWrite_con_stimulate_extend_gear_valve writeState = copiedState._update_for_con_stimulate_extend_gear_valve();
                             std::unordered_map<LandingGear_R6::_ProjectionRead_con_stimulate_extend_gear_valve, LandingGear_R6::_ProjectionWrite_con_stimulate_extend_gear_valve, LandingGear_R6::_ProjectionRead_con_stimulate_extend_gear_valve::Hash, LandingGear_R6::_ProjectionRead_con_stimulate_extend_gear_valve::HashEqual> _OpCache_with_parameter_con_stimulate_extend_gear_valve = std::unordered_map<LandingGear_R6::_ProjectionRead_con_stimulate_extend_gear_valve, LandingGear_R6::_ProjectionWrite_con_stimulate_extend_gear_valve, LandingGear_R6::_ProjectionRead_con_stimulate_extend_gear_valve::Hash, LandingGear_R6::_ProjectionRead_con_stimulate_extend_gear_valve::HashEqual>();
                             _OpCache_with_parameter_con_stimulate_extend_gear_valve.insert({readState, writeState});
                             _OpCache_con_stimulate_extend_gear_valve.insert({_trid_17, _OpCache_with_parameter_con_stimulate_extend_gear_valve});
-                        }
-                    } else {
-                        {
-                            std::unique_lock<std::mutex> _ProjectionRead_con_stimulate_extend_gear_valve_lock(_ProjectionRead_con_stimulate_extend_gear_valve_mutex);
+                        } else {
                             std::unordered_map<LandingGear_R6::_ProjectionRead_con_stimulate_extend_gear_valve, LandingGear_R6::_ProjectionWrite_con_stimulate_extend_gear_valve, LandingGear_R6::_ProjectionRead_con_stimulate_extend_gear_valve::Hash, LandingGear_R6::_ProjectionRead_con_stimulate_extend_gear_valve::HashEqual> _OpCache_with_parameter_con_stimulate_extend_gear_valve = _OpCache_with_parameter_con_stimulate_extend_gear_valve_ptr->second;
                             auto writeState_ptr = _OpCache_with_parameter_con_stimulate_extend_gear_valve.find(readState);
                             if(writeState_ptr != _OpCache_with_parameter_con_stimulate_extend_gear_valve.end()) {
@@ -11408,7 +11324,6 @@ class ModelChecker {
                             }
                         }
                     }
-
                     copiedState.stateAccessedVia = "con_stimulate_extend_gear_valve";
                     result.insert(copiedState);
                     {
@@ -11418,33 +11333,29 @@ class ModelChecker {
                 }
                 LandingGear_R6::_ProjectionRead__tr_con_stop_stimulate_extend_gear_valve read__tr_con_stop_stimulate_extend_gear_valve_state = state._projected_state_for__tr_con_stop_stimulate_extend_gear_valve();
                 bool _trid_18 = false;
-                auto _obj__trid_18_ptr = _OpCache_tr_con_stop_stimulate_extend_gear_valve.find(read__tr_con_stop_stimulate_extend_gear_valve_state);
-                if(_obj__trid_18_ptr == _OpCache_tr_con_stop_stimulate_extend_gear_valve.end()) {
-                    _trid_18 = state._tr_con_stop_stimulate_extend_gear_valve();
-                    {
-                        std::unique_lock<std::mutex> _ProjectionRead__tr_con_stop_stimulate_extend_gear_valve_lock(_ProjectionRead__tr_con_stop_stimulate_extend_gear_valve_mutex);
+                {
+                    std::unique_lock<std::mutex> _ProjectionRead__tr_con_stop_stimulate_extend_gear_valve_lock(_ProjectionRead__tr_con_stop_stimulate_extend_gear_valve_mutex);
+                    auto _obj__trid_18_ptr = _OpCache_tr_con_stop_stimulate_extend_gear_valve.find(read__tr_con_stop_stimulate_extend_gear_valve_state);
+                    if(_obj__trid_18_ptr == _OpCache_tr_con_stop_stimulate_extend_gear_valve.end()) {
+                        _trid_18 = state._tr_con_stop_stimulate_extend_gear_valve();
                         _OpCache_tr_con_stop_stimulate_extend_gear_valve.insert({read__tr_con_stop_stimulate_extend_gear_valve_state, _trid_18});
+                    } else {
+                        _trid_18 = _obj__trid_18_ptr->second;
                     }
-                } else {
-                    _trid_18 = _obj__trid_18_ptr->second;
                 }
                 if(_trid_18) {
                     LandingGear_R6 copiedState = state._copy();
                     LandingGear_R6::_ProjectionRead_con_stop_stimulate_extend_gear_valve readState = state._projected_state_for_con_stop_stimulate_extend_gear_valve();
-
-                    auto _OpCache_with_parameter_con_stop_stimulate_extend_gear_valve_ptr = _OpCache_con_stop_stimulate_extend_gear_valve.find(_trid_18);
-                    if(_OpCache_with_parameter_con_stop_stimulate_extend_gear_valve_ptr == _OpCache_con_stop_stimulate_extend_gear_valve.end()) {
-                        {
-                            std::unique_lock<std::mutex> _ProjectionRead_con_stop_stimulate_extend_gear_valve_lock(_ProjectionRead_con_stop_stimulate_extend_gear_valve_mutex);
+                    {
+                        std::unique_lock<std::mutex> _ProjectionRead_con_stop_stimulate_extend_gear_valve_lock(_ProjectionRead_con_stop_stimulate_extend_gear_valve_mutex);
+                        auto _OpCache_with_parameter_con_stop_stimulate_extend_gear_valve_ptr = _OpCache_con_stop_stimulate_extend_gear_valve.find(_trid_18);
+                        if(_OpCache_with_parameter_con_stop_stimulate_extend_gear_valve_ptr == _OpCache_con_stop_stimulate_extend_gear_valve.end()) {
                             copiedState.con_stop_stimulate_extend_gear_valve();
                             LandingGear_R6::_ProjectionWrite_con_stop_stimulate_extend_gear_valve writeState = copiedState._update_for_con_stop_stimulate_extend_gear_valve();
                             std::unordered_map<LandingGear_R6::_ProjectionRead_con_stop_stimulate_extend_gear_valve, LandingGear_R6::_ProjectionWrite_con_stop_stimulate_extend_gear_valve, LandingGear_R6::_ProjectionRead_con_stop_stimulate_extend_gear_valve::Hash, LandingGear_R6::_ProjectionRead_con_stop_stimulate_extend_gear_valve::HashEqual> _OpCache_with_parameter_con_stop_stimulate_extend_gear_valve = std::unordered_map<LandingGear_R6::_ProjectionRead_con_stop_stimulate_extend_gear_valve, LandingGear_R6::_ProjectionWrite_con_stop_stimulate_extend_gear_valve, LandingGear_R6::_ProjectionRead_con_stop_stimulate_extend_gear_valve::Hash, LandingGear_R6::_ProjectionRead_con_stop_stimulate_extend_gear_valve::HashEqual>();
                             _OpCache_with_parameter_con_stop_stimulate_extend_gear_valve.insert({readState, writeState});
                             _OpCache_con_stop_stimulate_extend_gear_valve.insert({_trid_18, _OpCache_with_parameter_con_stop_stimulate_extend_gear_valve});
-                        }
-                    } else {
-                        {
-                            std::unique_lock<std::mutex> _ProjectionRead_con_stop_stimulate_extend_gear_valve_lock(_ProjectionRead_con_stop_stimulate_extend_gear_valve_mutex);
+                        } else {
                             std::unordered_map<LandingGear_R6::_ProjectionRead_con_stop_stimulate_extend_gear_valve, LandingGear_R6::_ProjectionWrite_con_stop_stimulate_extend_gear_valve, LandingGear_R6::_ProjectionRead_con_stop_stimulate_extend_gear_valve::Hash, LandingGear_R6::_ProjectionRead_con_stop_stimulate_extend_gear_valve::HashEqual> _OpCache_with_parameter_con_stop_stimulate_extend_gear_valve = _OpCache_with_parameter_con_stop_stimulate_extend_gear_valve_ptr->second;
                             auto writeState_ptr = _OpCache_with_parameter_con_stop_stimulate_extend_gear_valve.find(readState);
                             if(writeState_ptr != _OpCache_with_parameter_con_stop_stimulate_extend_gear_valve.end()) {
@@ -11457,7 +11368,6 @@ class ModelChecker {
                             }
                         }
                     }
-
                     copiedState.stateAccessedVia = "con_stop_stimulate_extend_gear_valve";
                     result.insert(copiedState);
                     {
@@ -11466,1102 +11376,978 @@ class ModelChecker {
                     }
                 }
                 LandingGear_R6::_ProjectionRead__tr_env_start_retracting_first read__tr_env_start_retracting_first_state = state._projected_state_for__tr_env_start_retracting_first();
-                auto _trid_19_ptr = _OpCache_tr_env_start_retracting_first.find(read__tr_env_start_retracting_first_state);
-                if(_trid_19_ptr == _OpCache_tr_env_start_retracting_first.end()) {
-                    BSet<LandingGear_R6::POSITION> _trid_19 = state._tr_env_start_retracting_first();
-                    {
-                        std::unique_lock<std::mutex> _ProjectionRead__tr_env_start_retracting_first_lock(_ProjectionRead__tr_env_start_retracting_first_mutex);
+                {
+                    std::unique_lock<std::mutex> _ProjectionRead__tr_env_start_retracting_first_lock(_ProjectionRead__tr_env_start_retracting_first_mutex);
+                    auto _trid_19_ptr = _OpCache_tr_env_start_retracting_first.find(read__tr_env_start_retracting_first_state);
+                    if(_trid_19_ptr == _OpCache_tr_env_start_retracting_first.end()) {
+                        BSet<LandingGear_R6::POSITION> _trid_19 = state._tr_env_start_retracting_first();
                         _OpCache_tr_env_start_retracting_first.insert({read__tr_env_start_retracting_first_state, _trid_19});
-                    }
-                    for(const LandingGear_R6::POSITION& param : _trid_19) {
-                        LandingGear_R6::POSITION _tmp_1 = param;
+                        for(const LandingGear_R6::POSITION& param : _trid_19) {
+                            LandingGear_R6::POSITION _tmp_1 = param;
 
-                        LandingGear_R6 copiedState = state._copy();
-                        LandingGear_R6::_ProjectionRead_env_start_retracting_first readState = state._projected_state_for_env_start_retracting_first();
-
-                        auto _OpCache_with_parameter_env_start_retracting_first_ptr = _OpCache_env_start_retracting_first.find(param);
-                        if(_OpCache_with_parameter_env_start_retracting_first_ptr == _OpCache_env_start_retracting_first.end()) {
+                            LandingGear_R6 copiedState = state._copy();
+                            LandingGear_R6::_ProjectionRead_env_start_retracting_first readState = state._projected_state_for_env_start_retracting_first();
                             {
                                 std::unique_lock<std::mutex> _ProjectionRead_env_start_retracting_first_lock(_ProjectionRead_env_start_retracting_first_mutex);
-                                copiedState.env_start_retracting_first(_tmp_1);
-                                LandingGear_R6::_ProjectionWrite_env_start_retracting_first writeState = copiedState._update_for_env_start_retracting_first();
-                                std::unordered_map<LandingGear_R6::_ProjectionRead_env_start_retracting_first, LandingGear_R6::_ProjectionWrite_env_start_retracting_first, LandingGear_R6::_ProjectionRead_env_start_retracting_first::Hash, LandingGear_R6::_ProjectionRead_env_start_retracting_first::HashEqual> _OpCache_with_parameter_env_start_retracting_first = std::unordered_map<LandingGear_R6::_ProjectionRead_env_start_retracting_first, LandingGear_R6::_ProjectionWrite_env_start_retracting_first, LandingGear_R6::_ProjectionRead_env_start_retracting_first::Hash, LandingGear_R6::_ProjectionRead_env_start_retracting_first::HashEqual>();
-                                _OpCache_with_parameter_env_start_retracting_first.insert({readState, writeState});
-                                _OpCache_env_start_retracting_first.insert({param, _OpCache_with_parameter_env_start_retracting_first});
-                            }
-                        } else {
-                            {
-                                std::unique_lock<std::mutex> _ProjectionRead_env_start_retracting_first_lock(_ProjectionRead_env_start_retracting_first_mutex);
-                                std::unordered_map<LandingGear_R6::_ProjectionRead_env_start_retracting_first, LandingGear_R6::_ProjectionWrite_env_start_retracting_first, LandingGear_R6::_ProjectionRead_env_start_retracting_first::Hash, LandingGear_R6::_ProjectionRead_env_start_retracting_first::HashEqual> _OpCache_with_parameter_env_start_retracting_first = _OpCache_with_parameter_env_start_retracting_first_ptr->second;
-                                auto writeState_ptr = _OpCache_with_parameter_env_start_retracting_first.find(readState);
-                                if(writeState_ptr != _OpCache_with_parameter_env_start_retracting_first.end()) {
-                                    LandingGear_R6::_ProjectionWrite_env_start_retracting_first writeState = writeState_ptr->second;
-                                    copiedState._apply_update_for_env_start_retracting_first(writeState);
-                                } else {
+                                auto _OpCache_with_parameter_env_start_retracting_first_ptr = _OpCache_env_start_retracting_first.find(param);
+                                if(_OpCache_with_parameter_env_start_retracting_first_ptr == _OpCache_env_start_retracting_first.end()) {
                                     copiedState.env_start_retracting_first(_tmp_1);
                                     LandingGear_R6::_ProjectionWrite_env_start_retracting_first writeState = copiedState._update_for_env_start_retracting_first();
+                                    std::unordered_map<LandingGear_R6::_ProjectionRead_env_start_retracting_first, LandingGear_R6::_ProjectionWrite_env_start_retracting_first, LandingGear_R6::_ProjectionRead_env_start_retracting_first::Hash, LandingGear_R6::_ProjectionRead_env_start_retracting_first::HashEqual> _OpCache_with_parameter_env_start_retracting_first = std::unordered_map<LandingGear_R6::_ProjectionRead_env_start_retracting_first, LandingGear_R6::_ProjectionWrite_env_start_retracting_first, LandingGear_R6::_ProjectionRead_env_start_retracting_first::Hash, LandingGear_R6::_ProjectionRead_env_start_retracting_first::HashEqual>();
                                     _OpCache_with_parameter_env_start_retracting_first.insert({readState, writeState});
+                                    _OpCache_env_start_retracting_first.insert({param, _OpCache_with_parameter_env_start_retracting_first});
+                                } else {
+                                    std::unordered_map<LandingGear_R6::_ProjectionRead_env_start_retracting_first, LandingGear_R6::_ProjectionWrite_env_start_retracting_first, LandingGear_R6::_ProjectionRead_env_start_retracting_first::Hash, LandingGear_R6::_ProjectionRead_env_start_retracting_first::HashEqual> _OpCache_with_parameter_env_start_retracting_first = _OpCache_with_parameter_env_start_retracting_first_ptr->second;
+                                    auto writeState_ptr = _OpCache_with_parameter_env_start_retracting_first.find(readState);
+                                    if(writeState_ptr != _OpCache_with_parameter_env_start_retracting_first.end()) {
+                                        LandingGear_R6::_ProjectionWrite_env_start_retracting_first writeState = writeState_ptr->second;
+                                        copiedState._apply_update_for_env_start_retracting_first(writeState);
+                                    } else {
+                                        copiedState.env_start_retracting_first(_tmp_1);
+                                        LandingGear_R6::_ProjectionWrite_env_start_retracting_first writeState = copiedState._update_for_env_start_retracting_first();
+                                        _OpCache_with_parameter_env_start_retracting_first.insert({readState, writeState});
+                                    }
                                 }
                             }
-                        }
-
-                        copiedState.stateAccessedVia = "env_start_retracting_first";
-                        result.insert(copiedState);
-                        {
-                            std::unique_lock<std::mutex> lock(mutex);
-                            transitions += 1;
-                        }
-                    }
-                } else {
-                    BSet<LandingGear_R6::POSITION> _trid_19 = _trid_19_ptr->second;
-                    for(const LandingGear_R6::POSITION& param : _trid_19) {
-                        LandingGear_R6::POSITION _tmp_1 = param;
-
-                        LandingGear_R6 copiedState = state._copy();
-                        LandingGear_R6::_ProjectionRead_env_start_retracting_first readState = state._projected_state_for_env_start_retracting_first();
-
-                        auto _OpCache_with_parameter_env_start_retracting_first_ptr = _OpCache_env_start_retracting_first.find(param);
-                        if(_OpCache_with_parameter_env_start_retracting_first_ptr == _OpCache_env_start_retracting_first.end()) {
+                            copiedState.stateAccessedVia = "env_start_retracting_first";
+                            result.insert(copiedState);
                             {
-                                std::unique_lock<std::mutex> _ProjectionRead_env_start_retracting_first_lock(_ProjectionRead_env_start_retracting_first_mutex);
-                                copiedState.env_start_retracting_first(_tmp_1);
-                                LandingGear_R6::_ProjectionWrite_env_start_retracting_first writeState = copiedState._update_for_env_start_retracting_first();
-                                std::unordered_map<LandingGear_R6::_ProjectionRead_env_start_retracting_first, LandingGear_R6::_ProjectionWrite_env_start_retracting_first, LandingGear_R6::_ProjectionRead_env_start_retracting_first::Hash, LandingGear_R6::_ProjectionRead_env_start_retracting_first::HashEqual> _OpCache_with_parameter_env_start_retracting_first = std::unordered_map<LandingGear_R6::_ProjectionRead_env_start_retracting_first, LandingGear_R6::_ProjectionWrite_env_start_retracting_first, LandingGear_R6::_ProjectionRead_env_start_retracting_first::Hash, LandingGear_R6::_ProjectionRead_env_start_retracting_first::HashEqual>();
-                                _OpCache_with_parameter_env_start_retracting_first.insert({readState, writeState});
-                                _OpCache_env_start_retracting_first.insert({param, _OpCache_with_parameter_env_start_retracting_first});
+                                std::unique_lock<std::mutex> lock(mutex);
+                                transitions += 1;
                             }
-                        } else {
+                        }
+                    } else {
+                        BSet<LandingGear_R6::POSITION> _trid_19 = _trid_19_ptr->second;
+                        for(const LandingGear_R6::POSITION& param : _trid_19) {
+                            LandingGear_R6::POSITION _tmp_1 = param;
+
+                            LandingGear_R6 copiedState = state._copy();
+                            LandingGear_R6::_ProjectionRead_env_start_retracting_first readState = state._projected_state_for_env_start_retracting_first();
                             {
                                 std::unique_lock<std::mutex> _ProjectionRead_env_start_retracting_first_lock(_ProjectionRead_env_start_retracting_first_mutex);
-                                std::unordered_map<LandingGear_R6::_ProjectionRead_env_start_retracting_first, LandingGear_R6::_ProjectionWrite_env_start_retracting_first, LandingGear_R6::_ProjectionRead_env_start_retracting_first::Hash, LandingGear_R6::_ProjectionRead_env_start_retracting_first::HashEqual> _OpCache_with_parameter_env_start_retracting_first = _OpCache_with_parameter_env_start_retracting_first_ptr->second;
-                                auto writeState_ptr = _OpCache_with_parameter_env_start_retracting_first.find(readState);
-                                if(writeState_ptr != _OpCache_with_parameter_env_start_retracting_first.end()) {
-                                    LandingGear_R6::_ProjectionWrite_env_start_retracting_first writeState = writeState_ptr->second;
-                                    copiedState._apply_update_for_env_start_retracting_first(writeState);
-                                } else {
+                                auto _OpCache_with_parameter_env_start_retracting_first_ptr = _OpCache_env_start_retracting_first.find(param);
+                                if(_OpCache_with_parameter_env_start_retracting_first_ptr == _OpCache_env_start_retracting_first.end()) {
                                     copiedState.env_start_retracting_first(_tmp_1);
                                     LandingGear_R6::_ProjectionWrite_env_start_retracting_first writeState = copiedState._update_for_env_start_retracting_first();
+                                    std::unordered_map<LandingGear_R6::_ProjectionRead_env_start_retracting_first, LandingGear_R6::_ProjectionWrite_env_start_retracting_first, LandingGear_R6::_ProjectionRead_env_start_retracting_first::Hash, LandingGear_R6::_ProjectionRead_env_start_retracting_first::HashEqual> _OpCache_with_parameter_env_start_retracting_first = std::unordered_map<LandingGear_R6::_ProjectionRead_env_start_retracting_first, LandingGear_R6::_ProjectionWrite_env_start_retracting_first, LandingGear_R6::_ProjectionRead_env_start_retracting_first::Hash, LandingGear_R6::_ProjectionRead_env_start_retracting_first::HashEqual>();
                                     _OpCache_with_parameter_env_start_retracting_first.insert({readState, writeState});
+                                    _OpCache_env_start_retracting_first.insert({param, _OpCache_with_parameter_env_start_retracting_first});
+                                } else {
+                                    std::unordered_map<LandingGear_R6::_ProjectionRead_env_start_retracting_first, LandingGear_R6::_ProjectionWrite_env_start_retracting_first, LandingGear_R6::_ProjectionRead_env_start_retracting_first::Hash, LandingGear_R6::_ProjectionRead_env_start_retracting_first::HashEqual> _OpCache_with_parameter_env_start_retracting_first = _OpCache_with_parameter_env_start_retracting_first_ptr->second;
+                                    auto writeState_ptr = _OpCache_with_parameter_env_start_retracting_first.find(readState);
+                                    if(writeState_ptr != _OpCache_with_parameter_env_start_retracting_first.end()) {
+                                        LandingGear_R6::_ProjectionWrite_env_start_retracting_first writeState = writeState_ptr->second;
+                                        copiedState._apply_update_for_env_start_retracting_first(writeState);
+                                    } else {
+                                        copiedState.env_start_retracting_first(_tmp_1);
+                                        LandingGear_R6::_ProjectionWrite_env_start_retracting_first writeState = copiedState._update_for_env_start_retracting_first();
+                                        _OpCache_with_parameter_env_start_retracting_first.insert({readState, writeState});
+                                    }
                                 }
                             }
-                        }
-
-                        copiedState.stateAccessedVia = "env_start_retracting_first";
-                        result.insert(copiedState);
-                        {
-                            std::unique_lock<std::mutex> lock(mutex);
-                            transitions += 1;
+                            copiedState.stateAccessedVia = "env_start_retracting_first";
+                            result.insert(copiedState);
+                            {
+                                std::unique_lock<std::mutex> lock(mutex);
+                                transitions += 1;
+                            }
                         }
                     }
                 }
                 LandingGear_R6::_ProjectionRead__tr_env_retract_gear_skip read__tr_env_retract_gear_skip_state = state._projected_state_for__tr_env_retract_gear_skip();
-                auto _trid_20_ptr = _OpCache_tr_env_retract_gear_skip.find(read__tr_env_retract_gear_skip_state);
-                if(_trid_20_ptr == _OpCache_tr_env_retract_gear_skip.end()) {
-                    BSet<LandingGear_R6::POSITION> _trid_20 = state._tr_env_retract_gear_skip();
-                    {
-                        std::unique_lock<std::mutex> _ProjectionRead__tr_env_retract_gear_skip_lock(_ProjectionRead__tr_env_retract_gear_skip_mutex);
+                {
+                    std::unique_lock<std::mutex> _ProjectionRead__tr_env_retract_gear_skip_lock(_ProjectionRead__tr_env_retract_gear_skip_mutex);
+                    auto _trid_20_ptr = _OpCache_tr_env_retract_gear_skip.find(read__tr_env_retract_gear_skip_state);
+                    if(_trid_20_ptr == _OpCache_tr_env_retract_gear_skip.end()) {
+                        BSet<LandingGear_R6::POSITION> _trid_20 = state._tr_env_retract_gear_skip();
                         _OpCache_tr_env_retract_gear_skip.insert({read__tr_env_retract_gear_skip_state, _trid_20});
-                    }
-                    for(const LandingGear_R6::POSITION& param : _trid_20) {
-                        LandingGear_R6::POSITION _tmp_1 = param;
+                        for(const LandingGear_R6::POSITION& param : _trid_20) {
+                            LandingGear_R6::POSITION _tmp_1 = param;
 
-                        LandingGear_R6 copiedState = state._copy();
-                        LandingGear_R6::_ProjectionRead_env_retract_gear_skip readState = state._projected_state_for_env_retract_gear_skip();
-
-                        auto _OpCache_with_parameter_env_retract_gear_skip_ptr = _OpCache_env_retract_gear_skip.find(param);
-                        if(_OpCache_with_parameter_env_retract_gear_skip_ptr == _OpCache_env_retract_gear_skip.end()) {
+                            LandingGear_R6 copiedState = state._copy();
+                            LandingGear_R6::_ProjectionRead_env_retract_gear_skip readState = state._projected_state_for_env_retract_gear_skip();
                             {
                                 std::unique_lock<std::mutex> _ProjectionRead_env_retract_gear_skip_lock(_ProjectionRead_env_retract_gear_skip_mutex);
-                                copiedState.env_retract_gear_skip(_tmp_1);
-                                LandingGear_R6::_ProjectionWrite_env_retract_gear_skip writeState = copiedState._update_for_env_retract_gear_skip();
-                                std::unordered_map<LandingGear_R6::_ProjectionRead_env_retract_gear_skip, LandingGear_R6::_ProjectionWrite_env_retract_gear_skip, LandingGear_R6::_ProjectionRead_env_retract_gear_skip::Hash, LandingGear_R6::_ProjectionRead_env_retract_gear_skip::HashEqual> _OpCache_with_parameter_env_retract_gear_skip = std::unordered_map<LandingGear_R6::_ProjectionRead_env_retract_gear_skip, LandingGear_R6::_ProjectionWrite_env_retract_gear_skip, LandingGear_R6::_ProjectionRead_env_retract_gear_skip::Hash, LandingGear_R6::_ProjectionRead_env_retract_gear_skip::HashEqual>();
-                                _OpCache_with_parameter_env_retract_gear_skip.insert({readState, writeState});
-                                _OpCache_env_retract_gear_skip.insert({param, _OpCache_with_parameter_env_retract_gear_skip});
-                            }
-                        } else {
-                            {
-                                std::unique_lock<std::mutex> _ProjectionRead_env_retract_gear_skip_lock(_ProjectionRead_env_retract_gear_skip_mutex);
-                                std::unordered_map<LandingGear_R6::_ProjectionRead_env_retract_gear_skip, LandingGear_R6::_ProjectionWrite_env_retract_gear_skip, LandingGear_R6::_ProjectionRead_env_retract_gear_skip::Hash, LandingGear_R6::_ProjectionRead_env_retract_gear_skip::HashEqual> _OpCache_with_parameter_env_retract_gear_skip = _OpCache_with_parameter_env_retract_gear_skip_ptr->second;
-                                auto writeState_ptr = _OpCache_with_parameter_env_retract_gear_skip.find(readState);
-                                if(writeState_ptr != _OpCache_with_parameter_env_retract_gear_skip.end()) {
-                                    LandingGear_R6::_ProjectionWrite_env_retract_gear_skip writeState = writeState_ptr->second;
-                                    copiedState._apply_update_for_env_retract_gear_skip(writeState);
-                                } else {
+                                auto _OpCache_with_parameter_env_retract_gear_skip_ptr = _OpCache_env_retract_gear_skip.find(param);
+                                if(_OpCache_with_parameter_env_retract_gear_skip_ptr == _OpCache_env_retract_gear_skip.end()) {
                                     copiedState.env_retract_gear_skip(_tmp_1);
                                     LandingGear_R6::_ProjectionWrite_env_retract_gear_skip writeState = copiedState._update_for_env_retract_gear_skip();
+                                    std::unordered_map<LandingGear_R6::_ProjectionRead_env_retract_gear_skip, LandingGear_R6::_ProjectionWrite_env_retract_gear_skip, LandingGear_R6::_ProjectionRead_env_retract_gear_skip::Hash, LandingGear_R6::_ProjectionRead_env_retract_gear_skip::HashEqual> _OpCache_with_parameter_env_retract_gear_skip = std::unordered_map<LandingGear_R6::_ProjectionRead_env_retract_gear_skip, LandingGear_R6::_ProjectionWrite_env_retract_gear_skip, LandingGear_R6::_ProjectionRead_env_retract_gear_skip::Hash, LandingGear_R6::_ProjectionRead_env_retract_gear_skip::HashEqual>();
                                     _OpCache_with_parameter_env_retract_gear_skip.insert({readState, writeState});
+                                    _OpCache_env_retract_gear_skip.insert({param, _OpCache_with_parameter_env_retract_gear_skip});
+                                } else {
+                                    std::unordered_map<LandingGear_R6::_ProjectionRead_env_retract_gear_skip, LandingGear_R6::_ProjectionWrite_env_retract_gear_skip, LandingGear_R6::_ProjectionRead_env_retract_gear_skip::Hash, LandingGear_R6::_ProjectionRead_env_retract_gear_skip::HashEqual> _OpCache_with_parameter_env_retract_gear_skip = _OpCache_with_parameter_env_retract_gear_skip_ptr->second;
+                                    auto writeState_ptr = _OpCache_with_parameter_env_retract_gear_skip.find(readState);
+                                    if(writeState_ptr != _OpCache_with_parameter_env_retract_gear_skip.end()) {
+                                        LandingGear_R6::_ProjectionWrite_env_retract_gear_skip writeState = writeState_ptr->second;
+                                        copiedState._apply_update_for_env_retract_gear_skip(writeState);
+                                    } else {
+                                        copiedState.env_retract_gear_skip(_tmp_1);
+                                        LandingGear_R6::_ProjectionWrite_env_retract_gear_skip writeState = copiedState._update_for_env_retract_gear_skip();
+                                        _OpCache_with_parameter_env_retract_gear_skip.insert({readState, writeState});
+                                    }
                                 }
                             }
-                        }
-
-                        copiedState.stateAccessedVia = "env_retract_gear_skip";
-                        result.insert(copiedState);
-                        {
-                            std::unique_lock<std::mutex> lock(mutex);
-                            transitions += 1;
-                        }
-                    }
-                } else {
-                    BSet<LandingGear_R6::POSITION> _trid_20 = _trid_20_ptr->second;
-                    for(const LandingGear_R6::POSITION& param : _trid_20) {
-                        LandingGear_R6::POSITION _tmp_1 = param;
-
-                        LandingGear_R6 copiedState = state._copy();
-                        LandingGear_R6::_ProjectionRead_env_retract_gear_skip readState = state._projected_state_for_env_retract_gear_skip();
-
-                        auto _OpCache_with_parameter_env_retract_gear_skip_ptr = _OpCache_env_retract_gear_skip.find(param);
-                        if(_OpCache_with_parameter_env_retract_gear_skip_ptr == _OpCache_env_retract_gear_skip.end()) {
+                            copiedState.stateAccessedVia = "env_retract_gear_skip";
+                            result.insert(copiedState);
                             {
-                                std::unique_lock<std::mutex> _ProjectionRead_env_retract_gear_skip_lock(_ProjectionRead_env_retract_gear_skip_mutex);
-                                copiedState.env_retract_gear_skip(_tmp_1);
-                                LandingGear_R6::_ProjectionWrite_env_retract_gear_skip writeState = copiedState._update_for_env_retract_gear_skip();
-                                std::unordered_map<LandingGear_R6::_ProjectionRead_env_retract_gear_skip, LandingGear_R6::_ProjectionWrite_env_retract_gear_skip, LandingGear_R6::_ProjectionRead_env_retract_gear_skip::Hash, LandingGear_R6::_ProjectionRead_env_retract_gear_skip::HashEqual> _OpCache_with_parameter_env_retract_gear_skip = std::unordered_map<LandingGear_R6::_ProjectionRead_env_retract_gear_skip, LandingGear_R6::_ProjectionWrite_env_retract_gear_skip, LandingGear_R6::_ProjectionRead_env_retract_gear_skip::Hash, LandingGear_R6::_ProjectionRead_env_retract_gear_skip::HashEqual>();
-                                _OpCache_with_parameter_env_retract_gear_skip.insert({readState, writeState});
-                                _OpCache_env_retract_gear_skip.insert({param, _OpCache_with_parameter_env_retract_gear_skip});
+                                std::unique_lock<std::mutex> lock(mutex);
+                                transitions += 1;
                             }
-                        } else {
+                        }
+                    } else {
+                        BSet<LandingGear_R6::POSITION> _trid_20 = _trid_20_ptr->second;
+                        for(const LandingGear_R6::POSITION& param : _trid_20) {
+                            LandingGear_R6::POSITION _tmp_1 = param;
+
+                            LandingGear_R6 copiedState = state._copy();
+                            LandingGear_R6::_ProjectionRead_env_retract_gear_skip readState = state._projected_state_for_env_retract_gear_skip();
                             {
                                 std::unique_lock<std::mutex> _ProjectionRead_env_retract_gear_skip_lock(_ProjectionRead_env_retract_gear_skip_mutex);
-                                std::unordered_map<LandingGear_R6::_ProjectionRead_env_retract_gear_skip, LandingGear_R6::_ProjectionWrite_env_retract_gear_skip, LandingGear_R6::_ProjectionRead_env_retract_gear_skip::Hash, LandingGear_R6::_ProjectionRead_env_retract_gear_skip::HashEqual> _OpCache_with_parameter_env_retract_gear_skip = _OpCache_with_parameter_env_retract_gear_skip_ptr->second;
-                                auto writeState_ptr = _OpCache_with_parameter_env_retract_gear_skip.find(readState);
-                                if(writeState_ptr != _OpCache_with_parameter_env_retract_gear_skip.end()) {
-                                    LandingGear_R6::_ProjectionWrite_env_retract_gear_skip writeState = writeState_ptr->second;
-                                    copiedState._apply_update_for_env_retract_gear_skip(writeState);
-                                } else {
+                                auto _OpCache_with_parameter_env_retract_gear_skip_ptr = _OpCache_env_retract_gear_skip.find(param);
+                                if(_OpCache_with_parameter_env_retract_gear_skip_ptr == _OpCache_env_retract_gear_skip.end()) {
                                     copiedState.env_retract_gear_skip(_tmp_1);
                                     LandingGear_R6::_ProjectionWrite_env_retract_gear_skip writeState = copiedState._update_for_env_retract_gear_skip();
+                                    std::unordered_map<LandingGear_R6::_ProjectionRead_env_retract_gear_skip, LandingGear_R6::_ProjectionWrite_env_retract_gear_skip, LandingGear_R6::_ProjectionRead_env_retract_gear_skip::Hash, LandingGear_R6::_ProjectionRead_env_retract_gear_skip::HashEqual> _OpCache_with_parameter_env_retract_gear_skip = std::unordered_map<LandingGear_R6::_ProjectionRead_env_retract_gear_skip, LandingGear_R6::_ProjectionWrite_env_retract_gear_skip, LandingGear_R6::_ProjectionRead_env_retract_gear_skip::Hash, LandingGear_R6::_ProjectionRead_env_retract_gear_skip::HashEqual>();
                                     _OpCache_with_parameter_env_retract_gear_skip.insert({readState, writeState});
+                                    _OpCache_env_retract_gear_skip.insert({param, _OpCache_with_parameter_env_retract_gear_skip});
+                                } else {
+                                    std::unordered_map<LandingGear_R6::_ProjectionRead_env_retract_gear_skip, LandingGear_R6::_ProjectionWrite_env_retract_gear_skip, LandingGear_R6::_ProjectionRead_env_retract_gear_skip::Hash, LandingGear_R6::_ProjectionRead_env_retract_gear_skip::HashEqual> _OpCache_with_parameter_env_retract_gear_skip = _OpCache_with_parameter_env_retract_gear_skip_ptr->second;
+                                    auto writeState_ptr = _OpCache_with_parameter_env_retract_gear_skip.find(readState);
+                                    if(writeState_ptr != _OpCache_with_parameter_env_retract_gear_skip.end()) {
+                                        LandingGear_R6::_ProjectionWrite_env_retract_gear_skip writeState = writeState_ptr->second;
+                                        copiedState._apply_update_for_env_retract_gear_skip(writeState);
+                                    } else {
+                                        copiedState.env_retract_gear_skip(_tmp_1);
+                                        LandingGear_R6::_ProjectionWrite_env_retract_gear_skip writeState = copiedState._update_for_env_retract_gear_skip();
+                                        _OpCache_with_parameter_env_retract_gear_skip.insert({readState, writeState});
+                                    }
                                 }
                             }
-                        }
-
-                        copiedState.stateAccessedVia = "env_retract_gear_skip";
-                        result.insert(copiedState);
-                        {
-                            std::unique_lock<std::mutex> lock(mutex);
-                            transitions += 1;
+                            copiedState.stateAccessedVia = "env_retract_gear_skip";
+                            result.insert(copiedState);
+                            {
+                                std::unique_lock<std::mutex> lock(mutex);
+                                transitions += 1;
+                            }
                         }
                     }
                 }
                 LandingGear_R6::_ProjectionRead__tr_env_retract_gear_last read__tr_env_retract_gear_last_state = state._projected_state_for__tr_env_retract_gear_last();
-                auto _trid_21_ptr = _OpCache_tr_env_retract_gear_last.find(read__tr_env_retract_gear_last_state);
-                if(_trid_21_ptr == _OpCache_tr_env_retract_gear_last.end()) {
-                    BSet<LandingGear_R6::POSITION> _trid_21 = state._tr_env_retract_gear_last();
-                    {
-                        std::unique_lock<std::mutex> _ProjectionRead__tr_env_retract_gear_last_lock(_ProjectionRead__tr_env_retract_gear_last_mutex);
+                {
+                    std::unique_lock<std::mutex> _ProjectionRead__tr_env_retract_gear_last_lock(_ProjectionRead__tr_env_retract_gear_last_mutex);
+                    auto _trid_21_ptr = _OpCache_tr_env_retract_gear_last.find(read__tr_env_retract_gear_last_state);
+                    if(_trid_21_ptr == _OpCache_tr_env_retract_gear_last.end()) {
+                        BSet<LandingGear_R6::POSITION> _trid_21 = state._tr_env_retract_gear_last();
                         _OpCache_tr_env_retract_gear_last.insert({read__tr_env_retract_gear_last_state, _trid_21});
-                    }
-                    for(const LandingGear_R6::POSITION& param : _trid_21) {
-                        LandingGear_R6::POSITION _tmp_1 = param;
+                        for(const LandingGear_R6::POSITION& param : _trid_21) {
+                            LandingGear_R6::POSITION _tmp_1 = param;
 
-                        LandingGear_R6 copiedState = state._copy();
-                        LandingGear_R6::_ProjectionRead_env_retract_gear_last readState = state._projected_state_for_env_retract_gear_last();
-
-                        auto _OpCache_with_parameter_env_retract_gear_last_ptr = _OpCache_env_retract_gear_last.find(param);
-                        if(_OpCache_with_parameter_env_retract_gear_last_ptr == _OpCache_env_retract_gear_last.end()) {
+                            LandingGear_R6 copiedState = state._copy();
+                            LandingGear_R6::_ProjectionRead_env_retract_gear_last readState = state._projected_state_for_env_retract_gear_last();
                             {
                                 std::unique_lock<std::mutex> _ProjectionRead_env_retract_gear_last_lock(_ProjectionRead_env_retract_gear_last_mutex);
-                                copiedState.env_retract_gear_last(_tmp_1);
-                                LandingGear_R6::_ProjectionWrite_env_retract_gear_last writeState = copiedState._update_for_env_retract_gear_last();
-                                std::unordered_map<LandingGear_R6::_ProjectionRead_env_retract_gear_last, LandingGear_R6::_ProjectionWrite_env_retract_gear_last, LandingGear_R6::_ProjectionRead_env_retract_gear_last::Hash, LandingGear_R6::_ProjectionRead_env_retract_gear_last::HashEqual> _OpCache_with_parameter_env_retract_gear_last = std::unordered_map<LandingGear_R6::_ProjectionRead_env_retract_gear_last, LandingGear_R6::_ProjectionWrite_env_retract_gear_last, LandingGear_R6::_ProjectionRead_env_retract_gear_last::Hash, LandingGear_R6::_ProjectionRead_env_retract_gear_last::HashEqual>();
-                                _OpCache_with_parameter_env_retract_gear_last.insert({readState, writeState});
-                                _OpCache_env_retract_gear_last.insert({param, _OpCache_with_parameter_env_retract_gear_last});
-                            }
-                        } else {
-                            {
-                                std::unique_lock<std::mutex> _ProjectionRead_env_retract_gear_last_lock(_ProjectionRead_env_retract_gear_last_mutex);
-                                std::unordered_map<LandingGear_R6::_ProjectionRead_env_retract_gear_last, LandingGear_R6::_ProjectionWrite_env_retract_gear_last, LandingGear_R6::_ProjectionRead_env_retract_gear_last::Hash, LandingGear_R6::_ProjectionRead_env_retract_gear_last::HashEqual> _OpCache_with_parameter_env_retract_gear_last = _OpCache_with_parameter_env_retract_gear_last_ptr->second;
-                                auto writeState_ptr = _OpCache_with_parameter_env_retract_gear_last.find(readState);
-                                if(writeState_ptr != _OpCache_with_parameter_env_retract_gear_last.end()) {
-                                    LandingGear_R6::_ProjectionWrite_env_retract_gear_last writeState = writeState_ptr->second;
-                                    copiedState._apply_update_for_env_retract_gear_last(writeState);
-                                } else {
+                                auto _OpCache_with_parameter_env_retract_gear_last_ptr = _OpCache_env_retract_gear_last.find(param);
+                                if(_OpCache_with_parameter_env_retract_gear_last_ptr == _OpCache_env_retract_gear_last.end()) {
                                     copiedState.env_retract_gear_last(_tmp_1);
                                     LandingGear_R6::_ProjectionWrite_env_retract_gear_last writeState = copiedState._update_for_env_retract_gear_last();
+                                    std::unordered_map<LandingGear_R6::_ProjectionRead_env_retract_gear_last, LandingGear_R6::_ProjectionWrite_env_retract_gear_last, LandingGear_R6::_ProjectionRead_env_retract_gear_last::Hash, LandingGear_R6::_ProjectionRead_env_retract_gear_last::HashEqual> _OpCache_with_parameter_env_retract_gear_last = std::unordered_map<LandingGear_R6::_ProjectionRead_env_retract_gear_last, LandingGear_R6::_ProjectionWrite_env_retract_gear_last, LandingGear_R6::_ProjectionRead_env_retract_gear_last::Hash, LandingGear_R6::_ProjectionRead_env_retract_gear_last::HashEqual>();
                                     _OpCache_with_parameter_env_retract_gear_last.insert({readState, writeState});
+                                    _OpCache_env_retract_gear_last.insert({param, _OpCache_with_parameter_env_retract_gear_last});
+                                } else {
+                                    std::unordered_map<LandingGear_R6::_ProjectionRead_env_retract_gear_last, LandingGear_R6::_ProjectionWrite_env_retract_gear_last, LandingGear_R6::_ProjectionRead_env_retract_gear_last::Hash, LandingGear_R6::_ProjectionRead_env_retract_gear_last::HashEqual> _OpCache_with_parameter_env_retract_gear_last = _OpCache_with_parameter_env_retract_gear_last_ptr->second;
+                                    auto writeState_ptr = _OpCache_with_parameter_env_retract_gear_last.find(readState);
+                                    if(writeState_ptr != _OpCache_with_parameter_env_retract_gear_last.end()) {
+                                        LandingGear_R6::_ProjectionWrite_env_retract_gear_last writeState = writeState_ptr->second;
+                                        copiedState._apply_update_for_env_retract_gear_last(writeState);
+                                    } else {
+                                        copiedState.env_retract_gear_last(_tmp_1);
+                                        LandingGear_R6::_ProjectionWrite_env_retract_gear_last writeState = copiedState._update_for_env_retract_gear_last();
+                                        _OpCache_with_parameter_env_retract_gear_last.insert({readState, writeState});
+                                    }
                                 }
                             }
-                        }
-
-                        copiedState.stateAccessedVia = "env_retract_gear_last";
-                        result.insert(copiedState);
-                        {
-                            std::unique_lock<std::mutex> lock(mutex);
-                            transitions += 1;
-                        }
-                    }
-                } else {
-                    BSet<LandingGear_R6::POSITION> _trid_21 = _trid_21_ptr->second;
-                    for(const LandingGear_R6::POSITION& param : _trid_21) {
-                        LandingGear_R6::POSITION _tmp_1 = param;
-
-                        LandingGear_R6 copiedState = state._copy();
-                        LandingGear_R6::_ProjectionRead_env_retract_gear_last readState = state._projected_state_for_env_retract_gear_last();
-
-                        auto _OpCache_with_parameter_env_retract_gear_last_ptr = _OpCache_env_retract_gear_last.find(param);
-                        if(_OpCache_with_parameter_env_retract_gear_last_ptr == _OpCache_env_retract_gear_last.end()) {
+                            copiedState.stateAccessedVia = "env_retract_gear_last";
+                            result.insert(copiedState);
                             {
-                                std::unique_lock<std::mutex> _ProjectionRead_env_retract_gear_last_lock(_ProjectionRead_env_retract_gear_last_mutex);
-                                copiedState.env_retract_gear_last(_tmp_1);
-                                LandingGear_R6::_ProjectionWrite_env_retract_gear_last writeState = copiedState._update_for_env_retract_gear_last();
-                                std::unordered_map<LandingGear_R6::_ProjectionRead_env_retract_gear_last, LandingGear_R6::_ProjectionWrite_env_retract_gear_last, LandingGear_R6::_ProjectionRead_env_retract_gear_last::Hash, LandingGear_R6::_ProjectionRead_env_retract_gear_last::HashEqual> _OpCache_with_parameter_env_retract_gear_last = std::unordered_map<LandingGear_R6::_ProjectionRead_env_retract_gear_last, LandingGear_R6::_ProjectionWrite_env_retract_gear_last, LandingGear_R6::_ProjectionRead_env_retract_gear_last::Hash, LandingGear_R6::_ProjectionRead_env_retract_gear_last::HashEqual>();
-                                _OpCache_with_parameter_env_retract_gear_last.insert({readState, writeState});
-                                _OpCache_env_retract_gear_last.insert({param, _OpCache_with_parameter_env_retract_gear_last});
+                                std::unique_lock<std::mutex> lock(mutex);
+                                transitions += 1;
                             }
-                        } else {
+                        }
+                    } else {
+                        BSet<LandingGear_R6::POSITION> _trid_21 = _trid_21_ptr->second;
+                        for(const LandingGear_R6::POSITION& param : _trid_21) {
+                            LandingGear_R6::POSITION _tmp_1 = param;
+
+                            LandingGear_R6 copiedState = state._copy();
+                            LandingGear_R6::_ProjectionRead_env_retract_gear_last readState = state._projected_state_for_env_retract_gear_last();
                             {
                                 std::unique_lock<std::mutex> _ProjectionRead_env_retract_gear_last_lock(_ProjectionRead_env_retract_gear_last_mutex);
-                                std::unordered_map<LandingGear_R6::_ProjectionRead_env_retract_gear_last, LandingGear_R6::_ProjectionWrite_env_retract_gear_last, LandingGear_R6::_ProjectionRead_env_retract_gear_last::Hash, LandingGear_R6::_ProjectionRead_env_retract_gear_last::HashEqual> _OpCache_with_parameter_env_retract_gear_last = _OpCache_with_parameter_env_retract_gear_last_ptr->second;
-                                auto writeState_ptr = _OpCache_with_parameter_env_retract_gear_last.find(readState);
-                                if(writeState_ptr != _OpCache_with_parameter_env_retract_gear_last.end()) {
-                                    LandingGear_R6::_ProjectionWrite_env_retract_gear_last writeState = writeState_ptr->second;
-                                    copiedState._apply_update_for_env_retract_gear_last(writeState);
-                                } else {
+                                auto _OpCache_with_parameter_env_retract_gear_last_ptr = _OpCache_env_retract_gear_last.find(param);
+                                if(_OpCache_with_parameter_env_retract_gear_last_ptr == _OpCache_env_retract_gear_last.end()) {
                                     copiedState.env_retract_gear_last(_tmp_1);
                                     LandingGear_R6::_ProjectionWrite_env_retract_gear_last writeState = copiedState._update_for_env_retract_gear_last();
+                                    std::unordered_map<LandingGear_R6::_ProjectionRead_env_retract_gear_last, LandingGear_R6::_ProjectionWrite_env_retract_gear_last, LandingGear_R6::_ProjectionRead_env_retract_gear_last::Hash, LandingGear_R6::_ProjectionRead_env_retract_gear_last::HashEqual> _OpCache_with_parameter_env_retract_gear_last = std::unordered_map<LandingGear_R6::_ProjectionRead_env_retract_gear_last, LandingGear_R6::_ProjectionWrite_env_retract_gear_last, LandingGear_R6::_ProjectionRead_env_retract_gear_last::Hash, LandingGear_R6::_ProjectionRead_env_retract_gear_last::HashEqual>();
                                     _OpCache_with_parameter_env_retract_gear_last.insert({readState, writeState});
+                                    _OpCache_env_retract_gear_last.insert({param, _OpCache_with_parameter_env_retract_gear_last});
+                                } else {
+                                    std::unordered_map<LandingGear_R6::_ProjectionRead_env_retract_gear_last, LandingGear_R6::_ProjectionWrite_env_retract_gear_last, LandingGear_R6::_ProjectionRead_env_retract_gear_last::Hash, LandingGear_R6::_ProjectionRead_env_retract_gear_last::HashEqual> _OpCache_with_parameter_env_retract_gear_last = _OpCache_with_parameter_env_retract_gear_last_ptr->second;
+                                    auto writeState_ptr = _OpCache_with_parameter_env_retract_gear_last.find(readState);
+                                    if(writeState_ptr != _OpCache_with_parameter_env_retract_gear_last.end()) {
+                                        LandingGear_R6::_ProjectionWrite_env_retract_gear_last writeState = writeState_ptr->second;
+                                        copiedState._apply_update_for_env_retract_gear_last(writeState);
+                                    } else {
+                                        copiedState.env_retract_gear_last(_tmp_1);
+                                        LandingGear_R6::_ProjectionWrite_env_retract_gear_last writeState = copiedState._update_for_env_retract_gear_last();
+                                        _OpCache_with_parameter_env_retract_gear_last.insert({readState, writeState});
+                                    }
                                 }
                             }
-                        }
-
-                        copiedState.stateAccessedVia = "env_retract_gear_last";
-                        result.insert(copiedState);
-                        {
-                            std::unique_lock<std::mutex> lock(mutex);
-                            transitions += 1;
+                            copiedState.stateAccessedVia = "env_retract_gear_last";
+                            result.insert(copiedState);
+                            {
+                                std::unique_lock<std::mutex> lock(mutex);
+                                transitions += 1;
+                            }
                         }
                     }
                 }
                 LandingGear_R6::_ProjectionRead__tr_env_start_extending read__tr_env_start_extending_state = state._projected_state_for__tr_env_start_extending();
-                auto _trid_22_ptr = _OpCache_tr_env_start_extending.find(read__tr_env_start_extending_state);
-                if(_trid_22_ptr == _OpCache_tr_env_start_extending.end()) {
-                    BSet<LandingGear_R6::POSITION> _trid_22 = state._tr_env_start_extending();
-                    {
-                        std::unique_lock<std::mutex> _ProjectionRead__tr_env_start_extending_lock(_ProjectionRead__tr_env_start_extending_mutex);
+                {
+                    std::unique_lock<std::mutex> _ProjectionRead__tr_env_start_extending_lock(_ProjectionRead__tr_env_start_extending_mutex);
+                    auto _trid_22_ptr = _OpCache_tr_env_start_extending.find(read__tr_env_start_extending_state);
+                    if(_trid_22_ptr == _OpCache_tr_env_start_extending.end()) {
+                        BSet<LandingGear_R6::POSITION> _trid_22 = state._tr_env_start_extending();
                         _OpCache_tr_env_start_extending.insert({read__tr_env_start_extending_state, _trid_22});
-                    }
-                    for(const LandingGear_R6::POSITION& param : _trid_22) {
-                        LandingGear_R6::POSITION _tmp_1 = param;
+                        for(const LandingGear_R6::POSITION& param : _trid_22) {
+                            LandingGear_R6::POSITION _tmp_1 = param;
 
-                        LandingGear_R6 copiedState = state._copy();
-                        LandingGear_R6::_ProjectionRead_env_start_extending readState = state._projected_state_for_env_start_extending();
-
-                        auto _OpCache_with_parameter_env_start_extending_ptr = _OpCache_env_start_extending.find(param);
-                        if(_OpCache_with_parameter_env_start_extending_ptr == _OpCache_env_start_extending.end()) {
+                            LandingGear_R6 copiedState = state._copy();
+                            LandingGear_R6::_ProjectionRead_env_start_extending readState = state._projected_state_for_env_start_extending();
                             {
                                 std::unique_lock<std::mutex> _ProjectionRead_env_start_extending_lock(_ProjectionRead_env_start_extending_mutex);
-                                copiedState.env_start_extending(_tmp_1);
-                                LandingGear_R6::_ProjectionWrite_env_start_extending writeState = copiedState._update_for_env_start_extending();
-                                std::unordered_map<LandingGear_R6::_ProjectionRead_env_start_extending, LandingGear_R6::_ProjectionWrite_env_start_extending, LandingGear_R6::_ProjectionRead_env_start_extending::Hash, LandingGear_R6::_ProjectionRead_env_start_extending::HashEqual> _OpCache_with_parameter_env_start_extending = std::unordered_map<LandingGear_R6::_ProjectionRead_env_start_extending, LandingGear_R6::_ProjectionWrite_env_start_extending, LandingGear_R6::_ProjectionRead_env_start_extending::Hash, LandingGear_R6::_ProjectionRead_env_start_extending::HashEqual>();
-                                _OpCache_with_parameter_env_start_extending.insert({readState, writeState});
-                                _OpCache_env_start_extending.insert({param, _OpCache_with_parameter_env_start_extending});
-                            }
-                        } else {
-                            {
-                                std::unique_lock<std::mutex> _ProjectionRead_env_start_extending_lock(_ProjectionRead_env_start_extending_mutex);
-                                std::unordered_map<LandingGear_R6::_ProjectionRead_env_start_extending, LandingGear_R6::_ProjectionWrite_env_start_extending, LandingGear_R6::_ProjectionRead_env_start_extending::Hash, LandingGear_R6::_ProjectionRead_env_start_extending::HashEqual> _OpCache_with_parameter_env_start_extending = _OpCache_with_parameter_env_start_extending_ptr->second;
-                                auto writeState_ptr = _OpCache_with_parameter_env_start_extending.find(readState);
-                                if(writeState_ptr != _OpCache_with_parameter_env_start_extending.end()) {
-                                    LandingGear_R6::_ProjectionWrite_env_start_extending writeState = writeState_ptr->second;
-                                    copiedState._apply_update_for_env_start_extending(writeState);
-                                } else {
+                                auto _OpCache_with_parameter_env_start_extending_ptr = _OpCache_env_start_extending.find(param);
+                                if(_OpCache_with_parameter_env_start_extending_ptr == _OpCache_env_start_extending.end()) {
                                     copiedState.env_start_extending(_tmp_1);
                                     LandingGear_R6::_ProjectionWrite_env_start_extending writeState = copiedState._update_for_env_start_extending();
+                                    std::unordered_map<LandingGear_R6::_ProjectionRead_env_start_extending, LandingGear_R6::_ProjectionWrite_env_start_extending, LandingGear_R6::_ProjectionRead_env_start_extending::Hash, LandingGear_R6::_ProjectionRead_env_start_extending::HashEqual> _OpCache_with_parameter_env_start_extending = std::unordered_map<LandingGear_R6::_ProjectionRead_env_start_extending, LandingGear_R6::_ProjectionWrite_env_start_extending, LandingGear_R6::_ProjectionRead_env_start_extending::Hash, LandingGear_R6::_ProjectionRead_env_start_extending::HashEqual>();
                                     _OpCache_with_parameter_env_start_extending.insert({readState, writeState});
+                                    _OpCache_env_start_extending.insert({param, _OpCache_with_parameter_env_start_extending});
+                                } else {
+                                    std::unordered_map<LandingGear_R6::_ProjectionRead_env_start_extending, LandingGear_R6::_ProjectionWrite_env_start_extending, LandingGear_R6::_ProjectionRead_env_start_extending::Hash, LandingGear_R6::_ProjectionRead_env_start_extending::HashEqual> _OpCache_with_parameter_env_start_extending = _OpCache_with_parameter_env_start_extending_ptr->second;
+                                    auto writeState_ptr = _OpCache_with_parameter_env_start_extending.find(readState);
+                                    if(writeState_ptr != _OpCache_with_parameter_env_start_extending.end()) {
+                                        LandingGear_R6::_ProjectionWrite_env_start_extending writeState = writeState_ptr->second;
+                                        copiedState._apply_update_for_env_start_extending(writeState);
+                                    } else {
+                                        copiedState.env_start_extending(_tmp_1);
+                                        LandingGear_R6::_ProjectionWrite_env_start_extending writeState = copiedState._update_for_env_start_extending();
+                                        _OpCache_with_parameter_env_start_extending.insert({readState, writeState});
+                                    }
                                 }
                             }
-                        }
-
-                        copiedState.stateAccessedVia = "env_start_extending";
-                        result.insert(copiedState);
-                        {
-                            std::unique_lock<std::mutex> lock(mutex);
-                            transitions += 1;
-                        }
-                    }
-                } else {
-                    BSet<LandingGear_R6::POSITION> _trid_22 = _trid_22_ptr->second;
-                    for(const LandingGear_R6::POSITION& param : _trid_22) {
-                        LandingGear_R6::POSITION _tmp_1 = param;
-
-                        LandingGear_R6 copiedState = state._copy();
-                        LandingGear_R6::_ProjectionRead_env_start_extending readState = state._projected_state_for_env_start_extending();
-
-                        auto _OpCache_with_parameter_env_start_extending_ptr = _OpCache_env_start_extending.find(param);
-                        if(_OpCache_with_parameter_env_start_extending_ptr == _OpCache_env_start_extending.end()) {
+                            copiedState.stateAccessedVia = "env_start_extending";
+                            result.insert(copiedState);
                             {
-                                std::unique_lock<std::mutex> _ProjectionRead_env_start_extending_lock(_ProjectionRead_env_start_extending_mutex);
-                                copiedState.env_start_extending(_tmp_1);
-                                LandingGear_R6::_ProjectionWrite_env_start_extending writeState = copiedState._update_for_env_start_extending();
-                                std::unordered_map<LandingGear_R6::_ProjectionRead_env_start_extending, LandingGear_R6::_ProjectionWrite_env_start_extending, LandingGear_R6::_ProjectionRead_env_start_extending::Hash, LandingGear_R6::_ProjectionRead_env_start_extending::HashEqual> _OpCache_with_parameter_env_start_extending = std::unordered_map<LandingGear_R6::_ProjectionRead_env_start_extending, LandingGear_R6::_ProjectionWrite_env_start_extending, LandingGear_R6::_ProjectionRead_env_start_extending::Hash, LandingGear_R6::_ProjectionRead_env_start_extending::HashEqual>();
-                                _OpCache_with_parameter_env_start_extending.insert({readState, writeState});
-                                _OpCache_env_start_extending.insert({param, _OpCache_with_parameter_env_start_extending});
+                                std::unique_lock<std::mutex> lock(mutex);
+                                transitions += 1;
                             }
-                        } else {
+                        }
+                    } else {
+                        BSet<LandingGear_R6::POSITION> _trid_22 = _trid_22_ptr->second;
+                        for(const LandingGear_R6::POSITION& param : _trid_22) {
+                            LandingGear_R6::POSITION _tmp_1 = param;
+
+                            LandingGear_R6 copiedState = state._copy();
+                            LandingGear_R6::_ProjectionRead_env_start_extending readState = state._projected_state_for_env_start_extending();
                             {
                                 std::unique_lock<std::mutex> _ProjectionRead_env_start_extending_lock(_ProjectionRead_env_start_extending_mutex);
-                                std::unordered_map<LandingGear_R6::_ProjectionRead_env_start_extending, LandingGear_R6::_ProjectionWrite_env_start_extending, LandingGear_R6::_ProjectionRead_env_start_extending::Hash, LandingGear_R6::_ProjectionRead_env_start_extending::HashEqual> _OpCache_with_parameter_env_start_extending = _OpCache_with_parameter_env_start_extending_ptr->second;
-                                auto writeState_ptr = _OpCache_with_parameter_env_start_extending.find(readState);
-                                if(writeState_ptr != _OpCache_with_parameter_env_start_extending.end()) {
-                                    LandingGear_R6::_ProjectionWrite_env_start_extending writeState = writeState_ptr->second;
-                                    copiedState._apply_update_for_env_start_extending(writeState);
-                                } else {
+                                auto _OpCache_with_parameter_env_start_extending_ptr = _OpCache_env_start_extending.find(param);
+                                if(_OpCache_with_parameter_env_start_extending_ptr == _OpCache_env_start_extending.end()) {
                                     copiedState.env_start_extending(_tmp_1);
                                     LandingGear_R6::_ProjectionWrite_env_start_extending writeState = copiedState._update_for_env_start_extending();
+                                    std::unordered_map<LandingGear_R6::_ProjectionRead_env_start_extending, LandingGear_R6::_ProjectionWrite_env_start_extending, LandingGear_R6::_ProjectionRead_env_start_extending::Hash, LandingGear_R6::_ProjectionRead_env_start_extending::HashEqual> _OpCache_with_parameter_env_start_extending = std::unordered_map<LandingGear_R6::_ProjectionRead_env_start_extending, LandingGear_R6::_ProjectionWrite_env_start_extending, LandingGear_R6::_ProjectionRead_env_start_extending::Hash, LandingGear_R6::_ProjectionRead_env_start_extending::HashEqual>();
                                     _OpCache_with_parameter_env_start_extending.insert({readState, writeState});
+                                    _OpCache_env_start_extending.insert({param, _OpCache_with_parameter_env_start_extending});
+                                } else {
+                                    std::unordered_map<LandingGear_R6::_ProjectionRead_env_start_extending, LandingGear_R6::_ProjectionWrite_env_start_extending, LandingGear_R6::_ProjectionRead_env_start_extending::Hash, LandingGear_R6::_ProjectionRead_env_start_extending::HashEqual> _OpCache_with_parameter_env_start_extending = _OpCache_with_parameter_env_start_extending_ptr->second;
+                                    auto writeState_ptr = _OpCache_with_parameter_env_start_extending.find(readState);
+                                    if(writeState_ptr != _OpCache_with_parameter_env_start_extending.end()) {
+                                        LandingGear_R6::_ProjectionWrite_env_start_extending writeState = writeState_ptr->second;
+                                        copiedState._apply_update_for_env_start_extending(writeState);
+                                    } else {
+                                        copiedState.env_start_extending(_tmp_1);
+                                        LandingGear_R6::_ProjectionWrite_env_start_extending writeState = copiedState._update_for_env_start_extending();
+                                        _OpCache_with_parameter_env_start_extending.insert({readState, writeState});
+                                    }
                                 }
                             }
-                        }
-
-                        copiedState.stateAccessedVia = "env_start_extending";
-                        result.insert(copiedState);
-                        {
-                            std::unique_lock<std::mutex> lock(mutex);
-                            transitions += 1;
+                            copiedState.stateAccessedVia = "env_start_extending";
+                            result.insert(copiedState);
+                            {
+                                std::unique_lock<std::mutex> lock(mutex);
+                                transitions += 1;
+                            }
                         }
                     }
                 }
                 LandingGear_R6::_ProjectionRead__tr_env_extend_gear_last read__tr_env_extend_gear_last_state = state._projected_state_for__tr_env_extend_gear_last();
-                auto _trid_23_ptr = _OpCache_tr_env_extend_gear_last.find(read__tr_env_extend_gear_last_state);
-                if(_trid_23_ptr == _OpCache_tr_env_extend_gear_last.end()) {
-                    BSet<LandingGear_R6::POSITION> _trid_23 = state._tr_env_extend_gear_last();
-                    {
-                        std::unique_lock<std::mutex> _ProjectionRead__tr_env_extend_gear_last_lock(_ProjectionRead__tr_env_extend_gear_last_mutex);
+                {
+                    std::unique_lock<std::mutex> _ProjectionRead__tr_env_extend_gear_last_lock(_ProjectionRead__tr_env_extend_gear_last_mutex);
+                    auto _trid_23_ptr = _OpCache_tr_env_extend_gear_last.find(read__tr_env_extend_gear_last_state);
+                    if(_trid_23_ptr == _OpCache_tr_env_extend_gear_last.end()) {
+                        BSet<LandingGear_R6::POSITION> _trid_23 = state._tr_env_extend_gear_last();
                         _OpCache_tr_env_extend_gear_last.insert({read__tr_env_extend_gear_last_state, _trid_23});
-                    }
-                    for(const LandingGear_R6::POSITION& param : _trid_23) {
-                        LandingGear_R6::POSITION _tmp_1 = param;
+                        for(const LandingGear_R6::POSITION& param : _trid_23) {
+                            LandingGear_R6::POSITION _tmp_1 = param;
 
-                        LandingGear_R6 copiedState = state._copy();
-                        LandingGear_R6::_ProjectionRead_env_extend_gear_last readState = state._projected_state_for_env_extend_gear_last();
-
-                        auto _OpCache_with_parameter_env_extend_gear_last_ptr = _OpCache_env_extend_gear_last.find(param);
-                        if(_OpCache_with_parameter_env_extend_gear_last_ptr == _OpCache_env_extend_gear_last.end()) {
+                            LandingGear_R6 copiedState = state._copy();
+                            LandingGear_R6::_ProjectionRead_env_extend_gear_last readState = state._projected_state_for_env_extend_gear_last();
                             {
                                 std::unique_lock<std::mutex> _ProjectionRead_env_extend_gear_last_lock(_ProjectionRead_env_extend_gear_last_mutex);
-                                copiedState.env_extend_gear_last(_tmp_1);
-                                LandingGear_R6::_ProjectionWrite_env_extend_gear_last writeState = copiedState._update_for_env_extend_gear_last();
-                                std::unordered_map<LandingGear_R6::_ProjectionRead_env_extend_gear_last, LandingGear_R6::_ProjectionWrite_env_extend_gear_last, LandingGear_R6::_ProjectionRead_env_extend_gear_last::Hash, LandingGear_R6::_ProjectionRead_env_extend_gear_last::HashEqual> _OpCache_with_parameter_env_extend_gear_last = std::unordered_map<LandingGear_R6::_ProjectionRead_env_extend_gear_last, LandingGear_R6::_ProjectionWrite_env_extend_gear_last, LandingGear_R6::_ProjectionRead_env_extend_gear_last::Hash, LandingGear_R6::_ProjectionRead_env_extend_gear_last::HashEqual>();
-                                _OpCache_with_parameter_env_extend_gear_last.insert({readState, writeState});
-                                _OpCache_env_extend_gear_last.insert({param, _OpCache_with_parameter_env_extend_gear_last});
-                            }
-                        } else {
-                            {
-                                std::unique_lock<std::mutex> _ProjectionRead_env_extend_gear_last_lock(_ProjectionRead_env_extend_gear_last_mutex);
-                                std::unordered_map<LandingGear_R6::_ProjectionRead_env_extend_gear_last, LandingGear_R6::_ProjectionWrite_env_extend_gear_last, LandingGear_R6::_ProjectionRead_env_extend_gear_last::Hash, LandingGear_R6::_ProjectionRead_env_extend_gear_last::HashEqual> _OpCache_with_parameter_env_extend_gear_last = _OpCache_with_parameter_env_extend_gear_last_ptr->second;
-                                auto writeState_ptr = _OpCache_with_parameter_env_extend_gear_last.find(readState);
-                                if(writeState_ptr != _OpCache_with_parameter_env_extend_gear_last.end()) {
-                                    LandingGear_R6::_ProjectionWrite_env_extend_gear_last writeState = writeState_ptr->second;
-                                    copiedState._apply_update_for_env_extend_gear_last(writeState);
-                                } else {
+                                auto _OpCache_with_parameter_env_extend_gear_last_ptr = _OpCache_env_extend_gear_last.find(param);
+                                if(_OpCache_with_parameter_env_extend_gear_last_ptr == _OpCache_env_extend_gear_last.end()) {
                                     copiedState.env_extend_gear_last(_tmp_1);
                                     LandingGear_R6::_ProjectionWrite_env_extend_gear_last writeState = copiedState._update_for_env_extend_gear_last();
+                                    std::unordered_map<LandingGear_R6::_ProjectionRead_env_extend_gear_last, LandingGear_R6::_ProjectionWrite_env_extend_gear_last, LandingGear_R6::_ProjectionRead_env_extend_gear_last::Hash, LandingGear_R6::_ProjectionRead_env_extend_gear_last::HashEqual> _OpCache_with_parameter_env_extend_gear_last = std::unordered_map<LandingGear_R6::_ProjectionRead_env_extend_gear_last, LandingGear_R6::_ProjectionWrite_env_extend_gear_last, LandingGear_R6::_ProjectionRead_env_extend_gear_last::Hash, LandingGear_R6::_ProjectionRead_env_extend_gear_last::HashEqual>();
                                     _OpCache_with_parameter_env_extend_gear_last.insert({readState, writeState});
+                                    _OpCache_env_extend_gear_last.insert({param, _OpCache_with_parameter_env_extend_gear_last});
+                                } else {
+                                    std::unordered_map<LandingGear_R6::_ProjectionRead_env_extend_gear_last, LandingGear_R6::_ProjectionWrite_env_extend_gear_last, LandingGear_R6::_ProjectionRead_env_extend_gear_last::Hash, LandingGear_R6::_ProjectionRead_env_extend_gear_last::HashEqual> _OpCache_with_parameter_env_extend_gear_last = _OpCache_with_parameter_env_extend_gear_last_ptr->second;
+                                    auto writeState_ptr = _OpCache_with_parameter_env_extend_gear_last.find(readState);
+                                    if(writeState_ptr != _OpCache_with_parameter_env_extend_gear_last.end()) {
+                                        LandingGear_R6::_ProjectionWrite_env_extend_gear_last writeState = writeState_ptr->second;
+                                        copiedState._apply_update_for_env_extend_gear_last(writeState);
+                                    } else {
+                                        copiedState.env_extend_gear_last(_tmp_1);
+                                        LandingGear_R6::_ProjectionWrite_env_extend_gear_last writeState = copiedState._update_for_env_extend_gear_last();
+                                        _OpCache_with_parameter_env_extend_gear_last.insert({readState, writeState});
+                                    }
                                 }
                             }
-                        }
-
-                        copiedState.stateAccessedVia = "env_extend_gear_last";
-                        result.insert(copiedState);
-                        {
-                            std::unique_lock<std::mutex> lock(mutex);
-                            transitions += 1;
-                        }
-                    }
-                } else {
-                    BSet<LandingGear_R6::POSITION> _trid_23 = _trid_23_ptr->second;
-                    for(const LandingGear_R6::POSITION& param : _trid_23) {
-                        LandingGear_R6::POSITION _tmp_1 = param;
-
-                        LandingGear_R6 copiedState = state._copy();
-                        LandingGear_R6::_ProjectionRead_env_extend_gear_last readState = state._projected_state_for_env_extend_gear_last();
-
-                        auto _OpCache_with_parameter_env_extend_gear_last_ptr = _OpCache_env_extend_gear_last.find(param);
-                        if(_OpCache_with_parameter_env_extend_gear_last_ptr == _OpCache_env_extend_gear_last.end()) {
+                            copiedState.stateAccessedVia = "env_extend_gear_last";
+                            result.insert(copiedState);
                             {
-                                std::unique_lock<std::mutex> _ProjectionRead_env_extend_gear_last_lock(_ProjectionRead_env_extend_gear_last_mutex);
-                                copiedState.env_extend_gear_last(_tmp_1);
-                                LandingGear_R6::_ProjectionWrite_env_extend_gear_last writeState = copiedState._update_for_env_extend_gear_last();
-                                std::unordered_map<LandingGear_R6::_ProjectionRead_env_extend_gear_last, LandingGear_R6::_ProjectionWrite_env_extend_gear_last, LandingGear_R6::_ProjectionRead_env_extend_gear_last::Hash, LandingGear_R6::_ProjectionRead_env_extend_gear_last::HashEqual> _OpCache_with_parameter_env_extend_gear_last = std::unordered_map<LandingGear_R6::_ProjectionRead_env_extend_gear_last, LandingGear_R6::_ProjectionWrite_env_extend_gear_last, LandingGear_R6::_ProjectionRead_env_extend_gear_last::Hash, LandingGear_R6::_ProjectionRead_env_extend_gear_last::HashEqual>();
-                                _OpCache_with_parameter_env_extend_gear_last.insert({readState, writeState});
-                                _OpCache_env_extend_gear_last.insert({param, _OpCache_with_parameter_env_extend_gear_last});
+                                std::unique_lock<std::mutex> lock(mutex);
+                                transitions += 1;
                             }
-                        } else {
+                        }
+                    } else {
+                        BSet<LandingGear_R6::POSITION> _trid_23 = _trid_23_ptr->second;
+                        for(const LandingGear_R6::POSITION& param : _trid_23) {
+                            LandingGear_R6::POSITION _tmp_1 = param;
+
+                            LandingGear_R6 copiedState = state._copy();
+                            LandingGear_R6::_ProjectionRead_env_extend_gear_last readState = state._projected_state_for_env_extend_gear_last();
                             {
                                 std::unique_lock<std::mutex> _ProjectionRead_env_extend_gear_last_lock(_ProjectionRead_env_extend_gear_last_mutex);
-                                std::unordered_map<LandingGear_R6::_ProjectionRead_env_extend_gear_last, LandingGear_R6::_ProjectionWrite_env_extend_gear_last, LandingGear_R6::_ProjectionRead_env_extend_gear_last::Hash, LandingGear_R6::_ProjectionRead_env_extend_gear_last::HashEqual> _OpCache_with_parameter_env_extend_gear_last = _OpCache_with_parameter_env_extend_gear_last_ptr->second;
-                                auto writeState_ptr = _OpCache_with_parameter_env_extend_gear_last.find(readState);
-                                if(writeState_ptr != _OpCache_with_parameter_env_extend_gear_last.end()) {
-                                    LandingGear_R6::_ProjectionWrite_env_extend_gear_last writeState = writeState_ptr->second;
-                                    copiedState._apply_update_for_env_extend_gear_last(writeState);
-                                } else {
+                                auto _OpCache_with_parameter_env_extend_gear_last_ptr = _OpCache_env_extend_gear_last.find(param);
+                                if(_OpCache_with_parameter_env_extend_gear_last_ptr == _OpCache_env_extend_gear_last.end()) {
                                     copiedState.env_extend_gear_last(_tmp_1);
                                     LandingGear_R6::_ProjectionWrite_env_extend_gear_last writeState = copiedState._update_for_env_extend_gear_last();
+                                    std::unordered_map<LandingGear_R6::_ProjectionRead_env_extend_gear_last, LandingGear_R6::_ProjectionWrite_env_extend_gear_last, LandingGear_R6::_ProjectionRead_env_extend_gear_last::Hash, LandingGear_R6::_ProjectionRead_env_extend_gear_last::HashEqual> _OpCache_with_parameter_env_extend_gear_last = std::unordered_map<LandingGear_R6::_ProjectionRead_env_extend_gear_last, LandingGear_R6::_ProjectionWrite_env_extend_gear_last, LandingGear_R6::_ProjectionRead_env_extend_gear_last::Hash, LandingGear_R6::_ProjectionRead_env_extend_gear_last::HashEqual>();
                                     _OpCache_with_parameter_env_extend_gear_last.insert({readState, writeState});
+                                    _OpCache_env_extend_gear_last.insert({param, _OpCache_with_parameter_env_extend_gear_last});
+                                } else {
+                                    std::unordered_map<LandingGear_R6::_ProjectionRead_env_extend_gear_last, LandingGear_R6::_ProjectionWrite_env_extend_gear_last, LandingGear_R6::_ProjectionRead_env_extend_gear_last::Hash, LandingGear_R6::_ProjectionRead_env_extend_gear_last::HashEqual> _OpCache_with_parameter_env_extend_gear_last = _OpCache_with_parameter_env_extend_gear_last_ptr->second;
+                                    auto writeState_ptr = _OpCache_with_parameter_env_extend_gear_last.find(readState);
+                                    if(writeState_ptr != _OpCache_with_parameter_env_extend_gear_last.end()) {
+                                        LandingGear_R6::_ProjectionWrite_env_extend_gear_last writeState = writeState_ptr->second;
+                                        copiedState._apply_update_for_env_extend_gear_last(writeState);
+                                    } else {
+                                        copiedState.env_extend_gear_last(_tmp_1);
+                                        LandingGear_R6::_ProjectionWrite_env_extend_gear_last writeState = copiedState._update_for_env_extend_gear_last();
+                                        _OpCache_with_parameter_env_extend_gear_last.insert({readState, writeState});
+                                    }
                                 }
                             }
-                        }
-
-                        copiedState.stateAccessedVia = "env_extend_gear_last";
-                        result.insert(copiedState);
-                        {
-                            std::unique_lock<std::mutex> lock(mutex);
-                            transitions += 1;
+                            copiedState.stateAccessedVia = "env_extend_gear_last";
+                            result.insert(copiedState);
+                            {
+                                std::unique_lock<std::mutex> lock(mutex);
+                                transitions += 1;
+                            }
                         }
                     }
                 }
                 LandingGear_R6::_ProjectionRead__tr_env_extend_gear_skip read__tr_env_extend_gear_skip_state = state._projected_state_for__tr_env_extend_gear_skip();
-                auto _trid_24_ptr = _OpCache_tr_env_extend_gear_skip.find(read__tr_env_extend_gear_skip_state);
-                if(_trid_24_ptr == _OpCache_tr_env_extend_gear_skip.end()) {
-                    BSet<LandingGear_R6::POSITION> _trid_24 = state._tr_env_extend_gear_skip();
-                    {
-                        std::unique_lock<std::mutex> _ProjectionRead__tr_env_extend_gear_skip_lock(_ProjectionRead__tr_env_extend_gear_skip_mutex);
+                {
+                    std::unique_lock<std::mutex> _ProjectionRead__tr_env_extend_gear_skip_lock(_ProjectionRead__tr_env_extend_gear_skip_mutex);
+                    auto _trid_24_ptr = _OpCache_tr_env_extend_gear_skip.find(read__tr_env_extend_gear_skip_state);
+                    if(_trid_24_ptr == _OpCache_tr_env_extend_gear_skip.end()) {
+                        BSet<LandingGear_R6::POSITION> _trid_24 = state._tr_env_extend_gear_skip();
                         _OpCache_tr_env_extend_gear_skip.insert({read__tr_env_extend_gear_skip_state, _trid_24});
-                    }
-                    for(const LandingGear_R6::POSITION& param : _trid_24) {
-                        LandingGear_R6::POSITION _tmp_1 = param;
+                        for(const LandingGear_R6::POSITION& param : _trid_24) {
+                            LandingGear_R6::POSITION _tmp_1 = param;
 
-                        LandingGear_R6 copiedState = state._copy();
-                        LandingGear_R6::_ProjectionRead_env_extend_gear_skip readState = state._projected_state_for_env_extend_gear_skip();
-
-                        auto _OpCache_with_parameter_env_extend_gear_skip_ptr = _OpCache_env_extend_gear_skip.find(param);
-                        if(_OpCache_with_parameter_env_extend_gear_skip_ptr == _OpCache_env_extend_gear_skip.end()) {
+                            LandingGear_R6 copiedState = state._copy();
+                            LandingGear_R6::_ProjectionRead_env_extend_gear_skip readState = state._projected_state_for_env_extend_gear_skip();
                             {
                                 std::unique_lock<std::mutex> _ProjectionRead_env_extend_gear_skip_lock(_ProjectionRead_env_extend_gear_skip_mutex);
-                                copiedState.env_extend_gear_skip(_tmp_1);
-                                LandingGear_R6::_ProjectionWrite_env_extend_gear_skip writeState = copiedState._update_for_env_extend_gear_skip();
-                                std::unordered_map<LandingGear_R6::_ProjectionRead_env_extend_gear_skip, LandingGear_R6::_ProjectionWrite_env_extend_gear_skip, LandingGear_R6::_ProjectionRead_env_extend_gear_skip::Hash, LandingGear_R6::_ProjectionRead_env_extend_gear_skip::HashEqual> _OpCache_with_parameter_env_extend_gear_skip = std::unordered_map<LandingGear_R6::_ProjectionRead_env_extend_gear_skip, LandingGear_R6::_ProjectionWrite_env_extend_gear_skip, LandingGear_R6::_ProjectionRead_env_extend_gear_skip::Hash, LandingGear_R6::_ProjectionRead_env_extend_gear_skip::HashEqual>();
-                                _OpCache_with_parameter_env_extend_gear_skip.insert({readState, writeState});
-                                _OpCache_env_extend_gear_skip.insert({param, _OpCache_with_parameter_env_extend_gear_skip});
-                            }
-                        } else {
-                            {
-                                std::unique_lock<std::mutex> _ProjectionRead_env_extend_gear_skip_lock(_ProjectionRead_env_extend_gear_skip_mutex);
-                                std::unordered_map<LandingGear_R6::_ProjectionRead_env_extend_gear_skip, LandingGear_R6::_ProjectionWrite_env_extend_gear_skip, LandingGear_R6::_ProjectionRead_env_extend_gear_skip::Hash, LandingGear_R6::_ProjectionRead_env_extend_gear_skip::HashEqual> _OpCache_with_parameter_env_extend_gear_skip = _OpCache_with_parameter_env_extend_gear_skip_ptr->second;
-                                auto writeState_ptr = _OpCache_with_parameter_env_extend_gear_skip.find(readState);
-                                if(writeState_ptr != _OpCache_with_parameter_env_extend_gear_skip.end()) {
-                                    LandingGear_R6::_ProjectionWrite_env_extend_gear_skip writeState = writeState_ptr->second;
-                                    copiedState._apply_update_for_env_extend_gear_skip(writeState);
-                                } else {
+                                auto _OpCache_with_parameter_env_extend_gear_skip_ptr = _OpCache_env_extend_gear_skip.find(param);
+                                if(_OpCache_with_parameter_env_extend_gear_skip_ptr == _OpCache_env_extend_gear_skip.end()) {
                                     copiedState.env_extend_gear_skip(_tmp_1);
                                     LandingGear_R6::_ProjectionWrite_env_extend_gear_skip writeState = copiedState._update_for_env_extend_gear_skip();
+                                    std::unordered_map<LandingGear_R6::_ProjectionRead_env_extend_gear_skip, LandingGear_R6::_ProjectionWrite_env_extend_gear_skip, LandingGear_R6::_ProjectionRead_env_extend_gear_skip::Hash, LandingGear_R6::_ProjectionRead_env_extend_gear_skip::HashEqual> _OpCache_with_parameter_env_extend_gear_skip = std::unordered_map<LandingGear_R6::_ProjectionRead_env_extend_gear_skip, LandingGear_R6::_ProjectionWrite_env_extend_gear_skip, LandingGear_R6::_ProjectionRead_env_extend_gear_skip::Hash, LandingGear_R6::_ProjectionRead_env_extend_gear_skip::HashEqual>();
                                     _OpCache_with_parameter_env_extend_gear_skip.insert({readState, writeState});
+                                    _OpCache_env_extend_gear_skip.insert({param, _OpCache_with_parameter_env_extend_gear_skip});
+                                } else {
+                                    std::unordered_map<LandingGear_R6::_ProjectionRead_env_extend_gear_skip, LandingGear_R6::_ProjectionWrite_env_extend_gear_skip, LandingGear_R6::_ProjectionRead_env_extend_gear_skip::Hash, LandingGear_R6::_ProjectionRead_env_extend_gear_skip::HashEqual> _OpCache_with_parameter_env_extend_gear_skip = _OpCache_with_parameter_env_extend_gear_skip_ptr->second;
+                                    auto writeState_ptr = _OpCache_with_parameter_env_extend_gear_skip.find(readState);
+                                    if(writeState_ptr != _OpCache_with_parameter_env_extend_gear_skip.end()) {
+                                        LandingGear_R6::_ProjectionWrite_env_extend_gear_skip writeState = writeState_ptr->second;
+                                        copiedState._apply_update_for_env_extend_gear_skip(writeState);
+                                    } else {
+                                        copiedState.env_extend_gear_skip(_tmp_1);
+                                        LandingGear_R6::_ProjectionWrite_env_extend_gear_skip writeState = copiedState._update_for_env_extend_gear_skip();
+                                        _OpCache_with_parameter_env_extend_gear_skip.insert({readState, writeState});
+                                    }
                                 }
                             }
-                        }
-
-                        copiedState.stateAccessedVia = "env_extend_gear_skip";
-                        result.insert(copiedState);
-                        {
-                            std::unique_lock<std::mutex> lock(mutex);
-                            transitions += 1;
-                        }
-                    }
-                } else {
-                    BSet<LandingGear_R6::POSITION> _trid_24 = _trid_24_ptr->second;
-                    for(const LandingGear_R6::POSITION& param : _trid_24) {
-                        LandingGear_R6::POSITION _tmp_1 = param;
-
-                        LandingGear_R6 copiedState = state._copy();
-                        LandingGear_R6::_ProjectionRead_env_extend_gear_skip readState = state._projected_state_for_env_extend_gear_skip();
-
-                        auto _OpCache_with_parameter_env_extend_gear_skip_ptr = _OpCache_env_extend_gear_skip.find(param);
-                        if(_OpCache_with_parameter_env_extend_gear_skip_ptr == _OpCache_env_extend_gear_skip.end()) {
+                            copiedState.stateAccessedVia = "env_extend_gear_skip";
+                            result.insert(copiedState);
                             {
-                                std::unique_lock<std::mutex> _ProjectionRead_env_extend_gear_skip_lock(_ProjectionRead_env_extend_gear_skip_mutex);
-                                copiedState.env_extend_gear_skip(_tmp_1);
-                                LandingGear_R6::_ProjectionWrite_env_extend_gear_skip writeState = copiedState._update_for_env_extend_gear_skip();
-                                std::unordered_map<LandingGear_R6::_ProjectionRead_env_extend_gear_skip, LandingGear_R6::_ProjectionWrite_env_extend_gear_skip, LandingGear_R6::_ProjectionRead_env_extend_gear_skip::Hash, LandingGear_R6::_ProjectionRead_env_extend_gear_skip::HashEqual> _OpCache_with_parameter_env_extend_gear_skip = std::unordered_map<LandingGear_R6::_ProjectionRead_env_extend_gear_skip, LandingGear_R6::_ProjectionWrite_env_extend_gear_skip, LandingGear_R6::_ProjectionRead_env_extend_gear_skip::Hash, LandingGear_R6::_ProjectionRead_env_extend_gear_skip::HashEqual>();
-                                _OpCache_with_parameter_env_extend_gear_skip.insert({readState, writeState});
-                                _OpCache_env_extend_gear_skip.insert({param, _OpCache_with_parameter_env_extend_gear_skip});
+                                std::unique_lock<std::mutex> lock(mutex);
+                                transitions += 1;
                             }
-                        } else {
+                        }
+                    } else {
+                        BSet<LandingGear_R6::POSITION> _trid_24 = _trid_24_ptr->second;
+                        for(const LandingGear_R6::POSITION& param : _trid_24) {
+                            LandingGear_R6::POSITION _tmp_1 = param;
+
+                            LandingGear_R6 copiedState = state._copy();
+                            LandingGear_R6::_ProjectionRead_env_extend_gear_skip readState = state._projected_state_for_env_extend_gear_skip();
                             {
                                 std::unique_lock<std::mutex> _ProjectionRead_env_extend_gear_skip_lock(_ProjectionRead_env_extend_gear_skip_mutex);
-                                std::unordered_map<LandingGear_R6::_ProjectionRead_env_extend_gear_skip, LandingGear_R6::_ProjectionWrite_env_extend_gear_skip, LandingGear_R6::_ProjectionRead_env_extend_gear_skip::Hash, LandingGear_R6::_ProjectionRead_env_extend_gear_skip::HashEqual> _OpCache_with_parameter_env_extend_gear_skip = _OpCache_with_parameter_env_extend_gear_skip_ptr->second;
-                                auto writeState_ptr = _OpCache_with_parameter_env_extend_gear_skip.find(readState);
-                                if(writeState_ptr != _OpCache_with_parameter_env_extend_gear_skip.end()) {
-                                    LandingGear_R6::_ProjectionWrite_env_extend_gear_skip writeState = writeState_ptr->second;
-                                    copiedState._apply_update_for_env_extend_gear_skip(writeState);
-                                } else {
+                                auto _OpCache_with_parameter_env_extend_gear_skip_ptr = _OpCache_env_extend_gear_skip.find(param);
+                                if(_OpCache_with_parameter_env_extend_gear_skip_ptr == _OpCache_env_extend_gear_skip.end()) {
                                     copiedState.env_extend_gear_skip(_tmp_1);
                                     LandingGear_R6::_ProjectionWrite_env_extend_gear_skip writeState = copiedState._update_for_env_extend_gear_skip();
+                                    std::unordered_map<LandingGear_R6::_ProjectionRead_env_extend_gear_skip, LandingGear_R6::_ProjectionWrite_env_extend_gear_skip, LandingGear_R6::_ProjectionRead_env_extend_gear_skip::Hash, LandingGear_R6::_ProjectionRead_env_extend_gear_skip::HashEqual> _OpCache_with_parameter_env_extend_gear_skip = std::unordered_map<LandingGear_R6::_ProjectionRead_env_extend_gear_skip, LandingGear_R6::_ProjectionWrite_env_extend_gear_skip, LandingGear_R6::_ProjectionRead_env_extend_gear_skip::Hash, LandingGear_R6::_ProjectionRead_env_extend_gear_skip::HashEqual>();
                                     _OpCache_with_parameter_env_extend_gear_skip.insert({readState, writeState});
+                                    _OpCache_env_extend_gear_skip.insert({param, _OpCache_with_parameter_env_extend_gear_skip});
+                                } else {
+                                    std::unordered_map<LandingGear_R6::_ProjectionRead_env_extend_gear_skip, LandingGear_R6::_ProjectionWrite_env_extend_gear_skip, LandingGear_R6::_ProjectionRead_env_extend_gear_skip::Hash, LandingGear_R6::_ProjectionRead_env_extend_gear_skip::HashEqual> _OpCache_with_parameter_env_extend_gear_skip = _OpCache_with_parameter_env_extend_gear_skip_ptr->second;
+                                    auto writeState_ptr = _OpCache_with_parameter_env_extend_gear_skip.find(readState);
+                                    if(writeState_ptr != _OpCache_with_parameter_env_extend_gear_skip.end()) {
+                                        LandingGear_R6::_ProjectionWrite_env_extend_gear_skip writeState = writeState_ptr->second;
+                                        copiedState._apply_update_for_env_extend_gear_skip(writeState);
+                                    } else {
+                                        copiedState.env_extend_gear_skip(_tmp_1);
+                                        LandingGear_R6::_ProjectionWrite_env_extend_gear_skip writeState = copiedState._update_for_env_extend_gear_skip();
+                                        _OpCache_with_parameter_env_extend_gear_skip.insert({readState, writeState});
+                                    }
                                 }
                             }
-                        }
-
-                        copiedState.stateAccessedVia = "env_extend_gear_skip";
-                        result.insert(copiedState);
-                        {
-                            std::unique_lock<std::mutex> lock(mutex);
-                            transitions += 1;
+                            copiedState.stateAccessedVia = "env_extend_gear_skip";
+                            result.insert(copiedState);
+                            {
+                                std::unique_lock<std::mutex> lock(mutex);
+                                transitions += 1;
+                            }
                         }
                     }
                 }
                 LandingGear_R6::_ProjectionRead__tr_env_start_open_door read__tr_env_start_open_door_state = state._projected_state_for__tr_env_start_open_door();
-                auto _trid_25_ptr = _OpCache_tr_env_start_open_door.find(read__tr_env_start_open_door_state);
-                if(_trid_25_ptr == _OpCache_tr_env_start_open_door.end()) {
-                    BSet<LandingGear_R6::POSITION> _trid_25 = state._tr_env_start_open_door();
-                    {
-                        std::unique_lock<std::mutex> _ProjectionRead__tr_env_start_open_door_lock(_ProjectionRead__tr_env_start_open_door_mutex);
+                {
+                    std::unique_lock<std::mutex> _ProjectionRead__tr_env_start_open_door_lock(_ProjectionRead__tr_env_start_open_door_mutex);
+                    auto _trid_25_ptr = _OpCache_tr_env_start_open_door.find(read__tr_env_start_open_door_state);
+                    if(_trid_25_ptr == _OpCache_tr_env_start_open_door.end()) {
+                        BSet<LandingGear_R6::POSITION> _trid_25 = state._tr_env_start_open_door();
                         _OpCache_tr_env_start_open_door.insert({read__tr_env_start_open_door_state, _trid_25});
-                    }
-                    for(const LandingGear_R6::POSITION& param : _trid_25) {
-                        LandingGear_R6::POSITION _tmp_1 = param;
+                        for(const LandingGear_R6::POSITION& param : _trid_25) {
+                            LandingGear_R6::POSITION _tmp_1 = param;
 
-                        LandingGear_R6 copiedState = state._copy();
-                        LandingGear_R6::_ProjectionRead_env_start_open_door readState = state._projected_state_for_env_start_open_door();
-
-                        auto _OpCache_with_parameter_env_start_open_door_ptr = _OpCache_env_start_open_door.find(param);
-                        if(_OpCache_with_parameter_env_start_open_door_ptr == _OpCache_env_start_open_door.end()) {
+                            LandingGear_R6 copiedState = state._copy();
+                            LandingGear_R6::_ProjectionRead_env_start_open_door readState = state._projected_state_for_env_start_open_door();
                             {
                                 std::unique_lock<std::mutex> _ProjectionRead_env_start_open_door_lock(_ProjectionRead_env_start_open_door_mutex);
-                                copiedState.env_start_open_door(_tmp_1);
-                                LandingGear_R6::_ProjectionWrite_env_start_open_door writeState = copiedState._update_for_env_start_open_door();
-                                std::unordered_map<LandingGear_R6::_ProjectionRead_env_start_open_door, LandingGear_R6::_ProjectionWrite_env_start_open_door, LandingGear_R6::_ProjectionRead_env_start_open_door::Hash, LandingGear_R6::_ProjectionRead_env_start_open_door::HashEqual> _OpCache_with_parameter_env_start_open_door = std::unordered_map<LandingGear_R6::_ProjectionRead_env_start_open_door, LandingGear_R6::_ProjectionWrite_env_start_open_door, LandingGear_R6::_ProjectionRead_env_start_open_door::Hash, LandingGear_R6::_ProjectionRead_env_start_open_door::HashEqual>();
-                                _OpCache_with_parameter_env_start_open_door.insert({readState, writeState});
-                                _OpCache_env_start_open_door.insert({param, _OpCache_with_parameter_env_start_open_door});
-                            }
-                        } else {
-                            {
-                                std::unique_lock<std::mutex> _ProjectionRead_env_start_open_door_lock(_ProjectionRead_env_start_open_door_mutex);
-                                std::unordered_map<LandingGear_R6::_ProjectionRead_env_start_open_door, LandingGear_R6::_ProjectionWrite_env_start_open_door, LandingGear_R6::_ProjectionRead_env_start_open_door::Hash, LandingGear_R6::_ProjectionRead_env_start_open_door::HashEqual> _OpCache_with_parameter_env_start_open_door = _OpCache_with_parameter_env_start_open_door_ptr->second;
-                                auto writeState_ptr = _OpCache_with_parameter_env_start_open_door.find(readState);
-                                if(writeState_ptr != _OpCache_with_parameter_env_start_open_door.end()) {
-                                    LandingGear_R6::_ProjectionWrite_env_start_open_door writeState = writeState_ptr->second;
-                                    copiedState._apply_update_for_env_start_open_door(writeState);
-                                } else {
+                                auto _OpCache_with_parameter_env_start_open_door_ptr = _OpCache_env_start_open_door.find(param);
+                                if(_OpCache_with_parameter_env_start_open_door_ptr == _OpCache_env_start_open_door.end()) {
                                     copiedState.env_start_open_door(_tmp_1);
                                     LandingGear_R6::_ProjectionWrite_env_start_open_door writeState = copiedState._update_for_env_start_open_door();
+                                    std::unordered_map<LandingGear_R6::_ProjectionRead_env_start_open_door, LandingGear_R6::_ProjectionWrite_env_start_open_door, LandingGear_R6::_ProjectionRead_env_start_open_door::Hash, LandingGear_R6::_ProjectionRead_env_start_open_door::HashEqual> _OpCache_with_parameter_env_start_open_door = std::unordered_map<LandingGear_R6::_ProjectionRead_env_start_open_door, LandingGear_R6::_ProjectionWrite_env_start_open_door, LandingGear_R6::_ProjectionRead_env_start_open_door::Hash, LandingGear_R6::_ProjectionRead_env_start_open_door::HashEqual>();
                                     _OpCache_with_parameter_env_start_open_door.insert({readState, writeState});
+                                    _OpCache_env_start_open_door.insert({param, _OpCache_with_parameter_env_start_open_door});
+                                } else {
+                                    std::unordered_map<LandingGear_R6::_ProjectionRead_env_start_open_door, LandingGear_R6::_ProjectionWrite_env_start_open_door, LandingGear_R6::_ProjectionRead_env_start_open_door::Hash, LandingGear_R6::_ProjectionRead_env_start_open_door::HashEqual> _OpCache_with_parameter_env_start_open_door = _OpCache_with_parameter_env_start_open_door_ptr->second;
+                                    auto writeState_ptr = _OpCache_with_parameter_env_start_open_door.find(readState);
+                                    if(writeState_ptr != _OpCache_with_parameter_env_start_open_door.end()) {
+                                        LandingGear_R6::_ProjectionWrite_env_start_open_door writeState = writeState_ptr->second;
+                                        copiedState._apply_update_for_env_start_open_door(writeState);
+                                    } else {
+                                        copiedState.env_start_open_door(_tmp_1);
+                                        LandingGear_R6::_ProjectionWrite_env_start_open_door writeState = copiedState._update_for_env_start_open_door();
+                                        _OpCache_with_parameter_env_start_open_door.insert({readState, writeState});
+                                    }
                                 }
                             }
-                        }
-
-                        copiedState.stateAccessedVia = "env_start_open_door";
-                        result.insert(copiedState);
-                        {
-                            std::unique_lock<std::mutex> lock(mutex);
-                            transitions += 1;
-                        }
-                    }
-                } else {
-                    BSet<LandingGear_R6::POSITION> _trid_25 = _trid_25_ptr->second;
-                    for(const LandingGear_R6::POSITION& param : _trid_25) {
-                        LandingGear_R6::POSITION _tmp_1 = param;
-
-                        LandingGear_R6 copiedState = state._copy();
-                        LandingGear_R6::_ProjectionRead_env_start_open_door readState = state._projected_state_for_env_start_open_door();
-
-                        auto _OpCache_with_parameter_env_start_open_door_ptr = _OpCache_env_start_open_door.find(param);
-                        if(_OpCache_with_parameter_env_start_open_door_ptr == _OpCache_env_start_open_door.end()) {
+                            copiedState.stateAccessedVia = "env_start_open_door";
+                            result.insert(copiedState);
                             {
-                                std::unique_lock<std::mutex> _ProjectionRead_env_start_open_door_lock(_ProjectionRead_env_start_open_door_mutex);
-                                copiedState.env_start_open_door(_tmp_1);
-                                LandingGear_R6::_ProjectionWrite_env_start_open_door writeState = copiedState._update_for_env_start_open_door();
-                                std::unordered_map<LandingGear_R6::_ProjectionRead_env_start_open_door, LandingGear_R6::_ProjectionWrite_env_start_open_door, LandingGear_R6::_ProjectionRead_env_start_open_door::Hash, LandingGear_R6::_ProjectionRead_env_start_open_door::HashEqual> _OpCache_with_parameter_env_start_open_door = std::unordered_map<LandingGear_R6::_ProjectionRead_env_start_open_door, LandingGear_R6::_ProjectionWrite_env_start_open_door, LandingGear_R6::_ProjectionRead_env_start_open_door::Hash, LandingGear_R6::_ProjectionRead_env_start_open_door::HashEqual>();
-                                _OpCache_with_parameter_env_start_open_door.insert({readState, writeState});
-                                _OpCache_env_start_open_door.insert({param, _OpCache_with_parameter_env_start_open_door});
+                                std::unique_lock<std::mutex> lock(mutex);
+                                transitions += 1;
                             }
-                        } else {
+                        }
+                    } else {
+                        BSet<LandingGear_R6::POSITION> _trid_25 = _trid_25_ptr->second;
+                        for(const LandingGear_R6::POSITION& param : _trid_25) {
+                            LandingGear_R6::POSITION _tmp_1 = param;
+
+                            LandingGear_R6 copiedState = state._copy();
+                            LandingGear_R6::_ProjectionRead_env_start_open_door readState = state._projected_state_for_env_start_open_door();
                             {
                                 std::unique_lock<std::mutex> _ProjectionRead_env_start_open_door_lock(_ProjectionRead_env_start_open_door_mutex);
-                                std::unordered_map<LandingGear_R6::_ProjectionRead_env_start_open_door, LandingGear_R6::_ProjectionWrite_env_start_open_door, LandingGear_R6::_ProjectionRead_env_start_open_door::Hash, LandingGear_R6::_ProjectionRead_env_start_open_door::HashEqual> _OpCache_with_parameter_env_start_open_door = _OpCache_with_parameter_env_start_open_door_ptr->second;
-                                auto writeState_ptr = _OpCache_with_parameter_env_start_open_door.find(readState);
-                                if(writeState_ptr != _OpCache_with_parameter_env_start_open_door.end()) {
-                                    LandingGear_R6::_ProjectionWrite_env_start_open_door writeState = writeState_ptr->second;
-                                    copiedState._apply_update_for_env_start_open_door(writeState);
-                                } else {
+                                auto _OpCache_with_parameter_env_start_open_door_ptr = _OpCache_env_start_open_door.find(param);
+                                if(_OpCache_with_parameter_env_start_open_door_ptr == _OpCache_env_start_open_door.end()) {
                                     copiedState.env_start_open_door(_tmp_1);
                                     LandingGear_R6::_ProjectionWrite_env_start_open_door writeState = copiedState._update_for_env_start_open_door();
+                                    std::unordered_map<LandingGear_R6::_ProjectionRead_env_start_open_door, LandingGear_R6::_ProjectionWrite_env_start_open_door, LandingGear_R6::_ProjectionRead_env_start_open_door::Hash, LandingGear_R6::_ProjectionRead_env_start_open_door::HashEqual> _OpCache_with_parameter_env_start_open_door = std::unordered_map<LandingGear_R6::_ProjectionRead_env_start_open_door, LandingGear_R6::_ProjectionWrite_env_start_open_door, LandingGear_R6::_ProjectionRead_env_start_open_door::Hash, LandingGear_R6::_ProjectionRead_env_start_open_door::HashEqual>();
                                     _OpCache_with_parameter_env_start_open_door.insert({readState, writeState});
+                                    _OpCache_env_start_open_door.insert({param, _OpCache_with_parameter_env_start_open_door});
+                                } else {
+                                    std::unordered_map<LandingGear_R6::_ProjectionRead_env_start_open_door, LandingGear_R6::_ProjectionWrite_env_start_open_door, LandingGear_R6::_ProjectionRead_env_start_open_door::Hash, LandingGear_R6::_ProjectionRead_env_start_open_door::HashEqual> _OpCache_with_parameter_env_start_open_door = _OpCache_with_parameter_env_start_open_door_ptr->second;
+                                    auto writeState_ptr = _OpCache_with_parameter_env_start_open_door.find(readState);
+                                    if(writeState_ptr != _OpCache_with_parameter_env_start_open_door.end()) {
+                                        LandingGear_R6::_ProjectionWrite_env_start_open_door writeState = writeState_ptr->second;
+                                        copiedState._apply_update_for_env_start_open_door(writeState);
+                                    } else {
+                                        copiedState.env_start_open_door(_tmp_1);
+                                        LandingGear_R6::_ProjectionWrite_env_start_open_door writeState = copiedState._update_for_env_start_open_door();
+                                        _OpCache_with_parameter_env_start_open_door.insert({readState, writeState});
+                                    }
                                 }
                             }
-                        }
-
-                        copiedState.stateAccessedVia = "env_start_open_door";
-                        result.insert(copiedState);
-                        {
-                            std::unique_lock<std::mutex> lock(mutex);
-                            transitions += 1;
+                            copiedState.stateAccessedVia = "env_start_open_door";
+                            result.insert(copiedState);
+                            {
+                                std::unique_lock<std::mutex> lock(mutex);
+                                transitions += 1;
+                            }
                         }
                     }
                 }
                 LandingGear_R6::_ProjectionRead__tr_env_open_door_last read__tr_env_open_door_last_state = state._projected_state_for__tr_env_open_door_last();
-                auto _trid_26_ptr = _OpCache_tr_env_open_door_last.find(read__tr_env_open_door_last_state);
-                if(_trid_26_ptr == _OpCache_tr_env_open_door_last.end()) {
-                    BSet<LandingGear_R6::POSITION> _trid_26 = state._tr_env_open_door_last();
-                    {
-                        std::unique_lock<std::mutex> _ProjectionRead__tr_env_open_door_last_lock(_ProjectionRead__tr_env_open_door_last_mutex);
+                {
+                    std::unique_lock<std::mutex> _ProjectionRead__tr_env_open_door_last_lock(_ProjectionRead__tr_env_open_door_last_mutex);
+                    auto _trid_26_ptr = _OpCache_tr_env_open_door_last.find(read__tr_env_open_door_last_state);
+                    if(_trid_26_ptr == _OpCache_tr_env_open_door_last.end()) {
+                        BSet<LandingGear_R6::POSITION> _trid_26 = state._tr_env_open_door_last();
                         _OpCache_tr_env_open_door_last.insert({read__tr_env_open_door_last_state, _trid_26});
-                    }
-                    for(const LandingGear_R6::POSITION& param : _trid_26) {
-                        LandingGear_R6::POSITION _tmp_1 = param;
+                        for(const LandingGear_R6::POSITION& param : _trid_26) {
+                            LandingGear_R6::POSITION _tmp_1 = param;
 
-                        LandingGear_R6 copiedState = state._copy();
-                        LandingGear_R6::_ProjectionRead_env_open_door_last readState = state._projected_state_for_env_open_door_last();
-
-                        auto _OpCache_with_parameter_env_open_door_last_ptr = _OpCache_env_open_door_last.find(param);
-                        if(_OpCache_with_parameter_env_open_door_last_ptr == _OpCache_env_open_door_last.end()) {
+                            LandingGear_R6 copiedState = state._copy();
+                            LandingGear_R6::_ProjectionRead_env_open_door_last readState = state._projected_state_for_env_open_door_last();
                             {
                                 std::unique_lock<std::mutex> _ProjectionRead_env_open_door_last_lock(_ProjectionRead_env_open_door_last_mutex);
-                                copiedState.env_open_door_last(_tmp_1);
-                                LandingGear_R6::_ProjectionWrite_env_open_door_last writeState = copiedState._update_for_env_open_door_last();
-                                std::unordered_map<LandingGear_R6::_ProjectionRead_env_open_door_last, LandingGear_R6::_ProjectionWrite_env_open_door_last, LandingGear_R6::_ProjectionRead_env_open_door_last::Hash, LandingGear_R6::_ProjectionRead_env_open_door_last::HashEqual> _OpCache_with_parameter_env_open_door_last = std::unordered_map<LandingGear_R6::_ProjectionRead_env_open_door_last, LandingGear_R6::_ProjectionWrite_env_open_door_last, LandingGear_R6::_ProjectionRead_env_open_door_last::Hash, LandingGear_R6::_ProjectionRead_env_open_door_last::HashEqual>();
-                                _OpCache_with_parameter_env_open_door_last.insert({readState, writeState});
-                                _OpCache_env_open_door_last.insert({param, _OpCache_with_parameter_env_open_door_last});
-                            }
-                        } else {
-                            {
-                                std::unique_lock<std::mutex> _ProjectionRead_env_open_door_last_lock(_ProjectionRead_env_open_door_last_mutex);
-                                std::unordered_map<LandingGear_R6::_ProjectionRead_env_open_door_last, LandingGear_R6::_ProjectionWrite_env_open_door_last, LandingGear_R6::_ProjectionRead_env_open_door_last::Hash, LandingGear_R6::_ProjectionRead_env_open_door_last::HashEqual> _OpCache_with_parameter_env_open_door_last = _OpCache_with_parameter_env_open_door_last_ptr->second;
-                                auto writeState_ptr = _OpCache_with_parameter_env_open_door_last.find(readState);
-                                if(writeState_ptr != _OpCache_with_parameter_env_open_door_last.end()) {
-                                    LandingGear_R6::_ProjectionWrite_env_open_door_last writeState = writeState_ptr->second;
-                                    copiedState._apply_update_for_env_open_door_last(writeState);
-                                } else {
+                                auto _OpCache_with_parameter_env_open_door_last_ptr = _OpCache_env_open_door_last.find(param);
+                                if(_OpCache_with_parameter_env_open_door_last_ptr == _OpCache_env_open_door_last.end()) {
                                     copiedState.env_open_door_last(_tmp_1);
                                     LandingGear_R6::_ProjectionWrite_env_open_door_last writeState = copiedState._update_for_env_open_door_last();
+                                    std::unordered_map<LandingGear_R6::_ProjectionRead_env_open_door_last, LandingGear_R6::_ProjectionWrite_env_open_door_last, LandingGear_R6::_ProjectionRead_env_open_door_last::Hash, LandingGear_R6::_ProjectionRead_env_open_door_last::HashEqual> _OpCache_with_parameter_env_open_door_last = std::unordered_map<LandingGear_R6::_ProjectionRead_env_open_door_last, LandingGear_R6::_ProjectionWrite_env_open_door_last, LandingGear_R6::_ProjectionRead_env_open_door_last::Hash, LandingGear_R6::_ProjectionRead_env_open_door_last::HashEqual>();
                                     _OpCache_with_parameter_env_open_door_last.insert({readState, writeState});
+                                    _OpCache_env_open_door_last.insert({param, _OpCache_with_parameter_env_open_door_last});
+                                } else {
+                                    std::unordered_map<LandingGear_R6::_ProjectionRead_env_open_door_last, LandingGear_R6::_ProjectionWrite_env_open_door_last, LandingGear_R6::_ProjectionRead_env_open_door_last::Hash, LandingGear_R6::_ProjectionRead_env_open_door_last::HashEqual> _OpCache_with_parameter_env_open_door_last = _OpCache_with_parameter_env_open_door_last_ptr->second;
+                                    auto writeState_ptr = _OpCache_with_parameter_env_open_door_last.find(readState);
+                                    if(writeState_ptr != _OpCache_with_parameter_env_open_door_last.end()) {
+                                        LandingGear_R6::_ProjectionWrite_env_open_door_last writeState = writeState_ptr->second;
+                                        copiedState._apply_update_for_env_open_door_last(writeState);
+                                    } else {
+                                        copiedState.env_open_door_last(_tmp_1);
+                                        LandingGear_R6::_ProjectionWrite_env_open_door_last writeState = copiedState._update_for_env_open_door_last();
+                                        _OpCache_with_parameter_env_open_door_last.insert({readState, writeState});
+                                    }
                                 }
                             }
-                        }
-
-                        copiedState.stateAccessedVia = "env_open_door_last";
-                        result.insert(copiedState);
-                        {
-                            std::unique_lock<std::mutex> lock(mutex);
-                            transitions += 1;
-                        }
-                    }
-                } else {
-                    BSet<LandingGear_R6::POSITION> _trid_26 = _trid_26_ptr->second;
-                    for(const LandingGear_R6::POSITION& param : _trid_26) {
-                        LandingGear_R6::POSITION _tmp_1 = param;
-
-                        LandingGear_R6 copiedState = state._copy();
-                        LandingGear_R6::_ProjectionRead_env_open_door_last readState = state._projected_state_for_env_open_door_last();
-
-                        auto _OpCache_with_parameter_env_open_door_last_ptr = _OpCache_env_open_door_last.find(param);
-                        if(_OpCache_with_parameter_env_open_door_last_ptr == _OpCache_env_open_door_last.end()) {
+                            copiedState.stateAccessedVia = "env_open_door_last";
+                            result.insert(copiedState);
                             {
-                                std::unique_lock<std::mutex> _ProjectionRead_env_open_door_last_lock(_ProjectionRead_env_open_door_last_mutex);
-                                copiedState.env_open_door_last(_tmp_1);
-                                LandingGear_R6::_ProjectionWrite_env_open_door_last writeState = copiedState._update_for_env_open_door_last();
-                                std::unordered_map<LandingGear_R6::_ProjectionRead_env_open_door_last, LandingGear_R6::_ProjectionWrite_env_open_door_last, LandingGear_R6::_ProjectionRead_env_open_door_last::Hash, LandingGear_R6::_ProjectionRead_env_open_door_last::HashEqual> _OpCache_with_parameter_env_open_door_last = std::unordered_map<LandingGear_R6::_ProjectionRead_env_open_door_last, LandingGear_R6::_ProjectionWrite_env_open_door_last, LandingGear_R6::_ProjectionRead_env_open_door_last::Hash, LandingGear_R6::_ProjectionRead_env_open_door_last::HashEqual>();
-                                _OpCache_with_parameter_env_open_door_last.insert({readState, writeState});
-                                _OpCache_env_open_door_last.insert({param, _OpCache_with_parameter_env_open_door_last});
+                                std::unique_lock<std::mutex> lock(mutex);
+                                transitions += 1;
                             }
-                        } else {
+                        }
+                    } else {
+                        BSet<LandingGear_R6::POSITION> _trid_26 = _trid_26_ptr->second;
+                        for(const LandingGear_R6::POSITION& param : _trid_26) {
+                            LandingGear_R6::POSITION _tmp_1 = param;
+
+                            LandingGear_R6 copiedState = state._copy();
+                            LandingGear_R6::_ProjectionRead_env_open_door_last readState = state._projected_state_for_env_open_door_last();
                             {
                                 std::unique_lock<std::mutex> _ProjectionRead_env_open_door_last_lock(_ProjectionRead_env_open_door_last_mutex);
-                                std::unordered_map<LandingGear_R6::_ProjectionRead_env_open_door_last, LandingGear_R6::_ProjectionWrite_env_open_door_last, LandingGear_R6::_ProjectionRead_env_open_door_last::Hash, LandingGear_R6::_ProjectionRead_env_open_door_last::HashEqual> _OpCache_with_parameter_env_open_door_last = _OpCache_with_parameter_env_open_door_last_ptr->second;
-                                auto writeState_ptr = _OpCache_with_parameter_env_open_door_last.find(readState);
-                                if(writeState_ptr != _OpCache_with_parameter_env_open_door_last.end()) {
-                                    LandingGear_R6::_ProjectionWrite_env_open_door_last writeState = writeState_ptr->second;
-                                    copiedState._apply_update_for_env_open_door_last(writeState);
-                                } else {
+                                auto _OpCache_with_parameter_env_open_door_last_ptr = _OpCache_env_open_door_last.find(param);
+                                if(_OpCache_with_parameter_env_open_door_last_ptr == _OpCache_env_open_door_last.end()) {
                                     copiedState.env_open_door_last(_tmp_1);
                                     LandingGear_R6::_ProjectionWrite_env_open_door_last writeState = copiedState._update_for_env_open_door_last();
+                                    std::unordered_map<LandingGear_R6::_ProjectionRead_env_open_door_last, LandingGear_R6::_ProjectionWrite_env_open_door_last, LandingGear_R6::_ProjectionRead_env_open_door_last::Hash, LandingGear_R6::_ProjectionRead_env_open_door_last::HashEqual> _OpCache_with_parameter_env_open_door_last = std::unordered_map<LandingGear_R6::_ProjectionRead_env_open_door_last, LandingGear_R6::_ProjectionWrite_env_open_door_last, LandingGear_R6::_ProjectionRead_env_open_door_last::Hash, LandingGear_R6::_ProjectionRead_env_open_door_last::HashEqual>();
                                     _OpCache_with_parameter_env_open_door_last.insert({readState, writeState});
+                                    _OpCache_env_open_door_last.insert({param, _OpCache_with_parameter_env_open_door_last});
+                                } else {
+                                    std::unordered_map<LandingGear_R6::_ProjectionRead_env_open_door_last, LandingGear_R6::_ProjectionWrite_env_open_door_last, LandingGear_R6::_ProjectionRead_env_open_door_last::Hash, LandingGear_R6::_ProjectionRead_env_open_door_last::HashEqual> _OpCache_with_parameter_env_open_door_last = _OpCache_with_parameter_env_open_door_last_ptr->second;
+                                    auto writeState_ptr = _OpCache_with_parameter_env_open_door_last.find(readState);
+                                    if(writeState_ptr != _OpCache_with_parameter_env_open_door_last.end()) {
+                                        LandingGear_R6::_ProjectionWrite_env_open_door_last writeState = writeState_ptr->second;
+                                        copiedState._apply_update_for_env_open_door_last(writeState);
+                                    } else {
+                                        copiedState.env_open_door_last(_tmp_1);
+                                        LandingGear_R6::_ProjectionWrite_env_open_door_last writeState = copiedState._update_for_env_open_door_last();
+                                        _OpCache_with_parameter_env_open_door_last.insert({readState, writeState});
+                                    }
                                 }
                             }
-                        }
-
-                        copiedState.stateAccessedVia = "env_open_door_last";
-                        result.insert(copiedState);
-                        {
-                            std::unique_lock<std::mutex> lock(mutex);
-                            transitions += 1;
+                            copiedState.stateAccessedVia = "env_open_door_last";
+                            result.insert(copiedState);
+                            {
+                                std::unique_lock<std::mutex> lock(mutex);
+                                transitions += 1;
+                            }
                         }
                     }
                 }
                 LandingGear_R6::_ProjectionRead__tr_env_open_door_skip read__tr_env_open_door_skip_state = state._projected_state_for__tr_env_open_door_skip();
-                auto _trid_27_ptr = _OpCache_tr_env_open_door_skip.find(read__tr_env_open_door_skip_state);
-                if(_trid_27_ptr == _OpCache_tr_env_open_door_skip.end()) {
-                    BSet<LandingGear_R6::POSITION> _trid_27 = state._tr_env_open_door_skip();
-                    {
-                        std::unique_lock<std::mutex> _ProjectionRead__tr_env_open_door_skip_lock(_ProjectionRead__tr_env_open_door_skip_mutex);
+                {
+                    std::unique_lock<std::mutex> _ProjectionRead__tr_env_open_door_skip_lock(_ProjectionRead__tr_env_open_door_skip_mutex);
+                    auto _trid_27_ptr = _OpCache_tr_env_open_door_skip.find(read__tr_env_open_door_skip_state);
+                    if(_trid_27_ptr == _OpCache_tr_env_open_door_skip.end()) {
+                        BSet<LandingGear_R6::POSITION> _trid_27 = state._tr_env_open_door_skip();
                         _OpCache_tr_env_open_door_skip.insert({read__tr_env_open_door_skip_state, _trid_27});
-                    }
-                    for(const LandingGear_R6::POSITION& param : _trid_27) {
-                        LandingGear_R6::POSITION _tmp_1 = param;
+                        for(const LandingGear_R6::POSITION& param : _trid_27) {
+                            LandingGear_R6::POSITION _tmp_1 = param;
 
-                        LandingGear_R6 copiedState = state._copy();
-                        LandingGear_R6::_ProjectionRead_env_open_door_skip readState = state._projected_state_for_env_open_door_skip();
-
-                        auto _OpCache_with_parameter_env_open_door_skip_ptr = _OpCache_env_open_door_skip.find(param);
-                        if(_OpCache_with_parameter_env_open_door_skip_ptr == _OpCache_env_open_door_skip.end()) {
+                            LandingGear_R6 copiedState = state._copy();
+                            LandingGear_R6::_ProjectionRead_env_open_door_skip readState = state._projected_state_for_env_open_door_skip();
                             {
                                 std::unique_lock<std::mutex> _ProjectionRead_env_open_door_skip_lock(_ProjectionRead_env_open_door_skip_mutex);
-                                copiedState.env_open_door_skip(_tmp_1);
-                                LandingGear_R6::_ProjectionWrite_env_open_door_skip writeState = copiedState._update_for_env_open_door_skip();
-                                std::unordered_map<LandingGear_R6::_ProjectionRead_env_open_door_skip, LandingGear_R6::_ProjectionWrite_env_open_door_skip, LandingGear_R6::_ProjectionRead_env_open_door_skip::Hash, LandingGear_R6::_ProjectionRead_env_open_door_skip::HashEqual> _OpCache_with_parameter_env_open_door_skip = std::unordered_map<LandingGear_R6::_ProjectionRead_env_open_door_skip, LandingGear_R6::_ProjectionWrite_env_open_door_skip, LandingGear_R6::_ProjectionRead_env_open_door_skip::Hash, LandingGear_R6::_ProjectionRead_env_open_door_skip::HashEqual>();
-                                _OpCache_with_parameter_env_open_door_skip.insert({readState, writeState});
-                                _OpCache_env_open_door_skip.insert({param, _OpCache_with_parameter_env_open_door_skip});
-                            }
-                        } else {
-                            {
-                                std::unique_lock<std::mutex> _ProjectionRead_env_open_door_skip_lock(_ProjectionRead_env_open_door_skip_mutex);
-                                std::unordered_map<LandingGear_R6::_ProjectionRead_env_open_door_skip, LandingGear_R6::_ProjectionWrite_env_open_door_skip, LandingGear_R6::_ProjectionRead_env_open_door_skip::Hash, LandingGear_R6::_ProjectionRead_env_open_door_skip::HashEqual> _OpCache_with_parameter_env_open_door_skip = _OpCache_with_parameter_env_open_door_skip_ptr->second;
-                                auto writeState_ptr = _OpCache_with_parameter_env_open_door_skip.find(readState);
-                                if(writeState_ptr != _OpCache_with_parameter_env_open_door_skip.end()) {
-                                    LandingGear_R6::_ProjectionWrite_env_open_door_skip writeState = writeState_ptr->second;
-                                    copiedState._apply_update_for_env_open_door_skip(writeState);
-                                } else {
+                                auto _OpCache_with_parameter_env_open_door_skip_ptr = _OpCache_env_open_door_skip.find(param);
+                                if(_OpCache_with_parameter_env_open_door_skip_ptr == _OpCache_env_open_door_skip.end()) {
                                     copiedState.env_open_door_skip(_tmp_1);
                                     LandingGear_R6::_ProjectionWrite_env_open_door_skip writeState = copiedState._update_for_env_open_door_skip();
+                                    std::unordered_map<LandingGear_R6::_ProjectionRead_env_open_door_skip, LandingGear_R6::_ProjectionWrite_env_open_door_skip, LandingGear_R6::_ProjectionRead_env_open_door_skip::Hash, LandingGear_R6::_ProjectionRead_env_open_door_skip::HashEqual> _OpCache_with_parameter_env_open_door_skip = std::unordered_map<LandingGear_R6::_ProjectionRead_env_open_door_skip, LandingGear_R6::_ProjectionWrite_env_open_door_skip, LandingGear_R6::_ProjectionRead_env_open_door_skip::Hash, LandingGear_R6::_ProjectionRead_env_open_door_skip::HashEqual>();
                                     _OpCache_with_parameter_env_open_door_skip.insert({readState, writeState});
+                                    _OpCache_env_open_door_skip.insert({param, _OpCache_with_parameter_env_open_door_skip});
+                                } else {
+                                    std::unordered_map<LandingGear_R6::_ProjectionRead_env_open_door_skip, LandingGear_R6::_ProjectionWrite_env_open_door_skip, LandingGear_R6::_ProjectionRead_env_open_door_skip::Hash, LandingGear_R6::_ProjectionRead_env_open_door_skip::HashEqual> _OpCache_with_parameter_env_open_door_skip = _OpCache_with_parameter_env_open_door_skip_ptr->second;
+                                    auto writeState_ptr = _OpCache_with_parameter_env_open_door_skip.find(readState);
+                                    if(writeState_ptr != _OpCache_with_parameter_env_open_door_skip.end()) {
+                                        LandingGear_R6::_ProjectionWrite_env_open_door_skip writeState = writeState_ptr->second;
+                                        copiedState._apply_update_for_env_open_door_skip(writeState);
+                                    } else {
+                                        copiedState.env_open_door_skip(_tmp_1);
+                                        LandingGear_R6::_ProjectionWrite_env_open_door_skip writeState = copiedState._update_for_env_open_door_skip();
+                                        _OpCache_with_parameter_env_open_door_skip.insert({readState, writeState});
+                                    }
                                 }
                             }
-                        }
-
-                        copiedState.stateAccessedVia = "env_open_door_skip";
-                        result.insert(copiedState);
-                        {
-                            std::unique_lock<std::mutex> lock(mutex);
-                            transitions += 1;
-                        }
-                    }
-                } else {
-                    BSet<LandingGear_R6::POSITION> _trid_27 = _trid_27_ptr->second;
-                    for(const LandingGear_R6::POSITION& param : _trid_27) {
-                        LandingGear_R6::POSITION _tmp_1 = param;
-
-                        LandingGear_R6 copiedState = state._copy();
-                        LandingGear_R6::_ProjectionRead_env_open_door_skip readState = state._projected_state_for_env_open_door_skip();
-
-                        auto _OpCache_with_parameter_env_open_door_skip_ptr = _OpCache_env_open_door_skip.find(param);
-                        if(_OpCache_with_parameter_env_open_door_skip_ptr == _OpCache_env_open_door_skip.end()) {
+                            copiedState.stateAccessedVia = "env_open_door_skip";
+                            result.insert(copiedState);
                             {
-                                std::unique_lock<std::mutex> _ProjectionRead_env_open_door_skip_lock(_ProjectionRead_env_open_door_skip_mutex);
-                                copiedState.env_open_door_skip(_tmp_1);
-                                LandingGear_R6::_ProjectionWrite_env_open_door_skip writeState = copiedState._update_for_env_open_door_skip();
-                                std::unordered_map<LandingGear_R6::_ProjectionRead_env_open_door_skip, LandingGear_R6::_ProjectionWrite_env_open_door_skip, LandingGear_R6::_ProjectionRead_env_open_door_skip::Hash, LandingGear_R6::_ProjectionRead_env_open_door_skip::HashEqual> _OpCache_with_parameter_env_open_door_skip = std::unordered_map<LandingGear_R6::_ProjectionRead_env_open_door_skip, LandingGear_R6::_ProjectionWrite_env_open_door_skip, LandingGear_R6::_ProjectionRead_env_open_door_skip::Hash, LandingGear_R6::_ProjectionRead_env_open_door_skip::HashEqual>();
-                                _OpCache_with_parameter_env_open_door_skip.insert({readState, writeState});
-                                _OpCache_env_open_door_skip.insert({param, _OpCache_with_parameter_env_open_door_skip});
+                                std::unique_lock<std::mutex> lock(mutex);
+                                transitions += 1;
                             }
-                        } else {
+                        }
+                    } else {
+                        BSet<LandingGear_R6::POSITION> _trid_27 = _trid_27_ptr->second;
+                        for(const LandingGear_R6::POSITION& param : _trid_27) {
+                            LandingGear_R6::POSITION _tmp_1 = param;
+
+                            LandingGear_R6 copiedState = state._copy();
+                            LandingGear_R6::_ProjectionRead_env_open_door_skip readState = state._projected_state_for_env_open_door_skip();
                             {
                                 std::unique_lock<std::mutex> _ProjectionRead_env_open_door_skip_lock(_ProjectionRead_env_open_door_skip_mutex);
-                                std::unordered_map<LandingGear_R6::_ProjectionRead_env_open_door_skip, LandingGear_R6::_ProjectionWrite_env_open_door_skip, LandingGear_R6::_ProjectionRead_env_open_door_skip::Hash, LandingGear_R6::_ProjectionRead_env_open_door_skip::HashEqual> _OpCache_with_parameter_env_open_door_skip = _OpCache_with_parameter_env_open_door_skip_ptr->second;
-                                auto writeState_ptr = _OpCache_with_parameter_env_open_door_skip.find(readState);
-                                if(writeState_ptr != _OpCache_with_parameter_env_open_door_skip.end()) {
-                                    LandingGear_R6::_ProjectionWrite_env_open_door_skip writeState = writeState_ptr->second;
-                                    copiedState._apply_update_for_env_open_door_skip(writeState);
-                                } else {
+                                auto _OpCache_with_parameter_env_open_door_skip_ptr = _OpCache_env_open_door_skip.find(param);
+                                if(_OpCache_with_parameter_env_open_door_skip_ptr == _OpCache_env_open_door_skip.end()) {
                                     copiedState.env_open_door_skip(_tmp_1);
                                     LandingGear_R6::_ProjectionWrite_env_open_door_skip writeState = copiedState._update_for_env_open_door_skip();
+                                    std::unordered_map<LandingGear_R6::_ProjectionRead_env_open_door_skip, LandingGear_R6::_ProjectionWrite_env_open_door_skip, LandingGear_R6::_ProjectionRead_env_open_door_skip::Hash, LandingGear_R6::_ProjectionRead_env_open_door_skip::HashEqual> _OpCache_with_parameter_env_open_door_skip = std::unordered_map<LandingGear_R6::_ProjectionRead_env_open_door_skip, LandingGear_R6::_ProjectionWrite_env_open_door_skip, LandingGear_R6::_ProjectionRead_env_open_door_skip::Hash, LandingGear_R6::_ProjectionRead_env_open_door_skip::HashEqual>();
                                     _OpCache_with_parameter_env_open_door_skip.insert({readState, writeState});
+                                    _OpCache_env_open_door_skip.insert({param, _OpCache_with_parameter_env_open_door_skip});
+                                } else {
+                                    std::unordered_map<LandingGear_R6::_ProjectionRead_env_open_door_skip, LandingGear_R6::_ProjectionWrite_env_open_door_skip, LandingGear_R6::_ProjectionRead_env_open_door_skip::Hash, LandingGear_R6::_ProjectionRead_env_open_door_skip::HashEqual> _OpCache_with_parameter_env_open_door_skip = _OpCache_with_parameter_env_open_door_skip_ptr->second;
+                                    auto writeState_ptr = _OpCache_with_parameter_env_open_door_skip.find(readState);
+                                    if(writeState_ptr != _OpCache_with_parameter_env_open_door_skip.end()) {
+                                        LandingGear_R6::_ProjectionWrite_env_open_door_skip writeState = writeState_ptr->second;
+                                        copiedState._apply_update_for_env_open_door_skip(writeState);
+                                    } else {
+                                        copiedState.env_open_door_skip(_tmp_1);
+                                        LandingGear_R6::_ProjectionWrite_env_open_door_skip writeState = copiedState._update_for_env_open_door_skip();
+                                        _OpCache_with_parameter_env_open_door_skip.insert({readState, writeState});
+                                    }
                                 }
                             }
-                        }
-
-                        copiedState.stateAccessedVia = "env_open_door_skip";
-                        result.insert(copiedState);
-                        {
-                            std::unique_lock<std::mutex> lock(mutex);
-                            transitions += 1;
+                            copiedState.stateAccessedVia = "env_open_door_skip";
+                            result.insert(copiedState);
+                            {
+                                std::unique_lock<std::mutex> lock(mutex);
+                                transitions += 1;
+                            }
                         }
                     }
                 }
                 LandingGear_R6::_ProjectionRead__tr_env_start_close_door read__tr_env_start_close_door_state = state._projected_state_for__tr_env_start_close_door();
-                auto _trid_28_ptr = _OpCache_tr_env_start_close_door.find(read__tr_env_start_close_door_state);
-                if(_trid_28_ptr == _OpCache_tr_env_start_close_door.end()) {
-                    BSet<LandingGear_R6::POSITION> _trid_28 = state._tr_env_start_close_door();
-                    {
-                        std::unique_lock<std::mutex> _ProjectionRead__tr_env_start_close_door_lock(_ProjectionRead__tr_env_start_close_door_mutex);
+                {
+                    std::unique_lock<std::mutex> _ProjectionRead__tr_env_start_close_door_lock(_ProjectionRead__tr_env_start_close_door_mutex);
+                    auto _trid_28_ptr = _OpCache_tr_env_start_close_door.find(read__tr_env_start_close_door_state);
+                    if(_trid_28_ptr == _OpCache_tr_env_start_close_door.end()) {
+                        BSet<LandingGear_R6::POSITION> _trid_28 = state._tr_env_start_close_door();
                         _OpCache_tr_env_start_close_door.insert({read__tr_env_start_close_door_state, _trid_28});
-                    }
-                    for(const LandingGear_R6::POSITION& param : _trid_28) {
-                        LandingGear_R6::POSITION _tmp_1 = param;
+                        for(const LandingGear_R6::POSITION& param : _trid_28) {
+                            LandingGear_R6::POSITION _tmp_1 = param;
 
-                        LandingGear_R6 copiedState = state._copy();
-                        LandingGear_R6::_ProjectionRead_env_start_close_door readState = state._projected_state_for_env_start_close_door();
-
-                        auto _OpCache_with_parameter_env_start_close_door_ptr = _OpCache_env_start_close_door.find(param);
-                        if(_OpCache_with_parameter_env_start_close_door_ptr == _OpCache_env_start_close_door.end()) {
+                            LandingGear_R6 copiedState = state._copy();
+                            LandingGear_R6::_ProjectionRead_env_start_close_door readState = state._projected_state_for_env_start_close_door();
                             {
                                 std::unique_lock<std::mutex> _ProjectionRead_env_start_close_door_lock(_ProjectionRead_env_start_close_door_mutex);
-                                copiedState.env_start_close_door(_tmp_1);
-                                LandingGear_R6::_ProjectionWrite_env_start_close_door writeState = copiedState._update_for_env_start_close_door();
-                                std::unordered_map<LandingGear_R6::_ProjectionRead_env_start_close_door, LandingGear_R6::_ProjectionWrite_env_start_close_door, LandingGear_R6::_ProjectionRead_env_start_close_door::Hash, LandingGear_R6::_ProjectionRead_env_start_close_door::HashEqual> _OpCache_with_parameter_env_start_close_door = std::unordered_map<LandingGear_R6::_ProjectionRead_env_start_close_door, LandingGear_R6::_ProjectionWrite_env_start_close_door, LandingGear_R6::_ProjectionRead_env_start_close_door::Hash, LandingGear_R6::_ProjectionRead_env_start_close_door::HashEqual>();
-                                _OpCache_with_parameter_env_start_close_door.insert({readState, writeState});
-                                _OpCache_env_start_close_door.insert({param, _OpCache_with_parameter_env_start_close_door});
-                            }
-                        } else {
-                            {
-                                std::unique_lock<std::mutex> _ProjectionRead_env_start_close_door_lock(_ProjectionRead_env_start_close_door_mutex);
-                                std::unordered_map<LandingGear_R6::_ProjectionRead_env_start_close_door, LandingGear_R6::_ProjectionWrite_env_start_close_door, LandingGear_R6::_ProjectionRead_env_start_close_door::Hash, LandingGear_R6::_ProjectionRead_env_start_close_door::HashEqual> _OpCache_with_parameter_env_start_close_door = _OpCache_with_parameter_env_start_close_door_ptr->second;
-                                auto writeState_ptr = _OpCache_with_parameter_env_start_close_door.find(readState);
-                                if(writeState_ptr != _OpCache_with_parameter_env_start_close_door.end()) {
-                                    LandingGear_R6::_ProjectionWrite_env_start_close_door writeState = writeState_ptr->second;
-                                    copiedState._apply_update_for_env_start_close_door(writeState);
-                                } else {
+                                auto _OpCache_with_parameter_env_start_close_door_ptr = _OpCache_env_start_close_door.find(param);
+                                if(_OpCache_with_parameter_env_start_close_door_ptr == _OpCache_env_start_close_door.end()) {
                                     copiedState.env_start_close_door(_tmp_1);
                                     LandingGear_R6::_ProjectionWrite_env_start_close_door writeState = copiedState._update_for_env_start_close_door();
+                                    std::unordered_map<LandingGear_R6::_ProjectionRead_env_start_close_door, LandingGear_R6::_ProjectionWrite_env_start_close_door, LandingGear_R6::_ProjectionRead_env_start_close_door::Hash, LandingGear_R6::_ProjectionRead_env_start_close_door::HashEqual> _OpCache_with_parameter_env_start_close_door = std::unordered_map<LandingGear_R6::_ProjectionRead_env_start_close_door, LandingGear_R6::_ProjectionWrite_env_start_close_door, LandingGear_R6::_ProjectionRead_env_start_close_door::Hash, LandingGear_R6::_ProjectionRead_env_start_close_door::HashEqual>();
                                     _OpCache_with_parameter_env_start_close_door.insert({readState, writeState});
+                                    _OpCache_env_start_close_door.insert({param, _OpCache_with_parameter_env_start_close_door});
+                                } else {
+                                    std::unordered_map<LandingGear_R6::_ProjectionRead_env_start_close_door, LandingGear_R6::_ProjectionWrite_env_start_close_door, LandingGear_R6::_ProjectionRead_env_start_close_door::Hash, LandingGear_R6::_ProjectionRead_env_start_close_door::HashEqual> _OpCache_with_parameter_env_start_close_door = _OpCache_with_parameter_env_start_close_door_ptr->second;
+                                    auto writeState_ptr = _OpCache_with_parameter_env_start_close_door.find(readState);
+                                    if(writeState_ptr != _OpCache_with_parameter_env_start_close_door.end()) {
+                                        LandingGear_R6::_ProjectionWrite_env_start_close_door writeState = writeState_ptr->second;
+                                        copiedState._apply_update_for_env_start_close_door(writeState);
+                                    } else {
+                                        copiedState.env_start_close_door(_tmp_1);
+                                        LandingGear_R6::_ProjectionWrite_env_start_close_door writeState = copiedState._update_for_env_start_close_door();
+                                        _OpCache_with_parameter_env_start_close_door.insert({readState, writeState});
+                                    }
                                 }
                             }
-                        }
-
-                        copiedState.stateAccessedVia = "env_start_close_door";
-                        result.insert(copiedState);
-                        {
-                            std::unique_lock<std::mutex> lock(mutex);
-                            transitions += 1;
-                        }
-                    }
-                } else {
-                    BSet<LandingGear_R6::POSITION> _trid_28 = _trid_28_ptr->second;
-                    for(const LandingGear_R6::POSITION& param : _trid_28) {
-                        LandingGear_R6::POSITION _tmp_1 = param;
-
-                        LandingGear_R6 copiedState = state._copy();
-                        LandingGear_R6::_ProjectionRead_env_start_close_door readState = state._projected_state_for_env_start_close_door();
-
-                        auto _OpCache_with_parameter_env_start_close_door_ptr = _OpCache_env_start_close_door.find(param);
-                        if(_OpCache_with_parameter_env_start_close_door_ptr == _OpCache_env_start_close_door.end()) {
+                            copiedState.stateAccessedVia = "env_start_close_door";
+                            result.insert(copiedState);
                             {
-                                std::unique_lock<std::mutex> _ProjectionRead_env_start_close_door_lock(_ProjectionRead_env_start_close_door_mutex);
-                                copiedState.env_start_close_door(_tmp_1);
-                                LandingGear_R6::_ProjectionWrite_env_start_close_door writeState = copiedState._update_for_env_start_close_door();
-                                std::unordered_map<LandingGear_R6::_ProjectionRead_env_start_close_door, LandingGear_R6::_ProjectionWrite_env_start_close_door, LandingGear_R6::_ProjectionRead_env_start_close_door::Hash, LandingGear_R6::_ProjectionRead_env_start_close_door::HashEqual> _OpCache_with_parameter_env_start_close_door = std::unordered_map<LandingGear_R6::_ProjectionRead_env_start_close_door, LandingGear_R6::_ProjectionWrite_env_start_close_door, LandingGear_R6::_ProjectionRead_env_start_close_door::Hash, LandingGear_R6::_ProjectionRead_env_start_close_door::HashEqual>();
-                                _OpCache_with_parameter_env_start_close_door.insert({readState, writeState});
-                                _OpCache_env_start_close_door.insert({param, _OpCache_with_parameter_env_start_close_door});
+                                std::unique_lock<std::mutex> lock(mutex);
+                                transitions += 1;
                             }
-                        } else {
+                        }
+                    } else {
+                        BSet<LandingGear_R6::POSITION> _trid_28 = _trid_28_ptr->second;
+                        for(const LandingGear_R6::POSITION& param : _trid_28) {
+                            LandingGear_R6::POSITION _tmp_1 = param;
+
+                            LandingGear_R6 copiedState = state._copy();
+                            LandingGear_R6::_ProjectionRead_env_start_close_door readState = state._projected_state_for_env_start_close_door();
                             {
                                 std::unique_lock<std::mutex> _ProjectionRead_env_start_close_door_lock(_ProjectionRead_env_start_close_door_mutex);
-                                std::unordered_map<LandingGear_R6::_ProjectionRead_env_start_close_door, LandingGear_R6::_ProjectionWrite_env_start_close_door, LandingGear_R6::_ProjectionRead_env_start_close_door::Hash, LandingGear_R6::_ProjectionRead_env_start_close_door::HashEqual> _OpCache_with_parameter_env_start_close_door = _OpCache_with_parameter_env_start_close_door_ptr->second;
-                                auto writeState_ptr = _OpCache_with_parameter_env_start_close_door.find(readState);
-                                if(writeState_ptr != _OpCache_with_parameter_env_start_close_door.end()) {
-                                    LandingGear_R6::_ProjectionWrite_env_start_close_door writeState = writeState_ptr->second;
-                                    copiedState._apply_update_for_env_start_close_door(writeState);
-                                } else {
+                                auto _OpCache_with_parameter_env_start_close_door_ptr = _OpCache_env_start_close_door.find(param);
+                                if(_OpCache_with_parameter_env_start_close_door_ptr == _OpCache_env_start_close_door.end()) {
                                     copiedState.env_start_close_door(_tmp_1);
                                     LandingGear_R6::_ProjectionWrite_env_start_close_door writeState = copiedState._update_for_env_start_close_door();
+                                    std::unordered_map<LandingGear_R6::_ProjectionRead_env_start_close_door, LandingGear_R6::_ProjectionWrite_env_start_close_door, LandingGear_R6::_ProjectionRead_env_start_close_door::Hash, LandingGear_R6::_ProjectionRead_env_start_close_door::HashEqual> _OpCache_with_parameter_env_start_close_door = std::unordered_map<LandingGear_R6::_ProjectionRead_env_start_close_door, LandingGear_R6::_ProjectionWrite_env_start_close_door, LandingGear_R6::_ProjectionRead_env_start_close_door::Hash, LandingGear_R6::_ProjectionRead_env_start_close_door::HashEqual>();
                                     _OpCache_with_parameter_env_start_close_door.insert({readState, writeState});
+                                    _OpCache_env_start_close_door.insert({param, _OpCache_with_parameter_env_start_close_door});
+                                } else {
+                                    std::unordered_map<LandingGear_R6::_ProjectionRead_env_start_close_door, LandingGear_R6::_ProjectionWrite_env_start_close_door, LandingGear_R6::_ProjectionRead_env_start_close_door::Hash, LandingGear_R6::_ProjectionRead_env_start_close_door::HashEqual> _OpCache_with_parameter_env_start_close_door = _OpCache_with_parameter_env_start_close_door_ptr->second;
+                                    auto writeState_ptr = _OpCache_with_parameter_env_start_close_door.find(readState);
+                                    if(writeState_ptr != _OpCache_with_parameter_env_start_close_door.end()) {
+                                        LandingGear_R6::_ProjectionWrite_env_start_close_door writeState = writeState_ptr->second;
+                                        copiedState._apply_update_for_env_start_close_door(writeState);
+                                    } else {
+                                        copiedState.env_start_close_door(_tmp_1);
+                                        LandingGear_R6::_ProjectionWrite_env_start_close_door writeState = copiedState._update_for_env_start_close_door();
+                                        _OpCache_with_parameter_env_start_close_door.insert({readState, writeState});
+                                    }
                                 }
                             }
-                        }
-
-                        copiedState.stateAccessedVia = "env_start_close_door";
-                        result.insert(copiedState);
-                        {
-                            std::unique_lock<std::mutex> lock(mutex);
-                            transitions += 1;
+                            copiedState.stateAccessedVia = "env_start_close_door";
+                            result.insert(copiedState);
+                            {
+                                std::unique_lock<std::mutex> lock(mutex);
+                                transitions += 1;
+                            }
                         }
                     }
                 }
                 LandingGear_R6::_ProjectionRead__tr_env_close_door read__tr_env_close_door_state = state._projected_state_for__tr_env_close_door();
-                auto _trid_29_ptr = _OpCache_tr_env_close_door.find(read__tr_env_close_door_state);
-                if(_trid_29_ptr == _OpCache_tr_env_close_door.end()) {
-                    BSet<LandingGear_R6::POSITION> _trid_29 = state._tr_env_close_door();
-                    {
-                        std::unique_lock<std::mutex> _ProjectionRead__tr_env_close_door_lock(_ProjectionRead__tr_env_close_door_mutex);
+                {
+                    std::unique_lock<std::mutex> _ProjectionRead__tr_env_close_door_lock(_ProjectionRead__tr_env_close_door_mutex);
+                    auto _trid_29_ptr = _OpCache_tr_env_close_door.find(read__tr_env_close_door_state);
+                    if(_trid_29_ptr == _OpCache_tr_env_close_door.end()) {
+                        BSet<LandingGear_R6::POSITION> _trid_29 = state._tr_env_close_door();
                         _OpCache_tr_env_close_door.insert({read__tr_env_close_door_state, _trid_29});
-                    }
-                    for(const LandingGear_R6::POSITION& param : _trid_29) {
-                        LandingGear_R6::POSITION _tmp_1 = param;
+                        for(const LandingGear_R6::POSITION& param : _trid_29) {
+                            LandingGear_R6::POSITION _tmp_1 = param;
 
-                        LandingGear_R6 copiedState = state._copy();
-                        LandingGear_R6::_ProjectionRead_env_close_door readState = state._projected_state_for_env_close_door();
-
-                        auto _OpCache_with_parameter_env_close_door_ptr = _OpCache_env_close_door.find(param);
-                        if(_OpCache_with_parameter_env_close_door_ptr == _OpCache_env_close_door.end()) {
+                            LandingGear_R6 copiedState = state._copy();
+                            LandingGear_R6::_ProjectionRead_env_close_door readState = state._projected_state_for_env_close_door();
                             {
                                 std::unique_lock<std::mutex> _ProjectionRead_env_close_door_lock(_ProjectionRead_env_close_door_mutex);
-                                copiedState.env_close_door(_tmp_1);
-                                LandingGear_R6::_ProjectionWrite_env_close_door writeState = copiedState._update_for_env_close_door();
-                                std::unordered_map<LandingGear_R6::_ProjectionRead_env_close_door, LandingGear_R6::_ProjectionWrite_env_close_door, LandingGear_R6::_ProjectionRead_env_close_door::Hash, LandingGear_R6::_ProjectionRead_env_close_door::HashEqual> _OpCache_with_parameter_env_close_door = std::unordered_map<LandingGear_R6::_ProjectionRead_env_close_door, LandingGear_R6::_ProjectionWrite_env_close_door, LandingGear_R6::_ProjectionRead_env_close_door::Hash, LandingGear_R6::_ProjectionRead_env_close_door::HashEqual>();
-                                _OpCache_with_parameter_env_close_door.insert({readState, writeState});
-                                _OpCache_env_close_door.insert({param, _OpCache_with_parameter_env_close_door});
-                            }
-                        } else {
-                            {
-                                std::unique_lock<std::mutex> _ProjectionRead_env_close_door_lock(_ProjectionRead_env_close_door_mutex);
-                                std::unordered_map<LandingGear_R6::_ProjectionRead_env_close_door, LandingGear_R6::_ProjectionWrite_env_close_door, LandingGear_R6::_ProjectionRead_env_close_door::Hash, LandingGear_R6::_ProjectionRead_env_close_door::HashEqual> _OpCache_with_parameter_env_close_door = _OpCache_with_parameter_env_close_door_ptr->second;
-                                auto writeState_ptr = _OpCache_with_parameter_env_close_door.find(readState);
-                                if(writeState_ptr != _OpCache_with_parameter_env_close_door.end()) {
-                                    LandingGear_R6::_ProjectionWrite_env_close_door writeState = writeState_ptr->second;
-                                    copiedState._apply_update_for_env_close_door(writeState);
-                                } else {
+                                auto _OpCache_with_parameter_env_close_door_ptr = _OpCache_env_close_door.find(param);
+                                if(_OpCache_with_parameter_env_close_door_ptr == _OpCache_env_close_door.end()) {
                                     copiedState.env_close_door(_tmp_1);
                                     LandingGear_R6::_ProjectionWrite_env_close_door writeState = copiedState._update_for_env_close_door();
+                                    std::unordered_map<LandingGear_R6::_ProjectionRead_env_close_door, LandingGear_R6::_ProjectionWrite_env_close_door, LandingGear_R6::_ProjectionRead_env_close_door::Hash, LandingGear_R6::_ProjectionRead_env_close_door::HashEqual> _OpCache_with_parameter_env_close_door = std::unordered_map<LandingGear_R6::_ProjectionRead_env_close_door, LandingGear_R6::_ProjectionWrite_env_close_door, LandingGear_R6::_ProjectionRead_env_close_door::Hash, LandingGear_R6::_ProjectionRead_env_close_door::HashEqual>();
                                     _OpCache_with_parameter_env_close_door.insert({readState, writeState});
+                                    _OpCache_env_close_door.insert({param, _OpCache_with_parameter_env_close_door});
+                                } else {
+                                    std::unordered_map<LandingGear_R6::_ProjectionRead_env_close_door, LandingGear_R6::_ProjectionWrite_env_close_door, LandingGear_R6::_ProjectionRead_env_close_door::Hash, LandingGear_R6::_ProjectionRead_env_close_door::HashEqual> _OpCache_with_parameter_env_close_door = _OpCache_with_parameter_env_close_door_ptr->second;
+                                    auto writeState_ptr = _OpCache_with_parameter_env_close_door.find(readState);
+                                    if(writeState_ptr != _OpCache_with_parameter_env_close_door.end()) {
+                                        LandingGear_R6::_ProjectionWrite_env_close_door writeState = writeState_ptr->second;
+                                        copiedState._apply_update_for_env_close_door(writeState);
+                                    } else {
+                                        copiedState.env_close_door(_tmp_1);
+                                        LandingGear_R6::_ProjectionWrite_env_close_door writeState = copiedState._update_for_env_close_door();
+                                        _OpCache_with_parameter_env_close_door.insert({readState, writeState});
+                                    }
                                 }
                             }
-                        }
-
-                        copiedState.stateAccessedVia = "env_close_door";
-                        result.insert(copiedState);
-                        {
-                            std::unique_lock<std::mutex> lock(mutex);
-                            transitions += 1;
-                        }
-                    }
-                } else {
-                    BSet<LandingGear_R6::POSITION> _trid_29 = _trid_29_ptr->second;
-                    for(const LandingGear_R6::POSITION& param : _trid_29) {
-                        LandingGear_R6::POSITION _tmp_1 = param;
-
-                        LandingGear_R6 copiedState = state._copy();
-                        LandingGear_R6::_ProjectionRead_env_close_door readState = state._projected_state_for_env_close_door();
-
-                        auto _OpCache_with_parameter_env_close_door_ptr = _OpCache_env_close_door.find(param);
-                        if(_OpCache_with_parameter_env_close_door_ptr == _OpCache_env_close_door.end()) {
+                            copiedState.stateAccessedVia = "env_close_door";
+                            result.insert(copiedState);
                             {
-                                std::unique_lock<std::mutex> _ProjectionRead_env_close_door_lock(_ProjectionRead_env_close_door_mutex);
-                                copiedState.env_close_door(_tmp_1);
-                                LandingGear_R6::_ProjectionWrite_env_close_door writeState = copiedState._update_for_env_close_door();
-                                std::unordered_map<LandingGear_R6::_ProjectionRead_env_close_door, LandingGear_R6::_ProjectionWrite_env_close_door, LandingGear_R6::_ProjectionRead_env_close_door::Hash, LandingGear_R6::_ProjectionRead_env_close_door::HashEqual> _OpCache_with_parameter_env_close_door = std::unordered_map<LandingGear_R6::_ProjectionRead_env_close_door, LandingGear_R6::_ProjectionWrite_env_close_door, LandingGear_R6::_ProjectionRead_env_close_door::Hash, LandingGear_R6::_ProjectionRead_env_close_door::HashEqual>();
-                                _OpCache_with_parameter_env_close_door.insert({readState, writeState});
-                                _OpCache_env_close_door.insert({param, _OpCache_with_parameter_env_close_door});
+                                std::unique_lock<std::mutex> lock(mutex);
+                                transitions += 1;
                             }
-                        } else {
+                        }
+                    } else {
+                        BSet<LandingGear_R6::POSITION> _trid_29 = _trid_29_ptr->second;
+                        for(const LandingGear_R6::POSITION& param : _trid_29) {
+                            LandingGear_R6::POSITION _tmp_1 = param;
+
+                            LandingGear_R6 copiedState = state._copy();
+                            LandingGear_R6::_ProjectionRead_env_close_door readState = state._projected_state_for_env_close_door();
                             {
                                 std::unique_lock<std::mutex> _ProjectionRead_env_close_door_lock(_ProjectionRead_env_close_door_mutex);
-                                std::unordered_map<LandingGear_R6::_ProjectionRead_env_close_door, LandingGear_R6::_ProjectionWrite_env_close_door, LandingGear_R6::_ProjectionRead_env_close_door::Hash, LandingGear_R6::_ProjectionRead_env_close_door::HashEqual> _OpCache_with_parameter_env_close_door = _OpCache_with_parameter_env_close_door_ptr->second;
-                                auto writeState_ptr = _OpCache_with_parameter_env_close_door.find(readState);
-                                if(writeState_ptr != _OpCache_with_parameter_env_close_door.end()) {
-                                    LandingGear_R6::_ProjectionWrite_env_close_door writeState = writeState_ptr->second;
-                                    copiedState._apply_update_for_env_close_door(writeState);
-                                } else {
+                                auto _OpCache_with_parameter_env_close_door_ptr = _OpCache_env_close_door.find(param);
+                                if(_OpCache_with_parameter_env_close_door_ptr == _OpCache_env_close_door.end()) {
                                     copiedState.env_close_door(_tmp_1);
                                     LandingGear_R6::_ProjectionWrite_env_close_door writeState = copiedState._update_for_env_close_door();
+                                    std::unordered_map<LandingGear_R6::_ProjectionRead_env_close_door, LandingGear_R6::_ProjectionWrite_env_close_door, LandingGear_R6::_ProjectionRead_env_close_door::Hash, LandingGear_R6::_ProjectionRead_env_close_door::HashEqual> _OpCache_with_parameter_env_close_door = std::unordered_map<LandingGear_R6::_ProjectionRead_env_close_door, LandingGear_R6::_ProjectionWrite_env_close_door, LandingGear_R6::_ProjectionRead_env_close_door::Hash, LandingGear_R6::_ProjectionRead_env_close_door::HashEqual>();
                                     _OpCache_with_parameter_env_close_door.insert({readState, writeState});
+                                    _OpCache_env_close_door.insert({param, _OpCache_with_parameter_env_close_door});
+                                } else {
+                                    std::unordered_map<LandingGear_R6::_ProjectionRead_env_close_door, LandingGear_R6::_ProjectionWrite_env_close_door, LandingGear_R6::_ProjectionRead_env_close_door::Hash, LandingGear_R6::_ProjectionRead_env_close_door::HashEqual> _OpCache_with_parameter_env_close_door = _OpCache_with_parameter_env_close_door_ptr->second;
+                                    auto writeState_ptr = _OpCache_with_parameter_env_close_door.find(readState);
+                                    if(writeState_ptr != _OpCache_with_parameter_env_close_door.end()) {
+                                        LandingGear_R6::_ProjectionWrite_env_close_door writeState = writeState_ptr->second;
+                                        copiedState._apply_update_for_env_close_door(writeState);
+                                    } else {
+                                        copiedState.env_close_door(_tmp_1);
+                                        LandingGear_R6::_ProjectionWrite_env_close_door writeState = copiedState._update_for_env_close_door();
+                                        _OpCache_with_parameter_env_close_door.insert({readState, writeState});
+                                    }
                                 }
                             }
-                        }
-
-                        copiedState.stateAccessedVia = "env_close_door";
-                        result.insert(copiedState);
-                        {
-                            std::unique_lock<std::mutex> lock(mutex);
-                            transitions += 1;
+                            copiedState.stateAccessedVia = "env_close_door";
+                            result.insert(copiedState);
+                            {
+                                std::unique_lock<std::mutex> lock(mutex);
+                                transitions += 1;
+                            }
                         }
                     }
                 }
                 LandingGear_R6::_ProjectionRead__tr_env_close_door_skip read__tr_env_close_door_skip_state = state._projected_state_for__tr_env_close_door_skip();
-                auto _trid_30_ptr = _OpCache_tr_env_close_door_skip.find(read__tr_env_close_door_skip_state);
-                if(_trid_30_ptr == _OpCache_tr_env_close_door_skip.end()) {
-                    BSet<LandingGear_R6::POSITION> _trid_30 = state._tr_env_close_door_skip();
-                    {
-                        std::unique_lock<std::mutex> _ProjectionRead__tr_env_close_door_skip_lock(_ProjectionRead__tr_env_close_door_skip_mutex);
+                {
+                    std::unique_lock<std::mutex> _ProjectionRead__tr_env_close_door_skip_lock(_ProjectionRead__tr_env_close_door_skip_mutex);
+                    auto _trid_30_ptr = _OpCache_tr_env_close_door_skip.find(read__tr_env_close_door_skip_state);
+                    if(_trid_30_ptr == _OpCache_tr_env_close_door_skip.end()) {
+                        BSet<LandingGear_R6::POSITION> _trid_30 = state._tr_env_close_door_skip();
                         _OpCache_tr_env_close_door_skip.insert({read__tr_env_close_door_skip_state, _trid_30});
-                    }
-                    for(const LandingGear_R6::POSITION& param : _trid_30) {
-                        LandingGear_R6::POSITION _tmp_1 = param;
+                        for(const LandingGear_R6::POSITION& param : _trid_30) {
+                            LandingGear_R6::POSITION _tmp_1 = param;
 
-                        LandingGear_R6 copiedState = state._copy();
-                        LandingGear_R6::_ProjectionRead_env_close_door_skip readState = state._projected_state_for_env_close_door_skip();
-
-                        auto _OpCache_with_parameter_env_close_door_skip_ptr = _OpCache_env_close_door_skip.find(param);
-                        if(_OpCache_with_parameter_env_close_door_skip_ptr == _OpCache_env_close_door_skip.end()) {
+                            LandingGear_R6 copiedState = state._copy();
+                            LandingGear_R6::_ProjectionRead_env_close_door_skip readState = state._projected_state_for_env_close_door_skip();
                             {
                                 std::unique_lock<std::mutex> _ProjectionRead_env_close_door_skip_lock(_ProjectionRead_env_close_door_skip_mutex);
-                                copiedState.env_close_door_skip(_tmp_1);
-                                LandingGear_R6::_ProjectionWrite_env_close_door_skip writeState = copiedState._update_for_env_close_door_skip();
-                                std::unordered_map<LandingGear_R6::_ProjectionRead_env_close_door_skip, LandingGear_R6::_ProjectionWrite_env_close_door_skip, LandingGear_R6::_ProjectionRead_env_close_door_skip::Hash, LandingGear_R6::_ProjectionRead_env_close_door_skip::HashEqual> _OpCache_with_parameter_env_close_door_skip = std::unordered_map<LandingGear_R6::_ProjectionRead_env_close_door_skip, LandingGear_R6::_ProjectionWrite_env_close_door_skip, LandingGear_R6::_ProjectionRead_env_close_door_skip::Hash, LandingGear_R6::_ProjectionRead_env_close_door_skip::HashEqual>();
-                                _OpCache_with_parameter_env_close_door_skip.insert({readState, writeState});
-                                _OpCache_env_close_door_skip.insert({param, _OpCache_with_parameter_env_close_door_skip});
-                            }
-                        } else {
-                            {
-                                std::unique_lock<std::mutex> _ProjectionRead_env_close_door_skip_lock(_ProjectionRead_env_close_door_skip_mutex);
-                                std::unordered_map<LandingGear_R6::_ProjectionRead_env_close_door_skip, LandingGear_R6::_ProjectionWrite_env_close_door_skip, LandingGear_R6::_ProjectionRead_env_close_door_skip::Hash, LandingGear_R6::_ProjectionRead_env_close_door_skip::HashEqual> _OpCache_with_parameter_env_close_door_skip = _OpCache_with_parameter_env_close_door_skip_ptr->second;
-                                auto writeState_ptr = _OpCache_with_parameter_env_close_door_skip.find(readState);
-                                if(writeState_ptr != _OpCache_with_parameter_env_close_door_skip.end()) {
-                                    LandingGear_R6::_ProjectionWrite_env_close_door_skip writeState = writeState_ptr->second;
-                                    copiedState._apply_update_for_env_close_door_skip(writeState);
-                                } else {
+                                auto _OpCache_with_parameter_env_close_door_skip_ptr = _OpCache_env_close_door_skip.find(param);
+                                if(_OpCache_with_parameter_env_close_door_skip_ptr == _OpCache_env_close_door_skip.end()) {
                                     copiedState.env_close_door_skip(_tmp_1);
                                     LandingGear_R6::_ProjectionWrite_env_close_door_skip writeState = copiedState._update_for_env_close_door_skip();
+                                    std::unordered_map<LandingGear_R6::_ProjectionRead_env_close_door_skip, LandingGear_R6::_ProjectionWrite_env_close_door_skip, LandingGear_R6::_ProjectionRead_env_close_door_skip::Hash, LandingGear_R6::_ProjectionRead_env_close_door_skip::HashEqual> _OpCache_with_parameter_env_close_door_skip = std::unordered_map<LandingGear_R6::_ProjectionRead_env_close_door_skip, LandingGear_R6::_ProjectionWrite_env_close_door_skip, LandingGear_R6::_ProjectionRead_env_close_door_skip::Hash, LandingGear_R6::_ProjectionRead_env_close_door_skip::HashEqual>();
                                     _OpCache_with_parameter_env_close_door_skip.insert({readState, writeState});
+                                    _OpCache_env_close_door_skip.insert({param, _OpCache_with_parameter_env_close_door_skip});
+                                } else {
+                                    std::unordered_map<LandingGear_R6::_ProjectionRead_env_close_door_skip, LandingGear_R6::_ProjectionWrite_env_close_door_skip, LandingGear_R6::_ProjectionRead_env_close_door_skip::Hash, LandingGear_R6::_ProjectionRead_env_close_door_skip::HashEqual> _OpCache_with_parameter_env_close_door_skip = _OpCache_with_parameter_env_close_door_skip_ptr->second;
+                                    auto writeState_ptr = _OpCache_with_parameter_env_close_door_skip.find(readState);
+                                    if(writeState_ptr != _OpCache_with_parameter_env_close_door_skip.end()) {
+                                        LandingGear_R6::_ProjectionWrite_env_close_door_skip writeState = writeState_ptr->second;
+                                        copiedState._apply_update_for_env_close_door_skip(writeState);
+                                    } else {
+                                        copiedState.env_close_door_skip(_tmp_1);
+                                        LandingGear_R6::_ProjectionWrite_env_close_door_skip writeState = copiedState._update_for_env_close_door_skip();
+                                        _OpCache_with_parameter_env_close_door_skip.insert({readState, writeState});
+                                    }
                                 }
                             }
-                        }
-
-                        copiedState.stateAccessedVia = "env_close_door_skip";
-                        result.insert(copiedState);
-                        {
-                            std::unique_lock<std::mutex> lock(mutex);
-                            transitions += 1;
-                        }
-                    }
-                } else {
-                    BSet<LandingGear_R6::POSITION> _trid_30 = _trid_30_ptr->second;
-                    for(const LandingGear_R6::POSITION& param : _trid_30) {
-                        LandingGear_R6::POSITION _tmp_1 = param;
-
-                        LandingGear_R6 copiedState = state._copy();
-                        LandingGear_R6::_ProjectionRead_env_close_door_skip readState = state._projected_state_for_env_close_door_skip();
-
-                        auto _OpCache_with_parameter_env_close_door_skip_ptr = _OpCache_env_close_door_skip.find(param);
-                        if(_OpCache_with_parameter_env_close_door_skip_ptr == _OpCache_env_close_door_skip.end()) {
+                            copiedState.stateAccessedVia = "env_close_door_skip";
+                            result.insert(copiedState);
                             {
-                                std::unique_lock<std::mutex> _ProjectionRead_env_close_door_skip_lock(_ProjectionRead_env_close_door_skip_mutex);
-                                copiedState.env_close_door_skip(_tmp_1);
-                                LandingGear_R6::_ProjectionWrite_env_close_door_skip writeState = copiedState._update_for_env_close_door_skip();
-                                std::unordered_map<LandingGear_R6::_ProjectionRead_env_close_door_skip, LandingGear_R6::_ProjectionWrite_env_close_door_skip, LandingGear_R6::_ProjectionRead_env_close_door_skip::Hash, LandingGear_R6::_ProjectionRead_env_close_door_skip::HashEqual> _OpCache_with_parameter_env_close_door_skip = std::unordered_map<LandingGear_R6::_ProjectionRead_env_close_door_skip, LandingGear_R6::_ProjectionWrite_env_close_door_skip, LandingGear_R6::_ProjectionRead_env_close_door_skip::Hash, LandingGear_R6::_ProjectionRead_env_close_door_skip::HashEqual>();
-                                _OpCache_with_parameter_env_close_door_skip.insert({readState, writeState});
-                                _OpCache_env_close_door_skip.insert({param, _OpCache_with_parameter_env_close_door_skip});
+                                std::unique_lock<std::mutex> lock(mutex);
+                                transitions += 1;
                             }
-                        } else {
+                        }
+                    } else {
+                        BSet<LandingGear_R6::POSITION> _trid_30 = _trid_30_ptr->second;
+                        for(const LandingGear_R6::POSITION& param : _trid_30) {
+                            LandingGear_R6::POSITION _tmp_1 = param;
+
+                            LandingGear_R6 copiedState = state._copy();
+                            LandingGear_R6::_ProjectionRead_env_close_door_skip readState = state._projected_state_for_env_close_door_skip();
                             {
                                 std::unique_lock<std::mutex> _ProjectionRead_env_close_door_skip_lock(_ProjectionRead_env_close_door_skip_mutex);
-                                std::unordered_map<LandingGear_R6::_ProjectionRead_env_close_door_skip, LandingGear_R6::_ProjectionWrite_env_close_door_skip, LandingGear_R6::_ProjectionRead_env_close_door_skip::Hash, LandingGear_R6::_ProjectionRead_env_close_door_skip::HashEqual> _OpCache_with_parameter_env_close_door_skip = _OpCache_with_parameter_env_close_door_skip_ptr->second;
-                                auto writeState_ptr = _OpCache_with_parameter_env_close_door_skip.find(readState);
-                                if(writeState_ptr != _OpCache_with_parameter_env_close_door_skip.end()) {
-                                    LandingGear_R6::_ProjectionWrite_env_close_door_skip writeState = writeState_ptr->second;
-                                    copiedState._apply_update_for_env_close_door_skip(writeState);
-                                } else {
+                                auto _OpCache_with_parameter_env_close_door_skip_ptr = _OpCache_env_close_door_skip.find(param);
+                                if(_OpCache_with_parameter_env_close_door_skip_ptr == _OpCache_env_close_door_skip.end()) {
                                     copiedState.env_close_door_skip(_tmp_1);
                                     LandingGear_R6::_ProjectionWrite_env_close_door_skip writeState = copiedState._update_for_env_close_door_skip();
+                                    std::unordered_map<LandingGear_R6::_ProjectionRead_env_close_door_skip, LandingGear_R6::_ProjectionWrite_env_close_door_skip, LandingGear_R6::_ProjectionRead_env_close_door_skip::Hash, LandingGear_R6::_ProjectionRead_env_close_door_skip::HashEqual> _OpCache_with_parameter_env_close_door_skip = std::unordered_map<LandingGear_R6::_ProjectionRead_env_close_door_skip, LandingGear_R6::_ProjectionWrite_env_close_door_skip, LandingGear_R6::_ProjectionRead_env_close_door_skip::Hash, LandingGear_R6::_ProjectionRead_env_close_door_skip::HashEqual>();
                                     _OpCache_with_parameter_env_close_door_skip.insert({readState, writeState});
+                                    _OpCache_env_close_door_skip.insert({param, _OpCache_with_parameter_env_close_door_skip});
+                                } else {
+                                    std::unordered_map<LandingGear_R6::_ProjectionRead_env_close_door_skip, LandingGear_R6::_ProjectionWrite_env_close_door_skip, LandingGear_R6::_ProjectionRead_env_close_door_skip::Hash, LandingGear_R6::_ProjectionRead_env_close_door_skip::HashEqual> _OpCache_with_parameter_env_close_door_skip = _OpCache_with_parameter_env_close_door_skip_ptr->second;
+                                    auto writeState_ptr = _OpCache_with_parameter_env_close_door_skip.find(readState);
+                                    if(writeState_ptr != _OpCache_with_parameter_env_close_door_skip.end()) {
+                                        LandingGear_R6::_ProjectionWrite_env_close_door_skip writeState = writeState_ptr->second;
+                                        copiedState._apply_update_for_env_close_door_skip(writeState);
+                                    } else {
+                                        copiedState.env_close_door_skip(_tmp_1);
+                                        LandingGear_R6::_ProjectionWrite_env_close_door_skip writeState = copiedState._update_for_env_close_door_skip();
+                                        _OpCache_with_parameter_env_close_door_skip.insert({readState, writeState});
+                                    }
                                 }
                             }
-                        }
-
-                        copiedState.stateAccessedVia = "env_close_door_skip";
-                        result.insert(copiedState);
-                        {
-                            std::unique_lock<std::mutex> lock(mutex);
-                            transitions += 1;
+                            copiedState.stateAccessedVia = "env_close_door_skip";
+                            result.insert(copiedState);
+                            {
+                                std::unique_lock<std::mutex> lock(mutex);
+                                transitions += 1;
+                            }
                         }
                     }
                 }
                 LandingGear_R6::_ProjectionRead__tr_toggle_handle_up read__tr_toggle_handle_up_state = state._projected_state_for__tr_toggle_handle_up();
                 bool _trid_31 = false;
-                auto _obj__trid_31_ptr = _OpCache_tr_toggle_handle_up.find(read__tr_toggle_handle_up_state);
-                if(_obj__trid_31_ptr == _OpCache_tr_toggle_handle_up.end()) {
-                    _trid_31 = state._tr_toggle_handle_up();
-                    {
-                        std::unique_lock<std::mutex> _ProjectionRead__tr_toggle_handle_up_lock(_ProjectionRead__tr_toggle_handle_up_mutex);
+                {
+                    std::unique_lock<std::mutex> _ProjectionRead__tr_toggle_handle_up_lock(_ProjectionRead__tr_toggle_handle_up_mutex);
+                    auto _obj__trid_31_ptr = _OpCache_tr_toggle_handle_up.find(read__tr_toggle_handle_up_state);
+                    if(_obj__trid_31_ptr == _OpCache_tr_toggle_handle_up.end()) {
+                        _trid_31 = state._tr_toggle_handle_up();
                         _OpCache_tr_toggle_handle_up.insert({read__tr_toggle_handle_up_state, _trid_31});
+                    } else {
+                        _trid_31 = _obj__trid_31_ptr->second;
                     }
-                } else {
-                    _trid_31 = _obj__trid_31_ptr->second;
                 }
                 if(_trid_31) {
                     LandingGear_R6 copiedState = state._copy();
                     LandingGear_R6::_ProjectionRead_toggle_handle_up readState = state._projected_state_for_toggle_handle_up();
-
-                    auto _OpCache_with_parameter_toggle_handle_up_ptr = _OpCache_toggle_handle_up.find(_trid_31);
-                    if(_OpCache_with_parameter_toggle_handle_up_ptr == _OpCache_toggle_handle_up.end()) {
-                        {
-                            std::unique_lock<std::mutex> _ProjectionRead_toggle_handle_up_lock(_ProjectionRead_toggle_handle_up_mutex);
+                    {
+                        std::unique_lock<std::mutex> _ProjectionRead_toggle_handle_up_lock(_ProjectionRead_toggle_handle_up_mutex);
+                        auto _OpCache_with_parameter_toggle_handle_up_ptr = _OpCache_toggle_handle_up.find(_trid_31);
+                        if(_OpCache_with_parameter_toggle_handle_up_ptr == _OpCache_toggle_handle_up.end()) {
                             copiedState.toggle_handle_up();
                             LandingGear_R6::_ProjectionWrite_toggle_handle_up writeState = copiedState._update_for_toggle_handle_up();
                             std::unordered_map<LandingGear_R6::_ProjectionRead_toggle_handle_up, LandingGear_R6::_ProjectionWrite_toggle_handle_up, LandingGear_R6::_ProjectionRead_toggle_handle_up::Hash, LandingGear_R6::_ProjectionRead_toggle_handle_up::HashEqual> _OpCache_with_parameter_toggle_handle_up = std::unordered_map<LandingGear_R6::_ProjectionRead_toggle_handle_up, LandingGear_R6::_ProjectionWrite_toggle_handle_up, LandingGear_R6::_ProjectionRead_toggle_handle_up::Hash, LandingGear_R6::_ProjectionRead_toggle_handle_up::HashEqual>();
                             _OpCache_with_parameter_toggle_handle_up.insert({readState, writeState});
                             _OpCache_toggle_handle_up.insert({_trid_31, _OpCache_with_parameter_toggle_handle_up});
-                        }
-                    } else {
-                        {
-                            std::unique_lock<std::mutex> _ProjectionRead_toggle_handle_up_lock(_ProjectionRead_toggle_handle_up_mutex);
+                        } else {
                             std::unordered_map<LandingGear_R6::_ProjectionRead_toggle_handle_up, LandingGear_R6::_ProjectionWrite_toggle_handle_up, LandingGear_R6::_ProjectionRead_toggle_handle_up::Hash, LandingGear_R6::_ProjectionRead_toggle_handle_up::HashEqual> _OpCache_with_parameter_toggle_handle_up = _OpCache_with_parameter_toggle_handle_up_ptr->second;
                             auto writeState_ptr = _OpCache_with_parameter_toggle_handle_up.find(readState);
                             if(writeState_ptr != _OpCache_with_parameter_toggle_handle_up.end()) {
@@ -12574,7 +12360,6 @@ class ModelChecker {
                             }
                         }
                     }
-
                     copiedState.stateAccessedVia = "toggle_handle_up";
                     result.insert(copiedState);
                     {
@@ -12584,33 +12369,29 @@ class ModelChecker {
                 }
                 LandingGear_R6::_ProjectionRead__tr_toggle_handle_down read__tr_toggle_handle_down_state = state._projected_state_for__tr_toggle_handle_down();
                 bool _trid_32 = false;
-                auto _obj__trid_32_ptr = _OpCache_tr_toggle_handle_down.find(read__tr_toggle_handle_down_state);
-                if(_obj__trid_32_ptr == _OpCache_tr_toggle_handle_down.end()) {
-                    _trid_32 = state._tr_toggle_handle_down();
-                    {
-                        std::unique_lock<std::mutex> _ProjectionRead__tr_toggle_handle_down_lock(_ProjectionRead__tr_toggle_handle_down_mutex);
+                {
+                    std::unique_lock<std::mutex> _ProjectionRead__tr_toggle_handle_down_lock(_ProjectionRead__tr_toggle_handle_down_mutex);
+                    auto _obj__trid_32_ptr = _OpCache_tr_toggle_handle_down.find(read__tr_toggle_handle_down_state);
+                    if(_obj__trid_32_ptr == _OpCache_tr_toggle_handle_down.end()) {
+                        _trid_32 = state._tr_toggle_handle_down();
                         _OpCache_tr_toggle_handle_down.insert({read__tr_toggle_handle_down_state, _trid_32});
+                    } else {
+                        _trid_32 = _obj__trid_32_ptr->second;
                     }
-                } else {
-                    _trid_32 = _obj__trid_32_ptr->second;
                 }
                 if(_trid_32) {
                     LandingGear_R6 copiedState = state._copy();
                     LandingGear_R6::_ProjectionRead_toggle_handle_down readState = state._projected_state_for_toggle_handle_down();
-
-                    auto _OpCache_with_parameter_toggle_handle_down_ptr = _OpCache_toggle_handle_down.find(_trid_32);
-                    if(_OpCache_with_parameter_toggle_handle_down_ptr == _OpCache_toggle_handle_down.end()) {
-                        {
-                            std::unique_lock<std::mutex> _ProjectionRead_toggle_handle_down_lock(_ProjectionRead_toggle_handle_down_mutex);
+                    {
+                        std::unique_lock<std::mutex> _ProjectionRead_toggle_handle_down_lock(_ProjectionRead_toggle_handle_down_mutex);
+                        auto _OpCache_with_parameter_toggle_handle_down_ptr = _OpCache_toggle_handle_down.find(_trid_32);
+                        if(_OpCache_with_parameter_toggle_handle_down_ptr == _OpCache_toggle_handle_down.end()) {
                             copiedState.toggle_handle_down();
                             LandingGear_R6::_ProjectionWrite_toggle_handle_down writeState = copiedState._update_for_toggle_handle_down();
                             std::unordered_map<LandingGear_R6::_ProjectionRead_toggle_handle_down, LandingGear_R6::_ProjectionWrite_toggle_handle_down, LandingGear_R6::_ProjectionRead_toggle_handle_down::Hash, LandingGear_R6::_ProjectionRead_toggle_handle_down::HashEqual> _OpCache_with_parameter_toggle_handle_down = std::unordered_map<LandingGear_R6::_ProjectionRead_toggle_handle_down, LandingGear_R6::_ProjectionWrite_toggle_handle_down, LandingGear_R6::_ProjectionRead_toggle_handle_down::Hash, LandingGear_R6::_ProjectionRead_toggle_handle_down::HashEqual>();
                             _OpCache_with_parameter_toggle_handle_down.insert({readState, writeState});
                             _OpCache_toggle_handle_down.insert({_trid_32, _OpCache_with_parameter_toggle_handle_down});
-                        }
-                    } else {
-                        {
-                            std::unique_lock<std::mutex> _ProjectionRead_toggle_handle_down_lock(_ProjectionRead_toggle_handle_down_mutex);
+                        } else {
                             std::unordered_map<LandingGear_R6::_ProjectionRead_toggle_handle_down, LandingGear_R6::_ProjectionWrite_toggle_handle_down, LandingGear_R6::_ProjectionRead_toggle_handle_down::Hash, LandingGear_R6::_ProjectionRead_toggle_handle_down::HashEqual> _OpCache_with_parameter_toggle_handle_down = _OpCache_with_parameter_toggle_handle_down_ptr->second;
                             auto writeState_ptr = _OpCache_with_parameter_toggle_handle_down.find(readState);
                             if(writeState_ptr != _OpCache_with_parameter_toggle_handle_down.end()) {
@@ -12623,7 +12404,6 @@ class ModelChecker {
                             }
                         }
                     }
-
                     copiedState.stateAccessedVia = "toggle_handle_down";
                     result.insert(copiedState);
                     {
@@ -12633,33 +12413,29 @@ class ModelChecker {
                 }
                 LandingGear_R6::_ProjectionRead__tr_con_stimulate_general_valve read__tr_con_stimulate_general_valve_state = state._projected_state_for__tr_con_stimulate_general_valve();
                 bool _trid_33 = false;
-                auto _obj__trid_33_ptr = _OpCache_tr_con_stimulate_general_valve.find(read__tr_con_stimulate_general_valve_state);
-                if(_obj__trid_33_ptr == _OpCache_tr_con_stimulate_general_valve.end()) {
-                    _trid_33 = state._tr_con_stimulate_general_valve();
-                    {
-                        std::unique_lock<std::mutex> _ProjectionRead__tr_con_stimulate_general_valve_lock(_ProjectionRead__tr_con_stimulate_general_valve_mutex);
+                {
+                    std::unique_lock<std::mutex> _ProjectionRead__tr_con_stimulate_general_valve_lock(_ProjectionRead__tr_con_stimulate_general_valve_mutex);
+                    auto _obj__trid_33_ptr = _OpCache_tr_con_stimulate_general_valve.find(read__tr_con_stimulate_general_valve_state);
+                    if(_obj__trid_33_ptr == _OpCache_tr_con_stimulate_general_valve.end()) {
+                        _trid_33 = state._tr_con_stimulate_general_valve();
                         _OpCache_tr_con_stimulate_general_valve.insert({read__tr_con_stimulate_general_valve_state, _trid_33});
+                    } else {
+                        _trid_33 = _obj__trid_33_ptr->second;
                     }
-                } else {
-                    _trid_33 = _obj__trid_33_ptr->second;
                 }
                 if(_trid_33) {
                     LandingGear_R6 copiedState = state._copy();
                     LandingGear_R6::_ProjectionRead_con_stimulate_general_valve readState = state._projected_state_for_con_stimulate_general_valve();
-
-                    auto _OpCache_with_parameter_con_stimulate_general_valve_ptr = _OpCache_con_stimulate_general_valve.find(_trid_33);
-                    if(_OpCache_with_parameter_con_stimulate_general_valve_ptr == _OpCache_con_stimulate_general_valve.end()) {
-                        {
-                            std::unique_lock<std::mutex> _ProjectionRead_con_stimulate_general_valve_lock(_ProjectionRead_con_stimulate_general_valve_mutex);
+                    {
+                        std::unique_lock<std::mutex> _ProjectionRead_con_stimulate_general_valve_lock(_ProjectionRead_con_stimulate_general_valve_mutex);
+                        auto _OpCache_with_parameter_con_stimulate_general_valve_ptr = _OpCache_con_stimulate_general_valve.find(_trid_33);
+                        if(_OpCache_with_parameter_con_stimulate_general_valve_ptr == _OpCache_con_stimulate_general_valve.end()) {
                             copiedState.con_stimulate_general_valve();
                             LandingGear_R6::_ProjectionWrite_con_stimulate_general_valve writeState = copiedState._update_for_con_stimulate_general_valve();
                             std::unordered_map<LandingGear_R6::_ProjectionRead_con_stimulate_general_valve, LandingGear_R6::_ProjectionWrite_con_stimulate_general_valve, LandingGear_R6::_ProjectionRead_con_stimulate_general_valve::Hash, LandingGear_R6::_ProjectionRead_con_stimulate_general_valve::HashEqual> _OpCache_with_parameter_con_stimulate_general_valve = std::unordered_map<LandingGear_R6::_ProjectionRead_con_stimulate_general_valve, LandingGear_R6::_ProjectionWrite_con_stimulate_general_valve, LandingGear_R6::_ProjectionRead_con_stimulate_general_valve::Hash, LandingGear_R6::_ProjectionRead_con_stimulate_general_valve::HashEqual>();
                             _OpCache_with_parameter_con_stimulate_general_valve.insert({readState, writeState});
                             _OpCache_con_stimulate_general_valve.insert({_trid_33, _OpCache_with_parameter_con_stimulate_general_valve});
-                        }
-                    } else {
-                        {
-                            std::unique_lock<std::mutex> _ProjectionRead_con_stimulate_general_valve_lock(_ProjectionRead_con_stimulate_general_valve_mutex);
+                        } else {
                             std::unordered_map<LandingGear_R6::_ProjectionRead_con_stimulate_general_valve, LandingGear_R6::_ProjectionWrite_con_stimulate_general_valve, LandingGear_R6::_ProjectionRead_con_stimulate_general_valve::Hash, LandingGear_R6::_ProjectionRead_con_stimulate_general_valve::HashEqual> _OpCache_with_parameter_con_stimulate_general_valve = _OpCache_with_parameter_con_stimulate_general_valve_ptr->second;
                             auto writeState_ptr = _OpCache_with_parameter_con_stimulate_general_valve.find(readState);
                             if(writeState_ptr != _OpCache_with_parameter_con_stimulate_general_valve.end()) {
@@ -12672,7 +12448,6 @@ class ModelChecker {
                             }
                         }
                     }
-
                     copiedState.stateAccessedVia = "con_stimulate_general_valve";
                     result.insert(copiedState);
                     {
@@ -12682,33 +12457,29 @@ class ModelChecker {
                 }
                 LandingGear_R6::_ProjectionRead__tr_con_stop_stimulate_general_valve read__tr_con_stop_stimulate_general_valve_state = state._projected_state_for__tr_con_stop_stimulate_general_valve();
                 bool _trid_34 = false;
-                auto _obj__trid_34_ptr = _OpCache_tr_con_stop_stimulate_general_valve.find(read__tr_con_stop_stimulate_general_valve_state);
-                if(_obj__trid_34_ptr == _OpCache_tr_con_stop_stimulate_general_valve.end()) {
-                    _trid_34 = state._tr_con_stop_stimulate_general_valve();
-                    {
-                        std::unique_lock<std::mutex> _ProjectionRead__tr_con_stop_stimulate_general_valve_lock(_ProjectionRead__tr_con_stop_stimulate_general_valve_mutex);
+                {
+                    std::unique_lock<std::mutex> _ProjectionRead__tr_con_stop_stimulate_general_valve_lock(_ProjectionRead__tr_con_stop_stimulate_general_valve_mutex);
+                    auto _obj__trid_34_ptr = _OpCache_tr_con_stop_stimulate_general_valve.find(read__tr_con_stop_stimulate_general_valve_state);
+                    if(_obj__trid_34_ptr == _OpCache_tr_con_stop_stimulate_general_valve.end()) {
+                        _trid_34 = state._tr_con_stop_stimulate_general_valve();
                         _OpCache_tr_con_stop_stimulate_general_valve.insert({read__tr_con_stop_stimulate_general_valve_state, _trid_34});
+                    } else {
+                        _trid_34 = _obj__trid_34_ptr->second;
                     }
-                } else {
-                    _trid_34 = _obj__trid_34_ptr->second;
                 }
                 if(_trid_34) {
                     LandingGear_R6 copiedState = state._copy();
                     LandingGear_R6::_ProjectionRead_con_stop_stimulate_general_valve readState = state._projected_state_for_con_stop_stimulate_general_valve();
-
-                    auto _OpCache_with_parameter_con_stop_stimulate_general_valve_ptr = _OpCache_con_stop_stimulate_general_valve.find(_trid_34);
-                    if(_OpCache_with_parameter_con_stop_stimulate_general_valve_ptr == _OpCache_con_stop_stimulate_general_valve.end()) {
-                        {
-                            std::unique_lock<std::mutex> _ProjectionRead_con_stop_stimulate_general_valve_lock(_ProjectionRead_con_stop_stimulate_general_valve_mutex);
+                    {
+                        std::unique_lock<std::mutex> _ProjectionRead_con_stop_stimulate_general_valve_lock(_ProjectionRead_con_stop_stimulate_general_valve_mutex);
+                        auto _OpCache_with_parameter_con_stop_stimulate_general_valve_ptr = _OpCache_con_stop_stimulate_general_valve.find(_trid_34);
+                        if(_OpCache_with_parameter_con_stop_stimulate_general_valve_ptr == _OpCache_con_stop_stimulate_general_valve.end()) {
                             copiedState.con_stop_stimulate_general_valve();
                             LandingGear_R6::_ProjectionWrite_con_stop_stimulate_general_valve writeState = copiedState._update_for_con_stop_stimulate_general_valve();
                             std::unordered_map<LandingGear_R6::_ProjectionRead_con_stop_stimulate_general_valve, LandingGear_R6::_ProjectionWrite_con_stop_stimulate_general_valve, LandingGear_R6::_ProjectionRead_con_stop_stimulate_general_valve::Hash, LandingGear_R6::_ProjectionRead_con_stop_stimulate_general_valve::HashEqual> _OpCache_with_parameter_con_stop_stimulate_general_valve = std::unordered_map<LandingGear_R6::_ProjectionRead_con_stop_stimulate_general_valve, LandingGear_R6::_ProjectionWrite_con_stop_stimulate_general_valve, LandingGear_R6::_ProjectionRead_con_stop_stimulate_general_valve::Hash, LandingGear_R6::_ProjectionRead_con_stop_stimulate_general_valve::HashEqual>();
                             _OpCache_with_parameter_con_stop_stimulate_general_valve.insert({readState, writeState});
                             _OpCache_con_stop_stimulate_general_valve.insert({_trid_34, _OpCache_with_parameter_con_stop_stimulate_general_valve});
-                        }
-                    } else {
-                        {
-                            std::unique_lock<std::mutex> _ProjectionRead_con_stop_stimulate_general_valve_lock(_ProjectionRead_con_stop_stimulate_general_valve_mutex);
+                        } else {
                             std::unordered_map<LandingGear_R6::_ProjectionRead_con_stop_stimulate_general_valve, LandingGear_R6::_ProjectionWrite_con_stop_stimulate_general_valve, LandingGear_R6::_ProjectionRead_con_stop_stimulate_general_valve::Hash, LandingGear_R6::_ProjectionRead_con_stop_stimulate_general_valve::HashEqual> _OpCache_with_parameter_con_stop_stimulate_general_valve = _OpCache_with_parameter_con_stop_stimulate_general_valve_ptr->second;
                             auto writeState_ptr = _OpCache_with_parameter_con_stop_stimulate_general_valve.find(readState);
                             if(writeState_ptr != _OpCache_with_parameter_con_stop_stimulate_general_valve.end()) {
@@ -12721,7 +12492,6 @@ class ModelChecker {
                             }
                         }
                     }
-
                     copiedState.stateAccessedVia = "con_stop_stimulate_general_valve";
                     result.insert(copiedState);
                     {
@@ -12731,33 +12501,29 @@ class ModelChecker {
                 }
                 LandingGear_R6::_ProjectionRead__tr_evn_open_general_valve read__tr_evn_open_general_valve_state = state._projected_state_for__tr_evn_open_general_valve();
                 bool _trid_35 = false;
-                auto _obj__trid_35_ptr = _OpCache_tr_evn_open_general_valve.find(read__tr_evn_open_general_valve_state);
-                if(_obj__trid_35_ptr == _OpCache_tr_evn_open_general_valve.end()) {
-                    _trid_35 = state._tr_evn_open_general_valve();
-                    {
-                        std::unique_lock<std::mutex> _ProjectionRead__tr_evn_open_general_valve_lock(_ProjectionRead__tr_evn_open_general_valve_mutex);
+                {
+                    std::unique_lock<std::mutex> _ProjectionRead__tr_evn_open_general_valve_lock(_ProjectionRead__tr_evn_open_general_valve_mutex);
+                    auto _obj__trid_35_ptr = _OpCache_tr_evn_open_general_valve.find(read__tr_evn_open_general_valve_state);
+                    if(_obj__trid_35_ptr == _OpCache_tr_evn_open_general_valve.end()) {
+                        _trid_35 = state._tr_evn_open_general_valve();
                         _OpCache_tr_evn_open_general_valve.insert({read__tr_evn_open_general_valve_state, _trid_35});
+                    } else {
+                        _trid_35 = _obj__trid_35_ptr->second;
                     }
-                } else {
-                    _trid_35 = _obj__trid_35_ptr->second;
                 }
                 if(_trid_35) {
                     LandingGear_R6 copiedState = state._copy();
                     LandingGear_R6::_ProjectionRead_evn_open_general_valve readState = state._projected_state_for_evn_open_general_valve();
-
-                    auto _OpCache_with_parameter_evn_open_general_valve_ptr = _OpCache_evn_open_general_valve.find(_trid_35);
-                    if(_OpCache_with_parameter_evn_open_general_valve_ptr == _OpCache_evn_open_general_valve.end()) {
-                        {
-                            std::unique_lock<std::mutex> _ProjectionRead_evn_open_general_valve_lock(_ProjectionRead_evn_open_general_valve_mutex);
+                    {
+                        std::unique_lock<std::mutex> _ProjectionRead_evn_open_general_valve_lock(_ProjectionRead_evn_open_general_valve_mutex);
+                        auto _OpCache_with_parameter_evn_open_general_valve_ptr = _OpCache_evn_open_general_valve.find(_trid_35);
+                        if(_OpCache_with_parameter_evn_open_general_valve_ptr == _OpCache_evn_open_general_valve.end()) {
                             copiedState.evn_open_general_valve();
                             LandingGear_R6::_ProjectionWrite_evn_open_general_valve writeState = copiedState._update_for_evn_open_general_valve();
                             std::unordered_map<LandingGear_R6::_ProjectionRead_evn_open_general_valve, LandingGear_R6::_ProjectionWrite_evn_open_general_valve, LandingGear_R6::_ProjectionRead_evn_open_general_valve::Hash, LandingGear_R6::_ProjectionRead_evn_open_general_valve::HashEqual> _OpCache_with_parameter_evn_open_general_valve = std::unordered_map<LandingGear_R6::_ProjectionRead_evn_open_general_valve, LandingGear_R6::_ProjectionWrite_evn_open_general_valve, LandingGear_R6::_ProjectionRead_evn_open_general_valve::Hash, LandingGear_R6::_ProjectionRead_evn_open_general_valve::HashEqual>();
                             _OpCache_with_parameter_evn_open_general_valve.insert({readState, writeState});
                             _OpCache_evn_open_general_valve.insert({_trid_35, _OpCache_with_parameter_evn_open_general_valve});
-                        }
-                    } else {
-                        {
-                            std::unique_lock<std::mutex> _ProjectionRead_evn_open_general_valve_lock(_ProjectionRead_evn_open_general_valve_mutex);
+                        } else {
                             std::unordered_map<LandingGear_R6::_ProjectionRead_evn_open_general_valve, LandingGear_R6::_ProjectionWrite_evn_open_general_valve, LandingGear_R6::_ProjectionRead_evn_open_general_valve::Hash, LandingGear_R6::_ProjectionRead_evn_open_general_valve::HashEqual> _OpCache_with_parameter_evn_open_general_valve = _OpCache_with_parameter_evn_open_general_valve_ptr->second;
                             auto writeState_ptr = _OpCache_with_parameter_evn_open_general_valve.find(readState);
                             if(writeState_ptr != _OpCache_with_parameter_evn_open_general_valve.end()) {
@@ -12770,7 +12536,6 @@ class ModelChecker {
                             }
                         }
                     }
-
                     copiedState.stateAccessedVia = "evn_open_general_valve";
                     result.insert(copiedState);
                     {
@@ -12780,33 +12545,29 @@ class ModelChecker {
                 }
                 LandingGear_R6::_ProjectionRead__tr_evn_close_general_valve read__tr_evn_close_general_valve_state = state._projected_state_for__tr_evn_close_general_valve();
                 bool _trid_36 = false;
-                auto _obj__trid_36_ptr = _OpCache_tr_evn_close_general_valve.find(read__tr_evn_close_general_valve_state);
-                if(_obj__trid_36_ptr == _OpCache_tr_evn_close_general_valve.end()) {
-                    _trid_36 = state._tr_evn_close_general_valve();
-                    {
-                        std::unique_lock<std::mutex> _ProjectionRead__tr_evn_close_general_valve_lock(_ProjectionRead__tr_evn_close_general_valve_mutex);
+                {
+                    std::unique_lock<std::mutex> _ProjectionRead__tr_evn_close_general_valve_lock(_ProjectionRead__tr_evn_close_general_valve_mutex);
+                    auto _obj__trid_36_ptr = _OpCache_tr_evn_close_general_valve.find(read__tr_evn_close_general_valve_state);
+                    if(_obj__trid_36_ptr == _OpCache_tr_evn_close_general_valve.end()) {
+                        _trid_36 = state._tr_evn_close_general_valve();
                         _OpCache_tr_evn_close_general_valve.insert({read__tr_evn_close_general_valve_state, _trid_36});
+                    } else {
+                        _trid_36 = _obj__trid_36_ptr->second;
                     }
-                } else {
-                    _trid_36 = _obj__trid_36_ptr->second;
                 }
                 if(_trid_36) {
                     LandingGear_R6 copiedState = state._copy();
                     LandingGear_R6::_ProjectionRead_evn_close_general_valve readState = state._projected_state_for_evn_close_general_valve();
-
-                    auto _OpCache_with_parameter_evn_close_general_valve_ptr = _OpCache_evn_close_general_valve.find(_trid_36);
-                    if(_OpCache_with_parameter_evn_close_general_valve_ptr == _OpCache_evn_close_general_valve.end()) {
-                        {
-                            std::unique_lock<std::mutex> _ProjectionRead_evn_close_general_valve_lock(_ProjectionRead_evn_close_general_valve_mutex);
+                    {
+                        std::unique_lock<std::mutex> _ProjectionRead_evn_close_general_valve_lock(_ProjectionRead_evn_close_general_valve_mutex);
+                        auto _OpCache_with_parameter_evn_close_general_valve_ptr = _OpCache_evn_close_general_valve.find(_trid_36);
+                        if(_OpCache_with_parameter_evn_close_general_valve_ptr == _OpCache_evn_close_general_valve.end()) {
                             copiedState.evn_close_general_valve();
                             LandingGear_R6::_ProjectionWrite_evn_close_general_valve writeState = copiedState._update_for_evn_close_general_valve();
                             std::unordered_map<LandingGear_R6::_ProjectionRead_evn_close_general_valve, LandingGear_R6::_ProjectionWrite_evn_close_general_valve, LandingGear_R6::_ProjectionRead_evn_close_general_valve::Hash, LandingGear_R6::_ProjectionRead_evn_close_general_valve::HashEqual> _OpCache_with_parameter_evn_close_general_valve = std::unordered_map<LandingGear_R6::_ProjectionRead_evn_close_general_valve, LandingGear_R6::_ProjectionWrite_evn_close_general_valve, LandingGear_R6::_ProjectionRead_evn_close_general_valve::Hash, LandingGear_R6::_ProjectionRead_evn_close_general_valve::HashEqual>();
                             _OpCache_with_parameter_evn_close_general_valve.insert({readState, writeState});
                             _OpCache_evn_close_general_valve.insert({_trid_36, _OpCache_with_parameter_evn_close_general_valve});
-                        }
-                    } else {
-                        {
-                            std::unique_lock<std::mutex> _ProjectionRead_evn_close_general_valve_lock(_ProjectionRead_evn_close_general_valve_mutex);
+                        } else {
                             std::unordered_map<LandingGear_R6::_ProjectionRead_evn_close_general_valve, LandingGear_R6::_ProjectionWrite_evn_close_general_valve, LandingGear_R6::_ProjectionRead_evn_close_general_valve::Hash, LandingGear_R6::_ProjectionRead_evn_close_general_valve::HashEqual> _OpCache_with_parameter_evn_close_general_valve = _OpCache_with_parameter_evn_close_general_valve_ptr->second;
                             auto writeState_ptr = _OpCache_with_parameter_evn_close_general_valve.find(readState);
                             if(writeState_ptr != _OpCache_with_parameter_evn_close_general_valve.end()) {
@@ -12819,7 +12580,6 @@ class ModelChecker {
                             }
                         }
                     }
-
                     copiedState.stateAccessedVia = "evn_close_general_valve";
                     result.insert(copiedState);
                     {
@@ -12829,33 +12589,29 @@ class ModelChecker {
                 }
                 LandingGear_R6::_ProjectionRead__tr_env_close_analogical_switch read__tr_env_close_analogical_switch_state = state._projected_state_for__tr_env_close_analogical_switch();
                 bool _trid_37 = false;
-                auto _obj__trid_37_ptr = _OpCache_tr_env_close_analogical_switch.find(read__tr_env_close_analogical_switch_state);
-                if(_obj__trid_37_ptr == _OpCache_tr_env_close_analogical_switch.end()) {
-                    _trid_37 = state._tr_env_close_analogical_switch();
-                    {
-                        std::unique_lock<std::mutex> _ProjectionRead__tr_env_close_analogical_switch_lock(_ProjectionRead__tr_env_close_analogical_switch_mutex);
+                {
+                    std::unique_lock<std::mutex> _ProjectionRead__tr_env_close_analogical_switch_lock(_ProjectionRead__tr_env_close_analogical_switch_mutex);
+                    auto _obj__trid_37_ptr = _OpCache_tr_env_close_analogical_switch.find(read__tr_env_close_analogical_switch_state);
+                    if(_obj__trid_37_ptr == _OpCache_tr_env_close_analogical_switch.end()) {
+                        _trid_37 = state._tr_env_close_analogical_switch();
                         _OpCache_tr_env_close_analogical_switch.insert({read__tr_env_close_analogical_switch_state, _trid_37});
+                    } else {
+                        _trid_37 = _obj__trid_37_ptr->second;
                     }
-                } else {
-                    _trid_37 = _obj__trid_37_ptr->second;
                 }
                 if(_trid_37) {
                     LandingGear_R6 copiedState = state._copy();
                     LandingGear_R6::_ProjectionRead_env_close_analogical_switch readState = state._projected_state_for_env_close_analogical_switch();
-
-                    auto _OpCache_with_parameter_env_close_analogical_switch_ptr = _OpCache_env_close_analogical_switch.find(_trid_37);
-                    if(_OpCache_with_parameter_env_close_analogical_switch_ptr == _OpCache_env_close_analogical_switch.end()) {
-                        {
-                            std::unique_lock<std::mutex> _ProjectionRead_env_close_analogical_switch_lock(_ProjectionRead_env_close_analogical_switch_mutex);
+                    {
+                        std::unique_lock<std::mutex> _ProjectionRead_env_close_analogical_switch_lock(_ProjectionRead_env_close_analogical_switch_mutex);
+                        auto _OpCache_with_parameter_env_close_analogical_switch_ptr = _OpCache_env_close_analogical_switch.find(_trid_37);
+                        if(_OpCache_with_parameter_env_close_analogical_switch_ptr == _OpCache_env_close_analogical_switch.end()) {
                             copiedState.env_close_analogical_switch();
                             LandingGear_R6::_ProjectionWrite_env_close_analogical_switch writeState = copiedState._update_for_env_close_analogical_switch();
                             std::unordered_map<LandingGear_R6::_ProjectionRead_env_close_analogical_switch, LandingGear_R6::_ProjectionWrite_env_close_analogical_switch, LandingGear_R6::_ProjectionRead_env_close_analogical_switch::Hash, LandingGear_R6::_ProjectionRead_env_close_analogical_switch::HashEqual> _OpCache_with_parameter_env_close_analogical_switch = std::unordered_map<LandingGear_R6::_ProjectionRead_env_close_analogical_switch, LandingGear_R6::_ProjectionWrite_env_close_analogical_switch, LandingGear_R6::_ProjectionRead_env_close_analogical_switch::Hash, LandingGear_R6::_ProjectionRead_env_close_analogical_switch::HashEqual>();
                             _OpCache_with_parameter_env_close_analogical_switch.insert({readState, writeState});
                             _OpCache_env_close_analogical_switch.insert({_trid_37, _OpCache_with_parameter_env_close_analogical_switch});
-                        }
-                    } else {
-                        {
-                            std::unique_lock<std::mutex> _ProjectionRead_env_close_analogical_switch_lock(_ProjectionRead_env_close_analogical_switch_mutex);
+                        } else {
                             std::unordered_map<LandingGear_R6::_ProjectionRead_env_close_analogical_switch, LandingGear_R6::_ProjectionWrite_env_close_analogical_switch, LandingGear_R6::_ProjectionRead_env_close_analogical_switch::Hash, LandingGear_R6::_ProjectionRead_env_close_analogical_switch::HashEqual> _OpCache_with_parameter_env_close_analogical_switch = _OpCache_with_parameter_env_close_analogical_switch_ptr->second;
                             auto writeState_ptr = _OpCache_with_parameter_env_close_analogical_switch.find(readState);
                             if(writeState_ptr != _OpCache_with_parameter_env_close_analogical_switch.end()) {
@@ -12868,7 +12624,6 @@ class ModelChecker {
                             }
                         }
                     }
-
                     copiedState.stateAccessedVia = "env_close_analogical_switch";
                     result.insert(copiedState);
                     {
@@ -12878,33 +12633,29 @@ class ModelChecker {
                 }
                 LandingGear_R6::_ProjectionRead__tr_env_open_analogical_switch read__tr_env_open_analogical_switch_state = state._projected_state_for__tr_env_open_analogical_switch();
                 bool _trid_38 = false;
-                auto _obj__trid_38_ptr = _OpCache_tr_env_open_analogical_switch.find(read__tr_env_open_analogical_switch_state);
-                if(_obj__trid_38_ptr == _OpCache_tr_env_open_analogical_switch.end()) {
-                    _trid_38 = state._tr_env_open_analogical_switch();
-                    {
-                        std::unique_lock<std::mutex> _ProjectionRead__tr_env_open_analogical_switch_lock(_ProjectionRead__tr_env_open_analogical_switch_mutex);
+                {
+                    std::unique_lock<std::mutex> _ProjectionRead__tr_env_open_analogical_switch_lock(_ProjectionRead__tr_env_open_analogical_switch_mutex);
+                    auto _obj__trid_38_ptr = _OpCache_tr_env_open_analogical_switch.find(read__tr_env_open_analogical_switch_state);
+                    if(_obj__trid_38_ptr == _OpCache_tr_env_open_analogical_switch.end()) {
+                        _trid_38 = state._tr_env_open_analogical_switch();
                         _OpCache_tr_env_open_analogical_switch.insert({read__tr_env_open_analogical_switch_state, _trid_38});
+                    } else {
+                        _trid_38 = _obj__trid_38_ptr->second;
                     }
-                } else {
-                    _trid_38 = _obj__trid_38_ptr->second;
                 }
                 if(_trid_38) {
                     LandingGear_R6 copiedState = state._copy();
                     LandingGear_R6::_ProjectionRead_env_open_analogical_switch readState = state._projected_state_for_env_open_analogical_switch();
-
-                    auto _OpCache_with_parameter_env_open_analogical_switch_ptr = _OpCache_env_open_analogical_switch.find(_trid_38);
-                    if(_OpCache_with_parameter_env_open_analogical_switch_ptr == _OpCache_env_open_analogical_switch.end()) {
-                        {
-                            std::unique_lock<std::mutex> _ProjectionRead_env_open_analogical_switch_lock(_ProjectionRead_env_open_analogical_switch_mutex);
+                    {
+                        std::unique_lock<std::mutex> _ProjectionRead_env_open_analogical_switch_lock(_ProjectionRead_env_open_analogical_switch_mutex);
+                        auto _OpCache_with_parameter_env_open_analogical_switch_ptr = _OpCache_env_open_analogical_switch.find(_trid_38);
+                        if(_OpCache_with_parameter_env_open_analogical_switch_ptr == _OpCache_env_open_analogical_switch.end()) {
                             copiedState.env_open_analogical_switch();
                             LandingGear_R6::_ProjectionWrite_env_open_analogical_switch writeState = copiedState._update_for_env_open_analogical_switch();
                             std::unordered_map<LandingGear_R6::_ProjectionRead_env_open_analogical_switch, LandingGear_R6::_ProjectionWrite_env_open_analogical_switch, LandingGear_R6::_ProjectionRead_env_open_analogical_switch::Hash, LandingGear_R6::_ProjectionRead_env_open_analogical_switch::HashEqual> _OpCache_with_parameter_env_open_analogical_switch = std::unordered_map<LandingGear_R6::_ProjectionRead_env_open_analogical_switch, LandingGear_R6::_ProjectionWrite_env_open_analogical_switch, LandingGear_R6::_ProjectionRead_env_open_analogical_switch::Hash, LandingGear_R6::_ProjectionRead_env_open_analogical_switch::HashEqual>();
                             _OpCache_with_parameter_env_open_analogical_switch.insert({readState, writeState});
                             _OpCache_env_open_analogical_switch.insert({_trid_38, _OpCache_with_parameter_env_open_analogical_switch});
-                        }
-                    } else {
-                        {
-                            std::unique_lock<std::mutex> _ProjectionRead_env_open_analogical_switch_lock(_ProjectionRead_env_open_analogical_switch_mutex);
+                        } else {
                             std::unordered_map<LandingGear_R6::_ProjectionRead_env_open_analogical_switch, LandingGear_R6::_ProjectionWrite_env_open_analogical_switch, LandingGear_R6::_ProjectionRead_env_open_analogical_switch::Hash, LandingGear_R6::_ProjectionRead_env_open_analogical_switch::HashEqual> _OpCache_with_parameter_env_open_analogical_switch = _OpCache_with_parameter_env_open_analogical_switch_ptr->second;
                             auto writeState_ptr = _OpCache_with_parameter_env_open_analogical_switch.find(readState);
                             if(writeState_ptr != _OpCache_with_parameter_env_open_analogical_switch.end()) {
@@ -12917,7 +12668,6 @@ class ModelChecker {
                             }
                         }
                     }
-
                     copiedState.stateAccessedVia = "env_open_analogical_switch";
                     result.insert(copiedState);
                     {

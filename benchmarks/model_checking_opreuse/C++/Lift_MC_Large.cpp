@@ -792,33 +792,29 @@ class ModelChecker {
             if(isCaching) {
                 Lift_MC_Large::_ProjectionRead__tr_inc read__tr_inc_state = state._projected_state_for__tr_inc();
                 bool _trid_1 = false;
-                auto _obj__trid_1_ptr = _OpCache_tr_inc.find(read__tr_inc_state);
-                if(_obj__trid_1_ptr == _OpCache_tr_inc.end()) {
-                    _trid_1 = state._tr_inc();
-                    {
-                        std::unique_lock<std::mutex> _ProjectionRead__tr_inc_lock(_ProjectionRead__tr_inc_mutex);
+                {
+                    std::unique_lock<std::mutex> _ProjectionRead__tr_inc_lock(_ProjectionRead__tr_inc_mutex);
+                    auto _obj__trid_1_ptr = _OpCache_tr_inc.find(read__tr_inc_state);
+                    if(_obj__trid_1_ptr == _OpCache_tr_inc.end()) {
+                        _trid_1 = state._tr_inc();
                         _OpCache_tr_inc.insert({read__tr_inc_state, _trid_1});
+                    } else {
+                        _trid_1 = _obj__trid_1_ptr->second;
                     }
-                } else {
-                    _trid_1 = _obj__trid_1_ptr->second;
                 }
                 if(_trid_1) {
                     Lift_MC_Large copiedState = state._copy();
                     Lift_MC_Large::_ProjectionRead_inc readState = state._projected_state_for_inc();
-
-                    auto _OpCache_with_parameter_inc_ptr = _OpCache_inc.find(_trid_1);
-                    if(_OpCache_with_parameter_inc_ptr == _OpCache_inc.end()) {
-                        {
-                            std::unique_lock<std::mutex> _ProjectionRead_inc_lock(_ProjectionRead_inc_mutex);
+                    {
+                        std::unique_lock<std::mutex> _ProjectionRead_inc_lock(_ProjectionRead_inc_mutex);
+                        auto _OpCache_with_parameter_inc_ptr = _OpCache_inc.find(_trid_1);
+                        if(_OpCache_with_parameter_inc_ptr == _OpCache_inc.end()) {
                             copiedState.inc();
                             Lift_MC_Large::_ProjectionWrite_inc writeState = copiedState._update_for_inc();
                             std::unordered_map<Lift_MC_Large::_ProjectionRead_inc, Lift_MC_Large::_ProjectionWrite_inc, Lift_MC_Large::_ProjectionRead_inc::Hash, Lift_MC_Large::_ProjectionRead_inc::HashEqual> _OpCache_with_parameter_inc = std::unordered_map<Lift_MC_Large::_ProjectionRead_inc, Lift_MC_Large::_ProjectionWrite_inc, Lift_MC_Large::_ProjectionRead_inc::Hash, Lift_MC_Large::_ProjectionRead_inc::HashEqual>();
                             _OpCache_with_parameter_inc.insert({readState, writeState});
                             _OpCache_inc.insert({_trid_1, _OpCache_with_parameter_inc});
-                        }
-                    } else {
-                        {
-                            std::unique_lock<std::mutex> _ProjectionRead_inc_lock(_ProjectionRead_inc_mutex);
+                        } else {
                             std::unordered_map<Lift_MC_Large::_ProjectionRead_inc, Lift_MC_Large::_ProjectionWrite_inc, Lift_MC_Large::_ProjectionRead_inc::Hash, Lift_MC_Large::_ProjectionRead_inc::HashEqual> _OpCache_with_parameter_inc = _OpCache_with_parameter_inc_ptr->second;
                             auto writeState_ptr = _OpCache_with_parameter_inc.find(readState);
                             if(writeState_ptr != _OpCache_with_parameter_inc.end()) {
@@ -831,7 +827,6 @@ class ModelChecker {
                             }
                         }
                     }
-
                     copiedState.stateAccessedVia = "inc";
                     result.insert(copiedState);
                     {
@@ -841,33 +836,29 @@ class ModelChecker {
                 }
                 Lift_MC_Large::_ProjectionRead__tr_dec read__tr_dec_state = state._projected_state_for__tr_dec();
                 bool _trid_2 = false;
-                auto _obj__trid_2_ptr = _OpCache_tr_dec.find(read__tr_dec_state);
-                if(_obj__trid_2_ptr == _OpCache_tr_dec.end()) {
-                    _trid_2 = state._tr_dec();
-                    {
-                        std::unique_lock<std::mutex> _ProjectionRead__tr_dec_lock(_ProjectionRead__tr_dec_mutex);
+                {
+                    std::unique_lock<std::mutex> _ProjectionRead__tr_dec_lock(_ProjectionRead__tr_dec_mutex);
+                    auto _obj__trid_2_ptr = _OpCache_tr_dec.find(read__tr_dec_state);
+                    if(_obj__trid_2_ptr == _OpCache_tr_dec.end()) {
+                        _trid_2 = state._tr_dec();
                         _OpCache_tr_dec.insert({read__tr_dec_state, _trid_2});
+                    } else {
+                        _trid_2 = _obj__trid_2_ptr->second;
                     }
-                } else {
-                    _trid_2 = _obj__trid_2_ptr->second;
                 }
                 if(_trid_2) {
                     Lift_MC_Large copiedState = state._copy();
                     Lift_MC_Large::_ProjectionRead_dec readState = state._projected_state_for_dec();
-
-                    auto _OpCache_with_parameter_dec_ptr = _OpCache_dec.find(_trid_2);
-                    if(_OpCache_with_parameter_dec_ptr == _OpCache_dec.end()) {
-                        {
-                            std::unique_lock<std::mutex> _ProjectionRead_dec_lock(_ProjectionRead_dec_mutex);
+                    {
+                        std::unique_lock<std::mutex> _ProjectionRead_dec_lock(_ProjectionRead_dec_mutex);
+                        auto _OpCache_with_parameter_dec_ptr = _OpCache_dec.find(_trid_2);
+                        if(_OpCache_with_parameter_dec_ptr == _OpCache_dec.end()) {
                             copiedState.dec();
                             Lift_MC_Large::_ProjectionWrite_dec writeState = copiedState._update_for_dec();
                             std::unordered_map<Lift_MC_Large::_ProjectionRead_dec, Lift_MC_Large::_ProjectionWrite_dec, Lift_MC_Large::_ProjectionRead_dec::Hash, Lift_MC_Large::_ProjectionRead_dec::HashEqual> _OpCache_with_parameter_dec = std::unordered_map<Lift_MC_Large::_ProjectionRead_dec, Lift_MC_Large::_ProjectionWrite_dec, Lift_MC_Large::_ProjectionRead_dec::Hash, Lift_MC_Large::_ProjectionRead_dec::HashEqual>();
                             _OpCache_with_parameter_dec.insert({readState, writeState});
                             _OpCache_dec.insert({_trid_2, _OpCache_with_parameter_dec});
-                        }
-                    } else {
-                        {
-                            std::unique_lock<std::mutex> _ProjectionRead_dec_lock(_ProjectionRead_dec_mutex);
+                        } else {
                             std::unordered_map<Lift_MC_Large::_ProjectionRead_dec, Lift_MC_Large::_ProjectionWrite_dec, Lift_MC_Large::_ProjectionRead_dec::Hash, Lift_MC_Large::_ProjectionRead_dec::HashEqual> _OpCache_with_parameter_dec = _OpCache_with_parameter_dec_ptr->second;
                             auto writeState_ptr = _OpCache_with_parameter_dec.find(readState);
                             if(writeState_ptr != _OpCache_with_parameter_dec.end()) {
@@ -880,7 +871,6 @@ class ModelChecker {
                             }
                         }
                     }
-
                     copiedState.stateAccessedVia = "dec";
                     result.insert(copiedState);
                     {

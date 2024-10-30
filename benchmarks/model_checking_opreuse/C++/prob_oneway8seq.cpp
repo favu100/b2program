@@ -3668,33 +3668,29 @@ class ModelChecker {
             if(isCaching) {
                 prob_oneway8seq::_ProjectionRead__tr_move0 read__tr_move0_state = state._projected_state_for__tr_move0();
                 bool _trid_1 = false;
-                auto _obj__trid_1_ptr = _OpCache_tr_move0.find(read__tr_move0_state);
-                if(_obj__trid_1_ptr == _OpCache_tr_move0.end()) {
-                    _trid_1 = state._tr_move0();
-                    {
-                        std::unique_lock<std::mutex> _ProjectionRead__tr_move0_lock(_ProjectionRead__tr_move0_mutex);
+                {
+                    std::unique_lock<std::mutex> _ProjectionRead__tr_move0_lock(_ProjectionRead__tr_move0_mutex);
+                    auto _obj__trid_1_ptr = _OpCache_tr_move0.find(read__tr_move0_state);
+                    if(_obj__trid_1_ptr == _OpCache_tr_move0.end()) {
+                        _trid_1 = state._tr_move0();
                         _OpCache_tr_move0.insert({read__tr_move0_state, _trid_1});
+                    } else {
+                        _trid_1 = _obj__trid_1_ptr->second;
                     }
-                } else {
-                    _trid_1 = _obj__trid_1_ptr->second;
                 }
                 if(_trid_1) {
                     prob_oneway8seq copiedState = state._copy();
                     prob_oneway8seq::_ProjectionRead_move0 readState = state._projected_state_for_move0();
-
-                    auto _OpCache_with_parameter_move0_ptr = _OpCache_move0.find(_trid_1);
-                    if(_OpCache_with_parameter_move0_ptr == _OpCache_move0.end()) {
-                        {
-                            std::unique_lock<std::mutex> _ProjectionRead_move0_lock(_ProjectionRead_move0_mutex);
+                    {
+                        std::unique_lock<std::mutex> _ProjectionRead_move0_lock(_ProjectionRead_move0_mutex);
+                        auto _OpCache_with_parameter_move0_ptr = _OpCache_move0.find(_trid_1);
+                        if(_OpCache_with_parameter_move0_ptr == _OpCache_move0.end()) {
                             copiedState.move0();
                             prob_oneway8seq::_ProjectionWrite_move0 writeState = copiedState._update_for_move0();
                             std::unordered_map<prob_oneway8seq::_ProjectionRead_move0, prob_oneway8seq::_ProjectionWrite_move0, prob_oneway8seq::_ProjectionRead_move0::Hash, prob_oneway8seq::_ProjectionRead_move0::HashEqual> _OpCache_with_parameter_move0 = std::unordered_map<prob_oneway8seq::_ProjectionRead_move0, prob_oneway8seq::_ProjectionWrite_move0, prob_oneway8seq::_ProjectionRead_move0::Hash, prob_oneway8seq::_ProjectionRead_move0::HashEqual>();
                             _OpCache_with_parameter_move0.insert({readState, writeState});
                             _OpCache_move0.insert({_trid_1, _OpCache_with_parameter_move0});
-                        }
-                    } else {
-                        {
-                            std::unique_lock<std::mutex> _ProjectionRead_move0_lock(_ProjectionRead_move0_mutex);
+                        } else {
                             std::unordered_map<prob_oneway8seq::_ProjectionRead_move0, prob_oneway8seq::_ProjectionWrite_move0, prob_oneway8seq::_ProjectionRead_move0::Hash, prob_oneway8seq::_ProjectionRead_move0::HashEqual> _OpCache_with_parameter_move0 = _OpCache_with_parameter_move0_ptr->second;
                             auto writeState_ptr = _OpCache_with_parameter_move0.find(readState);
                             if(writeState_ptr != _OpCache_with_parameter_move0.end()) {
@@ -3707,7 +3703,6 @@ class ModelChecker {
                             }
                         }
                     }
-
                     copiedState.stateAccessedVia = "move0";
                     result.insert(copiedState);
                     {
@@ -3717,33 +3712,29 @@ class ModelChecker {
                 }
                 prob_oneway8seq::_ProjectionRead__tr_move1 read__tr_move1_state = state._projected_state_for__tr_move1();
                 bool _trid_2 = false;
-                auto _obj__trid_2_ptr = _OpCache_tr_move1.find(read__tr_move1_state);
-                if(_obj__trid_2_ptr == _OpCache_tr_move1.end()) {
-                    _trid_2 = state._tr_move1();
-                    {
-                        std::unique_lock<std::mutex> _ProjectionRead__tr_move1_lock(_ProjectionRead__tr_move1_mutex);
+                {
+                    std::unique_lock<std::mutex> _ProjectionRead__tr_move1_lock(_ProjectionRead__tr_move1_mutex);
+                    auto _obj__trid_2_ptr = _OpCache_tr_move1.find(read__tr_move1_state);
+                    if(_obj__trid_2_ptr == _OpCache_tr_move1.end()) {
+                        _trid_2 = state._tr_move1();
                         _OpCache_tr_move1.insert({read__tr_move1_state, _trid_2});
+                    } else {
+                        _trid_2 = _obj__trid_2_ptr->second;
                     }
-                } else {
-                    _trid_2 = _obj__trid_2_ptr->second;
                 }
                 if(_trid_2) {
                     prob_oneway8seq copiedState = state._copy();
                     prob_oneway8seq::_ProjectionRead_move1 readState = state._projected_state_for_move1();
-
-                    auto _OpCache_with_parameter_move1_ptr = _OpCache_move1.find(_trid_2);
-                    if(_OpCache_with_parameter_move1_ptr == _OpCache_move1.end()) {
-                        {
-                            std::unique_lock<std::mutex> _ProjectionRead_move1_lock(_ProjectionRead_move1_mutex);
+                    {
+                        std::unique_lock<std::mutex> _ProjectionRead_move1_lock(_ProjectionRead_move1_mutex);
+                        auto _OpCache_with_parameter_move1_ptr = _OpCache_move1.find(_trid_2);
+                        if(_OpCache_with_parameter_move1_ptr == _OpCache_move1.end()) {
                             copiedState.move1();
                             prob_oneway8seq::_ProjectionWrite_move1 writeState = copiedState._update_for_move1();
                             std::unordered_map<prob_oneway8seq::_ProjectionRead_move1, prob_oneway8seq::_ProjectionWrite_move1, prob_oneway8seq::_ProjectionRead_move1::Hash, prob_oneway8seq::_ProjectionRead_move1::HashEqual> _OpCache_with_parameter_move1 = std::unordered_map<prob_oneway8seq::_ProjectionRead_move1, prob_oneway8seq::_ProjectionWrite_move1, prob_oneway8seq::_ProjectionRead_move1::Hash, prob_oneway8seq::_ProjectionRead_move1::HashEqual>();
                             _OpCache_with_parameter_move1.insert({readState, writeState});
                             _OpCache_move1.insert({_trid_2, _OpCache_with_parameter_move1});
-                        }
-                    } else {
-                        {
-                            std::unique_lock<std::mutex> _ProjectionRead_move1_lock(_ProjectionRead_move1_mutex);
+                        } else {
                             std::unordered_map<prob_oneway8seq::_ProjectionRead_move1, prob_oneway8seq::_ProjectionWrite_move1, prob_oneway8seq::_ProjectionRead_move1::Hash, prob_oneway8seq::_ProjectionRead_move1::HashEqual> _OpCache_with_parameter_move1 = _OpCache_with_parameter_move1_ptr->second;
                             auto writeState_ptr = _OpCache_with_parameter_move1.find(readState);
                             if(writeState_ptr != _OpCache_with_parameter_move1.end()) {
@@ -3756,7 +3747,6 @@ class ModelChecker {
                             }
                         }
                     }
-
                     copiedState.stateAccessedVia = "move1";
                     result.insert(copiedState);
                     {
@@ -3766,33 +3756,29 @@ class ModelChecker {
                 }
                 prob_oneway8seq::_ProjectionRead__tr_move2 read__tr_move2_state = state._projected_state_for__tr_move2();
                 bool _trid_3 = false;
-                auto _obj__trid_3_ptr = _OpCache_tr_move2.find(read__tr_move2_state);
-                if(_obj__trid_3_ptr == _OpCache_tr_move2.end()) {
-                    _trid_3 = state._tr_move2();
-                    {
-                        std::unique_lock<std::mutex> _ProjectionRead__tr_move2_lock(_ProjectionRead__tr_move2_mutex);
+                {
+                    std::unique_lock<std::mutex> _ProjectionRead__tr_move2_lock(_ProjectionRead__tr_move2_mutex);
+                    auto _obj__trid_3_ptr = _OpCache_tr_move2.find(read__tr_move2_state);
+                    if(_obj__trid_3_ptr == _OpCache_tr_move2.end()) {
+                        _trid_3 = state._tr_move2();
                         _OpCache_tr_move2.insert({read__tr_move2_state, _trid_3});
+                    } else {
+                        _trid_3 = _obj__trid_3_ptr->second;
                     }
-                } else {
-                    _trid_3 = _obj__trid_3_ptr->second;
                 }
                 if(_trid_3) {
                     prob_oneway8seq copiedState = state._copy();
                     prob_oneway8seq::_ProjectionRead_move2 readState = state._projected_state_for_move2();
-
-                    auto _OpCache_with_parameter_move2_ptr = _OpCache_move2.find(_trid_3);
-                    if(_OpCache_with_parameter_move2_ptr == _OpCache_move2.end()) {
-                        {
-                            std::unique_lock<std::mutex> _ProjectionRead_move2_lock(_ProjectionRead_move2_mutex);
+                    {
+                        std::unique_lock<std::mutex> _ProjectionRead_move2_lock(_ProjectionRead_move2_mutex);
+                        auto _OpCache_with_parameter_move2_ptr = _OpCache_move2.find(_trid_3);
+                        if(_OpCache_with_parameter_move2_ptr == _OpCache_move2.end()) {
                             copiedState.move2();
                             prob_oneway8seq::_ProjectionWrite_move2 writeState = copiedState._update_for_move2();
                             std::unordered_map<prob_oneway8seq::_ProjectionRead_move2, prob_oneway8seq::_ProjectionWrite_move2, prob_oneway8seq::_ProjectionRead_move2::Hash, prob_oneway8seq::_ProjectionRead_move2::HashEqual> _OpCache_with_parameter_move2 = std::unordered_map<prob_oneway8seq::_ProjectionRead_move2, prob_oneway8seq::_ProjectionWrite_move2, prob_oneway8seq::_ProjectionRead_move2::Hash, prob_oneway8seq::_ProjectionRead_move2::HashEqual>();
                             _OpCache_with_parameter_move2.insert({readState, writeState});
                             _OpCache_move2.insert({_trid_3, _OpCache_with_parameter_move2});
-                        }
-                    } else {
-                        {
-                            std::unique_lock<std::mutex> _ProjectionRead_move2_lock(_ProjectionRead_move2_mutex);
+                        } else {
                             std::unordered_map<prob_oneway8seq::_ProjectionRead_move2, prob_oneway8seq::_ProjectionWrite_move2, prob_oneway8seq::_ProjectionRead_move2::Hash, prob_oneway8seq::_ProjectionRead_move2::HashEqual> _OpCache_with_parameter_move2 = _OpCache_with_parameter_move2_ptr->second;
                             auto writeState_ptr = _OpCache_with_parameter_move2.find(readState);
                             if(writeState_ptr != _OpCache_with_parameter_move2.end()) {
@@ -3805,7 +3791,6 @@ class ModelChecker {
                             }
                         }
                     }
-
                     copiedState.stateAccessedVia = "move2";
                     result.insert(copiedState);
                     {
@@ -3815,33 +3800,29 @@ class ModelChecker {
                 }
                 prob_oneway8seq::_ProjectionRead__tr_move3 read__tr_move3_state = state._projected_state_for__tr_move3();
                 bool _trid_4 = false;
-                auto _obj__trid_4_ptr = _OpCache_tr_move3.find(read__tr_move3_state);
-                if(_obj__trid_4_ptr == _OpCache_tr_move3.end()) {
-                    _trid_4 = state._tr_move3();
-                    {
-                        std::unique_lock<std::mutex> _ProjectionRead__tr_move3_lock(_ProjectionRead__tr_move3_mutex);
+                {
+                    std::unique_lock<std::mutex> _ProjectionRead__tr_move3_lock(_ProjectionRead__tr_move3_mutex);
+                    auto _obj__trid_4_ptr = _OpCache_tr_move3.find(read__tr_move3_state);
+                    if(_obj__trid_4_ptr == _OpCache_tr_move3.end()) {
+                        _trid_4 = state._tr_move3();
                         _OpCache_tr_move3.insert({read__tr_move3_state, _trid_4});
+                    } else {
+                        _trid_4 = _obj__trid_4_ptr->second;
                     }
-                } else {
-                    _trid_4 = _obj__trid_4_ptr->second;
                 }
                 if(_trid_4) {
                     prob_oneway8seq copiedState = state._copy();
                     prob_oneway8seq::_ProjectionRead_move3 readState = state._projected_state_for_move3();
-
-                    auto _OpCache_with_parameter_move3_ptr = _OpCache_move3.find(_trid_4);
-                    if(_OpCache_with_parameter_move3_ptr == _OpCache_move3.end()) {
-                        {
-                            std::unique_lock<std::mutex> _ProjectionRead_move3_lock(_ProjectionRead_move3_mutex);
+                    {
+                        std::unique_lock<std::mutex> _ProjectionRead_move3_lock(_ProjectionRead_move3_mutex);
+                        auto _OpCache_with_parameter_move3_ptr = _OpCache_move3.find(_trid_4);
+                        if(_OpCache_with_parameter_move3_ptr == _OpCache_move3.end()) {
                             copiedState.move3();
                             prob_oneway8seq::_ProjectionWrite_move3 writeState = copiedState._update_for_move3();
                             std::unordered_map<prob_oneway8seq::_ProjectionRead_move3, prob_oneway8seq::_ProjectionWrite_move3, prob_oneway8seq::_ProjectionRead_move3::Hash, prob_oneway8seq::_ProjectionRead_move3::HashEqual> _OpCache_with_parameter_move3 = std::unordered_map<prob_oneway8seq::_ProjectionRead_move3, prob_oneway8seq::_ProjectionWrite_move3, prob_oneway8seq::_ProjectionRead_move3::Hash, prob_oneway8seq::_ProjectionRead_move3::HashEqual>();
                             _OpCache_with_parameter_move3.insert({readState, writeState});
                             _OpCache_move3.insert({_trid_4, _OpCache_with_parameter_move3});
-                        }
-                    } else {
-                        {
-                            std::unique_lock<std::mutex> _ProjectionRead_move3_lock(_ProjectionRead_move3_mutex);
+                        } else {
                             std::unordered_map<prob_oneway8seq::_ProjectionRead_move3, prob_oneway8seq::_ProjectionWrite_move3, prob_oneway8seq::_ProjectionRead_move3::Hash, prob_oneway8seq::_ProjectionRead_move3::HashEqual> _OpCache_with_parameter_move3 = _OpCache_with_parameter_move3_ptr->second;
                             auto writeState_ptr = _OpCache_with_parameter_move3.find(readState);
                             if(writeState_ptr != _OpCache_with_parameter_move3.end()) {
@@ -3854,7 +3835,6 @@ class ModelChecker {
                             }
                         }
                     }
-
                     copiedState.stateAccessedVia = "move3";
                     result.insert(copiedState);
                     {
@@ -3864,33 +3844,29 @@ class ModelChecker {
                 }
                 prob_oneway8seq::_ProjectionRead__tr_move4 read__tr_move4_state = state._projected_state_for__tr_move4();
                 bool _trid_5 = false;
-                auto _obj__trid_5_ptr = _OpCache_tr_move4.find(read__tr_move4_state);
-                if(_obj__trid_5_ptr == _OpCache_tr_move4.end()) {
-                    _trid_5 = state._tr_move4();
-                    {
-                        std::unique_lock<std::mutex> _ProjectionRead__tr_move4_lock(_ProjectionRead__tr_move4_mutex);
+                {
+                    std::unique_lock<std::mutex> _ProjectionRead__tr_move4_lock(_ProjectionRead__tr_move4_mutex);
+                    auto _obj__trid_5_ptr = _OpCache_tr_move4.find(read__tr_move4_state);
+                    if(_obj__trid_5_ptr == _OpCache_tr_move4.end()) {
+                        _trid_5 = state._tr_move4();
                         _OpCache_tr_move4.insert({read__tr_move4_state, _trid_5});
+                    } else {
+                        _trid_5 = _obj__trid_5_ptr->second;
                     }
-                } else {
-                    _trid_5 = _obj__trid_5_ptr->second;
                 }
                 if(_trid_5) {
                     prob_oneway8seq copiedState = state._copy();
                     prob_oneway8seq::_ProjectionRead_move4 readState = state._projected_state_for_move4();
-
-                    auto _OpCache_with_parameter_move4_ptr = _OpCache_move4.find(_trid_5);
-                    if(_OpCache_with_parameter_move4_ptr == _OpCache_move4.end()) {
-                        {
-                            std::unique_lock<std::mutex> _ProjectionRead_move4_lock(_ProjectionRead_move4_mutex);
+                    {
+                        std::unique_lock<std::mutex> _ProjectionRead_move4_lock(_ProjectionRead_move4_mutex);
+                        auto _OpCache_with_parameter_move4_ptr = _OpCache_move4.find(_trid_5);
+                        if(_OpCache_with_parameter_move4_ptr == _OpCache_move4.end()) {
                             copiedState.move4();
                             prob_oneway8seq::_ProjectionWrite_move4 writeState = copiedState._update_for_move4();
                             std::unordered_map<prob_oneway8seq::_ProjectionRead_move4, prob_oneway8seq::_ProjectionWrite_move4, prob_oneway8seq::_ProjectionRead_move4::Hash, prob_oneway8seq::_ProjectionRead_move4::HashEqual> _OpCache_with_parameter_move4 = std::unordered_map<prob_oneway8seq::_ProjectionRead_move4, prob_oneway8seq::_ProjectionWrite_move4, prob_oneway8seq::_ProjectionRead_move4::Hash, prob_oneway8seq::_ProjectionRead_move4::HashEqual>();
                             _OpCache_with_parameter_move4.insert({readState, writeState});
                             _OpCache_move4.insert({_trid_5, _OpCache_with_parameter_move4});
-                        }
-                    } else {
-                        {
-                            std::unique_lock<std::mutex> _ProjectionRead_move4_lock(_ProjectionRead_move4_mutex);
+                        } else {
                             std::unordered_map<prob_oneway8seq::_ProjectionRead_move4, prob_oneway8seq::_ProjectionWrite_move4, prob_oneway8seq::_ProjectionRead_move4::Hash, prob_oneway8seq::_ProjectionRead_move4::HashEqual> _OpCache_with_parameter_move4 = _OpCache_with_parameter_move4_ptr->second;
                             auto writeState_ptr = _OpCache_with_parameter_move4.find(readState);
                             if(writeState_ptr != _OpCache_with_parameter_move4.end()) {
@@ -3903,7 +3879,6 @@ class ModelChecker {
                             }
                         }
                     }
-
                     copiedState.stateAccessedVia = "move4";
                     result.insert(copiedState);
                     {
@@ -3913,33 +3888,29 @@ class ModelChecker {
                 }
                 prob_oneway8seq::_ProjectionRead__tr_move5 read__tr_move5_state = state._projected_state_for__tr_move5();
                 bool _trid_6 = false;
-                auto _obj__trid_6_ptr = _OpCache_tr_move5.find(read__tr_move5_state);
-                if(_obj__trid_6_ptr == _OpCache_tr_move5.end()) {
-                    _trid_6 = state._tr_move5();
-                    {
-                        std::unique_lock<std::mutex> _ProjectionRead__tr_move5_lock(_ProjectionRead__tr_move5_mutex);
+                {
+                    std::unique_lock<std::mutex> _ProjectionRead__tr_move5_lock(_ProjectionRead__tr_move5_mutex);
+                    auto _obj__trid_6_ptr = _OpCache_tr_move5.find(read__tr_move5_state);
+                    if(_obj__trid_6_ptr == _OpCache_tr_move5.end()) {
+                        _trid_6 = state._tr_move5();
                         _OpCache_tr_move5.insert({read__tr_move5_state, _trid_6});
+                    } else {
+                        _trid_6 = _obj__trid_6_ptr->second;
                     }
-                } else {
-                    _trid_6 = _obj__trid_6_ptr->second;
                 }
                 if(_trid_6) {
                     prob_oneway8seq copiedState = state._copy();
                     prob_oneway8seq::_ProjectionRead_move5 readState = state._projected_state_for_move5();
-
-                    auto _OpCache_with_parameter_move5_ptr = _OpCache_move5.find(_trid_6);
-                    if(_OpCache_with_parameter_move5_ptr == _OpCache_move5.end()) {
-                        {
-                            std::unique_lock<std::mutex> _ProjectionRead_move5_lock(_ProjectionRead_move5_mutex);
+                    {
+                        std::unique_lock<std::mutex> _ProjectionRead_move5_lock(_ProjectionRead_move5_mutex);
+                        auto _OpCache_with_parameter_move5_ptr = _OpCache_move5.find(_trid_6);
+                        if(_OpCache_with_parameter_move5_ptr == _OpCache_move5.end()) {
                             copiedState.move5();
                             prob_oneway8seq::_ProjectionWrite_move5 writeState = copiedState._update_for_move5();
                             std::unordered_map<prob_oneway8seq::_ProjectionRead_move5, prob_oneway8seq::_ProjectionWrite_move5, prob_oneway8seq::_ProjectionRead_move5::Hash, prob_oneway8seq::_ProjectionRead_move5::HashEqual> _OpCache_with_parameter_move5 = std::unordered_map<prob_oneway8seq::_ProjectionRead_move5, prob_oneway8seq::_ProjectionWrite_move5, prob_oneway8seq::_ProjectionRead_move5::Hash, prob_oneway8seq::_ProjectionRead_move5::HashEqual>();
                             _OpCache_with_parameter_move5.insert({readState, writeState});
                             _OpCache_move5.insert({_trid_6, _OpCache_with_parameter_move5});
-                        }
-                    } else {
-                        {
-                            std::unique_lock<std::mutex> _ProjectionRead_move5_lock(_ProjectionRead_move5_mutex);
+                        } else {
                             std::unordered_map<prob_oneway8seq::_ProjectionRead_move5, prob_oneway8seq::_ProjectionWrite_move5, prob_oneway8seq::_ProjectionRead_move5::Hash, prob_oneway8seq::_ProjectionRead_move5::HashEqual> _OpCache_with_parameter_move5 = _OpCache_with_parameter_move5_ptr->second;
                             auto writeState_ptr = _OpCache_with_parameter_move5.find(readState);
                             if(writeState_ptr != _OpCache_with_parameter_move5.end()) {
@@ -3952,7 +3923,6 @@ class ModelChecker {
                             }
                         }
                     }
-
                     copiedState.stateAccessedVia = "move5";
                     result.insert(copiedState);
                     {
@@ -3962,33 +3932,29 @@ class ModelChecker {
                 }
                 prob_oneway8seq::_ProjectionRead__tr_move6 read__tr_move6_state = state._projected_state_for__tr_move6();
                 bool _trid_7 = false;
-                auto _obj__trid_7_ptr = _OpCache_tr_move6.find(read__tr_move6_state);
-                if(_obj__trid_7_ptr == _OpCache_tr_move6.end()) {
-                    _trid_7 = state._tr_move6();
-                    {
-                        std::unique_lock<std::mutex> _ProjectionRead__tr_move6_lock(_ProjectionRead__tr_move6_mutex);
+                {
+                    std::unique_lock<std::mutex> _ProjectionRead__tr_move6_lock(_ProjectionRead__tr_move6_mutex);
+                    auto _obj__trid_7_ptr = _OpCache_tr_move6.find(read__tr_move6_state);
+                    if(_obj__trid_7_ptr == _OpCache_tr_move6.end()) {
+                        _trid_7 = state._tr_move6();
                         _OpCache_tr_move6.insert({read__tr_move6_state, _trid_7});
+                    } else {
+                        _trid_7 = _obj__trid_7_ptr->second;
                     }
-                } else {
-                    _trid_7 = _obj__trid_7_ptr->second;
                 }
                 if(_trid_7) {
                     prob_oneway8seq copiedState = state._copy();
                     prob_oneway8seq::_ProjectionRead_move6 readState = state._projected_state_for_move6();
-
-                    auto _OpCache_with_parameter_move6_ptr = _OpCache_move6.find(_trid_7);
-                    if(_OpCache_with_parameter_move6_ptr == _OpCache_move6.end()) {
-                        {
-                            std::unique_lock<std::mutex> _ProjectionRead_move6_lock(_ProjectionRead_move6_mutex);
+                    {
+                        std::unique_lock<std::mutex> _ProjectionRead_move6_lock(_ProjectionRead_move6_mutex);
+                        auto _OpCache_with_parameter_move6_ptr = _OpCache_move6.find(_trid_7);
+                        if(_OpCache_with_parameter_move6_ptr == _OpCache_move6.end()) {
                             copiedState.move6();
                             prob_oneway8seq::_ProjectionWrite_move6 writeState = copiedState._update_for_move6();
                             std::unordered_map<prob_oneway8seq::_ProjectionRead_move6, prob_oneway8seq::_ProjectionWrite_move6, prob_oneway8seq::_ProjectionRead_move6::Hash, prob_oneway8seq::_ProjectionRead_move6::HashEqual> _OpCache_with_parameter_move6 = std::unordered_map<prob_oneway8seq::_ProjectionRead_move6, prob_oneway8seq::_ProjectionWrite_move6, prob_oneway8seq::_ProjectionRead_move6::Hash, prob_oneway8seq::_ProjectionRead_move6::HashEqual>();
                             _OpCache_with_parameter_move6.insert({readState, writeState});
                             _OpCache_move6.insert({_trid_7, _OpCache_with_parameter_move6});
-                        }
-                    } else {
-                        {
-                            std::unique_lock<std::mutex> _ProjectionRead_move6_lock(_ProjectionRead_move6_mutex);
+                        } else {
                             std::unordered_map<prob_oneway8seq::_ProjectionRead_move6, prob_oneway8seq::_ProjectionWrite_move6, prob_oneway8seq::_ProjectionRead_move6::Hash, prob_oneway8seq::_ProjectionRead_move6::HashEqual> _OpCache_with_parameter_move6 = _OpCache_with_parameter_move6_ptr->second;
                             auto writeState_ptr = _OpCache_with_parameter_move6.find(readState);
                             if(writeState_ptr != _OpCache_with_parameter_move6.end()) {
@@ -4001,7 +3967,6 @@ class ModelChecker {
                             }
                         }
                     }
-
                     copiedState.stateAccessedVia = "move6";
                     result.insert(copiedState);
                     {
@@ -4011,33 +3976,29 @@ class ModelChecker {
                 }
                 prob_oneway8seq::_ProjectionRead__tr_move7 read__tr_move7_state = state._projected_state_for__tr_move7();
                 bool _trid_8 = false;
-                auto _obj__trid_8_ptr = _OpCache_tr_move7.find(read__tr_move7_state);
-                if(_obj__trid_8_ptr == _OpCache_tr_move7.end()) {
-                    _trid_8 = state._tr_move7();
-                    {
-                        std::unique_lock<std::mutex> _ProjectionRead__tr_move7_lock(_ProjectionRead__tr_move7_mutex);
+                {
+                    std::unique_lock<std::mutex> _ProjectionRead__tr_move7_lock(_ProjectionRead__tr_move7_mutex);
+                    auto _obj__trid_8_ptr = _OpCache_tr_move7.find(read__tr_move7_state);
+                    if(_obj__trid_8_ptr == _OpCache_tr_move7.end()) {
+                        _trid_8 = state._tr_move7();
                         _OpCache_tr_move7.insert({read__tr_move7_state, _trid_8});
+                    } else {
+                        _trid_8 = _obj__trid_8_ptr->second;
                     }
-                } else {
-                    _trid_8 = _obj__trid_8_ptr->second;
                 }
                 if(_trid_8) {
                     prob_oneway8seq copiedState = state._copy();
                     prob_oneway8seq::_ProjectionRead_move7 readState = state._projected_state_for_move7();
-
-                    auto _OpCache_with_parameter_move7_ptr = _OpCache_move7.find(_trid_8);
-                    if(_OpCache_with_parameter_move7_ptr == _OpCache_move7.end()) {
-                        {
-                            std::unique_lock<std::mutex> _ProjectionRead_move7_lock(_ProjectionRead_move7_mutex);
+                    {
+                        std::unique_lock<std::mutex> _ProjectionRead_move7_lock(_ProjectionRead_move7_mutex);
+                        auto _OpCache_with_parameter_move7_ptr = _OpCache_move7.find(_trid_8);
+                        if(_OpCache_with_parameter_move7_ptr == _OpCache_move7.end()) {
                             copiedState.move7();
                             prob_oneway8seq::_ProjectionWrite_move7 writeState = copiedState._update_for_move7();
                             std::unordered_map<prob_oneway8seq::_ProjectionRead_move7, prob_oneway8seq::_ProjectionWrite_move7, prob_oneway8seq::_ProjectionRead_move7::Hash, prob_oneway8seq::_ProjectionRead_move7::HashEqual> _OpCache_with_parameter_move7 = std::unordered_map<prob_oneway8seq::_ProjectionRead_move7, prob_oneway8seq::_ProjectionWrite_move7, prob_oneway8seq::_ProjectionRead_move7::Hash, prob_oneway8seq::_ProjectionRead_move7::HashEqual>();
                             _OpCache_with_parameter_move7.insert({readState, writeState});
                             _OpCache_move7.insert({_trid_8, _OpCache_with_parameter_move7});
-                        }
-                    } else {
-                        {
-                            std::unique_lock<std::mutex> _ProjectionRead_move7_lock(_ProjectionRead_move7_mutex);
+                        } else {
                             std::unordered_map<prob_oneway8seq::_ProjectionRead_move7, prob_oneway8seq::_ProjectionWrite_move7, prob_oneway8seq::_ProjectionRead_move7::Hash, prob_oneway8seq::_ProjectionRead_move7::HashEqual> _OpCache_with_parameter_move7 = _OpCache_with_parameter_move7_ptr->second;
                             auto writeState_ptr = _OpCache_with_parameter_move7.find(readState);
                             if(writeState_ptr != _OpCache_with_parameter_move7.end()) {
@@ -4050,7 +4011,6 @@ class ModelChecker {
                             }
                         }
                     }
-
                     copiedState.stateAccessedVia = "move7";
                     result.insert(copiedState);
                     {
@@ -4060,33 +4020,29 @@ class ModelChecker {
                 }
                 prob_oneway8seq::_ProjectionRead__tr_arrived read__tr_arrived_state = state._projected_state_for__tr_arrived();
                 bool _trid_9 = false;
-                auto _obj__trid_9_ptr = _OpCache_tr_arrived.find(read__tr_arrived_state);
-                if(_obj__trid_9_ptr == _OpCache_tr_arrived.end()) {
-                    _trid_9 = state._tr_arrived();
-                    {
-                        std::unique_lock<std::mutex> _ProjectionRead__tr_arrived_lock(_ProjectionRead__tr_arrived_mutex);
+                {
+                    std::unique_lock<std::mutex> _ProjectionRead__tr_arrived_lock(_ProjectionRead__tr_arrived_mutex);
+                    auto _obj__trid_9_ptr = _OpCache_tr_arrived.find(read__tr_arrived_state);
+                    if(_obj__trid_9_ptr == _OpCache_tr_arrived.end()) {
+                        _trid_9 = state._tr_arrived();
                         _OpCache_tr_arrived.insert({read__tr_arrived_state, _trid_9});
+                    } else {
+                        _trid_9 = _obj__trid_9_ptr->second;
                     }
-                } else {
-                    _trid_9 = _obj__trid_9_ptr->second;
                 }
                 if(_trid_9) {
                     prob_oneway8seq copiedState = state._copy();
                     prob_oneway8seq::_ProjectionRead_arrived readState = state._projected_state_for_arrived();
-
-                    auto _OpCache_with_parameter_arrived_ptr = _OpCache_arrived.find(_trid_9);
-                    if(_OpCache_with_parameter_arrived_ptr == _OpCache_arrived.end()) {
-                        {
-                            std::unique_lock<std::mutex> _ProjectionRead_arrived_lock(_ProjectionRead_arrived_mutex);
+                    {
+                        std::unique_lock<std::mutex> _ProjectionRead_arrived_lock(_ProjectionRead_arrived_mutex);
+                        auto _OpCache_with_parameter_arrived_ptr = _OpCache_arrived.find(_trid_9);
+                        if(_OpCache_with_parameter_arrived_ptr == _OpCache_arrived.end()) {
                             copiedState.arrived();
                             prob_oneway8seq::_ProjectionWrite_arrived writeState = copiedState._update_for_arrived();
                             std::unordered_map<prob_oneway8seq::_ProjectionRead_arrived, prob_oneway8seq::_ProjectionWrite_arrived, prob_oneway8seq::_ProjectionRead_arrived::Hash, prob_oneway8seq::_ProjectionRead_arrived::HashEqual> _OpCache_with_parameter_arrived = std::unordered_map<prob_oneway8seq::_ProjectionRead_arrived, prob_oneway8seq::_ProjectionWrite_arrived, prob_oneway8seq::_ProjectionRead_arrived::Hash, prob_oneway8seq::_ProjectionRead_arrived::HashEqual>();
                             _OpCache_with_parameter_arrived.insert({readState, writeState});
                             _OpCache_arrived.insert({_trid_9, _OpCache_with_parameter_arrived});
-                        }
-                    } else {
-                        {
-                            std::unique_lock<std::mutex> _ProjectionRead_arrived_lock(_ProjectionRead_arrived_mutex);
+                        } else {
                             std::unordered_map<prob_oneway8seq::_ProjectionRead_arrived, prob_oneway8seq::_ProjectionWrite_arrived, prob_oneway8seq::_ProjectionRead_arrived::Hash, prob_oneway8seq::_ProjectionRead_arrived::HashEqual> _OpCache_with_parameter_arrived = _OpCache_with_parameter_arrived_ptr->second;
                             auto writeState_ptr = _OpCache_with_parameter_arrived.find(readState);
                             if(writeState_ptr != _OpCache_with_parameter_arrived.end()) {
@@ -4099,7 +4055,6 @@ class ModelChecker {
                             }
                         }
                     }
-
                     copiedState.stateAccessedVia = "arrived";
                     result.insert(copiedState);
                     {

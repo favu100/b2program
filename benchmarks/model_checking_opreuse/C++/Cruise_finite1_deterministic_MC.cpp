@@ -8722,33 +8722,29 @@ class ModelChecker {
             if(isCaching) {
                 Cruise_finite1_deterministic_MC::_ProjectionRead__tr_CruiseBecomesNotAllowed read__tr_CruiseBecomesNotAllowed_state = state._projected_state_for__tr_CruiseBecomesNotAllowed();
                 bool _trid_1 = false;
-                auto _obj__trid_1_ptr = _OpCache_tr_CruiseBecomesNotAllowed.find(read__tr_CruiseBecomesNotAllowed_state);
-                if(_obj__trid_1_ptr == _OpCache_tr_CruiseBecomesNotAllowed.end()) {
-                    _trid_1 = state._tr_CruiseBecomesNotAllowed();
-                    {
-                        std::unique_lock<std::mutex> _ProjectionRead__tr_CruiseBecomesNotAllowed_lock(_ProjectionRead__tr_CruiseBecomesNotAllowed_mutex);
+                {
+                    std::unique_lock<std::mutex> _ProjectionRead__tr_CruiseBecomesNotAllowed_lock(_ProjectionRead__tr_CruiseBecomesNotAllowed_mutex);
+                    auto _obj__trid_1_ptr = _OpCache_tr_CruiseBecomesNotAllowed.find(read__tr_CruiseBecomesNotAllowed_state);
+                    if(_obj__trid_1_ptr == _OpCache_tr_CruiseBecomesNotAllowed.end()) {
+                        _trid_1 = state._tr_CruiseBecomesNotAllowed();
                         _OpCache_tr_CruiseBecomesNotAllowed.insert({read__tr_CruiseBecomesNotAllowed_state, _trid_1});
+                    } else {
+                        _trid_1 = _obj__trid_1_ptr->second;
                     }
-                } else {
-                    _trid_1 = _obj__trid_1_ptr->second;
                 }
                 if(_trid_1) {
                     Cruise_finite1_deterministic_MC copiedState = state._copy();
                     Cruise_finite1_deterministic_MC::_ProjectionRead_CruiseBecomesNotAllowed readState = state._projected_state_for_CruiseBecomesNotAllowed();
-
-                    auto _OpCache_with_parameter_CruiseBecomesNotAllowed_ptr = _OpCache_CruiseBecomesNotAllowed.find(_trid_1);
-                    if(_OpCache_with_parameter_CruiseBecomesNotAllowed_ptr == _OpCache_CruiseBecomesNotAllowed.end()) {
-                        {
-                            std::unique_lock<std::mutex> _ProjectionRead_CruiseBecomesNotAllowed_lock(_ProjectionRead_CruiseBecomesNotAllowed_mutex);
+                    {
+                        std::unique_lock<std::mutex> _ProjectionRead_CruiseBecomesNotAllowed_lock(_ProjectionRead_CruiseBecomesNotAllowed_mutex);
+                        auto _OpCache_with_parameter_CruiseBecomesNotAllowed_ptr = _OpCache_CruiseBecomesNotAllowed.find(_trid_1);
+                        if(_OpCache_with_parameter_CruiseBecomesNotAllowed_ptr == _OpCache_CruiseBecomesNotAllowed.end()) {
                             copiedState.CruiseBecomesNotAllowed();
                             Cruise_finite1_deterministic_MC::_ProjectionWrite_CruiseBecomesNotAllowed writeState = copiedState._update_for_CruiseBecomesNotAllowed();
                             std::unordered_map<Cruise_finite1_deterministic_MC::_ProjectionRead_CruiseBecomesNotAllowed, Cruise_finite1_deterministic_MC::_ProjectionWrite_CruiseBecomesNotAllowed, Cruise_finite1_deterministic_MC::_ProjectionRead_CruiseBecomesNotAllowed::Hash, Cruise_finite1_deterministic_MC::_ProjectionRead_CruiseBecomesNotAllowed::HashEqual> _OpCache_with_parameter_CruiseBecomesNotAllowed = std::unordered_map<Cruise_finite1_deterministic_MC::_ProjectionRead_CruiseBecomesNotAllowed, Cruise_finite1_deterministic_MC::_ProjectionWrite_CruiseBecomesNotAllowed, Cruise_finite1_deterministic_MC::_ProjectionRead_CruiseBecomesNotAllowed::Hash, Cruise_finite1_deterministic_MC::_ProjectionRead_CruiseBecomesNotAllowed::HashEqual>();
                             _OpCache_with_parameter_CruiseBecomesNotAllowed.insert({readState, writeState});
                             _OpCache_CruiseBecomesNotAllowed.insert({_trid_1, _OpCache_with_parameter_CruiseBecomesNotAllowed});
-                        }
-                    } else {
-                        {
-                            std::unique_lock<std::mutex> _ProjectionRead_CruiseBecomesNotAllowed_lock(_ProjectionRead_CruiseBecomesNotAllowed_mutex);
+                        } else {
                             std::unordered_map<Cruise_finite1_deterministic_MC::_ProjectionRead_CruiseBecomesNotAllowed, Cruise_finite1_deterministic_MC::_ProjectionWrite_CruiseBecomesNotAllowed, Cruise_finite1_deterministic_MC::_ProjectionRead_CruiseBecomesNotAllowed::Hash, Cruise_finite1_deterministic_MC::_ProjectionRead_CruiseBecomesNotAllowed::HashEqual> _OpCache_with_parameter_CruiseBecomesNotAllowed = _OpCache_with_parameter_CruiseBecomesNotAllowed_ptr->second;
                             auto writeState_ptr = _OpCache_with_parameter_CruiseBecomesNotAllowed.find(readState);
                             if(writeState_ptr != _OpCache_with_parameter_CruiseBecomesNotAllowed.end()) {
@@ -8761,7 +8757,6 @@ class ModelChecker {
                             }
                         }
                     }
-
                     copiedState.stateAccessedVia = "CruiseBecomesNotAllowed";
                     result.insert(copiedState);
                     {
@@ -8771,33 +8766,29 @@ class ModelChecker {
                 }
                 Cruise_finite1_deterministic_MC::_ProjectionRead__tr_CruiseBecomesAllowed read__tr_CruiseBecomesAllowed_state = state._projected_state_for__tr_CruiseBecomesAllowed();
                 bool _trid_2 = false;
-                auto _obj__trid_2_ptr = _OpCache_tr_CruiseBecomesAllowed.find(read__tr_CruiseBecomesAllowed_state);
-                if(_obj__trid_2_ptr == _OpCache_tr_CruiseBecomesAllowed.end()) {
-                    _trid_2 = state._tr_CruiseBecomesAllowed();
-                    {
-                        std::unique_lock<std::mutex> _ProjectionRead__tr_CruiseBecomesAllowed_lock(_ProjectionRead__tr_CruiseBecomesAllowed_mutex);
+                {
+                    std::unique_lock<std::mutex> _ProjectionRead__tr_CruiseBecomesAllowed_lock(_ProjectionRead__tr_CruiseBecomesAllowed_mutex);
+                    auto _obj__trid_2_ptr = _OpCache_tr_CruiseBecomesAllowed.find(read__tr_CruiseBecomesAllowed_state);
+                    if(_obj__trid_2_ptr == _OpCache_tr_CruiseBecomesAllowed.end()) {
+                        _trid_2 = state._tr_CruiseBecomesAllowed();
                         _OpCache_tr_CruiseBecomesAllowed.insert({read__tr_CruiseBecomesAllowed_state, _trid_2});
+                    } else {
+                        _trid_2 = _obj__trid_2_ptr->second;
                     }
-                } else {
-                    _trid_2 = _obj__trid_2_ptr->second;
                 }
                 if(_trid_2) {
                     Cruise_finite1_deterministic_MC copiedState = state._copy();
                     Cruise_finite1_deterministic_MC::_ProjectionRead_CruiseBecomesAllowed readState = state._projected_state_for_CruiseBecomesAllowed();
-
-                    auto _OpCache_with_parameter_CruiseBecomesAllowed_ptr = _OpCache_CruiseBecomesAllowed.find(_trid_2);
-                    if(_OpCache_with_parameter_CruiseBecomesAllowed_ptr == _OpCache_CruiseBecomesAllowed.end()) {
-                        {
-                            std::unique_lock<std::mutex> _ProjectionRead_CruiseBecomesAllowed_lock(_ProjectionRead_CruiseBecomesAllowed_mutex);
+                    {
+                        std::unique_lock<std::mutex> _ProjectionRead_CruiseBecomesAllowed_lock(_ProjectionRead_CruiseBecomesAllowed_mutex);
+                        auto _OpCache_with_parameter_CruiseBecomesAllowed_ptr = _OpCache_CruiseBecomesAllowed.find(_trid_2);
+                        if(_OpCache_with_parameter_CruiseBecomesAllowed_ptr == _OpCache_CruiseBecomesAllowed.end()) {
                             copiedState.CruiseBecomesAllowed();
                             Cruise_finite1_deterministic_MC::_ProjectionWrite_CruiseBecomesAllowed writeState = copiedState._update_for_CruiseBecomesAllowed();
                             std::unordered_map<Cruise_finite1_deterministic_MC::_ProjectionRead_CruiseBecomesAllowed, Cruise_finite1_deterministic_MC::_ProjectionWrite_CruiseBecomesAllowed, Cruise_finite1_deterministic_MC::_ProjectionRead_CruiseBecomesAllowed::Hash, Cruise_finite1_deterministic_MC::_ProjectionRead_CruiseBecomesAllowed::HashEqual> _OpCache_with_parameter_CruiseBecomesAllowed = std::unordered_map<Cruise_finite1_deterministic_MC::_ProjectionRead_CruiseBecomesAllowed, Cruise_finite1_deterministic_MC::_ProjectionWrite_CruiseBecomesAllowed, Cruise_finite1_deterministic_MC::_ProjectionRead_CruiseBecomesAllowed::Hash, Cruise_finite1_deterministic_MC::_ProjectionRead_CruiseBecomesAllowed::HashEqual>();
                             _OpCache_with_parameter_CruiseBecomesAllowed.insert({readState, writeState});
                             _OpCache_CruiseBecomesAllowed.insert({_trid_2, _OpCache_with_parameter_CruiseBecomesAllowed});
-                        }
-                    } else {
-                        {
-                            std::unique_lock<std::mutex> _ProjectionRead_CruiseBecomesAllowed_lock(_ProjectionRead_CruiseBecomesAllowed_mutex);
+                        } else {
                             std::unordered_map<Cruise_finite1_deterministic_MC::_ProjectionRead_CruiseBecomesAllowed, Cruise_finite1_deterministic_MC::_ProjectionWrite_CruiseBecomesAllowed, Cruise_finite1_deterministic_MC::_ProjectionRead_CruiseBecomesAllowed::Hash, Cruise_finite1_deterministic_MC::_ProjectionRead_CruiseBecomesAllowed::HashEqual> _OpCache_with_parameter_CruiseBecomesAllowed = _OpCache_with_parameter_CruiseBecomesAllowed_ptr->second;
                             auto writeState_ptr = _OpCache_with_parameter_CruiseBecomesAllowed.find(readState);
                             if(writeState_ptr != _OpCache_with_parameter_CruiseBecomesAllowed.end()) {
@@ -8810,7 +8801,6 @@ class ModelChecker {
                             }
                         }
                     }
-
                     copiedState.stateAccessedVia = "CruiseBecomesAllowed";
                     result.insert(copiedState);
                     {
@@ -8819,216 +8809,192 @@ class ModelChecker {
                     }
                 }
                 Cruise_finite1_deterministic_MC::_ProjectionRead__tr_SetCruiseSpeed read__tr_SetCruiseSpeed_state = state._projected_state_for__tr_SetCruiseSpeed();
-                auto _trid_3_ptr = _OpCache_tr_SetCruiseSpeed.find(read__tr_SetCruiseSpeed_state);
-                if(_trid_3_ptr == _OpCache_tr_SetCruiseSpeed.end()) {
-                    BSet<BTuple<BBoolean, BBoolean >> _trid_3 = state._tr_SetCruiseSpeed();
-                    {
-                        std::unique_lock<std::mutex> _ProjectionRead__tr_SetCruiseSpeed_lock(_ProjectionRead__tr_SetCruiseSpeed_mutex);
+                {
+                    std::unique_lock<std::mutex> _ProjectionRead__tr_SetCruiseSpeed_lock(_ProjectionRead__tr_SetCruiseSpeed_mutex);
+                    auto _trid_3_ptr = _OpCache_tr_SetCruiseSpeed.find(read__tr_SetCruiseSpeed_state);
+                    if(_trid_3_ptr == _OpCache_tr_SetCruiseSpeed.end()) {
+                        BSet<BTuple<BBoolean, BBoolean >> _trid_3 = state._tr_SetCruiseSpeed();
                         _OpCache_tr_SetCruiseSpeed.insert({read__tr_SetCruiseSpeed_state, _trid_3});
-                    }
-                    for(const BTuple<BBoolean, BBoolean >& param : _trid_3) {
-                        BBoolean _tmp_1 = param.projection2();
-                        BBoolean _tmp_2 = param.projection1();
+                        for(const BTuple<BBoolean, BBoolean >& param : _trid_3) {
+                            BBoolean _tmp_1 = param.projection2();
+                            BBoolean _tmp_2 = param.projection1();
 
-                        Cruise_finite1_deterministic_MC copiedState = state._copy();
-                        Cruise_finite1_deterministic_MC::_ProjectionRead_SetCruiseSpeed readState = state._projected_state_for_SetCruiseSpeed();
-
-                        auto _OpCache_with_parameter_SetCruiseSpeed_ptr = _OpCache_SetCruiseSpeed.find(param);
-                        if(_OpCache_with_parameter_SetCruiseSpeed_ptr == _OpCache_SetCruiseSpeed.end()) {
+                            Cruise_finite1_deterministic_MC copiedState = state._copy();
+                            Cruise_finite1_deterministic_MC::_ProjectionRead_SetCruiseSpeed readState = state._projected_state_for_SetCruiseSpeed();
                             {
                                 std::unique_lock<std::mutex> _ProjectionRead_SetCruiseSpeed_lock(_ProjectionRead_SetCruiseSpeed_mutex);
-                                copiedState.SetCruiseSpeed(_tmp_2, _tmp_1);
-                                Cruise_finite1_deterministic_MC::_ProjectionWrite_SetCruiseSpeed writeState = copiedState._update_for_SetCruiseSpeed();
-                                std::unordered_map<Cruise_finite1_deterministic_MC::_ProjectionRead_SetCruiseSpeed, Cruise_finite1_deterministic_MC::_ProjectionWrite_SetCruiseSpeed, Cruise_finite1_deterministic_MC::_ProjectionRead_SetCruiseSpeed::Hash, Cruise_finite1_deterministic_MC::_ProjectionRead_SetCruiseSpeed::HashEqual> _OpCache_with_parameter_SetCruiseSpeed = std::unordered_map<Cruise_finite1_deterministic_MC::_ProjectionRead_SetCruiseSpeed, Cruise_finite1_deterministic_MC::_ProjectionWrite_SetCruiseSpeed, Cruise_finite1_deterministic_MC::_ProjectionRead_SetCruiseSpeed::Hash, Cruise_finite1_deterministic_MC::_ProjectionRead_SetCruiseSpeed::HashEqual>();
-                                _OpCache_with_parameter_SetCruiseSpeed.insert({readState, writeState});
-                                _OpCache_SetCruiseSpeed.insert({param, _OpCache_with_parameter_SetCruiseSpeed});
-                            }
-                        } else {
-                            {
-                                std::unique_lock<std::mutex> _ProjectionRead_SetCruiseSpeed_lock(_ProjectionRead_SetCruiseSpeed_mutex);
-                                std::unordered_map<Cruise_finite1_deterministic_MC::_ProjectionRead_SetCruiseSpeed, Cruise_finite1_deterministic_MC::_ProjectionWrite_SetCruiseSpeed, Cruise_finite1_deterministic_MC::_ProjectionRead_SetCruiseSpeed::Hash, Cruise_finite1_deterministic_MC::_ProjectionRead_SetCruiseSpeed::HashEqual> _OpCache_with_parameter_SetCruiseSpeed = _OpCache_with_parameter_SetCruiseSpeed_ptr->second;
-                                auto writeState_ptr = _OpCache_with_parameter_SetCruiseSpeed.find(readState);
-                                if(writeState_ptr != _OpCache_with_parameter_SetCruiseSpeed.end()) {
-                                    Cruise_finite1_deterministic_MC::_ProjectionWrite_SetCruiseSpeed writeState = writeState_ptr->second;
-                                    copiedState._apply_update_for_SetCruiseSpeed(writeState);
-                                } else {
+                                auto _OpCache_with_parameter_SetCruiseSpeed_ptr = _OpCache_SetCruiseSpeed.find(param);
+                                if(_OpCache_with_parameter_SetCruiseSpeed_ptr == _OpCache_SetCruiseSpeed.end()) {
                                     copiedState.SetCruiseSpeed(_tmp_2, _tmp_1);
                                     Cruise_finite1_deterministic_MC::_ProjectionWrite_SetCruiseSpeed writeState = copiedState._update_for_SetCruiseSpeed();
+                                    std::unordered_map<Cruise_finite1_deterministic_MC::_ProjectionRead_SetCruiseSpeed, Cruise_finite1_deterministic_MC::_ProjectionWrite_SetCruiseSpeed, Cruise_finite1_deterministic_MC::_ProjectionRead_SetCruiseSpeed::Hash, Cruise_finite1_deterministic_MC::_ProjectionRead_SetCruiseSpeed::HashEqual> _OpCache_with_parameter_SetCruiseSpeed = std::unordered_map<Cruise_finite1_deterministic_MC::_ProjectionRead_SetCruiseSpeed, Cruise_finite1_deterministic_MC::_ProjectionWrite_SetCruiseSpeed, Cruise_finite1_deterministic_MC::_ProjectionRead_SetCruiseSpeed::Hash, Cruise_finite1_deterministic_MC::_ProjectionRead_SetCruiseSpeed::HashEqual>();
                                     _OpCache_with_parameter_SetCruiseSpeed.insert({readState, writeState});
+                                    _OpCache_SetCruiseSpeed.insert({param, _OpCache_with_parameter_SetCruiseSpeed});
+                                } else {
+                                    std::unordered_map<Cruise_finite1_deterministic_MC::_ProjectionRead_SetCruiseSpeed, Cruise_finite1_deterministic_MC::_ProjectionWrite_SetCruiseSpeed, Cruise_finite1_deterministic_MC::_ProjectionRead_SetCruiseSpeed::Hash, Cruise_finite1_deterministic_MC::_ProjectionRead_SetCruiseSpeed::HashEqual> _OpCache_with_parameter_SetCruiseSpeed = _OpCache_with_parameter_SetCruiseSpeed_ptr->second;
+                                    auto writeState_ptr = _OpCache_with_parameter_SetCruiseSpeed.find(readState);
+                                    if(writeState_ptr != _OpCache_with_parameter_SetCruiseSpeed.end()) {
+                                        Cruise_finite1_deterministic_MC::_ProjectionWrite_SetCruiseSpeed writeState = writeState_ptr->second;
+                                        copiedState._apply_update_for_SetCruiseSpeed(writeState);
+                                    } else {
+                                        copiedState.SetCruiseSpeed(_tmp_2, _tmp_1);
+                                        Cruise_finite1_deterministic_MC::_ProjectionWrite_SetCruiseSpeed writeState = copiedState._update_for_SetCruiseSpeed();
+                                        _OpCache_with_parameter_SetCruiseSpeed.insert({readState, writeState});
+                                    }
                                 }
                             }
-                        }
-
-                        copiedState.stateAccessedVia = "SetCruiseSpeed";
-                        result.insert(copiedState);
-                        {
-                            std::unique_lock<std::mutex> lock(mutex);
-                            transitions += 1;
-                        }
-                    }
-                } else {
-                    BSet<BTuple<BBoolean, BBoolean >> _trid_3 = _trid_3_ptr->second;
-                    for(const BTuple<BBoolean, BBoolean >& param : _trid_3) {
-                        BBoolean _tmp_1 = param.projection2();
-                        BBoolean _tmp_2 = param.projection1();
-
-                        Cruise_finite1_deterministic_MC copiedState = state._copy();
-                        Cruise_finite1_deterministic_MC::_ProjectionRead_SetCruiseSpeed readState = state._projected_state_for_SetCruiseSpeed();
-
-                        auto _OpCache_with_parameter_SetCruiseSpeed_ptr = _OpCache_SetCruiseSpeed.find(param);
-                        if(_OpCache_with_parameter_SetCruiseSpeed_ptr == _OpCache_SetCruiseSpeed.end()) {
+                            copiedState.stateAccessedVia = "SetCruiseSpeed";
+                            result.insert(copiedState);
                             {
-                                std::unique_lock<std::mutex> _ProjectionRead_SetCruiseSpeed_lock(_ProjectionRead_SetCruiseSpeed_mutex);
-                                copiedState.SetCruiseSpeed(_tmp_2, _tmp_1);
-                                Cruise_finite1_deterministic_MC::_ProjectionWrite_SetCruiseSpeed writeState = copiedState._update_for_SetCruiseSpeed();
-                                std::unordered_map<Cruise_finite1_deterministic_MC::_ProjectionRead_SetCruiseSpeed, Cruise_finite1_deterministic_MC::_ProjectionWrite_SetCruiseSpeed, Cruise_finite1_deterministic_MC::_ProjectionRead_SetCruiseSpeed::Hash, Cruise_finite1_deterministic_MC::_ProjectionRead_SetCruiseSpeed::HashEqual> _OpCache_with_parameter_SetCruiseSpeed = std::unordered_map<Cruise_finite1_deterministic_MC::_ProjectionRead_SetCruiseSpeed, Cruise_finite1_deterministic_MC::_ProjectionWrite_SetCruiseSpeed, Cruise_finite1_deterministic_MC::_ProjectionRead_SetCruiseSpeed::Hash, Cruise_finite1_deterministic_MC::_ProjectionRead_SetCruiseSpeed::HashEqual>();
-                                _OpCache_with_parameter_SetCruiseSpeed.insert({readState, writeState});
-                                _OpCache_SetCruiseSpeed.insert({param, _OpCache_with_parameter_SetCruiseSpeed});
+                                std::unique_lock<std::mutex> lock(mutex);
+                                transitions += 1;
                             }
-                        } else {
+                        }
+                    } else {
+                        BSet<BTuple<BBoolean, BBoolean >> _trid_3 = _trid_3_ptr->second;
+                        for(const BTuple<BBoolean, BBoolean >& param : _trid_3) {
+                            BBoolean _tmp_1 = param.projection2();
+                            BBoolean _tmp_2 = param.projection1();
+
+                            Cruise_finite1_deterministic_MC copiedState = state._copy();
+                            Cruise_finite1_deterministic_MC::_ProjectionRead_SetCruiseSpeed readState = state._projected_state_for_SetCruiseSpeed();
                             {
                                 std::unique_lock<std::mutex> _ProjectionRead_SetCruiseSpeed_lock(_ProjectionRead_SetCruiseSpeed_mutex);
-                                std::unordered_map<Cruise_finite1_deterministic_MC::_ProjectionRead_SetCruiseSpeed, Cruise_finite1_deterministic_MC::_ProjectionWrite_SetCruiseSpeed, Cruise_finite1_deterministic_MC::_ProjectionRead_SetCruiseSpeed::Hash, Cruise_finite1_deterministic_MC::_ProjectionRead_SetCruiseSpeed::HashEqual> _OpCache_with_parameter_SetCruiseSpeed = _OpCache_with_parameter_SetCruiseSpeed_ptr->second;
-                                auto writeState_ptr = _OpCache_with_parameter_SetCruiseSpeed.find(readState);
-                                if(writeState_ptr != _OpCache_with_parameter_SetCruiseSpeed.end()) {
-                                    Cruise_finite1_deterministic_MC::_ProjectionWrite_SetCruiseSpeed writeState = writeState_ptr->second;
-                                    copiedState._apply_update_for_SetCruiseSpeed(writeState);
-                                } else {
+                                auto _OpCache_with_parameter_SetCruiseSpeed_ptr = _OpCache_SetCruiseSpeed.find(param);
+                                if(_OpCache_with_parameter_SetCruiseSpeed_ptr == _OpCache_SetCruiseSpeed.end()) {
                                     copiedState.SetCruiseSpeed(_tmp_2, _tmp_1);
                                     Cruise_finite1_deterministic_MC::_ProjectionWrite_SetCruiseSpeed writeState = copiedState._update_for_SetCruiseSpeed();
+                                    std::unordered_map<Cruise_finite1_deterministic_MC::_ProjectionRead_SetCruiseSpeed, Cruise_finite1_deterministic_MC::_ProjectionWrite_SetCruiseSpeed, Cruise_finite1_deterministic_MC::_ProjectionRead_SetCruiseSpeed::Hash, Cruise_finite1_deterministic_MC::_ProjectionRead_SetCruiseSpeed::HashEqual> _OpCache_with_parameter_SetCruiseSpeed = std::unordered_map<Cruise_finite1_deterministic_MC::_ProjectionRead_SetCruiseSpeed, Cruise_finite1_deterministic_MC::_ProjectionWrite_SetCruiseSpeed, Cruise_finite1_deterministic_MC::_ProjectionRead_SetCruiseSpeed::Hash, Cruise_finite1_deterministic_MC::_ProjectionRead_SetCruiseSpeed::HashEqual>();
                                     _OpCache_with_parameter_SetCruiseSpeed.insert({readState, writeState});
+                                    _OpCache_SetCruiseSpeed.insert({param, _OpCache_with_parameter_SetCruiseSpeed});
+                                } else {
+                                    std::unordered_map<Cruise_finite1_deterministic_MC::_ProjectionRead_SetCruiseSpeed, Cruise_finite1_deterministic_MC::_ProjectionWrite_SetCruiseSpeed, Cruise_finite1_deterministic_MC::_ProjectionRead_SetCruiseSpeed::Hash, Cruise_finite1_deterministic_MC::_ProjectionRead_SetCruiseSpeed::HashEqual> _OpCache_with_parameter_SetCruiseSpeed = _OpCache_with_parameter_SetCruiseSpeed_ptr->second;
+                                    auto writeState_ptr = _OpCache_with_parameter_SetCruiseSpeed.find(readState);
+                                    if(writeState_ptr != _OpCache_with_parameter_SetCruiseSpeed.end()) {
+                                        Cruise_finite1_deterministic_MC::_ProjectionWrite_SetCruiseSpeed writeState = writeState_ptr->second;
+                                        copiedState._apply_update_for_SetCruiseSpeed(writeState);
+                                    } else {
+                                        copiedState.SetCruiseSpeed(_tmp_2, _tmp_1);
+                                        Cruise_finite1_deterministic_MC::_ProjectionWrite_SetCruiseSpeed writeState = copiedState._update_for_SetCruiseSpeed();
+                                        _OpCache_with_parameter_SetCruiseSpeed.insert({readState, writeState});
+                                    }
                                 }
                             }
-                        }
-
-                        copiedState.stateAccessedVia = "SetCruiseSpeed";
-                        result.insert(copiedState);
-                        {
-                            std::unique_lock<std::mutex> lock(mutex);
-                            transitions += 1;
+                            copiedState.stateAccessedVia = "SetCruiseSpeed";
+                            result.insert(copiedState);
+                            {
+                                std::unique_lock<std::mutex> lock(mutex);
+                                transitions += 1;
+                            }
                         }
                     }
                 }
                 Cruise_finite1_deterministic_MC::_ProjectionRead__tr_CCInitialisationFinished read__tr_CCInitialisationFinished_state = state._projected_state_for__tr_CCInitialisationFinished();
-                auto _trid_4_ptr = _OpCache_tr_CCInitialisationFinished.find(read__tr_CCInitialisationFinished_state);
-                if(_trid_4_ptr == _OpCache_tr_CCInitialisationFinished.end()) {
-                    BSet<BTuple<BBoolean, BBoolean >> _trid_4 = state._tr_CCInitialisationFinished();
-                    {
-                        std::unique_lock<std::mutex> _ProjectionRead__tr_CCInitialisationFinished_lock(_ProjectionRead__tr_CCInitialisationFinished_mutex);
+                {
+                    std::unique_lock<std::mutex> _ProjectionRead__tr_CCInitialisationFinished_lock(_ProjectionRead__tr_CCInitialisationFinished_mutex);
+                    auto _trid_4_ptr = _OpCache_tr_CCInitialisationFinished.find(read__tr_CCInitialisationFinished_state);
+                    if(_trid_4_ptr == _OpCache_tr_CCInitialisationFinished.end()) {
+                        BSet<BTuple<BBoolean, BBoolean >> _trid_4 = state._tr_CCInitialisationFinished();
                         _OpCache_tr_CCInitialisationFinished.insert({read__tr_CCInitialisationFinished_state, _trid_4});
-                    }
-                    for(const BTuple<BBoolean, BBoolean >& param : _trid_4) {
-                        BBoolean _tmp_1 = param.projection2();
-                        BBoolean _tmp_2 = param.projection1();
+                        for(const BTuple<BBoolean, BBoolean >& param : _trid_4) {
+                            BBoolean _tmp_1 = param.projection2();
+                            BBoolean _tmp_2 = param.projection1();
 
-                        Cruise_finite1_deterministic_MC copiedState = state._copy();
-                        Cruise_finite1_deterministic_MC::_ProjectionRead_CCInitialisationFinished readState = state._projected_state_for_CCInitialisationFinished();
-
-                        auto _OpCache_with_parameter_CCInitialisationFinished_ptr = _OpCache_CCInitialisationFinished.find(param);
-                        if(_OpCache_with_parameter_CCInitialisationFinished_ptr == _OpCache_CCInitialisationFinished.end()) {
+                            Cruise_finite1_deterministic_MC copiedState = state._copy();
+                            Cruise_finite1_deterministic_MC::_ProjectionRead_CCInitialisationFinished readState = state._projected_state_for_CCInitialisationFinished();
                             {
                                 std::unique_lock<std::mutex> _ProjectionRead_CCInitialisationFinished_lock(_ProjectionRead_CCInitialisationFinished_mutex);
-                                copiedState.CCInitialisationFinished(_tmp_2, _tmp_1);
-                                Cruise_finite1_deterministic_MC::_ProjectionWrite_CCInitialisationFinished writeState = copiedState._update_for_CCInitialisationFinished();
-                                std::unordered_map<Cruise_finite1_deterministic_MC::_ProjectionRead_CCInitialisationFinished, Cruise_finite1_deterministic_MC::_ProjectionWrite_CCInitialisationFinished, Cruise_finite1_deterministic_MC::_ProjectionRead_CCInitialisationFinished::Hash, Cruise_finite1_deterministic_MC::_ProjectionRead_CCInitialisationFinished::HashEqual> _OpCache_with_parameter_CCInitialisationFinished = std::unordered_map<Cruise_finite1_deterministic_MC::_ProjectionRead_CCInitialisationFinished, Cruise_finite1_deterministic_MC::_ProjectionWrite_CCInitialisationFinished, Cruise_finite1_deterministic_MC::_ProjectionRead_CCInitialisationFinished::Hash, Cruise_finite1_deterministic_MC::_ProjectionRead_CCInitialisationFinished::HashEqual>();
-                                _OpCache_with_parameter_CCInitialisationFinished.insert({readState, writeState});
-                                _OpCache_CCInitialisationFinished.insert({param, _OpCache_with_parameter_CCInitialisationFinished});
-                            }
-                        } else {
-                            {
-                                std::unique_lock<std::mutex> _ProjectionRead_CCInitialisationFinished_lock(_ProjectionRead_CCInitialisationFinished_mutex);
-                                std::unordered_map<Cruise_finite1_deterministic_MC::_ProjectionRead_CCInitialisationFinished, Cruise_finite1_deterministic_MC::_ProjectionWrite_CCInitialisationFinished, Cruise_finite1_deterministic_MC::_ProjectionRead_CCInitialisationFinished::Hash, Cruise_finite1_deterministic_MC::_ProjectionRead_CCInitialisationFinished::HashEqual> _OpCache_with_parameter_CCInitialisationFinished = _OpCache_with_parameter_CCInitialisationFinished_ptr->second;
-                                auto writeState_ptr = _OpCache_with_parameter_CCInitialisationFinished.find(readState);
-                                if(writeState_ptr != _OpCache_with_parameter_CCInitialisationFinished.end()) {
-                                    Cruise_finite1_deterministic_MC::_ProjectionWrite_CCInitialisationFinished writeState = writeState_ptr->second;
-                                    copiedState._apply_update_for_CCInitialisationFinished(writeState);
-                                } else {
+                                auto _OpCache_with_parameter_CCInitialisationFinished_ptr = _OpCache_CCInitialisationFinished.find(param);
+                                if(_OpCache_with_parameter_CCInitialisationFinished_ptr == _OpCache_CCInitialisationFinished.end()) {
                                     copiedState.CCInitialisationFinished(_tmp_2, _tmp_1);
                                     Cruise_finite1_deterministic_MC::_ProjectionWrite_CCInitialisationFinished writeState = copiedState._update_for_CCInitialisationFinished();
+                                    std::unordered_map<Cruise_finite1_deterministic_MC::_ProjectionRead_CCInitialisationFinished, Cruise_finite1_deterministic_MC::_ProjectionWrite_CCInitialisationFinished, Cruise_finite1_deterministic_MC::_ProjectionRead_CCInitialisationFinished::Hash, Cruise_finite1_deterministic_MC::_ProjectionRead_CCInitialisationFinished::HashEqual> _OpCache_with_parameter_CCInitialisationFinished = std::unordered_map<Cruise_finite1_deterministic_MC::_ProjectionRead_CCInitialisationFinished, Cruise_finite1_deterministic_MC::_ProjectionWrite_CCInitialisationFinished, Cruise_finite1_deterministic_MC::_ProjectionRead_CCInitialisationFinished::Hash, Cruise_finite1_deterministic_MC::_ProjectionRead_CCInitialisationFinished::HashEqual>();
                                     _OpCache_with_parameter_CCInitialisationFinished.insert({readState, writeState});
+                                    _OpCache_CCInitialisationFinished.insert({param, _OpCache_with_parameter_CCInitialisationFinished});
+                                } else {
+                                    std::unordered_map<Cruise_finite1_deterministic_MC::_ProjectionRead_CCInitialisationFinished, Cruise_finite1_deterministic_MC::_ProjectionWrite_CCInitialisationFinished, Cruise_finite1_deterministic_MC::_ProjectionRead_CCInitialisationFinished::Hash, Cruise_finite1_deterministic_MC::_ProjectionRead_CCInitialisationFinished::HashEqual> _OpCache_with_parameter_CCInitialisationFinished = _OpCache_with_parameter_CCInitialisationFinished_ptr->second;
+                                    auto writeState_ptr = _OpCache_with_parameter_CCInitialisationFinished.find(readState);
+                                    if(writeState_ptr != _OpCache_with_parameter_CCInitialisationFinished.end()) {
+                                        Cruise_finite1_deterministic_MC::_ProjectionWrite_CCInitialisationFinished writeState = writeState_ptr->second;
+                                        copiedState._apply_update_for_CCInitialisationFinished(writeState);
+                                    } else {
+                                        copiedState.CCInitialisationFinished(_tmp_2, _tmp_1);
+                                        Cruise_finite1_deterministic_MC::_ProjectionWrite_CCInitialisationFinished writeState = copiedState._update_for_CCInitialisationFinished();
+                                        _OpCache_with_parameter_CCInitialisationFinished.insert({readState, writeState});
+                                    }
                                 }
                             }
-                        }
-
-                        copiedState.stateAccessedVia = "CCInitialisationFinished";
-                        result.insert(copiedState);
-                        {
-                            std::unique_lock<std::mutex> lock(mutex);
-                            transitions += 1;
-                        }
-                    }
-                } else {
-                    BSet<BTuple<BBoolean, BBoolean >> _trid_4 = _trid_4_ptr->second;
-                    for(const BTuple<BBoolean, BBoolean >& param : _trid_4) {
-                        BBoolean _tmp_1 = param.projection2();
-                        BBoolean _tmp_2 = param.projection1();
-
-                        Cruise_finite1_deterministic_MC copiedState = state._copy();
-                        Cruise_finite1_deterministic_MC::_ProjectionRead_CCInitialisationFinished readState = state._projected_state_for_CCInitialisationFinished();
-
-                        auto _OpCache_with_parameter_CCInitialisationFinished_ptr = _OpCache_CCInitialisationFinished.find(param);
-                        if(_OpCache_with_parameter_CCInitialisationFinished_ptr == _OpCache_CCInitialisationFinished.end()) {
+                            copiedState.stateAccessedVia = "CCInitialisationFinished";
+                            result.insert(copiedState);
                             {
-                                std::unique_lock<std::mutex> _ProjectionRead_CCInitialisationFinished_lock(_ProjectionRead_CCInitialisationFinished_mutex);
-                                copiedState.CCInitialisationFinished(_tmp_2, _tmp_1);
-                                Cruise_finite1_deterministic_MC::_ProjectionWrite_CCInitialisationFinished writeState = copiedState._update_for_CCInitialisationFinished();
-                                std::unordered_map<Cruise_finite1_deterministic_MC::_ProjectionRead_CCInitialisationFinished, Cruise_finite1_deterministic_MC::_ProjectionWrite_CCInitialisationFinished, Cruise_finite1_deterministic_MC::_ProjectionRead_CCInitialisationFinished::Hash, Cruise_finite1_deterministic_MC::_ProjectionRead_CCInitialisationFinished::HashEqual> _OpCache_with_parameter_CCInitialisationFinished = std::unordered_map<Cruise_finite1_deterministic_MC::_ProjectionRead_CCInitialisationFinished, Cruise_finite1_deterministic_MC::_ProjectionWrite_CCInitialisationFinished, Cruise_finite1_deterministic_MC::_ProjectionRead_CCInitialisationFinished::Hash, Cruise_finite1_deterministic_MC::_ProjectionRead_CCInitialisationFinished::HashEqual>();
-                                _OpCache_with_parameter_CCInitialisationFinished.insert({readState, writeState});
-                                _OpCache_CCInitialisationFinished.insert({param, _OpCache_with_parameter_CCInitialisationFinished});
+                                std::unique_lock<std::mutex> lock(mutex);
+                                transitions += 1;
                             }
-                        } else {
+                        }
+                    } else {
+                        BSet<BTuple<BBoolean, BBoolean >> _trid_4 = _trid_4_ptr->second;
+                        for(const BTuple<BBoolean, BBoolean >& param : _trid_4) {
+                            BBoolean _tmp_1 = param.projection2();
+                            BBoolean _tmp_2 = param.projection1();
+
+                            Cruise_finite1_deterministic_MC copiedState = state._copy();
+                            Cruise_finite1_deterministic_MC::_ProjectionRead_CCInitialisationFinished readState = state._projected_state_for_CCInitialisationFinished();
                             {
                                 std::unique_lock<std::mutex> _ProjectionRead_CCInitialisationFinished_lock(_ProjectionRead_CCInitialisationFinished_mutex);
-                                std::unordered_map<Cruise_finite1_deterministic_MC::_ProjectionRead_CCInitialisationFinished, Cruise_finite1_deterministic_MC::_ProjectionWrite_CCInitialisationFinished, Cruise_finite1_deterministic_MC::_ProjectionRead_CCInitialisationFinished::Hash, Cruise_finite1_deterministic_MC::_ProjectionRead_CCInitialisationFinished::HashEqual> _OpCache_with_parameter_CCInitialisationFinished = _OpCache_with_parameter_CCInitialisationFinished_ptr->second;
-                                auto writeState_ptr = _OpCache_with_parameter_CCInitialisationFinished.find(readState);
-                                if(writeState_ptr != _OpCache_with_parameter_CCInitialisationFinished.end()) {
-                                    Cruise_finite1_deterministic_MC::_ProjectionWrite_CCInitialisationFinished writeState = writeState_ptr->second;
-                                    copiedState._apply_update_for_CCInitialisationFinished(writeState);
-                                } else {
+                                auto _OpCache_with_parameter_CCInitialisationFinished_ptr = _OpCache_CCInitialisationFinished.find(param);
+                                if(_OpCache_with_parameter_CCInitialisationFinished_ptr == _OpCache_CCInitialisationFinished.end()) {
                                     copiedState.CCInitialisationFinished(_tmp_2, _tmp_1);
                                     Cruise_finite1_deterministic_MC::_ProjectionWrite_CCInitialisationFinished writeState = copiedState._update_for_CCInitialisationFinished();
+                                    std::unordered_map<Cruise_finite1_deterministic_MC::_ProjectionRead_CCInitialisationFinished, Cruise_finite1_deterministic_MC::_ProjectionWrite_CCInitialisationFinished, Cruise_finite1_deterministic_MC::_ProjectionRead_CCInitialisationFinished::Hash, Cruise_finite1_deterministic_MC::_ProjectionRead_CCInitialisationFinished::HashEqual> _OpCache_with_parameter_CCInitialisationFinished = std::unordered_map<Cruise_finite1_deterministic_MC::_ProjectionRead_CCInitialisationFinished, Cruise_finite1_deterministic_MC::_ProjectionWrite_CCInitialisationFinished, Cruise_finite1_deterministic_MC::_ProjectionRead_CCInitialisationFinished::Hash, Cruise_finite1_deterministic_MC::_ProjectionRead_CCInitialisationFinished::HashEqual>();
                                     _OpCache_with_parameter_CCInitialisationFinished.insert({readState, writeState});
+                                    _OpCache_CCInitialisationFinished.insert({param, _OpCache_with_parameter_CCInitialisationFinished});
+                                } else {
+                                    std::unordered_map<Cruise_finite1_deterministic_MC::_ProjectionRead_CCInitialisationFinished, Cruise_finite1_deterministic_MC::_ProjectionWrite_CCInitialisationFinished, Cruise_finite1_deterministic_MC::_ProjectionRead_CCInitialisationFinished::Hash, Cruise_finite1_deterministic_MC::_ProjectionRead_CCInitialisationFinished::HashEqual> _OpCache_with_parameter_CCInitialisationFinished = _OpCache_with_parameter_CCInitialisationFinished_ptr->second;
+                                    auto writeState_ptr = _OpCache_with_parameter_CCInitialisationFinished.find(readState);
+                                    if(writeState_ptr != _OpCache_with_parameter_CCInitialisationFinished.end()) {
+                                        Cruise_finite1_deterministic_MC::_ProjectionWrite_CCInitialisationFinished writeState = writeState_ptr->second;
+                                        copiedState._apply_update_for_CCInitialisationFinished(writeState);
+                                    } else {
+                                        copiedState.CCInitialisationFinished(_tmp_2, _tmp_1);
+                                        Cruise_finite1_deterministic_MC::_ProjectionWrite_CCInitialisationFinished writeState = copiedState._update_for_CCInitialisationFinished();
+                                        _OpCache_with_parameter_CCInitialisationFinished.insert({readState, writeState});
+                                    }
                                 }
                             }
-                        }
-
-                        copiedState.stateAccessedVia = "CCInitialisationFinished";
-                        result.insert(copiedState);
-                        {
-                            std::unique_lock<std::mutex> lock(mutex);
-                            transitions += 1;
+                            copiedState.stateAccessedVia = "CCInitialisationFinished";
+                            result.insert(copiedState);
+                            {
+                                std::unique_lock<std::mutex> lock(mutex);
+                                transitions += 1;
+                            }
                         }
                     }
                 }
                 Cruise_finite1_deterministic_MC::_ProjectionRead__tr_CCInitialisationDelayFinished read__tr_CCInitialisationDelayFinished_state = state._projected_state_for__tr_CCInitialisationDelayFinished();
                 bool _trid_5 = false;
-                auto _obj__trid_5_ptr = _OpCache_tr_CCInitialisationDelayFinished.find(read__tr_CCInitialisationDelayFinished_state);
-                if(_obj__trid_5_ptr == _OpCache_tr_CCInitialisationDelayFinished.end()) {
-                    _trid_5 = state._tr_CCInitialisationDelayFinished();
-                    {
-                        std::unique_lock<std::mutex> _ProjectionRead__tr_CCInitialisationDelayFinished_lock(_ProjectionRead__tr_CCInitialisationDelayFinished_mutex);
+                {
+                    std::unique_lock<std::mutex> _ProjectionRead__tr_CCInitialisationDelayFinished_lock(_ProjectionRead__tr_CCInitialisationDelayFinished_mutex);
+                    auto _obj__trid_5_ptr = _OpCache_tr_CCInitialisationDelayFinished.find(read__tr_CCInitialisationDelayFinished_state);
+                    if(_obj__trid_5_ptr == _OpCache_tr_CCInitialisationDelayFinished.end()) {
+                        _trid_5 = state._tr_CCInitialisationDelayFinished();
                         _OpCache_tr_CCInitialisationDelayFinished.insert({read__tr_CCInitialisationDelayFinished_state, _trid_5});
+                    } else {
+                        _trid_5 = _obj__trid_5_ptr->second;
                     }
-                } else {
-                    _trid_5 = _obj__trid_5_ptr->second;
                 }
                 if(_trid_5) {
                     Cruise_finite1_deterministic_MC copiedState = state._copy();
                     Cruise_finite1_deterministic_MC::_ProjectionRead_CCInitialisationDelayFinished readState = state._projected_state_for_CCInitialisationDelayFinished();
-
-                    auto _OpCache_with_parameter_CCInitialisationDelayFinished_ptr = _OpCache_CCInitialisationDelayFinished.find(_trid_5);
-                    if(_OpCache_with_parameter_CCInitialisationDelayFinished_ptr == _OpCache_CCInitialisationDelayFinished.end()) {
-                        {
-                            std::unique_lock<std::mutex> _ProjectionRead_CCInitialisationDelayFinished_lock(_ProjectionRead_CCInitialisationDelayFinished_mutex);
+                    {
+                        std::unique_lock<std::mutex> _ProjectionRead_CCInitialisationDelayFinished_lock(_ProjectionRead_CCInitialisationDelayFinished_mutex);
+                        auto _OpCache_with_parameter_CCInitialisationDelayFinished_ptr = _OpCache_CCInitialisationDelayFinished.find(_trid_5);
+                        if(_OpCache_with_parameter_CCInitialisationDelayFinished_ptr == _OpCache_CCInitialisationDelayFinished.end()) {
                             copiedState.CCInitialisationDelayFinished();
                             Cruise_finite1_deterministic_MC::_ProjectionWrite_CCInitialisationDelayFinished writeState = copiedState._update_for_CCInitialisationDelayFinished();
                             std::unordered_map<Cruise_finite1_deterministic_MC::_ProjectionRead_CCInitialisationDelayFinished, Cruise_finite1_deterministic_MC::_ProjectionWrite_CCInitialisationDelayFinished, Cruise_finite1_deterministic_MC::_ProjectionRead_CCInitialisationDelayFinished::Hash, Cruise_finite1_deterministic_MC::_ProjectionRead_CCInitialisationDelayFinished::HashEqual> _OpCache_with_parameter_CCInitialisationDelayFinished = std::unordered_map<Cruise_finite1_deterministic_MC::_ProjectionRead_CCInitialisationDelayFinished, Cruise_finite1_deterministic_MC::_ProjectionWrite_CCInitialisationDelayFinished, Cruise_finite1_deterministic_MC::_ProjectionRead_CCInitialisationDelayFinished::Hash, Cruise_finite1_deterministic_MC::_ProjectionRead_CCInitialisationDelayFinished::HashEqual>();
                             _OpCache_with_parameter_CCInitialisationDelayFinished.insert({readState, writeState});
                             _OpCache_CCInitialisationDelayFinished.insert({_trid_5, _OpCache_with_parameter_CCInitialisationDelayFinished});
-                        }
-                    } else {
-                        {
-                            std::unique_lock<std::mutex> _ProjectionRead_CCInitialisationDelayFinished_lock(_ProjectionRead_CCInitialisationDelayFinished_mutex);
+                        } else {
                             std::unordered_map<Cruise_finite1_deterministic_MC::_ProjectionRead_CCInitialisationDelayFinished, Cruise_finite1_deterministic_MC::_ProjectionWrite_CCInitialisationDelayFinished, Cruise_finite1_deterministic_MC::_ProjectionRead_CCInitialisationDelayFinished::Hash, Cruise_finite1_deterministic_MC::_ProjectionRead_CCInitialisationDelayFinished::HashEqual> _OpCache_with_parameter_CCInitialisationDelayFinished = _OpCache_with_parameter_CCInitialisationDelayFinished_ptr->second;
                             auto writeState_ptr = _OpCache_with_parameter_CCInitialisationDelayFinished.find(readState);
                             if(writeState_ptr != _OpCache_with_parameter_CCInitialisationDelayFinished.end()) {
@@ -9041,7 +9007,6 @@ class ModelChecker {
                             }
                         }
                     }
-
                     copiedState.stateAccessedVia = "CCInitialisationDelayFinished";
                     result.insert(copiedState);
                     {
@@ -9050,125 +9015,111 @@ class ModelChecker {
                     }
                 }
                 Cruise_finite1_deterministic_MC::_ProjectionRead__tr_CruiseSpeedChangeFinished read__tr_CruiseSpeedChangeFinished_state = state._projected_state_for__tr_CruiseSpeedChangeFinished();
-                auto _trid_6_ptr = _OpCache_tr_CruiseSpeedChangeFinished.find(read__tr_CruiseSpeedChangeFinished_state);
-                if(_trid_6_ptr == _OpCache_tr_CruiseSpeedChangeFinished.end()) {
-                    BSet<BTuple<BBoolean, BBoolean >> _trid_6 = state._tr_CruiseSpeedChangeFinished();
-                    {
-                        std::unique_lock<std::mutex> _ProjectionRead__tr_CruiseSpeedChangeFinished_lock(_ProjectionRead__tr_CruiseSpeedChangeFinished_mutex);
+                {
+                    std::unique_lock<std::mutex> _ProjectionRead__tr_CruiseSpeedChangeFinished_lock(_ProjectionRead__tr_CruiseSpeedChangeFinished_mutex);
+                    auto _trid_6_ptr = _OpCache_tr_CruiseSpeedChangeFinished.find(read__tr_CruiseSpeedChangeFinished_state);
+                    if(_trid_6_ptr == _OpCache_tr_CruiseSpeedChangeFinished.end()) {
+                        BSet<BTuple<BBoolean, BBoolean >> _trid_6 = state._tr_CruiseSpeedChangeFinished();
                         _OpCache_tr_CruiseSpeedChangeFinished.insert({read__tr_CruiseSpeedChangeFinished_state, _trid_6});
-                    }
-                    for(const BTuple<BBoolean, BBoolean >& param : _trid_6) {
-                        BBoolean _tmp_1 = param.projection2();
-                        BBoolean _tmp_2 = param.projection1();
+                        for(const BTuple<BBoolean, BBoolean >& param : _trid_6) {
+                            BBoolean _tmp_1 = param.projection2();
+                            BBoolean _tmp_2 = param.projection1();
 
-                        Cruise_finite1_deterministic_MC copiedState = state._copy();
-                        Cruise_finite1_deterministic_MC::_ProjectionRead_CruiseSpeedChangeFinished readState = state._projected_state_for_CruiseSpeedChangeFinished();
-
-                        auto _OpCache_with_parameter_CruiseSpeedChangeFinished_ptr = _OpCache_CruiseSpeedChangeFinished.find(param);
-                        if(_OpCache_with_parameter_CruiseSpeedChangeFinished_ptr == _OpCache_CruiseSpeedChangeFinished.end()) {
+                            Cruise_finite1_deterministic_MC copiedState = state._copy();
+                            Cruise_finite1_deterministic_MC::_ProjectionRead_CruiseSpeedChangeFinished readState = state._projected_state_for_CruiseSpeedChangeFinished();
                             {
                                 std::unique_lock<std::mutex> _ProjectionRead_CruiseSpeedChangeFinished_lock(_ProjectionRead_CruiseSpeedChangeFinished_mutex);
-                                copiedState.CruiseSpeedChangeFinished(_tmp_2, _tmp_1);
-                                Cruise_finite1_deterministic_MC::_ProjectionWrite_CruiseSpeedChangeFinished writeState = copiedState._update_for_CruiseSpeedChangeFinished();
-                                std::unordered_map<Cruise_finite1_deterministic_MC::_ProjectionRead_CruiseSpeedChangeFinished, Cruise_finite1_deterministic_MC::_ProjectionWrite_CruiseSpeedChangeFinished, Cruise_finite1_deterministic_MC::_ProjectionRead_CruiseSpeedChangeFinished::Hash, Cruise_finite1_deterministic_MC::_ProjectionRead_CruiseSpeedChangeFinished::HashEqual> _OpCache_with_parameter_CruiseSpeedChangeFinished = std::unordered_map<Cruise_finite1_deterministic_MC::_ProjectionRead_CruiseSpeedChangeFinished, Cruise_finite1_deterministic_MC::_ProjectionWrite_CruiseSpeedChangeFinished, Cruise_finite1_deterministic_MC::_ProjectionRead_CruiseSpeedChangeFinished::Hash, Cruise_finite1_deterministic_MC::_ProjectionRead_CruiseSpeedChangeFinished::HashEqual>();
-                                _OpCache_with_parameter_CruiseSpeedChangeFinished.insert({readState, writeState});
-                                _OpCache_CruiseSpeedChangeFinished.insert({param, _OpCache_with_parameter_CruiseSpeedChangeFinished});
-                            }
-                        } else {
-                            {
-                                std::unique_lock<std::mutex> _ProjectionRead_CruiseSpeedChangeFinished_lock(_ProjectionRead_CruiseSpeedChangeFinished_mutex);
-                                std::unordered_map<Cruise_finite1_deterministic_MC::_ProjectionRead_CruiseSpeedChangeFinished, Cruise_finite1_deterministic_MC::_ProjectionWrite_CruiseSpeedChangeFinished, Cruise_finite1_deterministic_MC::_ProjectionRead_CruiseSpeedChangeFinished::Hash, Cruise_finite1_deterministic_MC::_ProjectionRead_CruiseSpeedChangeFinished::HashEqual> _OpCache_with_parameter_CruiseSpeedChangeFinished = _OpCache_with_parameter_CruiseSpeedChangeFinished_ptr->second;
-                                auto writeState_ptr = _OpCache_with_parameter_CruiseSpeedChangeFinished.find(readState);
-                                if(writeState_ptr != _OpCache_with_parameter_CruiseSpeedChangeFinished.end()) {
-                                    Cruise_finite1_deterministic_MC::_ProjectionWrite_CruiseSpeedChangeFinished writeState = writeState_ptr->second;
-                                    copiedState._apply_update_for_CruiseSpeedChangeFinished(writeState);
-                                } else {
+                                auto _OpCache_with_parameter_CruiseSpeedChangeFinished_ptr = _OpCache_CruiseSpeedChangeFinished.find(param);
+                                if(_OpCache_with_parameter_CruiseSpeedChangeFinished_ptr == _OpCache_CruiseSpeedChangeFinished.end()) {
                                     copiedState.CruiseSpeedChangeFinished(_tmp_2, _tmp_1);
                                     Cruise_finite1_deterministic_MC::_ProjectionWrite_CruiseSpeedChangeFinished writeState = copiedState._update_for_CruiseSpeedChangeFinished();
+                                    std::unordered_map<Cruise_finite1_deterministic_MC::_ProjectionRead_CruiseSpeedChangeFinished, Cruise_finite1_deterministic_MC::_ProjectionWrite_CruiseSpeedChangeFinished, Cruise_finite1_deterministic_MC::_ProjectionRead_CruiseSpeedChangeFinished::Hash, Cruise_finite1_deterministic_MC::_ProjectionRead_CruiseSpeedChangeFinished::HashEqual> _OpCache_with_parameter_CruiseSpeedChangeFinished = std::unordered_map<Cruise_finite1_deterministic_MC::_ProjectionRead_CruiseSpeedChangeFinished, Cruise_finite1_deterministic_MC::_ProjectionWrite_CruiseSpeedChangeFinished, Cruise_finite1_deterministic_MC::_ProjectionRead_CruiseSpeedChangeFinished::Hash, Cruise_finite1_deterministic_MC::_ProjectionRead_CruiseSpeedChangeFinished::HashEqual>();
                                     _OpCache_with_parameter_CruiseSpeedChangeFinished.insert({readState, writeState});
+                                    _OpCache_CruiseSpeedChangeFinished.insert({param, _OpCache_with_parameter_CruiseSpeedChangeFinished});
+                                } else {
+                                    std::unordered_map<Cruise_finite1_deterministic_MC::_ProjectionRead_CruiseSpeedChangeFinished, Cruise_finite1_deterministic_MC::_ProjectionWrite_CruiseSpeedChangeFinished, Cruise_finite1_deterministic_MC::_ProjectionRead_CruiseSpeedChangeFinished::Hash, Cruise_finite1_deterministic_MC::_ProjectionRead_CruiseSpeedChangeFinished::HashEqual> _OpCache_with_parameter_CruiseSpeedChangeFinished = _OpCache_with_parameter_CruiseSpeedChangeFinished_ptr->second;
+                                    auto writeState_ptr = _OpCache_with_parameter_CruiseSpeedChangeFinished.find(readState);
+                                    if(writeState_ptr != _OpCache_with_parameter_CruiseSpeedChangeFinished.end()) {
+                                        Cruise_finite1_deterministic_MC::_ProjectionWrite_CruiseSpeedChangeFinished writeState = writeState_ptr->second;
+                                        copiedState._apply_update_for_CruiseSpeedChangeFinished(writeState);
+                                    } else {
+                                        copiedState.CruiseSpeedChangeFinished(_tmp_2, _tmp_1);
+                                        Cruise_finite1_deterministic_MC::_ProjectionWrite_CruiseSpeedChangeFinished writeState = copiedState._update_for_CruiseSpeedChangeFinished();
+                                        _OpCache_with_parameter_CruiseSpeedChangeFinished.insert({readState, writeState});
+                                    }
                                 }
                             }
-                        }
-
-                        copiedState.stateAccessedVia = "CruiseSpeedChangeFinished";
-                        result.insert(copiedState);
-                        {
-                            std::unique_lock<std::mutex> lock(mutex);
-                            transitions += 1;
-                        }
-                    }
-                } else {
-                    BSet<BTuple<BBoolean, BBoolean >> _trid_6 = _trid_6_ptr->second;
-                    for(const BTuple<BBoolean, BBoolean >& param : _trid_6) {
-                        BBoolean _tmp_1 = param.projection2();
-                        BBoolean _tmp_2 = param.projection1();
-
-                        Cruise_finite1_deterministic_MC copiedState = state._copy();
-                        Cruise_finite1_deterministic_MC::_ProjectionRead_CruiseSpeedChangeFinished readState = state._projected_state_for_CruiseSpeedChangeFinished();
-
-                        auto _OpCache_with_parameter_CruiseSpeedChangeFinished_ptr = _OpCache_CruiseSpeedChangeFinished.find(param);
-                        if(_OpCache_with_parameter_CruiseSpeedChangeFinished_ptr == _OpCache_CruiseSpeedChangeFinished.end()) {
+                            copiedState.stateAccessedVia = "CruiseSpeedChangeFinished";
+                            result.insert(copiedState);
                             {
-                                std::unique_lock<std::mutex> _ProjectionRead_CruiseSpeedChangeFinished_lock(_ProjectionRead_CruiseSpeedChangeFinished_mutex);
-                                copiedState.CruiseSpeedChangeFinished(_tmp_2, _tmp_1);
-                                Cruise_finite1_deterministic_MC::_ProjectionWrite_CruiseSpeedChangeFinished writeState = copiedState._update_for_CruiseSpeedChangeFinished();
-                                std::unordered_map<Cruise_finite1_deterministic_MC::_ProjectionRead_CruiseSpeedChangeFinished, Cruise_finite1_deterministic_MC::_ProjectionWrite_CruiseSpeedChangeFinished, Cruise_finite1_deterministic_MC::_ProjectionRead_CruiseSpeedChangeFinished::Hash, Cruise_finite1_deterministic_MC::_ProjectionRead_CruiseSpeedChangeFinished::HashEqual> _OpCache_with_parameter_CruiseSpeedChangeFinished = std::unordered_map<Cruise_finite1_deterministic_MC::_ProjectionRead_CruiseSpeedChangeFinished, Cruise_finite1_deterministic_MC::_ProjectionWrite_CruiseSpeedChangeFinished, Cruise_finite1_deterministic_MC::_ProjectionRead_CruiseSpeedChangeFinished::Hash, Cruise_finite1_deterministic_MC::_ProjectionRead_CruiseSpeedChangeFinished::HashEqual>();
-                                _OpCache_with_parameter_CruiseSpeedChangeFinished.insert({readState, writeState});
-                                _OpCache_CruiseSpeedChangeFinished.insert({param, _OpCache_with_parameter_CruiseSpeedChangeFinished});
+                                std::unique_lock<std::mutex> lock(mutex);
+                                transitions += 1;
                             }
-                        } else {
+                        }
+                    } else {
+                        BSet<BTuple<BBoolean, BBoolean >> _trid_6 = _trid_6_ptr->second;
+                        for(const BTuple<BBoolean, BBoolean >& param : _trid_6) {
+                            BBoolean _tmp_1 = param.projection2();
+                            BBoolean _tmp_2 = param.projection1();
+
+                            Cruise_finite1_deterministic_MC copiedState = state._copy();
+                            Cruise_finite1_deterministic_MC::_ProjectionRead_CruiseSpeedChangeFinished readState = state._projected_state_for_CruiseSpeedChangeFinished();
                             {
                                 std::unique_lock<std::mutex> _ProjectionRead_CruiseSpeedChangeFinished_lock(_ProjectionRead_CruiseSpeedChangeFinished_mutex);
-                                std::unordered_map<Cruise_finite1_deterministic_MC::_ProjectionRead_CruiseSpeedChangeFinished, Cruise_finite1_deterministic_MC::_ProjectionWrite_CruiseSpeedChangeFinished, Cruise_finite1_deterministic_MC::_ProjectionRead_CruiseSpeedChangeFinished::Hash, Cruise_finite1_deterministic_MC::_ProjectionRead_CruiseSpeedChangeFinished::HashEqual> _OpCache_with_parameter_CruiseSpeedChangeFinished = _OpCache_with_parameter_CruiseSpeedChangeFinished_ptr->second;
-                                auto writeState_ptr = _OpCache_with_parameter_CruiseSpeedChangeFinished.find(readState);
-                                if(writeState_ptr != _OpCache_with_parameter_CruiseSpeedChangeFinished.end()) {
-                                    Cruise_finite1_deterministic_MC::_ProjectionWrite_CruiseSpeedChangeFinished writeState = writeState_ptr->second;
-                                    copiedState._apply_update_for_CruiseSpeedChangeFinished(writeState);
-                                } else {
+                                auto _OpCache_with_parameter_CruiseSpeedChangeFinished_ptr = _OpCache_CruiseSpeedChangeFinished.find(param);
+                                if(_OpCache_with_parameter_CruiseSpeedChangeFinished_ptr == _OpCache_CruiseSpeedChangeFinished.end()) {
                                     copiedState.CruiseSpeedChangeFinished(_tmp_2, _tmp_1);
                                     Cruise_finite1_deterministic_MC::_ProjectionWrite_CruiseSpeedChangeFinished writeState = copiedState._update_for_CruiseSpeedChangeFinished();
+                                    std::unordered_map<Cruise_finite1_deterministic_MC::_ProjectionRead_CruiseSpeedChangeFinished, Cruise_finite1_deterministic_MC::_ProjectionWrite_CruiseSpeedChangeFinished, Cruise_finite1_deterministic_MC::_ProjectionRead_CruiseSpeedChangeFinished::Hash, Cruise_finite1_deterministic_MC::_ProjectionRead_CruiseSpeedChangeFinished::HashEqual> _OpCache_with_parameter_CruiseSpeedChangeFinished = std::unordered_map<Cruise_finite1_deterministic_MC::_ProjectionRead_CruiseSpeedChangeFinished, Cruise_finite1_deterministic_MC::_ProjectionWrite_CruiseSpeedChangeFinished, Cruise_finite1_deterministic_MC::_ProjectionRead_CruiseSpeedChangeFinished::Hash, Cruise_finite1_deterministic_MC::_ProjectionRead_CruiseSpeedChangeFinished::HashEqual>();
                                     _OpCache_with_parameter_CruiseSpeedChangeFinished.insert({readState, writeState});
+                                    _OpCache_CruiseSpeedChangeFinished.insert({param, _OpCache_with_parameter_CruiseSpeedChangeFinished});
+                                } else {
+                                    std::unordered_map<Cruise_finite1_deterministic_MC::_ProjectionRead_CruiseSpeedChangeFinished, Cruise_finite1_deterministic_MC::_ProjectionWrite_CruiseSpeedChangeFinished, Cruise_finite1_deterministic_MC::_ProjectionRead_CruiseSpeedChangeFinished::Hash, Cruise_finite1_deterministic_MC::_ProjectionRead_CruiseSpeedChangeFinished::HashEqual> _OpCache_with_parameter_CruiseSpeedChangeFinished = _OpCache_with_parameter_CruiseSpeedChangeFinished_ptr->second;
+                                    auto writeState_ptr = _OpCache_with_parameter_CruiseSpeedChangeFinished.find(readState);
+                                    if(writeState_ptr != _OpCache_with_parameter_CruiseSpeedChangeFinished.end()) {
+                                        Cruise_finite1_deterministic_MC::_ProjectionWrite_CruiseSpeedChangeFinished writeState = writeState_ptr->second;
+                                        copiedState._apply_update_for_CruiseSpeedChangeFinished(writeState);
+                                    } else {
+                                        copiedState.CruiseSpeedChangeFinished(_tmp_2, _tmp_1);
+                                        Cruise_finite1_deterministic_MC::_ProjectionWrite_CruiseSpeedChangeFinished writeState = copiedState._update_for_CruiseSpeedChangeFinished();
+                                        _OpCache_with_parameter_CruiseSpeedChangeFinished.insert({readState, writeState});
+                                    }
                                 }
                             }
-                        }
-
-                        copiedState.stateAccessedVia = "CruiseSpeedChangeFinished";
-                        result.insert(copiedState);
-                        {
-                            std::unique_lock<std::mutex> lock(mutex);
-                            transitions += 1;
+                            copiedState.stateAccessedVia = "CruiseSpeedChangeFinished";
+                            result.insert(copiedState);
+                            {
+                                std::unique_lock<std::mutex> lock(mutex);
+                                transitions += 1;
+                            }
                         }
                     }
                 }
                 Cruise_finite1_deterministic_MC::_ProjectionRead__tr_CruiseSpeedChangeDelayFinished read__tr_CruiseSpeedChangeDelayFinished_state = state._projected_state_for__tr_CruiseSpeedChangeDelayFinished();
                 bool _trid_7 = false;
-                auto _obj__trid_7_ptr = _OpCache_tr_CruiseSpeedChangeDelayFinished.find(read__tr_CruiseSpeedChangeDelayFinished_state);
-                if(_obj__trid_7_ptr == _OpCache_tr_CruiseSpeedChangeDelayFinished.end()) {
-                    _trid_7 = state._tr_CruiseSpeedChangeDelayFinished();
-                    {
-                        std::unique_lock<std::mutex> _ProjectionRead__tr_CruiseSpeedChangeDelayFinished_lock(_ProjectionRead__tr_CruiseSpeedChangeDelayFinished_mutex);
+                {
+                    std::unique_lock<std::mutex> _ProjectionRead__tr_CruiseSpeedChangeDelayFinished_lock(_ProjectionRead__tr_CruiseSpeedChangeDelayFinished_mutex);
+                    auto _obj__trid_7_ptr = _OpCache_tr_CruiseSpeedChangeDelayFinished.find(read__tr_CruiseSpeedChangeDelayFinished_state);
+                    if(_obj__trid_7_ptr == _OpCache_tr_CruiseSpeedChangeDelayFinished.end()) {
+                        _trid_7 = state._tr_CruiseSpeedChangeDelayFinished();
                         _OpCache_tr_CruiseSpeedChangeDelayFinished.insert({read__tr_CruiseSpeedChangeDelayFinished_state, _trid_7});
+                    } else {
+                        _trid_7 = _obj__trid_7_ptr->second;
                     }
-                } else {
-                    _trid_7 = _obj__trid_7_ptr->second;
                 }
                 if(_trid_7) {
                     Cruise_finite1_deterministic_MC copiedState = state._copy();
                     Cruise_finite1_deterministic_MC::_ProjectionRead_CruiseSpeedChangeDelayFinished readState = state._projected_state_for_CruiseSpeedChangeDelayFinished();
-
-                    auto _OpCache_with_parameter_CruiseSpeedChangeDelayFinished_ptr = _OpCache_CruiseSpeedChangeDelayFinished.find(_trid_7);
-                    if(_OpCache_with_parameter_CruiseSpeedChangeDelayFinished_ptr == _OpCache_CruiseSpeedChangeDelayFinished.end()) {
-                        {
-                            std::unique_lock<std::mutex> _ProjectionRead_CruiseSpeedChangeDelayFinished_lock(_ProjectionRead_CruiseSpeedChangeDelayFinished_mutex);
+                    {
+                        std::unique_lock<std::mutex> _ProjectionRead_CruiseSpeedChangeDelayFinished_lock(_ProjectionRead_CruiseSpeedChangeDelayFinished_mutex);
+                        auto _OpCache_with_parameter_CruiseSpeedChangeDelayFinished_ptr = _OpCache_CruiseSpeedChangeDelayFinished.find(_trid_7);
+                        if(_OpCache_with_parameter_CruiseSpeedChangeDelayFinished_ptr == _OpCache_CruiseSpeedChangeDelayFinished.end()) {
                             copiedState.CruiseSpeedChangeDelayFinished();
                             Cruise_finite1_deterministic_MC::_ProjectionWrite_CruiseSpeedChangeDelayFinished writeState = copiedState._update_for_CruiseSpeedChangeDelayFinished();
                             std::unordered_map<Cruise_finite1_deterministic_MC::_ProjectionRead_CruiseSpeedChangeDelayFinished, Cruise_finite1_deterministic_MC::_ProjectionWrite_CruiseSpeedChangeDelayFinished, Cruise_finite1_deterministic_MC::_ProjectionRead_CruiseSpeedChangeDelayFinished::Hash, Cruise_finite1_deterministic_MC::_ProjectionRead_CruiseSpeedChangeDelayFinished::HashEqual> _OpCache_with_parameter_CruiseSpeedChangeDelayFinished = std::unordered_map<Cruise_finite1_deterministic_MC::_ProjectionRead_CruiseSpeedChangeDelayFinished, Cruise_finite1_deterministic_MC::_ProjectionWrite_CruiseSpeedChangeDelayFinished, Cruise_finite1_deterministic_MC::_ProjectionRead_CruiseSpeedChangeDelayFinished::Hash, Cruise_finite1_deterministic_MC::_ProjectionRead_CruiseSpeedChangeDelayFinished::HashEqual>();
                             _OpCache_with_parameter_CruiseSpeedChangeDelayFinished.insert({readState, writeState});
                             _OpCache_CruiseSpeedChangeDelayFinished.insert({_trid_7, _OpCache_with_parameter_CruiseSpeedChangeDelayFinished});
-                        }
-                    } else {
-                        {
-                            std::unique_lock<std::mutex> _ProjectionRead_CruiseSpeedChangeDelayFinished_lock(_ProjectionRead_CruiseSpeedChangeDelayFinished_mutex);
+                        } else {
                             std::unordered_map<Cruise_finite1_deterministic_MC::_ProjectionRead_CruiseSpeedChangeDelayFinished, Cruise_finite1_deterministic_MC::_ProjectionWrite_CruiseSpeedChangeDelayFinished, Cruise_finite1_deterministic_MC::_ProjectionRead_CruiseSpeedChangeDelayFinished::Hash, Cruise_finite1_deterministic_MC::_ProjectionRead_CruiseSpeedChangeDelayFinished::HashEqual> _OpCache_with_parameter_CruiseSpeedChangeDelayFinished = _OpCache_with_parameter_CruiseSpeedChangeDelayFinished_ptr->second;
                             auto writeState_ptr = _OpCache_with_parameter_CruiseSpeedChangeDelayFinished.find(readState);
                             if(writeState_ptr != _OpCache_with_parameter_CruiseSpeedChangeDelayFinished.end()) {
@@ -9181,7 +9132,6 @@ class ModelChecker {
                             }
                         }
                     }
-
                     copiedState.stateAccessedVia = "CruiseSpeedChangeDelayFinished";
                     result.insert(copiedState);
                     {
@@ -9191,33 +9141,29 @@ class ModelChecker {
                 }
                 Cruise_finite1_deterministic_MC::_ProjectionRead__tr_CruiseOff read__tr_CruiseOff_state = state._projected_state_for__tr_CruiseOff();
                 bool _trid_8 = false;
-                auto _obj__trid_8_ptr = _OpCache_tr_CruiseOff.find(read__tr_CruiseOff_state);
-                if(_obj__trid_8_ptr == _OpCache_tr_CruiseOff.end()) {
-                    _trid_8 = state._tr_CruiseOff();
-                    {
-                        std::unique_lock<std::mutex> _ProjectionRead__tr_CruiseOff_lock(_ProjectionRead__tr_CruiseOff_mutex);
+                {
+                    std::unique_lock<std::mutex> _ProjectionRead__tr_CruiseOff_lock(_ProjectionRead__tr_CruiseOff_mutex);
+                    auto _obj__trid_8_ptr = _OpCache_tr_CruiseOff.find(read__tr_CruiseOff_state);
+                    if(_obj__trid_8_ptr == _OpCache_tr_CruiseOff.end()) {
+                        _trid_8 = state._tr_CruiseOff();
                         _OpCache_tr_CruiseOff.insert({read__tr_CruiseOff_state, _trid_8});
+                    } else {
+                        _trid_8 = _obj__trid_8_ptr->second;
                     }
-                } else {
-                    _trid_8 = _obj__trid_8_ptr->second;
                 }
                 if(_trid_8) {
                     Cruise_finite1_deterministic_MC copiedState = state._copy();
                     Cruise_finite1_deterministic_MC::_ProjectionRead_CruiseOff readState = state._projected_state_for_CruiseOff();
-
-                    auto _OpCache_with_parameter_CruiseOff_ptr = _OpCache_CruiseOff.find(_trid_8);
-                    if(_OpCache_with_parameter_CruiseOff_ptr == _OpCache_CruiseOff.end()) {
-                        {
-                            std::unique_lock<std::mutex> _ProjectionRead_CruiseOff_lock(_ProjectionRead_CruiseOff_mutex);
+                    {
+                        std::unique_lock<std::mutex> _ProjectionRead_CruiseOff_lock(_ProjectionRead_CruiseOff_mutex);
+                        auto _OpCache_with_parameter_CruiseOff_ptr = _OpCache_CruiseOff.find(_trid_8);
+                        if(_OpCache_with_parameter_CruiseOff_ptr == _OpCache_CruiseOff.end()) {
                             copiedState.CruiseOff();
                             Cruise_finite1_deterministic_MC::_ProjectionWrite_CruiseOff writeState = copiedState._update_for_CruiseOff();
                             std::unordered_map<Cruise_finite1_deterministic_MC::_ProjectionRead_CruiseOff, Cruise_finite1_deterministic_MC::_ProjectionWrite_CruiseOff, Cruise_finite1_deterministic_MC::_ProjectionRead_CruiseOff::Hash, Cruise_finite1_deterministic_MC::_ProjectionRead_CruiseOff::HashEqual> _OpCache_with_parameter_CruiseOff = std::unordered_map<Cruise_finite1_deterministic_MC::_ProjectionRead_CruiseOff, Cruise_finite1_deterministic_MC::_ProjectionWrite_CruiseOff, Cruise_finite1_deterministic_MC::_ProjectionRead_CruiseOff::Hash, Cruise_finite1_deterministic_MC::_ProjectionRead_CruiseOff::HashEqual>();
                             _OpCache_with_parameter_CruiseOff.insert({readState, writeState});
                             _OpCache_CruiseOff.insert({_trid_8, _OpCache_with_parameter_CruiseOff});
-                        }
-                    } else {
-                        {
-                            std::unique_lock<std::mutex> _ProjectionRead_CruiseOff_lock(_ProjectionRead_CruiseOff_mutex);
+                        } else {
                             std::unordered_map<Cruise_finite1_deterministic_MC::_ProjectionRead_CruiseOff, Cruise_finite1_deterministic_MC::_ProjectionWrite_CruiseOff, Cruise_finite1_deterministic_MC::_ProjectionRead_CruiseOff::Hash, Cruise_finite1_deterministic_MC::_ProjectionRead_CruiseOff::HashEqual> _OpCache_with_parameter_CruiseOff = _OpCache_with_parameter_CruiseOff_ptr->second;
                             auto writeState_ptr = _OpCache_with_parameter_CruiseOff.find(readState);
                             if(writeState_ptr != _OpCache_with_parameter_CruiseOff.end()) {
@@ -9230,7 +9176,6 @@ class ModelChecker {
                             }
                         }
                     }
-
                     copiedState.stateAccessedVia = "CruiseOff";
                     result.insert(copiedState);
                     {
@@ -9240,33 +9185,29 @@ class ModelChecker {
                 }
                 Cruise_finite1_deterministic_MC::_ProjectionRead__tr_ExternalForcesBecomesExtreme read__tr_ExternalForcesBecomesExtreme_state = state._projected_state_for__tr_ExternalForcesBecomesExtreme();
                 bool _trid_9 = false;
-                auto _obj__trid_9_ptr = _OpCache_tr_ExternalForcesBecomesExtreme.find(read__tr_ExternalForcesBecomesExtreme_state);
-                if(_obj__trid_9_ptr == _OpCache_tr_ExternalForcesBecomesExtreme.end()) {
-                    _trid_9 = state._tr_ExternalForcesBecomesExtreme();
-                    {
-                        std::unique_lock<std::mutex> _ProjectionRead__tr_ExternalForcesBecomesExtreme_lock(_ProjectionRead__tr_ExternalForcesBecomesExtreme_mutex);
+                {
+                    std::unique_lock<std::mutex> _ProjectionRead__tr_ExternalForcesBecomesExtreme_lock(_ProjectionRead__tr_ExternalForcesBecomesExtreme_mutex);
+                    auto _obj__trid_9_ptr = _OpCache_tr_ExternalForcesBecomesExtreme.find(read__tr_ExternalForcesBecomesExtreme_state);
+                    if(_obj__trid_9_ptr == _OpCache_tr_ExternalForcesBecomesExtreme.end()) {
+                        _trid_9 = state._tr_ExternalForcesBecomesExtreme();
                         _OpCache_tr_ExternalForcesBecomesExtreme.insert({read__tr_ExternalForcesBecomesExtreme_state, _trid_9});
+                    } else {
+                        _trid_9 = _obj__trid_9_ptr->second;
                     }
-                } else {
-                    _trid_9 = _obj__trid_9_ptr->second;
                 }
                 if(_trid_9) {
                     Cruise_finite1_deterministic_MC copiedState = state._copy();
                     Cruise_finite1_deterministic_MC::_ProjectionRead_ExternalForcesBecomesExtreme readState = state._projected_state_for_ExternalForcesBecomesExtreme();
-
-                    auto _OpCache_with_parameter_ExternalForcesBecomesExtreme_ptr = _OpCache_ExternalForcesBecomesExtreme.find(_trid_9);
-                    if(_OpCache_with_parameter_ExternalForcesBecomesExtreme_ptr == _OpCache_ExternalForcesBecomesExtreme.end()) {
-                        {
-                            std::unique_lock<std::mutex> _ProjectionRead_ExternalForcesBecomesExtreme_lock(_ProjectionRead_ExternalForcesBecomesExtreme_mutex);
+                    {
+                        std::unique_lock<std::mutex> _ProjectionRead_ExternalForcesBecomesExtreme_lock(_ProjectionRead_ExternalForcesBecomesExtreme_mutex);
+                        auto _OpCache_with_parameter_ExternalForcesBecomesExtreme_ptr = _OpCache_ExternalForcesBecomesExtreme.find(_trid_9);
+                        if(_OpCache_with_parameter_ExternalForcesBecomesExtreme_ptr == _OpCache_ExternalForcesBecomesExtreme.end()) {
                             copiedState.ExternalForcesBecomesExtreme();
                             Cruise_finite1_deterministic_MC::_ProjectionWrite_ExternalForcesBecomesExtreme writeState = copiedState._update_for_ExternalForcesBecomesExtreme();
                             std::unordered_map<Cruise_finite1_deterministic_MC::_ProjectionRead_ExternalForcesBecomesExtreme, Cruise_finite1_deterministic_MC::_ProjectionWrite_ExternalForcesBecomesExtreme, Cruise_finite1_deterministic_MC::_ProjectionRead_ExternalForcesBecomesExtreme::Hash, Cruise_finite1_deterministic_MC::_ProjectionRead_ExternalForcesBecomesExtreme::HashEqual> _OpCache_with_parameter_ExternalForcesBecomesExtreme = std::unordered_map<Cruise_finite1_deterministic_MC::_ProjectionRead_ExternalForcesBecomesExtreme, Cruise_finite1_deterministic_MC::_ProjectionWrite_ExternalForcesBecomesExtreme, Cruise_finite1_deterministic_MC::_ProjectionRead_ExternalForcesBecomesExtreme::Hash, Cruise_finite1_deterministic_MC::_ProjectionRead_ExternalForcesBecomesExtreme::HashEqual>();
                             _OpCache_with_parameter_ExternalForcesBecomesExtreme.insert({readState, writeState});
                             _OpCache_ExternalForcesBecomesExtreme.insert({_trid_9, _OpCache_with_parameter_ExternalForcesBecomesExtreme});
-                        }
-                    } else {
-                        {
-                            std::unique_lock<std::mutex> _ProjectionRead_ExternalForcesBecomesExtreme_lock(_ProjectionRead_ExternalForcesBecomesExtreme_mutex);
+                        } else {
                             std::unordered_map<Cruise_finite1_deterministic_MC::_ProjectionRead_ExternalForcesBecomesExtreme, Cruise_finite1_deterministic_MC::_ProjectionWrite_ExternalForcesBecomesExtreme, Cruise_finite1_deterministic_MC::_ProjectionRead_ExternalForcesBecomesExtreme::Hash, Cruise_finite1_deterministic_MC::_ProjectionRead_ExternalForcesBecomesExtreme::HashEqual> _OpCache_with_parameter_ExternalForcesBecomesExtreme = _OpCache_with_parameter_ExternalForcesBecomesExtreme_ptr->second;
                             auto writeState_ptr = _OpCache_with_parameter_ExternalForcesBecomesExtreme.find(readState);
                             if(writeState_ptr != _OpCache_with_parameter_ExternalForcesBecomesExtreme.end()) {
@@ -9279,7 +9220,6 @@ class ModelChecker {
                             }
                         }
                     }
-
                     copiedState.stateAccessedVia = "ExternalForcesBecomesExtreme";
                     result.insert(copiedState);
                     {
@@ -9289,33 +9229,29 @@ class ModelChecker {
                 }
                 Cruise_finite1_deterministic_MC::_ProjectionRead__tr_ExternalForcesBecomesNormal read__tr_ExternalForcesBecomesNormal_state = state._projected_state_for__tr_ExternalForcesBecomesNormal();
                 bool _trid_10 = false;
-                auto _obj__trid_10_ptr = _OpCache_tr_ExternalForcesBecomesNormal.find(read__tr_ExternalForcesBecomesNormal_state);
-                if(_obj__trid_10_ptr == _OpCache_tr_ExternalForcesBecomesNormal.end()) {
-                    _trid_10 = state._tr_ExternalForcesBecomesNormal();
-                    {
-                        std::unique_lock<std::mutex> _ProjectionRead__tr_ExternalForcesBecomesNormal_lock(_ProjectionRead__tr_ExternalForcesBecomesNormal_mutex);
+                {
+                    std::unique_lock<std::mutex> _ProjectionRead__tr_ExternalForcesBecomesNormal_lock(_ProjectionRead__tr_ExternalForcesBecomesNormal_mutex);
+                    auto _obj__trid_10_ptr = _OpCache_tr_ExternalForcesBecomesNormal.find(read__tr_ExternalForcesBecomesNormal_state);
+                    if(_obj__trid_10_ptr == _OpCache_tr_ExternalForcesBecomesNormal.end()) {
+                        _trid_10 = state._tr_ExternalForcesBecomesNormal();
                         _OpCache_tr_ExternalForcesBecomesNormal.insert({read__tr_ExternalForcesBecomesNormal_state, _trid_10});
+                    } else {
+                        _trid_10 = _obj__trid_10_ptr->second;
                     }
-                } else {
-                    _trid_10 = _obj__trid_10_ptr->second;
                 }
                 if(_trid_10) {
                     Cruise_finite1_deterministic_MC copiedState = state._copy();
                     Cruise_finite1_deterministic_MC::_ProjectionRead_ExternalForcesBecomesNormal readState = state._projected_state_for_ExternalForcesBecomesNormal();
-
-                    auto _OpCache_with_parameter_ExternalForcesBecomesNormal_ptr = _OpCache_ExternalForcesBecomesNormal.find(_trid_10);
-                    if(_OpCache_with_parameter_ExternalForcesBecomesNormal_ptr == _OpCache_ExternalForcesBecomesNormal.end()) {
-                        {
-                            std::unique_lock<std::mutex> _ProjectionRead_ExternalForcesBecomesNormal_lock(_ProjectionRead_ExternalForcesBecomesNormal_mutex);
+                    {
+                        std::unique_lock<std::mutex> _ProjectionRead_ExternalForcesBecomesNormal_lock(_ProjectionRead_ExternalForcesBecomesNormal_mutex);
+                        auto _OpCache_with_parameter_ExternalForcesBecomesNormal_ptr = _OpCache_ExternalForcesBecomesNormal.find(_trid_10);
+                        if(_OpCache_with_parameter_ExternalForcesBecomesNormal_ptr == _OpCache_ExternalForcesBecomesNormal.end()) {
                             copiedState.ExternalForcesBecomesNormal();
                             Cruise_finite1_deterministic_MC::_ProjectionWrite_ExternalForcesBecomesNormal writeState = copiedState._update_for_ExternalForcesBecomesNormal();
                             std::unordered_map<Cruise_finite1_deterministic_MC::_ProjectionRead_ExternalForcesBecomesNormal, Cruise_finite1_deterministic_MC::_ProjectionWrite_ExternalForcesBecomesNormal, Cruise_finite1_deterministic_MC::_ProjectionRead_ExternalForcesBecomesNormal::Hash, Cruise_finite1_deterministic_MC::_ProjectionRead_ExternalForcesBecomesNormal::HashEqual> _OpCache_with_parameter_ExternalForcesBecomesNormal = std::unordered_map<Cruise_finite1_deterministic_MC::_ProjectionRead_ExternalForcesBecomesNormal, Cruise_finite1_deterministic_MC::_ProjectionWrite_ExternalForcesBecomesNormal, Cruise_finite1_deterministic_MC::_ProjectionRead_ExternalForcesBecomesNormal::Hash, Cruise_finite1_deterministic_MC::_ProjectionRead_ExternalForcesBecomesNormal::HashEqual>();
                             _OpCache_with_parameter_ExternalForcesBecomesNormal.insert({readState, writeState});
                             _OpCache_ExternalForcesBecomesNormal.insert({_trid_10, _OpCache_with_parameter_ExternalForcesBecomesNormal});
-                        }
-                    } else {
-                        {
-                            std::unique_lock<std::mutex> _ProjectionRead_ExternalForcesBecomesNormal_lock(_ProjectionRead_ExternalForcesBecomesNormal_mutex);
+                        } else {
                             std::unordered_map<Cruise_finite1_deterministic_MC::_ProjectionRead_ExternalForcesBecomesNormal, Cruise_finite1_deterministic_MC::_ProjectionWrite_ExternalForcesBecomesNormal, Cruise_finite1_deterministic_MC::_ProjectionRead_ExternalForcesBecomesNormal::Hash, Cruise_finite1_deterministic_MC::_ProjectionRead_ExternalForcesBecomesNormal::HashEqual> _OpCache_with_parameter_ExternalForcesBecomesNormal = _OpCache_with_parameter_ExternalForcesBecomesNormal_ptr->second;
                             auto writeState_ptr = _OpCache_with_parameter_ExternalForcesBecomesNormal.find(readState);
                             if(writeState_ptr != _OpCache_with_parameter_ExternalForcesBecomesNormal.end()) {
@@ -9328,7 +9264,6 @@ class ModelChecker {
                             }
                         }
                     }
-
                     copiedState.stateAccessedVia = "ExternalForcesBecomesNormal";
                     result.insert(copiedState);
                     {
@@ -9338,33 +9273,29 @@ class ModelChecker {
                 }
                 Cruise_finite1_deterministic_MC::_ProjectionRead__tr_VehicleLeavesCruiseSpeed read__tr_VehicleLeavesCruiseSpeed_state = state._projected_state_for__tr_VehicleLeavesCruiseSpeed();
                 bool _trid_11 = false;
-                auto _obj__trid_11_ptr = _OpCache_tr_VehicleLeavesCruiseSpeed.find(read__tr_VehicleLeavesCruiseSpeed_state);
-                if(_obj__trid_11_ptr == _OpCache_tr_VehicleLeavesCruiseSpeed.end()) {
-                    _trid_11 = state._tr_VehicleLeavesCruiseSpeed();
-                    {
-                        std::unique_lock<std::mutex> _ProjectionRead__tr_VehicleLeavesCruiseSpeed_lock(_ProjectionRead__tr_VehicleLeavesCruiseSpeed_mutex);
+                {
+                    std::unique_lock<std::mutex> _ProjectionRead__tr_VehicleLeavesCruiseSpeed_lock(_ProjectionRead__tr_VehicleLeavesCruiseSpeed_mutex);
+                    auto _obj__trid_11_ptr = _OpCache_tr_VehicleLeavesCruiseSpeed.find(read__tr_VehicleLeavesCruiseSpeed_state);
+                    if(_obj__trid_11_ptr == _OpCache_tr_VehicleLeavesCruiseSpeed.end()) {
+                        _trid_11 = state._tr_VehicleLeavesCruiseSpeed();
                         _OpCache_tr_VehicleLeavesCruiseSpeed.insert({read__tr_VehicleLeavesCruiseSpeed_state, _trid_11});
+                    } else {
+                        _trid_11 = _obj__trid_11_ptr->second;
                     }
-                } else {
-                    _trid_11 = _obj__trid_11_ptr->second;
                 }
                 if(_trid_11) {
                     Cruise_finite1_deterministic_MC copiedState = state._copy();
                     Cruise_finite1_deterministic_MC::_ProjectionRead_VehicleLeavesCruiseSpeed readState = state._projected_state_for_VehicleLeavesCruiseSpeed();
-
-                    auto _OpCache_with_parameter_VehicleLeavesCruiseSpeed_ptr = _OpCache_VehicleLeavesCruiseSpeed.find(_trid_11);
-                    if(_OpCache_with_parameter_VehicleLeavesCruiseSpeed_ptr == _OpCache_VehicleLeavesCruiseSpeed.end()) {
-                        {
-                            std::unique_lock<std::mutex> _ProjectionRead_VehicleLeavesCruiseSpeed_lock(_ProjectionRead_VehicleLeavesCruiseSpeed_mutex);
+                    {
+                        std::unique_lock<std::mutex> _ProjectionRead_VehicleLeavesCruiseSpeed_lock(_ProjectionRead_VehicleLeavesCruiseSpeed_mutex);
+                        auto _OpCache_with_parameter_VehicleLeavesCruiseSpeed_ptr = _OpCache_VehicleLeavesCruiseSpeed.find(_trid_11);
+                        if(_OpCache_with_parameter_VehicleLeavesCruiseSpeed_ptr == _OpCache_VehicleLeavesCruiseSpeed.end()) {
                             copiedState.VehicleLeavesCruiseSpeed();
                             Cruise_finite1_deterministic_MC::_ProjectionWrite_VehicleLeavesCruiseSpeed writeState = copiedState._update_for_VehicleLeavesCruiseSpeed();
                             std::unordered_map<Cruise_finite1_deterministic_MC::_ProjectionRead_VehicleLeavesCruiseSpeed, Cruise_finite1_deterministic_MC::_ProjectionWrite_VehicleLeavesCruiseSpeed, Cruise_finite1_deterministic_MC::_ProjectionRead_VehicleLeavesCruiseSpeed::Hash, Cruise_finite1_deterministic_MC::_ProjectionRead_VehicleLeavesCruiseSpeed::HashEqual> _OpCache_with_parameter_VehicleLeavesCruiseSpeed = std::unordered_map<Cruise_finite1_deterministic_MC::_ProjectionRead_VehicleLeavesCruiseSpeed, Cruise_finite1_deterministic_MC::_ProjectionWrite_VehicleLeavesCruiseSpeed, Cruise_finite1_deterministic_MC::_ProjectionRead_VehicleLeavesCruiseSpeed::Hash, Cruise_finite1_deterministic_MC::_ProjectionRead_VehicleLeavesCruiseSpeed::HashEqual>();
                             _OpCache_with_parameter_VehicleLeavesCruiseSpeed.insert({readState, writeState});
                             _OpCache_VehicleLeavesCruiseSpeed.insert({_trid_11, _OpCache_with_parameter_VehicleLeavesCruiseSpeed});
-                        }
-                    } else {
-                        {
-                            std::unique_lock<std::mutex> _ProjectionRead_VehicleLeavesCruiseSpeed_lock(_ProjectionRead_VehicleLeavesCruiseSpeed_mutex);
+                        } else {
                             std::unordered_map<Cruise_finite1_deterministic_MC::_ProjectionRead_VehicleLeavesCruiseSpeed, Cruise_finite1_deterministic_MC::_ProjectionWrite_VehicleLeavesCruiseSpeed, Cruise_finite1_deterministic_MC::_ProjectionRead_VehicleLeavesCruiseSpeed::Hash, Cruise_finite1_deterministic_MC::_ProjectionRead_VehicleLeavesCruiseSpeed::HashEqual> _OpCache_with_parameter_VehicleLeavesCruiseSpeed = _OpCache_with_parameter_VehicleLeavesCruiseSpeed_ptr->second;
                             auto writeState_ptr = _OpCache_with_parameter_VehicleLeavesCruiseSpeed.find(readState);
                             if(writeState_ptr != _OpCache_with_parameter_VehicleLeavesCruiseSpeed.end()) {
@@ -9377,7 +9308,6 @@ class ModelChecker {
                             }
                         }
                     }
-
                     copiedState.stateAccessedVia = "VehicleLeavesCruiseSpeed";
                     result.insert(copiedState);
                     {
@@ -9387,33 +9317,29 @@ class ModelChecker {
                 }
                 Cruise_finite1_deterministic_MC::_ProjectionRead__tr_VehicleReachesCruiseSpeed read__tr_VehicleReachesCruiseSpeed_state = state._projected_state_for__tr_VehicleReachesCruiseSpeed();
                 bool _trid_12 = false;
-                auto _obj__trid_12_ptr = _OpCache_tr_VehicleReachesCruiseSpeed.find(read__tr_VehicleReachesCruiseSpeed_state);
-                if(_obj__trid_12_ptr == _OpCache_tr_VehicleReachesCruiseSpeed.end()) {
-                    _trid_12 = state._tr_VehicleReachesCruiseSpeed();
-                    {
-                        std::unique_lock<std::mutex> _ProjectionRead__tr_VehicleReachesCruiseSpeed_lock(_ProjectionRead__tr_VehicleReachesCruiseSpeed_mutex);
+                {
+                    std::unique_lock<std::mutex> _ProjectionRead__tr_VehicleReachesCruiseSpeed_lock(_ProjectionRead__tr_VehicleReachesCruiseSpeed_mutex);
+                    auto _obj__trid_12_ptr = _OpCache_tr_VehicleReachesCruiseSpeed.find(read__tr_VehicleReachesCruiseSpeed_state);
+                    if(_obj__trid_12_ptr == _OpCache_tr_VehicleReachesCruiseSpeed.end()) {
+                        _trid_12 = state._tr_VehicleReachesCruiseSpeed();
                         _OpCache_tr_VehicleReachesCruiseSpeed.insert({read__tr_VehicleReachesCruiseSpeed_state, _trid_12});
+                    } else {
+                        _trid_12 = _obj__trid_12_ptr->second;
                     }
-                } else {
-                    _trid_12 = _obj__trid_12_ptr->second;
                 }
                 if(_trid_12) {
                     Cruise_finite1_deterministic_MC copiedState = state._copy();
                     Cruise_finite1_deterministic_MC::_ProjectionRead_VehicleReachesCruiseSpeed readState = state._projected_state_for_VehicleReachesCruiseSpeed();
-
-                    auto _OpCache_with_parameter_VehicleReachesCruiseSpeed_ptr = _OpCache_VehicleReachesCruiseSpeed.find(_trid_12);
-                    if(_OpCache_with_parameter_VehicleReachesCruiseSpeed_ptr == _OpCache_VehicleReachesCruiseSpeed.end()) {
-                        {
-                            std::unique_lock<std::mutex> _ProjectionRead_VehicleReachesCruiseSpeed_lock(_ProjectionRead_VehicleReachesCruiseSpeed_mutex);
+                    {
+                        std::unique_lock<std::mutex> _ProjectionRead_VehicleReachesCruiseSpeed_lock(_ProjectionRead_VehicleReachesCruiseSpeed_mutex);
+                        auto _OpCache_with_parameter_VehicleReachesCruiseSpeed_ptr = _OpCache_VehicleReachesCruiseSpeed.find(_trid_12);
+                        if(_OpCache_with_parameter_VehicleReachesCruiseSpeed_ptr == _OpCache_VehicleReachesCruiseSpeed.end()) {
                             copiedState.VehicleReachesCruiseSpeed();
                             Cruise_finite1_deterministic_MC::_ProjectionWrite_VehicleReachesCruiseSpeed writeState = copiedState._update_for_VehicleReachesCruiseSpeed();
                             std::unordered_map<Cruise_finite1_deterministic_MC::_ProjectionRead_VehicleReachesCruiseSpeed, Cruise_finite1_deterministic_MC::_ProjectionWrite_VehicleReachesCruiseSpeed, Cruise_finite1_deterministic_MC::_ProjectionRead_VehicleReachesCruiseSpeed::Hash, Cruise_finite1_deterministic_MC::_ProjectionRead_VehicleReachesCruiseSpeed::HashEqual> _OpCache_with_parameter_VehicleReachesCruiseSpeed = std::unordered_map<Cruise_finite1_deterministic_MC::_ProjectionRead_VehicleReachesCruiseSpeed, Cruise_finite1_deterministic_MC::_ProjectionWrite_VehicleReachesCruiseSpeed, Cruise_finite1_deterministic_MC::_ProjectionRead_VehicleReachesCruiseSpeed::Hash, Cruise_finite1_deterministic_MC::_ProjectionRead_VehicleReachesCruiseSpeed::HashEqual>();
                             _OpCache_with_parameter_VehicleReachesCruiseSpeed.insert({readState, writeState});
                             _OpCache_VehicleReachesCruiseSpeed.insert({_trid_12, _OpCache_with_parameter_VehicleReachesCruiseSpeed});
-                        }
-                    } else {
-                        {
-                            std::unique_lock<std::mutex> _ProjectionRead_VehicleReachesCruiseSpeed_lock(_ProjectionRead_VehicleReachesCruiseSpeed_mutex);
+                        } else {
                             std::unordered_map<Cruise_finite1_deterministic_MC::_ProjectionRead_VehicleReachesCruiseSpeed, Cruise_finite1_deterministic_MC::_ProjectionWrite_VehicleReachesCruiseSpeed, Cruise_finite1_deterministic_MC::_ProjectionRead_VehicleReachesCruiseSpeed::Hash, Cruise_finite1_deterministic_MC::_ProjectionRead_VehicleReachesCruiseSpeed::HashEqual> _OpCache_with_parameter_VehicleReachesCruiseSpeed = _OpCache_with_parameter_VehicleReachesCruiseSpeed_ptr->second;
                             auto writeState_ptr = _OpCache_with_parameter_VehicleReachesCruiseSpeed.find(readState);
                             if(writeState_ptr != _OpCache_with_parameter_VehicleReachesCruiseSpeed.end()) {
@@ -9426,7 +9352,6 @@ class ModelChecker {
                             }
                         }
                     }
-
                     copiedState.stateAccessedVia = "VehicleReachesCruiseSpeed";
                     result.insert(copiedState);
                     {
@@ -9436,33 +9361,29 @@ class ModelChecker {
                 }
                 Cruise_finite1_deterministic_MC::_ProjectionRead__tr_VehicleExceedsMaxCruiseSpeed read__tr_VehicleExceedsMaxCruiseSpeed_state = state._projected_state_for__tr_VehicleExceedsMaxCruiseSpeed();
                 bool _trid_13 = false;
-                auto _obj__trid_13_ptr = _OpCache_tr_VehicleExceedsMaxCruiseSpeed.find(read__tr_VehicleExceedsMaxCruiseSpeed_state);
-                if(_obj__trid_13_ptr == _OpCache_tr_VehicleExceedsMaxCruiseSpeed.end()) {
-                    _trid_13 = state._tr_VehicleExceedsMaxCruiseSpeed();
-                    {
-                        std::unique_lock<std::mutex> _ProjectionRead__tr_VehicleExceedsMaxCruiseSpeed_lock(_ProjectionRead__tr_VehicleExceedsMaxCruiseSpeed_mutex);
+                {
+                    std::unique_lock<std::mutex> _ProjectionRead__tr_VehicleExceedsMaxCruiseSpeed_lock(_ProjectionRead__tr_VehicleExceedsMaxCruiseSpeed_mutex);
+                    auto _obj__trid_13_ptr = _OpCache_tr_VehicleExceedsMaxCruiseSpeed.find(read__tr_VehicleExceedsMaxCruiseSpeed_state);
+                    if(_obj__trid_13_ptr == _OpCache_tr_VehicleExceedsMaxCruiseSpeed.end()) {
+                        _trid_13 = state._tr_VehicleExceedsMaxCruiseSpeed();
                         _OpCache_tr_VehicleExceedsMaxCruiseSpeed.insert({read__tr_VehicleExceedsMaxCruiseSpeed_state, _trid_13});
+                    } else {
+                        _trid_13 = _obj__trid_13_ptr->second;
                     }
-                } else {
-                    _trid_13 = _obj__trid_13_ptr->second;
                 }
                 if(_trid_13) {
                     Cruise_finite1_deterministic_MC copiedState = state._copy();
                     Cruise_finite1_deterministic_MC::_ProjectionRead_VehicleExceedsMaxCruiseSpeed readState = state._projected_state_for_VehicleExceedsMaxCruiseSpeed();
-
-                    auto _OpCache_with_parameter_VehicleExceedsMaxCruiseSpeed_ptr = _OpCache_VehicleExceedsMaxCruiseSpeed.find(_trid_13);
-                    if(_OpCache_with_parameter_VehicleExceedsMaxCruiseSpeed_ptr == _OpCache_VehicleExceedsMaxCruiseSpeed.end()) {
-                        {
-                            std::unique_lock<std::mutex> _ProjectionRead_VehicleExceedsMaxCruiseSpeed_lock(_ProjectionRead_VehicleExceedsMaxCruiseSpeed_mutex);
+                    {
+                        std::unique_lock<std::mutex> _ProjectionRead_VehicleExceedsMaxCruiseSpeed_lock(_ProjectionRead_VehicleExceedsMaxCruiseSpeed_mutex);
+                        auto _OpCache_with_parameter_VehicleExceedsMaxCruiseSpeed_ptr = _OpCache_VehicleExceedsMaxCruiseSpeed.find(_trid_13);
+                        if(_OpCache_with_parameter_VehicleExceedsMaxCruiseSpeed_ptr == _OpCache_VehicleExceedsMaxCruiseSpeed.end()) {
                             copiedState.VehicleExceedsMaxCruiseSpeed();
                             Cruise_finite1_deterministic_MC::_ProjectionWrite_VehicleExceedsMaxCruiseSpeed writeState = copiedState._update_for_VehicleExceedsMaxCruiseSpeed();
                             std::unordered_map<Cruise_finite1_deterministic_MC::_ProjectionRead_VehicleExceedsMaxCruiseSpeed, Cruise_finite1_deterministic_MC::_ProjectionWrite_VehicleExceedsMaxCruiseSpeed, Cruise_finite1_deterministic_MC::_ProjectionRead_VehicleExceedsMaxCruiseSpeed::Hash, Cruise_finite1_deterministic_MC::_ProjectionRead_VehicleExceedsMaxCruiseSpeed::HashEqual> _OpCache_with_parameter_VehicleExceedsMaxCruiseSpeed = std::unordered_map<Cruise_finite1_deterministic_MC::_ProjectionRead_VehicleExceedsMaxCruiseSpeed, Cruise_finite1_deterministic_MC::_ProjectionWrite_VehicleExceedsMaxCruiseSpeed, Cruise_finite1_deterministic_MC::_ProjectionRead_VehicleExceedsMaxCruiseSpeed::Hash, Cruise_finite1_deterministic_MC::_ProjectionRead_VehicleExceedsMaxCruiseSpeed::HashEqual>();
                             _OpCache_with_parameter_VehicleExceedsMaxCruiseSpeed.insert({readState, writeState});
                             _OpCache_VehicleExceedsMaxCruiseSpeed.insert({_trid_13, _OpCache_with_parameter_VehicleExceedsMaxCruiseSpeed});
-                        }
-                    } else {
-                        {
-                            std::unique_lock<std::mutex> _ProjectionRead_VehicleExceedsMaxCruiseSpeed_lock(_ProjectionRead_VehicleExceedsMaxCruiseSpeed_mutex);
+                        } else {
                             std::unordered_map<Cruise_finite1_deterministic_MC::_ProjectionRead_VehicleExceedsMaxCruiseSpeed, Cruise_finite1_deterministic_MC::_ProjectionWrite_VehicleExceedsMaxCruiseSpeed, Cruise_finite1_deterministic_MC::_ProjectionRead_VehicleExceedsMaxCruiseSpeed::Hash, Cruise_finite1_deterministic_MC::_ProjectionRead_VehicleExceedsMaxCruiseSpeed::HashEqual> _OpCache_with_parameter_VehicleExceedsMaxCruiseSpeed = _OpCache_with_parameter_VehicleExceedsMaxCruiseSpeed_ptr->second;
                             auto writeState_ptr = _OpCache_with_parameter_VehicleExceedsMaxCruiseSpeed.find(readState);
                             if(writeState_ptr != _OpCache_with_parameter_VehicleExceedsMaxCruiseSpeed.end()) {
@@ -9475,7 +9396,6 @@ class ModelChecker {
                             }
                         }
                     }
-
                     copiedState.stateAccessedVia = "VehicleExceedsMaxCruiseSpeed";
                     result.insert(copiedState);
                     {
@@ -9485,33 +9405,29 @@ class ModelChecker {
                 }
                 Cruise_finite1_deterministic_MC::_ProjectionRead__tr_VehicleFallsBelowMaxCruiseSpeed read__tr_VehicleFallsBelowMaxCruiseSpeed_state = state._projected_state_for__tr_VehicleFallsBelowMaxCruiseSpeed();
                 bool _trid_14 = false;
-                auto _obj__trid_14_ptr = _OpCache_tr_VehicleFallsBelowMaxCruiseSpeed.find(read__tr_VehicleFallsBelowMaxCruiseSpeed_state);
-                if(_obj__trid_14_ptr == _OpCache_tr_VehicleFallsBelowMaxCruiseSpeed.end()) {
-                    _trid_14 = state._tr_VehicleFallsBelowMaxCruiseSpeed();
-                    {
-                        std::unique_lock<std::mutex> _ProjectionRead__tr_VehicleFallsBelowMaxCruiseSpeed_lock(_ProjectionRead__tr_VehicleFallsBelowMaxCruiseSpeed_mutex);
+                {
+                    std::unique_lock<std::mutex> _ProjectionRead__tr_VehicleFallsBelowMaxCruiseSpeed_lock(_ProjectionRead__tr_VehicleFallsBelowMaxCruiseSpeed_mutex);
+                    auto _obj__trid_14_ptr = _OpCache_tr_VehicleFallsBelowMaxCruiseSpeed.find(read__tr_VehicleFallsBelowMaxCruiseSpeed_state);
+                    if(_obj__trid_14_ptr == _OpCache_tr_VehicleFallsBelowMaxCruiseSpeed.end()) {
+                        _trid_14 = state._tr_VehicleFallsBelowMaxCruiseSpeed();
                         _OpCache_tr_VehicleFallsBelowMaxCruiseSpeed.insert({read__tr_VehicleFallsBelowMaxCruiseSpeed_state, _trid_14});
+                    } else {
+                        _trid_14 = _obj__trid_14_ptr->second;
                     }
-                } else {
-                    _trid_14 = _obj__trid_14_ptr->second;
                 }
                 if(_trid_14) {
                     Cruise_finite1_deterministic_MC copiedState = state._copy();
                     Cruise_finite1_deterministic_MC::_ProjectionRead_VehicleFallsBelowMaxCruiseSpeed readState = state._projected_state_for_VehicleFallsBelowMaxCruiseSpeed();
-
-                    auto _OpCache_with_parameter_VehicleFallsBelowMaxCruiseSpeed_ptr = _OpCache_VehicleFallsBelowMaxCruiseSpeed.find(_trid_14);
-                    if(_OpCache_with_parameter_VehicleFallsBelowMaxCruiseSpeed_ptr == _OpCache_VehicleFallsBelowMaxCruiseSpeed.end()) {
-                        {
-                            std::unique_lock<std::mutex> _ProjectionRead_VehicleFallsBelowMaxCruiseSpeed_lock(_ProjectionRead_VehicleFallsBelowMaxCruiseSpeed_mutex);
+                    {
+                        std::unique_lock<std::mutex> _ProjectionRead_VehicleFallsBelowMaxCruiseSpeed_lock(_ProjectionRead_VehicleFallsBelowMaxCruiseSpeed_mutex);
+                        auto _OpCache_with_parameter_VehicleFallsBelowMaxCruiseSpeed_ptr = _OpCache_VehicleFallsBelowMaxCruiseSpeed.find(_trid_14);
+                        if(_OpCache_with_parameter_VehicleFallsBelowMaxCruiseSpeed_ptr == _OpCache_VehicleFallsBelowMaxCruiseSpeed.end()) {
                             copiedState.VehicleFallsBelowMaxCruiseSpeed();
                             Cruise_finite1_deterministic_MC::_ProjectionWrite_VehicleFallsBelowMaxCruiseSpeed writeState = copiedState._update_for_VehicleFallsBelowMaxCruiseSpeed();
                             std::unordered_map<Cruise_finite1_deterministic_MC::_ProjectionRead_VehicleFallsBelowMaxCruiseSpeed, Cruise_finite1_deterministic_MC::_ProjectionWrite_VehicleFallsBelowMaxCruiseSpeed, Cruise_finite1_deterministic_MC::_ProjectionRead_VehicleFallsBelowMaxCruiseSpeed::Hash, Cruise_finite1_deterministic_MC::_ProjectionRead_VehicleFallsBelowMaxCruiseSpeed::HashEqual> _OpCache_with_parameter_VehicleFallsBelowMaxCruiseSpeed = std::unordered_map<Cruise_finite1_deterministic_MC::_ProjectionRead_VehicleFallsBelowMaxCruiseSpeed, Cruise_finite1_deterministic_MC::_ProjectionWrite_VehicleFallsBelowMaxCruiseSpeed, Cruise_finite1_deterministic_MC::_ProjectionRead_VehicleFallsBelowMaxCruiseSpeed::Hash, Cruise_finite1_deterministic_MC::_ProjectionRead_VehicleFallsBelowMaxCruiseSpeed::HashEqual>();
                             _OpCache_with_parameter_VehicleFallsBelowMaxCruiseSpeed.insert({readState, writeState});
                             _OpCache_VehicleFallsBelowMaxCruiseSpeed.insert({_trid_14, _OpCache_with_parameter_VehicleFallsBelowMaxCruiseSpeed});
-                        }
-                    } else {
-                        {
-                            std::unique_lock<std::mutex> _ProjectionRead_VehicleFallsBelowMaxCruiseSpeed_lock(_ProjectionRead_VehicleFallsBelowMaxCruiseSpeed_mutex);
+                        } else {
                             std::unordered_map<Cruise_finite1_deterministic_MC::_ProjectionRead_VehicleFallsBelowMaxCruiseSpeed, Cruise_finite1_deterministic_MC::_ProjectionWrite_VehicleFallsBelowMaxCruiseSpeed, Cruise_finite1_deterministic_MC::_ProjectionRead_VehicleFallsBelowMaxCruiseSpeed::Hash, Cruise_finite1_deterministic_MC::_ProjectionRead_VehicleFallsBelowMaxCruiseSpeed::HashEqual> _OpCache_with_parameter_VehicleFallsBelowMaxCruiseSpeed = _OpCache_with_parameter_VehicleFallsBelowMaxCruiseSpeed_ptr->second;
                             auto writeState_ptr = _OpCache_with_parameter_VehicleFallsBelowMaxCruiseSpeed.find(readState);
                             if(writeState_ptr != _OpCache_with_parameter_VehicleFallsBelowMaxCruiseSpeed.end()) {
@@ -9524,7 +9440,6 @@ class ModelChecker {
                             }
                         }
                     }
-
                     copiedState.stateAccessedVia = "VehicleFallsBelowMaxCruiseSpeed";
                     result.insert(copiedState);
                     {
@@ -9534,33 +9449,29 @@ class ModelChecker {
                 }
                 Cruise_finite1_deterministic_MC::_ProjectionRead__tr_ObstacleDistanceBecomesVeryClose read__tr_ObstacleDistanceBecomesVeryClose_state = state._projected_state_for__tr_ObstacleDistanceBecomesVeryClose();
                 bool _trid_15 = false;
-                auto _obj__trid_15_ptr = _OpCache_tr_ObstacleDistanceBecomesVeryClose.find(read__tr_ObstacleDistanceBecomesVeryClose_state);
-                if(_obj__trid_15_ptr == _OpCache_tr_ObstacleDistanceBecomesVeryClose.end()) {
-                    _trid_15 = state._tr_ObstacleDistanceBecomesVeryClose();
-                    {
-                        std::unique_lock<std::mutex> _ProjectionRead__tr_ObstacleDistanceBecomesVeryClose_lock(_ProjectionRead__tr_ObstacleDistanceBecomesVeryClose_mutex);
+                {
+                    std::unique_lock<std::mutex> _ProjectionRead__tr_ObstacleDistanceBecomesVeryClose_lock(_ProjectionRead__tr_ObstacleDistanceBecomesVeryClose_mutex);
+                    auto _obj__trid_15_ptr = _OpCache_tr_ObstacleDistanceBecomesVeryClose.find(read__tr_ObstacleDistanceBecomesVeryClose_state);
+                    if(_obj__trid_15_ptr == _OpCache_tr_ObstacleDistanceBecomesVeryClose.end()) {
+                        _trid_15 = state._tr_ObstacleDistanceBecomesVeryClose();
                         _OpCache_tr_ObstacleDistanceBecomesVeryClose.insert({read__tr_ObstacleDistanceBecomesVeryClose_state, _trid_15});
+                    } else {
+                        _trid_15 = _obj__trid_15_ptr->second;
                     }
-                } else {
-                    _trid_15 = _obj__trid_15_ptr->second;
                 }
                 if(_trid_15) {
                     Cruise_finite1_deterministic_MC copiedState = state._copy();
                     Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleDistanceBecomesVeryClose readState = state._projected_state_for_ObstacleDistanceBecomesVeryClose();
-
-                    auto _OpCache_with_parameter_ObstacleDistanceBecomesVeryClose_ptr = _OpCache_ObstacleDistanceBecomesVeryClose.find(_trid_15);
-                    if(_OpCache_with_parameter_ObstacleDistanceBecomesVeryClose_ptr == _OpCache_ObstacleDistanceBecomesVeryClose.end()) {
-                        {
-                            std::unique_lock<std::mutex> _ProjectionRead_ObstacleDistanceBecomesVeryClose_lock(_ProjectionRead_ObstacleDistanceBecomesVeryClose_mutex);
+                    {
+                        std::unique_lock<std::mutex> _ProjectionRead_ObstacleDistanceBecomesVeryClose_lock(_ProjectionRead_ObstacleDistanceBecomesVeryClose_mutex);
+                        auto _OpCache_with_parameter_ObstacleDistanceBecomesVeryClose_ptr = _OpCache_ObstacleDistanceBecomesVeryClose.find(_trid_15);
+                        if(_OpCache_with_parameter_ObstacleDistanceBecomesVeryClose_ptr == _OpCache_ObstacleDistanceBecomesVeryClose.end()) {
                             copiedState.ObstacleDistanceBecomesVeryClose();
                             Cruise_finite1_deterministic_MC::_ProjectionWrite_ObstacleDistanceBecomesVeryClose writeState = copiedState._update_for_ObstacleDistanceBecomesVeryClose();
                             std::unordered_map<Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleDistanceBecomesVeryClose, Cruise_finite1_deterministic_MC::_ProjectionWrite_ObstacleDistanceBecomesVeryClose, Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleDistanceBecomesVeryClose::Hash, Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleDistanceBecomesVeryClose::HashEqual> _OpCache_with_parameter_ObstacleDistanceBecomesVeryClose = std::unordered_map<Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleDistanceBecomesVeryClose, Cruise_finite1_deterministic_MC::_ProjectionWrite_ObstacleDistanceBecomesVeryClose, Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleDistanceBecomesVeryClose::Hash, Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleDistanceBecomesVeryClose::HashEqual>();
                             _OpCache_with_parameter_ObstacleDistanceBecomesVeryClose.insert({readState, writeState});
                             _OpCache_ObstacleDistanceBecomesVeryClose.insert({_trid_15, _OpCache_with_parameter_ObstacleDistanceBecomesVeryClose});
-                        }
-                    } else {
-                        {
-                            std::unique_lock<std::mutex> _ProjectionRead_ObstacleDistanceBecomesVeryClose_lock(_ProjectionRead_ObstacleDistanceBecomesVeryClose_mutex);
+                        } else {
                             std::unordered_map<Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleDistanceBecomesVeryClose, Cruise_finite1_deterministic_MC::_ProjectionWrite_ObstacleDistanceBecomesVeryClose, Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleDistanceBecomesVeryClose::Hash, Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleDistanceBecomesVeryClose::HashEqual> _OpCache_with_parameter_ObstacleDistanceBecomesVeryClose = _OpCache_with_parameter_ObstacleDistanceBecomesVeryClose_ptr->second;
                             auto writeState_ptr = _OpCache_with_parameter_ObstacleDistanceBecomesVeryClose.find(readState);
                             if(writeState_ptr != _OpCache_with_parameter_ObstacleDistanceBecomesVeryClose.end()) {
@@ -9573,7 +9484,6 @@ class ModelChecker {
                             }
                         }
                     }
-
                     copiedState.stateAccessedVia = "ObstacleDistanceBecomesVeryClose";
                     result.insert(copiedState);
                     {
@@ -9583,33 +9493,29 @@ class ModelChecker {
                 }
                 Cruise_finite1_deterministic_MC::_ProjectionRead__tr_ObstacleDistanceBecomesClose read__tr_ObstacleDistanceBecomesClose_state = state._projected_state_for__tr_ObstacleDistanceBecomesClose();
                 bool _trid_16 = false;
-                auto _obj__trid_16_ptr = _OpCache_tr_ObstacleDistanceBecomesClose.find(read__tr_ObstacleDistanceBecomesClose_state);
-                if(_obj__trid_16_ptr == _OpCache_tr_ObstacleDistanceBecomesClose.end()) {
-                    _trid_16 = state._tr_ObstacleDistanceBecomesClose();
-                    {
-                        std::unique_lock<std::mutex> _ProjectionRead__tr_ObstacleDistanceBecomesClose_lock(_ProjectionRead__tr_ObstacleDistanceBecomesClose_mutex);
+                {
+                    std::unique_lock<std::mutex> _ProjectionRead__tr_ObstacleDistanceBecomesClose_lock(_ProjectionRead__tr_ObstacleDistanceBecomesClose_mutex);
+                    auto _obj__trid_16_ptr = _OpCache_tr_ObstacleDistanceBecomesClose.find(read__tr_ObstacleDistanceBecomesClose_state);
+                    if(_obj__trid_16_ptr == _OpCache_tr_ObstacleDistanceBecomesClose.end()) {
+                        _trid_16 = state._tr_ObstacleDistanceBecomesClose();
                         _OpCache_tr_ObstacleDistanceBecomesClose.insert({read__tr_ObstacleDistanceBecomesClose_state, _trid_16});
+                    } else {
+                        _trid_16 = _obj__trid_16_ptr->second;
                     }
-                } else {
-                    _trid_16 = _obj__trid_16_ptr->second;
                 }
                 if(_trid_16) {
                     Cruise_finite1_deterministic_MC copiedState = state._copy();
                     Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleDistanceBecomesClose readState = state._projected_state_for_ObstacleDistanceBecomesClose();
-
-                    auto _OpCache_with_parameter_ObstacleDistanceBecomesClose_ptr = _OpCache_ObstacleDistanceBecomesClose.find(_trid_16);
-                    if(_OpCache_with_parameter_ObstacleDistanceBecomesClose_ptr == _OpCache_ObstacleDistanceBecomesClose.end()) {
-                        {
-                            std::unique_lock<std::mutex> _ProjectionRead_ObstacleDistanceBecomesClose_lock(_ProjectionRead_ObstacleDistanceBecomesClose_mutex);
+                    {
+                        std::unique_lock<std::mutex> _ProjectionRead_ObstacleDistanceBecomesClose_lock(_ProjectionRead_ObstacleDistanceBecomesClose_mutex);
+                        auto _OpCache_with_parameter_ObstacleDistanceBecomesClose_ptr = _OpCache_ObstacleDistanceBecomesClose.find(_trid_16);
+                        if(_OpCache_with_parameter_ObstacleDistanceBecomesClose_ptr == _OpCache_ObstacleDistanceBecomesClose.end()) {
                             copiedState.ObstacleDistanceBecomesClose();
                             Cruise_finite1_deterministic_MC::_ProjectionWrite_ObstacleDistanceBecomesClose writeState = copiedState._update_for_ObstacleDistanceBecomesClose();
                             std::unordered_map<Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleDistanceBecomesClose, Cruise_finite1_deterministic_MC::_ProjectionWrite_ObstacleDistanceBecomesClose, Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleDistanceBecomesClose::Hash, Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleDistanceBecomesClose::HashEqual> _OpCache_with_parameter_ObstacleDistanceBecomesClose = std::unordered_map<Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleDistanceBecomesClose, Cruise_finite1_deterministic_MC::_ProjectionWrite_ObstacleDistanceBecomesClose, Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleDistanceBecomesClose::Hash, Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleDistanceBecomesClose::HashEqual>();
                             _OpCache_with_parameter_ObstacleDistanceBecomesClose.insert({readState, writeState});
                             _OpCache_ObstacleDistanceBecomesClose.insert({_trid_16, _OpCache_with_parameter_ObstacleDistanceBecomesClose});
-                        }
-                    } else {
-                        {
-                            std::unique_lock<std::mutex> _ProjectionRead_ObstacleDistanceBecomesClose_lock(_ProjectionRead_ObstacleDistanceBecomesClose_mutex);
+                        } else {
                             std::unordered_map<Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleDistanceBecomesClose, Cruise_finite1_deterministic_MC::_ProjectionWrite_ObstacleDistanceBecomesClose, Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleDistanceBecomesClose::Hash, Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleDistanceBecomesClose::HashEqual> _OpCache_with_parameter_ObstacleDistanceBecomesClose = _OpCache_with_parameter_ObstacleDistanceBecomesClose_ptr->second;
                             auto writeState_ptr = _OpCache_with_parameter_ObstacleDistanceBecomesClose.find(readState);
                             if(writeState_ptr != _OpCache_with_parameter_ObstacleDistanceBecomesClose.end()) {
@@ -9622,7 +9528,6 @@ class ModelChecker {
                             }
                         }
                     }
-
                     copiedState.stateAccessedVia = "ObstacleDistanceBecomesClose";
                     result.insert(copiedState);
                     {
@@ -9632,33 +9537,29 @@ class ModelChecker {
                 }
                 Cruise_finite1_deterministic_MC::_ProjectionRead__tr_ObstacleDistanceBecomesBig read__tr_ObstacleDistanceBecomesBig_state = state._projected_state_for__tr_ObstacleDistanceBecomesBig();
                 bool _trid_17 = false;
-                auto _obj__trid_17_ptr = _OpCache_tr_ObstacleDistanceBecomesBig.find(read__tr_ObstacleDistanceBecomesBig_state);
-                if(_obj__trid_17_ptr == _OpCache_tr_ObstacleDistanceBecomesBig.end()) {
-                    _trid_17 = state._tr_ObstacleDistanceBecomesBig();
-                    {
-                        std::unique_lock<std::mutex> _ProjectionRead__tr_ObstacleDistanceBecomesBig_lock(_ProjectionRead__tr_ObstacleDistanceBecomesBig_mutex);
+                {
+                    std::unique_lock<std::mutex> _ProjectionRead__tr_ObstacleDistanceBecomesBig_lock(_ProjectionRead__tr_ObstacleDistanceBecomesBig_mutex);
+                    auto _obj__trid_17_ptr = _OpCache_tr_ObstacleDistanceBecomesBig.find(read__tr_ObstacleDistanceBecomesBig_state);
+                    if(_obj__trid_17_ptr == _OpCache_tr_ObstacleDistanceBecomesBig.end()) {
+                        _trid_17 = state._tr_ObstacleDistanceBecomesBig();
                         _OpCache_tr_ObstacleDistanceBecomesBig.insert({read__tr_ObstacleDistanceBecomesBig_state, _trid_17});
+                    } else {
+                        _trid_17 = _obj__trid_17_ptr->second;
                     }
-                } else {
-                    _trid_17 = _obj__trid_17_ptr->second;
                 }
                 if(_trid_17) {
                     Cruise_finite1_deterministic_MC copiedState = state._copy();
                     Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleDistanceBecomesBig readState = state._projected_state_for_ObstacleDistanceBecomesBig();
-
-                    auto _OpCache_with_parameter_ObstacleDistanceBecomesBig_ptr = _OpCache_ObstacleDistanceBecomesBig.find(_trid_17);
-                    if(_OpCache_with_parameter_ObstacleDistanceBecomesBig_ptr == _OpCache_ObstacleDistanceBecomesBig.end()) {
-                        {
-                            std::unique_lock<std::mutex> _ProjectionRead_ObstacleDistanceBecomesBig_lock(_ProjectionRead_ObstacleDistanceBecomesBig_mutex);
+                    {
+                        std::unique_lock<std::mutex> _ProjectionRead_ObstacleDistanceBecomesBig_lock(_ProjectionRead_ObstacleDistanceBecomesBig_mutex);
+                        auto _OpCache_with_parameter_ObstacleDistanceBecomesBig_ptr = _OpCache_ObstacleDistanceBecomesBig.find(_trid_17);
+                        if(_OpCache_with_parameter_ObstacleDistanceBecomesBig_ptr == _OpCache_ObstacleDistanceBecomesBig.end()) {
                             copiedState.ObstacleDistanceBecomesBig();
                             Cruise_finite1_deterministic_MC::_ProjectionWrite_ObstacleDistanceBecomesBig writeState = copiedState._update_for_ObstacleDistanceBecomesBig();
                             std::unordered_map<Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleDistanceBecomesBig, Cruise_finite1_deterministic_MC::_ProjectionWrite_ObstacleDistanceBecomesBig, Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleDistanceBecomesBig::Hash, Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleDistanceBecomesBig::HashEqual> _OpCache_with_parameter_ObstacleDistanceBecomesBig = std::unordered_map<Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleDistanceBecomesBig, Cruise_finite1_deterministic_MC::_ProjectionWrite_ObstacleDistanceBecomesBig, Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleDistanceBecomesBig::Hash, Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleDistanceBecomesBig::HashEqual>();
                             _OpCache_with_parameter_ObstacleDistanceBecomesBig.insert({readState, writeState});
                             _OpCache_ObstacleDistanceBecomesBig.insert({_trid_17, _OpCache_with_parameter_ObstacleDistanceBecomesBig});
-                        }
-                    } else {
-                        {
-                            std::unique_lock<std::mutex> _ProjectionRead_ObstacleDistanceBecomesBig_lock(_ProjectionRead_ObstacleDistanceBecomesBig_mutex);
+                        } else {
                             std::unordered_map<Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleDistanceBecomesBig, Cruise_finite1_deterministic_MC::_ProjectionWrite_ObstacleDistanceBecomesBig, Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleDistanceBecomesBig::Hash, Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleDistanceBecomesBig::HashEqual> _OpCache_with_parameter_ObstacleDistanceBecomesBig = _OpCache_with_parameter_ObstacleDistanceBecomesBig_ptr->second;
                             auto writeState_ptr = _OpCache_with_parameter_ObstacleDistanceBecomesBig.find(readState);
                             if(writeState_ptr != _OpCache_with_parameter_ObstacleDistanceBecomesBig.end()) {
@@ -9671,7 +9572,6 @@ class ModelChecker {
                             }
                         }
                     }
-
                     copiedState.stateAccessedVia = "ObstacleDistanceBecomesBig";
                     result.insert(copiedState);
                     {
@@ -9681,33 +9581,29 @@ class ModelChecker {
                 }
                 Cruise_finite1_deterministic_MC::_ProjectionRead__tr_ObstacleStartsTravelFaster read__tr_ObstacleStartsTravelFaster_state = state._projected_state_for__tr_ObstacleStartsTravelFaster();
                 bool _trid_18 = false;
-                auto _obj__trid_18_ptr = _OpCache_tr_ObstacleStartsTravelFaster.find(read__tr_ObstacleStartsTravelFaster_state);
-                if(_obj__trid_18_ptr == _OpCache_tr_ObstacleStartsTravelFaster.end()) {
-                    _trid_18 = state._tr_ObstacleStartsTravelFaster();
-                    {
-                        std::unique_lock<std::mutex> _ProjectionRead__tr_ObstacleStartsTravelFaster_lock(_ProjectionRead__tr_ObstacleStartsTravelFaster_mutex);
+                {
+                    std::unique_lock<std::mutex> _ProjectionRead__tr_ObstacleStartsTravelFaster_lock(_ProjectionRead__tr_ObstacleStartsTravelFaster_mutex);
+                    auto _obj__trid_18_ptr = _OpCache_tr_ObstacleStartsTravelFaster.find(read__tr_ObstacleStartsTravelFaster_state);
+                    if(_obj__trid_18_ptr == _OpCache_tr_ObstacleStartsTravelFaster.end()) {
+                        _trid_18 = state._tr_ObstacleStartsTravelFaster();
                         _OpCache_tr_ObstacleStartsTravelFaster.insert({read__tr_ObstacleStartsTravelFaster_state, _trid_18});
+                    } else {
+                        _trid_18 = _obj__trid_18_ptr->second;
                     }
-                } else {
-                    _trid_18 = _obj__trid_18_ptr->second;
                 }
                 if(_trid_18) {
                     Cruise_finite1_deterministic_MC copiedState = state._copy();
                     Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleStartsTravelFaster readState = state._projected_state_for_ObstacleStartsTravelFaster();
-
-                    auto _OpCache_with_parameter_ObstacleStartsTravelFaster_ptr = _OpCache_ObstacleStartsTravelFaster.find(_trid_18);
-                    if(_OpCache_with_parameter_ObstacleStartsTravelFaster_ptr == _OpCache_ObstacleStartsTravelFaster.end()) {
-                        {
-                            std::unique_lock<std::mutex> _ProjectionRead_ObstacleStartsTravelFaster_lock(_ProjectionRead_ObstacleStartsTravelFaster_mutex);
+                    {
+                        std::unique_lock<std::mutex> _ProjectionRead_ObstacleStartsTravelFaster_lock(_ProjectionRead_ObstacleStartsTravelFaster_mutex);
+                        auto _OpCache_with_parameter_ObstacleStartsTravelFaster_ptr = _OpCache_ObstacleStartsTravelFaster.find(_trid_18);
+                        if(_OpCache_with_parameter_ObstacleStartsTravelFaster_ptr == _OpCache_ObstacleStartsTravelFaster.end()) {
                             copiedState.ObstacleStartsTravelFaster();
                             Cruise_finite1_deterministic_MC::_ProjectionWrite_ObstacleStartsTravelFaster writeState = copiedState._update_for_ObstacleStartsTravelFaster();
                             std::unordered_map<Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleStartsTravelFaster, Cruise_finite1_deterministic_MC::_ProjectionWrite_ObstacleStartsTravelFaster, Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleStartsTravelFaster::Hash, Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleStartsTravelFaster::HashEqual> _OpCache_with_parameter_ObstacleStartsTravelFaster = std::unordered_map<Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleStartsTravelFaster, Cruise_finite1_deterministic_MC::_ProjectionWrite_ObstacleStartsTravelFaster, Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleStartsTravelFaster::Hash, Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleStartsTravelFaster::HashEqual>();
                             _OpCache_with_parameter_ObstacleStartsTravelFaster.insert({readState, writeState});
                             _OpCache_ObstacleStartsTravelFaster.insert({_trid_18, _OpCache_with_parameter_ObstacleStartsTravelFaster});
-                        }
-                    } else {
-                        {
-                            std::unique_lock<std::mutex> _ProjectionRead_ObstacleStartsTravelFaster_lock(_ProjectionRead_ObstacleStartsTravelFaster_mutex);
+                        } else {
                             std::unordered_map<Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleStartsTravelFaster, Cruise_finite1_deterministic_MC::_ProjectionWrite_ObstacleStartsTravelFaster, Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleStartsTravelFaster::Hash, Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleStartsTravelFaster::HashEqual> _OpCache_with_parameter_ObstacleStartsTravelFaster = _OpCache_with_parameter_ObstacleStartsTravelFaster_ptr->second;
                             auto writeState_ptr = _OpCache_with_parameter_ObstacleStartsTravelFaster.find(readState);
                             if(writeState_ptr != _OpCache_with_parameter_ObstacleStartsTravelFaster.end()) {
@@ -9720,7 +9616,6 @@ class ModelChecker {
                             }
                         }
                     }
-
                     copiedState.stateAccessedVia = "ObstacleStartsTravelFaster";
                     result.insert(copiedState);
                     {
@@ -9730,33 +9625,29 @@ class ModelChecker {
                 }
                 Cruise_finite1_deterministic_MC::_ProjectionRead__tr_ObstacleStopsTravelFaster read__tr_ObstacleStopsTravelFaster_state = state._projected_state_for__tr_ObstacleStopsTravelFaster();
                 bool _trid_19 = false;
-                auto _obj__trid_19_ptr = _OpCache_tr_ObstacleStopsTravelFaster.find(read__tr_ObstacleStopsTravelFaster_state);
-                if(_obj__trid_19_ptr == _OpCache_tr_ObstacleStopsTravelFaster.end()) {
-                    _trid_19 = state._tr_ObstacleStopsTravelFaster();
-                    {
-                        std::unique_lock<std::mutex> _ProjectionRead__tr_ObstacleStopsTravelFaster_lock(_ProjectionRead__tr_ObstacleStopsTravelFaster_mutex);
+                {
+                    std::unique_lock<std::mutex> _ProjectionRead__tr_ObstacleStopsTravelFaster_lock(_ProjectionRead__tr_ObstacleStopsTravelFaster_mutex);
+                    auto _obj__trid_19_ptr = _OpCache_tr_ObstacleStopsTravelFaster.find(read__tr_ObstacleStopsTravelFaster_state);
+                    if(_obj__trid_19_ptr == _OpCache_tr_ObstacleStopsTravelFaster.end()) {
+                        _trid_19 = state._tr_ObstacleStopsTravelFaster();
                         _OpCache_tr_ObstacleStopsTravelFaster.insert({read__tr_ObstacleStopsTravelFaster_state, _trid_19});
+                    } else {
+                        _trid_19 = _obj__trid_19_ptr->second;
                     }
-                } else {
-                    _trid_19 = _obj__trid_19_ptr->second;
                 }
                 if(_trid_19) {
                     Cruise_finite1_deterministic_MC copiedState = state._copy();
                     Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleStopsTravelFaster readState = state._projected_state_for_ObstacleStopsTravelFaster();
-
-                    auto _OpCache_with_parameter_ObstacleStopsTravelFaster_ptr = _OpCache_ObstacleStopsTravelFaster.find(_trid_19);
-                    if(_OpCache_with_parameter_ObstacleStopsTravelFaster_ptr == _OpCache_ObstacleStopsTravelFaster.end()) {
-                        {
-                            std::unique_lock<std::mutex> _ProjectionRead_ObstacleStopsTravelFaster_lock(_ProjectionRead_ObstacleStopsTravelFaster_mutex);
+                    {
+                        std::unique_lock<std::mutex> _ProjectionRead_ObstacleStopsTravelFaster_lock(_ProjectionRead_ObstacleStopsTravelFaster_mutex);
+                        auto _OpCache_with_parameter_ObstacleStopsTravelFaster_ptr = _OpCache_ObstacleStopsTravelFaster.find(_trid_19);
+                        if(_OpCache_with_parameter_ObstacleStopsTravelFaster_ptr == _OpCache_ObstacleStopsTravelFaster.end()) {
                             copiedState.ObstacleStopsTravelFaster();
                             Cruise_finite1_deterministic_MC::_ProjectionWrite_ObstacleStopsTravelFaster writeState = copiedState._update_for_ObstacleStopsTravelFaster();
                             std::unordered_map<Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleStopsTravelFaster, Cruise_finite1_deterministic_MC::_ProjectionWrite_ObstacleStopsTravelFaster, Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleStopsTravelFaster::Hash, Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleStopsTravelFaster::HashEqual> _OpCache_with_parameter_ObstacleStopsTravelFaster = std::unordered_map<Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleStopsTravelFaster, Cruise_finite1_deterministic_MC::_ProjectionWrite_ObstacleStopsTravelFaster, Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleStopsTravelFaster::Hash, Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleStopsTravelFaster::HashEqual>();
                             _OpCache_with_parameter_ObstacleStopsTravelFaster.insert({readState, writeState});
                             _OpCache_ObstacleStopsTravelFaster.insert({_trid_19, _OpCache_with_parameter_ObstacleStopsTravelFaster});
-                        }
-                    } else {
-                        {
-                            std::unique_lock<std::mutex> _ProjectionRead_ObstacleStopsTravelFaster_lock(_ProjectionRead_ObstacleStopsTravelFaster_mutex);
+                        } else {
                             std::unordered_map<Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleStopsTravelFaster, Cruise_finite1_deterministic_MC::_ProjectionWrite_ObstacleStopsTravelFaster, Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleStopsTravelFaster::Hash, Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleStopsTravelFaster::HashEqual> _OpCache_with_parameter_ObstacleStopsTravelFaster = _OpCache_with_parameter_ObstacleStopsTravelFaster_ptr->second;
                             auto writeState_ptr = _OpCache_with_parameter_ObstacleStopsTravelFaster.find(readState);
                             if(writeState_ptr != _OpCache_with_parameter_ObstacleStopsTravelFaster.end()) {
@@ -9769,7 +9660,6 @@ class ModelChecker {
                             }
                         }
                     }
-
                     copiedState.stateAccessedVia = "ObstacleStopsTravelFaster";
                     result.insert(copiedState);
                     {
@@ -9779,33 +9669,29 @@ class ModelChecker {
                 }
                 Cruise_finite1_deterministic_MC::_ProjectionRead__tr_ObstacleStartsTravelSlower read__tr_ObstacleStartsTravelSlower_state = state._projected_state_for__tr_ObstacleStartsTravelSlower();
                 bool _trid_20 = false;
-                auto _obj__trid_20_ptr = _OpCache_tr_ObstacleStartsTravelSlower.find(read__tr_ObstacleStartsTravelSlower_state);
-                if(_obj__trid_20_ptr == _OpCache_tr_ObstacleStartsTravelSlower.end()) {
-                    _trid_20 = state._tr_ObstacleStartsTravelSlower();
-                    {
-                        std::unique_lock<std::mutex> _ProjectionRead__tr_ObstacleStartsTravelSlower_lock(_ProjectionRead__tr_ObstacleStartsTravelSlower_mutex);
+                {
+                    std::unique_lock<std::mutex> _ProjectionRead__tr_ObstacleStartsTravelSlower_lock(_ProjectionRead__tr_ObstacleStartsTravelSlower_mutex);
+                    auto _obj__trid_20_ptr = _OpCache_tr_ObstacleStartsTravelSlower.find(read__tr_ObstacleStartsTravelSlower_state);
+                    if(_obj__trid_20_ptr == _OpCache_tr_ObstacleStartsTravelSlower.end()) {
+                        _trid_20 = state._tr_ObstacleStartsTravelSlower();
                         _OpCache_tr_ObstacleStartsTravelSlower.insert({read__tr_ObstacleStartsTravelSlower_state, _trid_20});
+                    } else {
+                        _trid_20 = _obj__trid_20_ptr->second;
                     }
-                } else {
-                    _trid_20 = _obj__trid_20_ptr->second;
                 }
                 if(_trid_20) {
                     Cruise_finite1_deterministic_MC copiedState = state._copy();
                     Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleStartsTravelSlower readState = state._projected_state_for_ObstacleStartsTravelSlower();
-
-                    auto _OpCache_with_parameter_ObstacleStartsTravelSlower_ptr = _OpCache_ObstacleStartsTravelSlower.find(_trid_20);
-                    if(_OpCache_with_parameter_ObstacleStartsTravelSlower_ptr == _OpCache_ObstacleStartsTravelSlower.end()) {
-                        {
-                            std::unique_lock<std::mutex> _ProjectionRead_ObstacleStartsTravelSlower_lock(_ProjectionRead_ObstacleStartsTravelSlower_mutex);
+                    {
+                        std::unique_lock<std::mutex> _ProjectionRead_ObstacleStartsTravelSlower_lock(_ProjectionRead_ObstacleStartsTravelSlower_mutex);
+                        auto _OpCache_with_parameter_ObstacleStartsTravelSlower_ptr = _OpCache_ObstacleStartsTravelSlower.find(_trid_20);
+                        if(_OpCache_with_parameter_ObstacleStartsTravelSlower_ptr == _OpCache_ObstacleStartsTravelSlower.end()) {
                             copiedState.ObstacleStartsTravelSlower();
                             Cruise_finite1_deterministic_MC::_ProjectionWrite_ObstacleStartsTravelSlower writeState = copiedState._update_for_ObstacleStartsTravelSlower();
                             std::unordered_map<Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleStartsTravelSlower, Cruise_finite1_deterministic_MC::_ProjectionWrite_ObstacleStartsTravelSlower, Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleStartsTravelSlower::Hash, Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleStartsTravelSlower::HashEqual> _OpCache_with_parameter_ObstacleStartsTravelSlower = std::unordered_map<Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleStartsTravelSlower, Cruise_finite1_deterministic_MC::_ProjectionWrite_ObstacleStartsTravelSlower, Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleStartsTravelSlower::Hash, Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleStartsTravelSlower::HashEqual>();
                             _OpCache_with_parameter_ObstacleStartsTravelSlower.insert({readState, writeState});
                             _OpCache_ObstacleStartsTravelSlower.insert({_trid_20, _OpCache_with_parameter_ObstacleStartsTravelSlower});
-                        }
-                    } else {
-                        {
-                            std::unique_lock<std::mutex> _ProjectionRead_ObstacleStartsTravelSlower_lock(_ProjectionRead_ObstacleStartsTravelSlower_mutex);
+                        } else {
                             std::unordered_map<Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleStartsTravelSlower, Cruise_finite1_deterministic_MC::_ProjectionWrite_ObstacleStartsTravelSlower, Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleStartsTravelSlower::Hash, Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleStartsTravelSlower::HashEqual> _OpCache_with_parameter_ObstacleStartsTravelSlower = _OpCache_with_parameter_ObstacleStartsTravelSlower_ptr->second;
                             auto writeState_ptr = _OpCache_with_parameter_ObstacleStartsTravelSlower.find(readState);
                             if(writeState_ptr != _OpCache_with_parameter_ObstacleStartsTravelSlower.end()) {
@@ -9818,7 +9704,6 @@ class ModelChecker {
                             }
                         }
                     }
-
                     copiedState.stateAccessedVia = "ObstacleStartsTravelSlower";
                     result.insert(copiedState);
                     {
@@ -9828,33 +9713,29 @@ class ModelChecker {
                 }
                 Cruise_finite1_deterministic_MC::_ProjectionRead__tr_ObstacleStopsTravelSlower read__tr_ObstacleStopsTravelSlower_state = state._projected_state_for__tr_ObstacleStopsTravelSlower();
                 bool _trid_21 = false;
-                auto _obj__trid_21_ptr = _OpCache_tr_ObstacleStopsTravelSlower.find(read__tr_ObstacleStopsTravelSlower_state);
-                if(_obj__trid_21_ptr == _OpCache_tr_ObstacleStopsTravelSlower.end()) {
-                    _trid_21 = state._tr_ObstacleStopsTravelSlower();
-                    {
-                        std::unique_lock<std::mutex> _ProjectionRead__tr_ObstacleStopsTravelSlower_lock(_ProjectionRead__tr_ObstacleStopsTravelSlower_mutex);
+                {
+                    std::unique_lock<std::mutex> _ProjectionRead__tr_ObstacleStopsTravelSlower_lock(_ProjectionRead__tr_ObstacleStopsTravelSlower_mutex);
+                    auto _obj__trid_21_ptr = _OpCache_tr_ObstacleStopsTravelSlower.find(read__tr_ObstacleStopsTravelSlower_state);
+                    if(_obj__trid_21_ptr == _OpCache_tr_ObstacleStopsTravelSlower.end()) {
+                        _trid_21 = state._tr_ObstacleStopsTravelSlower();
                         _OpCache_tr_ObstacleStopsTravelSlower.insert({read__tr_ObstacleStopsTravelSlower_state, _trid_21});
+                    } else {
+                        _trid_21 = _obj__trid_21_ptr->second;
                     }
-                } else {
-                    _trid_21 = _obj__trid_21_ptr->second;
                 }
                 if(_trid_21) {
                     Cruise_finite1_deterministic_MC copiedState = state._copy();
                     Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleStopsTravelSlower readState = state._projected_state_for_ObstacleStopsTravelSlower();
-
-                    auto _OpCache_with_parameter_ObstacleStopsTravelSlower_ptr = _OpCache_ObstacleStopsTravelSlower.find(_trid_21);
-                    if(_OpCache_with_parameter_ObstacleStopsTravelSlower_ptr == _OpCache_ObstacleStopsTravelSlower.end()) {
-                        {
-                            std::unique_lock<std::mutex> _ProjectionRead_ObstacleStopsTravelSlower_lock(_ProjectionRead_ObstacleStopsTravelSlower_mutex);
+                    {
+                        std::unique_lock<std::mutex> _ProjectionRead_ObstacleStopsTravelSlower_lock(_ProjectionRead_ObstacleStopsTravelSlower_mutex);
+                        auto _OpCache_with_parameter_ObstacleStopsTravelSlower_ptr = _OpCache_ObstacleStopsTravelSlower.find(_trid_21);
+                        if(_OpCache_with_parameter_ObstacleStopsTravelSlower_ptr == _OpCache_ObstacleStopsTravelSlower.end()) {
                             copiedState.ObstacleStopsTravelSlower();
                             Cruise_finite1_deterministic_MC::_ProjectionWrite_ObstacleStopsTravelSlower writeState = copiedState._update_for_ObstacleStopsTravelSlower();
                             std::unordered_map<Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleStopsTravelSlower, Cruise_finite1_deterministic_MC::_ProjectionWrite_ObstacleStopsTravelSlower, Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleStopsTravelSlower::Hash, Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleStopsTravelSlower::HashEqual> _OpCache_with_parameter_ObstacleStopsTravelSlower = std::unordered_map<Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleStopsTravelSlower, Cruise_finite1_deterministic_MC::_ProjectionWrite_ObstacleStopsTravelSlower, Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleStopsTravelSlower::Hash, Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleStopsTravelSlower::HashEqual>();
                             _OpCache_with_parameter_ObstacleStopsTravelSlower.insert({readState, writeState});
                             _OpCache_ObstacleStopsTravelSlower.insert({_trid_21, _OpCache_with_parameter_ObstacleStopsTravelSlower});
-                        }
-                    } else {
-                        {
-                            std::unique_lock<std::mutex> _ProjectionRead_ObstacleStopsTravelSlower_lock(_ProjectionRead_ObstacleStopsTravelSlower_mutex);
+                        } else {
                             std::unordered_map<Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleStopsTravelSlower, Cruise_finite1_deterministic_MC::_ProjectionWrite_ObstacleStopsTravelSlower, Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleStopsTravelSlower::Hash, Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleStopsTravelSlower::HashEqual> _OpCache_with_parameter_ObstacleStopsTravelSlower = _OpCache_with_parameter_ObstacleStopsTravelSlower_ptr->second;
                             auto writeState_ptr = _OpCache_with_parameter_ObstacleStopsTravelSlower.find(readState);
                             if(writeState_ptr != _OpCache_with_parameter_ObstacleStopsTravelSlower.end()) {
@@ -9867,7 +9748,6 @@ class ModelChecker {
                             }
                         }
                     }
-
                     copiedState.stateAccessedVia = "ObstacleStopsTravelSlower";
                     result.insert(copiedState);
                     {
@@ -9876,214 +9756,190 @@ class ModelChecker {
                     }
                 }
                 Cruise_finite1_deterministic_MC::_ProjectionRead__tr_ObstacleAppearsWhenCruiseActive read__tr_ObstacleAppearsWhenCruiseActive_state = state._projected_state_for__tr_ObstacleAppearsWhenCruiseActive();
-                auto _trid_22_ptr = _OpCache_tr_ObstacleAppearsWhenCruiseActive.find(read__tr_ObstacleAppearsWhenCruiseActive_state);
-                if(_trid_22_ptr == _OpCache_tr_ObstacleAppearsWhenCruiseActive.end()) {
-                    BSet<BTuple<Cruise_finite1_deterministic_MC::RSset, Cruise_finite1_deterministic_MC::ODset >> _trid_22 = state._tr_ObstacleAppearsWhenCruiseActive();
-                    {
-                        std::unique_lock<std::mutex> _ProjectionRead__tr_ObstacleAppearsWhenCruiseActive_lock(_ProjectionRead__tr_ObstacleAppearsWhenCruiseActive_mutex);
+                {
+                    std::unique_lock<std::mutex> _ProjectionRead__tr_ObstacleAppearsWhenCruiseActive_lock(_ProjectionRead__tr_ObstacleAppearsWhenCruiseActive_mutex);
+                    auto _trid_22_ptr = _OpCache_tr_ObstacleAppearsWhenCruiseActive.find(read__tr_ObstacleAppearsWhenCruiseActive_state);
+                    if(_trid_22_ptr == _OpCache_tr_ObstacleAppearsWhenCruiseActive.end()) {
+                        BSet<BTuple<Cruise_finite1_deterministic_MC::RSset, Cruise_finite1_deterministic_MC::ODset >> _trid_22 = state._tr_ObstacleAppearsWhenCruiseActive();
                         _OpCache_tr_ObstacleAppearsWhenCruiseActive.insert({read__tr_ObstacleAppearsWhenCruiseActive_state, _trid_22});
-                    }
-                    for(const BTuple<Cruise_finite1_deterministic_MC::RSset, Cruise_finite1_deterministic_MC::ODset >& param : _trid_22) {
-                        Cruise_finite1_deterministic_MC::ODset _tmp_1 = param.projection2();
-                        Cruise_finite1_deterministic_MC::RSset _tmp_2 = param.projection1();
+                        for(const BTuple<Cruise_finite1_deterministic_MC::RSset, Cruise_finite1_deterministic_MC::ODset >& param : _trid_22) {
+                            Cruise_finite1_deterministic_MC::ODset _tmp_1 = param.projection2();
+                            Cruise_finite1_deterministic_MC::RSset _tmp_2 = param.projection1();
 
-                        Cruise_finite1_deterministic_MC copiedState = state._copy();
-                        Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleAppearsWhenCruiseActive readState = state._projected_state_for_ObstacleAppearsWhenCruiseActive();
-
-                        auto _OpCache_with_parameter_ObstacleAppearsWhenCruiseActive_ptr = _OpCache_ObstacleAppearsWhenCruiseActive.find(param);
-                        if(_OpCache_with_parameter_ObstacleAppearsWhenCruiseActive_ptr == _OpCache_ObstacleAppearsWhenCruiseActive.end()) {
+                            Cruise_finite1_deterministic_MC copiedState = state._copy();
+                            Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleAppearsWhenCruiseActive readState = state._projected_state_for_ObstacleAppearsWhenCruiseActive();
                             {
                                 std::unique_lock<std::mutex> _ProjectionRead_ObstacleAppearsWhenCruiseActive_lock(_ProjectionRead_ObstacleAppearsWhenCruiseActive_mutex);
-                                copiedState.ObstacleAppearsWhenCruiseActive(_tmp_2, _tmp_1);
-                                Cruise_finite1_deterministic_MC::_ProjectionWrite_ObstacleAppearsWhenCruiseActive writeState = copiedState._update_for_ObstacleAppearsWhenCruiseActive();
-                                std::unordered_map<Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleAppearsWhenCruiseActive, Cruise_finite1_deterministic_MC::_ProjectionWrite_ObstacleAppearsWhenCruiseActive, Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleAppearsWhenCruiseActive::Hash, Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleAppearsWhenCruiseActive::HashEqual> _OpCache_with_parameter_ObstacleAppearsWhenCruiseActive = std::unordered_map<Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleAppearsWhenCruiseActive, Cruise_finite1_deterministic_MC::_ProjectionWrite_ObstacleAppearsWhenCruiseActive, Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleAppearsWhenCruiseActive::Hash, Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleAppearsWhenCruiseActive::HashEqual>();
-                                _OpCache_with_parameter_ObstacleAppearsWhenCruiseActive.insert({readState, writeState});
-                                _OpCache_ObstacleAppearsWhenCruiseActive.insert({param, _OpCache_with_parameter_ObstacleAppearsWhenCruiseActive});
-                            }
-                        } else {
-                            {
-                                std::unique_lock<std::mutex> _ProjectionRead_ObstacleAppearsWhenCruiseActive_lock(_ProjectionRead_ObstacleAppearsWhenCruiseActive_mutex);
-                                std::unordered_map<Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleAppearsWhenCruiseActive, Cruise_finite1_deterministic_MC::_ProjectionWrite_ObstacleAppearsWhenCruiseActive, Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleAppearsWhenCruiseActive::Hash, Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleAppearsWhenCruiseActive::HashEqual> _OpCache_with_parameter_ObstacleAppearsWhenCruiseActive = _OpCache_with_parameter_ObstacleAppearsWhenCruiseActive_ptr->second;
-                                auto writeState_ptr = _OpCache_with_parameter_ObstacleAppearsWhenCruiseActive.find(readState);
-                                if(writeState_ptr != _OpCache_with_parameter_ObstacleAppearsWhenCruiseActive.end()) {
-                                    Cruise_finite1_deterministic_MC::_ProjectionWrite_ObstacleAppearsWhenCruiseActive writeState = writeState_ptr->second;
-                                    copiedState._apply_update_for_ObstacleAppearsWhenCruiseActive(writeState);
-                                } else {
+                                auto _OpCache_with_parameter_ObstacleAppearsWhenCruiseActive_ptr = _OpCache_ObstacleAppearsWhenCruiseActive.find(param);
+                                if(_OpCache_with_parameter_ObstacleAppearsWhenCruiseActive_ptr == _OpCache_ObstacleAppearsWhenCruiseActive.end()) {
                                     copiedState.ObstacleAppearsWhenCruiseActive(_tmp_2, _tmp_1);
                                     Cruise_finite1_deterministic_MC::_ProjectionWrite_ObstacleAppearsWhenCruiseActive writeState = copiedState._update_for_ObstacleAppearsWhenCruiseActive();
+                                    std::unordered_map<Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleAppearsWhenCruiseActive, Cruise_finite1_deterministic_MC::_ProjectionWrite_ObstacleAppearsWhenCruiseActive, Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleAppearsWhenCruiseActive::Hash, Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleAppearsWhenCruiseActive::HashEqual> _OpCache_with_parameter_ObstacleAppearsWhenCruiseActive = std::unordered_map<Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleAppearsWhenCruiseActive, Cruise_finite1_deterministic_MC::_ProjectionWrite_ObstacleAppearsWhenCruiseActive, Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleAppearsWhenCruiseActive::Hash, Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleAppearsWhenCruiseActive::HashEqual>();
                                     _OpCache_with_parameter_ObstacleAppearsWhenCruiseActive.insert({readState, writeState});
+                                    _OpCache_ObstacleAppearsWhenCruiseActive.insert({param, _OpCache_with_parameter_ObstacleAppearsWhenCruiseActive});
+                                } else {
+                                    std::unordered_map<Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleAppearsWhenCruiseActive, Cruise_finite1_deterministic_MC::_ProjectionWrite_ObstacleAppearsWhenCruiseActive, Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleAppearsWhenCruiseActive::Hash, Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleAppearsWhenCruiseActive::HashEqual> _OpCache_with_parameter_ObstacleAppearsWhenCruiseActive = _OpCache_with_parameter_ObstacleAppearsWhenCruiseActive_ptr->second;
+                                    auto writeState_ptr = _OpCache_with_parameter_ObstacleAppearsWhenCruiseActive.find(readState);
+                                    if(writeState_ptr != _OpCache_with_parameter_ObstacleAppearsWhenCruiseActive.end()) {
+                                        Cruise_finite1_deterministic_MC::_ProjectionWrite_ObstacleAppearsWhenCruiseActive writeState = writeState_ptr->second;
+                                        copiedState._apply_update_for_ObstacleAppearsWhenCruiseActive(writeState);
+                                    } else {
+                                        copiedState.ObstacleAppearsWhenCruiseActive(_tmp_2, _tmp_1);
+                                        Cruise_finite1_deterministic_MC::_ProjectionWrite_ObstacleAppearsWhenCruiseActive writeState = copiedState._update_for_ObstacleAppearsWhenCruiseActive();
+                                        _OpCache_with_parameter_ObstacleAppearsWhenCruiseActive.insert({readState, writeState});
+                                    }
                                 }
                             }
-                        }
-
-                        copiedState.stateAccessedVia = "ObstacleAppearsWhenCruiseActive";
-                        result.insert(copiedState);
-                        {
-                            std::unique_lock<std::mutex> lock(mutex);
-                            transitions += 1;
-                        }
-                    }
-                } else {
-                    BSet<BTuple<Cruise_finite1_deterministic_MC::RSset, Cruise_finite1_deterministic_MC::ODset >> _trid_22 = _trid_22_ptr->second;
-                    for(const BTuple<Cruise_finite1_deterministic_MC::RSset, Cruise_finite1_deterministic_MC::ODset >& param : _trid_22) {
-                        Cruise_finite1_deterministic_MC::ODset _tmp_1 = param.projection2();
-                        Cruise_finite1_deterministic_MC::RSset _tmp_2 = param.projection1();
-
-                        Cruise_finite1_deterministic_MC copiedState = state._copy();
-                        Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleAppearsWhenCruiseActive readState = state._projected_state_for_ObstacleAppearsWhenCruiseActive();
-
-                        auto _OpCache_with_parameter_ObstacleAppearsWhenCruiseActive_ptr = _OpCache_ObstacleAppearsWhenCruiseActive.find(param);
-                        if(_OpCache_with_parameter_ObstacleAppearsWhenCruiseActive_ptr == _OpCache_ObstacleAppearsWhenCruiseActive.end()) {
+                            copiedState.stateAccessedVia = "ObstacleAppearsWhenCruiseActive";
+                            result.insert(copiedState);
                             {
-                                std::unique_lock<std::mutex> _ProjectionRead_ObstacleAppearsWhenCruiseActive_lock(_ProjectionRead_ObstacleAppearsWhenCruiseActive_mutex);
-                                copiedState.ObstacleAppearsWhenCruiseActive(_tmp_2, _tmp_1);
-                                Cruise_finite1_deterministic_MC::_ProjectionWrite_ObstacleAppearsWhenCruiseActive writeState = copiedState._update_for_ObstacleAppearsWhenCruiseActive();
-                                std::unordered_map<Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleAppearsWhenCruiseActive, Cruise_finite1_deterministic_MC::_ProjectionWrite_ObstacleAppearsWhenCruiseActive, Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleAppearsWhenCruiseActive::Hash, Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleAppearsWhenCruiseActive::HashEqual> _OpCache_with_parameter_ObstacleAppearsWhenCruiseActive = std::unordered_map<Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleAppearsWhenCruiseActive, Cruise_finite1_deterministic_MC::_ProjectionWrite_ObstacleAppearsWhenCruiseActive, Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleAppearsWhenCruiseActive::Hash, Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleAppearsWhenCruiseActive::HashEqual>();
-                                _OpCache_with_parameter_ObstacleAppearsWhenCruiseActive.insert({readState, writeState});
-                                _OpCache_ObstacleAppearsWhenCruiseActive.insert({param, _OpCache_with_parameter_ObstacleAppearsWhenCruiseActive});
+                                std::unique_lock<std::mutex> lock(mutex);
+                                transitions += 1;
                             }
-                        } else {
+                        }
+                    } else {
+                        BSet<BTuple<Cruise_finite1_deterministic_MC::RSset, Cruise_finite1_deterministic_MC::ODset >> _trid_22 = _trid_22_ptr->second;
+                        for(const BTuple<Cruise_finite1_deterministic_MC::RSset, Cruise_finite1_deterministic_MC::ODset >& param : _trid_22) {
+                            Cruise_finite1_deterministic_MC::ODset _tmp_1 = param.projection2();
+                            Cruise_finite1_deterministic_MC::RSset _tmp_2 = param.projection1();
+
+                            Cruise_finite1_deterministic_MC copiedState = state._copy();
+                            Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleAppearsWhenCruiseActive readState = state._projected_state_for_ObstacleAppearsWhenCruiseActive();
                             {
                                 std::unique_lock<std::mutex> _ProjectionRead_ObstacleAppearsWhenCruiseActive_lock(_ProjectionRead_ObstacleAppearsWhenCruiseActive_mutex);
-                                std::unordered_map<Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleAppearsWhenCruiseActive, Cruise_finite1_deterministic_MC::_ProjectionWrite_ObstacleAppearsWhenCruiseActive, Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleAppearsWhenCruiseActive::Hash, Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleAppearsWhenCruiseActive::HashEqual> _OpCache_with_parameter_ObstacleAppearsWhenCruiseActive = _OpCache_with_parameter_ObstacleAppearsWhenCruiseActive_ptr->second;
-                                auto writeState_ptr = _OpCache_with_parameter_ObstacleAppearsWhenCruiseActive.find(readState);
-                                if(writeState_ptr != _OpCache_with_parameter_ObstacleAppearsWhenCruiseActive.end()) {
-                                    Cruise_finite1_deterministic_MC::_ProjectionWrite_ObstacleAppearsWhenCruiseActive writeState = writeState_ptr->second;
-                                    copiedState._apply_update_for_ObstacleAppearsWhenCruiseActive(writeState);
-                                } else {
+                                auto _OpCache_with_parameter_ObstacleAppearsWhenCruiseActive_ptr = _OpCache_ObstacleAppearsWhenCruiseActive.find(param);
+                                if(_OpCache_with_parameter_ObstacleAppearsWhenCruiseActive_ptr == _OpCache_ObstacleAppearsWhenCruiseActive.end()) {
                                     copiedState.ObstacleAppearsWhenCruiseActive(_tmp_2, _tmp_1);
                                     Cruise_finite1_deterministic_MC::_ProjectionWrite_ObstacleAppearsWhenCruiseActive writeState = copiedState._update_for_ObstacleAppearsWhenCruiseActive();
+                                    std::unordered_map<Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleAppearsWhenCruiseActive, Cruise_finite1_deterministic_MC::_ProjectionWrite_ObstacleAppearsWhenCruiseActive, Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleAppearsWhenCruiseActive::Hash, Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleAppearsWhenCruiseActive::HashEqual> _OpCache_with_parameter_ObstacleAppearsWhenCruiseActive = std::unordered_map<Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleAppearsWhenCruiseActive, Cruise_finite1_deterministic_MC::_ProjectionWrite_ObstacleAppearsWhenCruiseActive, Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleAppearsWhenCruiseActive::Hash, Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleAppearsWhenCruiseActive::HashEqual>();
                                     _OpCache_with_parameter_ObstacleAppearsWhenCruiseActive.insert({readState, writeState});
+                                    _OpCache_ObstacleAppearsWhenCruiseActive.insert({param, _OpCache_with_parameter_ObstacleAppearsWhenCruiseActive});
+                                } else {
+                                    std::unordered_map<Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleAppearsWhenCruiseActive, Cruise_finite1_deterministic_MC::_ProjectionWrite_ObstacleAppearsWhenCruiseActive, Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleAppearsWhenCruiseActive::Hash, Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleAppearsWhenCruiseActive::HashEqual> _OpCache_with_parameter_ObstacleAppearsWhenCruiseActive = _OpCache_with_parameter_ObstacleAppearsWhenCruiseActive_ptr->second;
+                                    auto writeState_ptr = _OpCache_with_parameter_ObstacleAppearsWhenCruiseActive.find(readState);
+                                    if(writeState_ptr != _OpCache_with_parameter_ObstacleAppearsWhenCruiseActive.end()) {
+                                        Cruise_finite1_deterministic_MC::_ProjectionWrite_ObstacleAppearsWhenCruiseActive writeState = writeState_ptr->second;
+                                        copiedState._apply_update_for_ObstacleAppearsWhenCruiseActive(writeState);
+                                    } else {
+                                        copiedState.ObstacleAppearsWhenCruiseActive(_tmp_2, _tmp_1);
+                                        Cruise_finite1_deterministic_MC::_ProjectionWrite_ObstacleAppearsWhenCruiseActive writeState = copiedState._update_for_ObstacleAppearsWhenCruiseActive();
+                                        _OpCache_with_parameter_ObstacleAppearsWhenCruiseActive.insert({readState, writeState});
+                                    }
                                 }
                             }
-                        }
-
-                        copiedState.stateAccessedVia = "ObstacleAppearsWhenCruiseActive";
-                        result.insert(copiedState);
-                        {
-                            std::unique_lock<std::mutex> lock(mutex);
-                            transitions += 1;
+                            copiedState.stateAccessedVia = "ObstacleAppearsWhenCruiseActive";
+                            result.insert(copiedState);
+                            {
+                                std::unique_lock<std::mutex> lock(mutex);
+                                transitions += 1;
+                            }
                         }
                     }
                 }
                 Cruise_finite1_deterministic_MC::_ProjectionRead__tr_ObstacleAppearsWhenCruiseInactive read__tr_ObstacleAppearsWhenCruiseInactive_state = state._projected_state_for__tr_ObstacleAppearsWhenCruiseInactive();
-                auto _trid_23_ptr = _OpCache_tr_ObstacleAppearsWhenCruiseInactive.find(read__tr_ObstacleAppearsWhenCruiseInactive_state);
-                if(_trid_23_ptr == _OpCache_tr_ObstacleAppearsWhenCruiseInactive.end()) {
-                    BSet<Cruise_finite1_deterministic_MC::RSset> _trid_23 = state._tr_ObstacleAppearsWhenCruiseInactive();
-                    {
-                        std::unique_lock<std::mutex> _ProjectionRead__tr_ObstacleAppearsWhenCruiseInactive_lock(_ProjectionRead__tr_ObstacleAppearsWhenCruiseInactive_mutex);
+                {
+                    std::unique_lock<std::mutex> _ProjectionRead__tr_ObstacleAppearsWhenCruiseInactive_lock(_ProjectionRead__tr_ObstacleAppearsWhenCruiseInactive_mutex);
+                    auto _trid_23_ptr = _OpCache_tr_ObstacleAppearsWhenCruiseInactive.find(read__tr_ObstacleAppearsWhenCruiseInactive_state);
+                    if(_trid_23_ptr == _OpCache_tr_ObstacleAppearsWhenCruiseInactive.end()) {
+                        BSet<Cruise_finite1_deterministic_MC::RSset> _trid_23 = state._tr_ObstacleAppearsWhenCruiseInactive();
                         _OpCache_tr_ObstacleAppearsWhenCruiseInactive.insert({read__tr_ObstacleAppearsWhenCruiseInactive_state, _trid_23});
-                    }
-                    for(const Cruise_finite1_deterministic_MC::RSset& param : _trid_23) {
-                        Cruise_finite1_deterministic_MC::RSset _tmp_1 = param;
+                        for(const Cruise_finite1_deterministic_MC::RSset& param : _trid_23) {
+                            Cruise_finite1_deterministic_MC::RSset _tmp_1 = param;
 
-                        Cruise_finite1_deterministic_MC copiedState = state._copy();
-                        Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleAppearsWhenCruiseInactive readState = state._projected_state_for_ObstacleAppearsWhenCruiseInactive();
-
-                        auto _OpCache_with_parameter_ObstacleAppearsWhenCruiseInactive_ptr = _OpCache_ObstacleAppearsWhenCruiseInactive.find(param);
-                        if(_OpCache_with_parameter_ObstacleAppearsWhenCruiseInactive_ptr == _OpCache_ObstacleAppearsWhenCruiseInactive.end()) {
+                            Cruise_finite1_deterministic_MC copiedState = state._copy();
+                            Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleAppearsWhenCruiseInactive readState = state._projected_state_for_ObstacleAppearsWhenCruiseInactive();
                             {
                                 std::unique_lock<std::mutex> _ProjectionRead_ObstacleAppearsWhenCruiseInactive_lock(_ProjectionRead_ObstacleAppearsWhenCruiseInactive_mutex);
-                                copiedState.ObstacleAppearsWhenCruiseInactive(_tmp_1);
-                                Cruise_finite1_deterministic_MC::_ProjectionWrite_ObstacleAppearsWhenCruiseInactive writeState = copiedState._update_for_ObstacleAppearsWhenCruiseInactive();
-                                std::unordered_map<Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleAppearsWhenCruiseInactive, Cruise_finite1_deterministic_MC::_ProjectionWrite_ObstacleAppearsWhenCruiseInactive, Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleAppearsWhenCruiseInactive::Hash, Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleAppearsWhenCruiseInactive::HashEqual> _OpCache_with_parameter_ObstacleAppearsWhenCruiseInactive = std::unordered_map<Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleAppearsWhenCruiseInactive, Cruise_finite1_deterministic_MC::_ProjectionWrite_ObstacleAppearsWhenCruiseInactive, Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleAppearsWhenCruiseInactive::Hash, Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleAppearsWhenCruiseInactive::HashEqual>();
-                                _OpCache_with_parameter_ObstacleAppearsWhenCruiseInactive.insert({readState, writeState});
-                                _OpCache_ObstacleAppearsWhenCruiseInactive.insert({param, _OpCache_with_parameter_ObstacleAppearsWhenCruiseInactive});
-                            }
-                        } else {
-                            {
-                                std::unique_lock<std::mutex> _ProjectionRead_ObstacleAppearsWhenCruiseInactive_lock(_ProjectionRead_ObstacleAppearsWhenCruiseInactive_mutex);
-                                std::unordered_map<Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleAppearsWhenCruiseInactive, Cruise_finite1_deterministic_MC::_ProjectionWrite_ObstacleAppearsWhenCruiseInactive, Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleAppearsWhenCruiseInactive::Hash, Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleAppearsWhenCruiseInactive::HashEqual> _OpCache_with_parameter_ObstacleAppearsWhenCruiseInactive = _OpCache_with_parameter_ObstacleAppearsWhenCruiseInactive_ptr->second;
-                                auto writeState_ptr = _OpCache_with_parameter_ObstacleAppearsWhenCruiseInactive.find(readState);
-                                if(writeState_ptr != _OpCache_with_parameter_ObstacleAppearsWhenCruiseInactive.end()) {
-                                    Cruise_finite1_deterministic_MC::_ProjectionWrite_ObstacleAppearsWhenCruiseInactive writeState = writeState_ptr->second;
-                                    copiedState._apply_update_for_ObstacleAppearsWhenCruiseInactive(writeState);
-                                } else {
+                                auto _OpCache_with_parameter_ObstacleAppearsWhenCruiseInactive_ptr = _OpCache_ObstacleAppearsWhenCruiseInactive.find(param);
+                                if(_OpCache_with_parameter_ObstacleAppearsWhenCruiseInactive_ptr == _OpCache_ObstacleAppearsWhenCruiseInactive.end()) {
                                     copiedState.ObstacleAppearsWhenCruiseInactive(_tmp_1);
                                     Cruise_finite1_deterministic_MC::_ProjectionWrite_ObstacleAppearsWhenCruiseInactive writeState = copiedState._update_for_ObstacleAppearsWhenCruiseInactive();
+                                    std::unordered_map<Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleAppearsWhenCruiseInactive, Cruise_finite1_deterministic_MC::_ProjectionWrite_ObstacleAppearsWhenCruiseInactive, Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleAppearsWhenCruiseInactive::Hash, Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleAppearsWhenCruiseInactive::HashEqual> _OpCache_with_parameter_ObstacleAppearsWhenCruiseInactive = std::unordered_map<Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleAppearsWhenCruiseInactive, Cruise_finite1_deterministic_MC::_ProjectionWrite_ObstacleAppearsWhenCruiseInactive, Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleAppearsWhenCruiseInactive::Hash, Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleAppearsWhenCruiseInactive::HashEqual>();
                                     _OpCache_with_parameter_ObstacleAppearsWhenCruiseInactive.insert({readState, writeState});
+                                    _OpCache_ObstacleAppearsWhenCruiseInactive.insert({param, _OpCache_with_parameter_ObstacleAppearsWhenCruiseInactive});
+                                } else {
+                                    std::unordered_map<Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleAppearsWhenCruiseInactive, Cruise_finite1_deterministic_MC::_ProjectionWrite_ObstacleAppearsWhenCruiseInactive, Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleAppearsWhenCruiseInactive::Hash, Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleAppearsWhenCruiseInactive::HashEqual> _OpCache_with_parameter_ObstacleAppearsWhenCruiseInactive = _OpCache_with_parameter_ObstacleAppearsWhenCruiseInactive_ptr->second;
+                                    auto writeState_ptr = _OpCache_with_parameter_ObstacleAppearsWhenCruiseInactive.find(readState);
+                                    if(writeState_ptr != _OpCache_with_parameter_ObstacleAppearsWhenCruiseInactive.end()) {
+                                        Cruise_finite1_deterministic_MC::_ProjectionWrite_ObstacleAppearsWhenCruiseInactive writeState = writeState_ptr->second;
+                                        copiedState._apply_update_for_ObstacleAppearsWhenCruiseInactive(writeState);
+                                    } else {
+                                        copiedState.ObstacleAppearsWhenCruiseInactive(_tmp_1);
+                                        Cruise_finite1_deterministic_MC::_ProjectionWrite_ObstacleAppearsWhenCruiseInactive writeState = copiedState._update_for_ObstacleAppearsWhenCruiseInactive();
+                                        _OpCache_with_parameter_ObstacleAppearsWhenCruiseInactive.insert({readState, writeState});
+                                    }
                                 }
                             }
-                        }
-
-                        copiedState.stateAccessedVia = "ObstacleAppearsWhenCruiseInactive";
-                        result.insert(copiedState);
-                        {
-                            std::unique_lock<std::mutex> lock(mutex);
-                            transitions += 1;
-                        }
-                    }
-                } else {
-                    BSet<Cruise_finite1_deterministic_MC::RSset> _trid_23 = _trid_23_ptr->second;
-                    for(const Cruise_finite1_deterministic_MC::RSset& param : _trid_23) {
-                        Cruise_finite1_deterministic_MC::RSset _tmp_1 = param;
-
-                        Cruise_finite1_deterministic_MC copiedState = state._copy();
-                        Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleAppearsWhenCruiseInactive readState = state._projected_state_for_ObstacleAppearsWhenCruiseInactive();
-
-                        auto _OpCache_with_parameter_ObstacleAppearsWhenCruiseInactive_ptr = _OpCache_ObstacleAppearsWhenCruiseInactive.find(param);
-                        if(_OpCache_with_parameter_ObstacleAppearsWhenCruiseInactive_ptr == _OpCache_ObstacleAppearsWhenCruiseInactive.end()) {
+                            copiedState.stateAccessedVia = "ObstacleAppearsWhenCruiseInactive";
+                            result.insert(copiedState);
                             {
-                                std::unique_lock<std::mutex> _ProjectionRead_ObstacleAppearsWhenCruiseInactive_lock(_ProjectionRead_ObstacleAppearsWhenCruiseInactive_mutex);
-                                copiedState.ObstacleAppearsWhenCruiseInactive(_tmp_1);
-                                Cruise_finite1_deterministic_MC::_ProjectionWrite_ObstacleAppearsWhenCruiseInactive writeState = copiedState._update_for_ObstacleAppearsWhenCruiseInactive();
-                                std::unordered_map<Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleAppearsWhenCruiseInactive, Cruise_finite1_deterministic_MC::_ProjectionWrite_ObstacleAppearsWhenCruiseInactive, Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleAppearsWhenCruiseInactive::Hash, Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleAppearsWhenCruiseInactive::HashEqual> _OpCache_with_parameter_ObstacleAppearsWhenCruiseInactive = std::unordered_map<Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleAppearsWhenCruiseInactive, Cruise_finite1_deterministic_MC::_ProjectionWrite_ObstacleAppearsWhenCruiseInactive, Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleAppearsWhenCruiseInactive::Hash, Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleAppearsWhenCruiseInactive::HashEqual>();
-                                _OpCache_with_parameter_ObstacleAppearsWhenCruiseInactive.insert({readState, writeState});
-                                _OpCache_ObstacleAppearsWhenCruiseInactive.insert({param, _OpCache_with_parameter_ObstacleAppearsWhenCruiseInactive});
+                                std::unique_lock<std::mutex> lock(mutex);
+                                transitions += 1;
                             }
-                        } else {
+                        }
+                    } else {
+                        BSet<Cruise_finite1_deterministic_MC::RSset> _trid_23 = _trid_23_ptr->second;
+                        for(const Cruise_finite1_deterministic_MC::RSset& param : _trid_23) {
+                            Cruise_finite1_deterministic_MC::RSset _tmp_1 = param;
+
+                            Cruise_finite1_deterministic_MC copiedState = state._copy();
+                            Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleAppearsWhenCruiseInactive readState = state._projected_state_for_ObstacleAppearsWhenCruiseInactive();
                             {
                                 std::unique_lock<std::mutex> _ProjectionRead_ObstacleAppearsWhenCruiseInactive_lock(_ProjectionRead_ObstacleAppearsWhenCruiseInactive_mutex);
-                                std::unordered_map<Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleAppearsWhenCruiseInactive, Cruise_finite1_deterministic_MC::_ProjectionWrite_ObstacleAppearsWhenCruiseInactive, Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleAppearsWhenCruiseInactive::Hash, Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleAppearsWhenCruiseInactive::HashEqual> _OpCache_with_parameter_ObstacleAppearsWhenCruiseInactive = _OpCache_with_parameter_ObstacleAppearsWhenCruiseInactive_ptr->second;
-                                auto writeState_ptr = _OpCache_with_parameter_ObstacleAppearsWhenCruiseInactive.find(readState);
-                                if(writeState_ptr != _OpCache_with_parameter_ObstacleAppearsWhenCruiseInactive.end()) {
-                                    Cruise_finite1_deterministic_MC::_ProjectionWrite_ObstacleAppearsWhenCruiseInactive writeState = writeState_ptr->second;
-                                    copiedState._apply_update_for_ObstacleAppearsWhenCruiseInactive(writeState);
-                                } else {
+                                auto _OpCache_with_parameter_ObstacleAppearsWhenCruiseInactive_ptr = _OpCache_ObstacleAppearsWhenCruiseInactive.find(param);
+                                if(_OpCache_with_parameter_ObstacleAppearsWhenCruiseInactive_ptr == _OpCache_ObstacleAppearsWhenCruiseInactive.end()) {
                                     copiedState.ObstacleAppearsWhenCruiseInactive(_tmp_1);
                                     Cruise_finite1_deterministic_MC::_ProjectionWrite_ObstacleAppearsWhenCruiseInactive writeState = copiedState._update_for_ObstacleAppearsWhenCruiseInactive();
+                                    std::unordered_map<Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleAppearsWhenCruiseInactive, Cruise_finite1_deterministic_MC::_ProjectionWrite_ObstacleAppearsWhenCruiseInactive, Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleAppearsWhenCruiseInactive::Hash, Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleAppearsWhenCruiseInactive::HashEqual> _OpCache_with_parameter_ObstacleAppearsWhenCruiseInactive = std::unordered_map<Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleAppearsWhenCruiseInactive, Cruise_finite1_deterministic_MC::_ProjectionWrite_ObstacleAppearsWhenCruiseInactive, Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleAppearsWhenCruiseInactive::Hash, Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleAppearsWhenCruiseInactive::HashEqual>();
                                     _OpCache_with_parameter_ObstacleAppearsWhenCruiseInactive.insert({readState, writeState});
+                                    _OpCache_ObstacleAppearsWhenCruiseInactive.insert({param, _OpCache_with_parameter_ObstacleAppearsWhenCruiseInactive});
+                                } else {
+                                    std::unordered_map<Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleAppearsWhenCruiseInactive, Cruise_finite1_deterministic_MC::_ProjectionWrite_ObstacleAppearsWhenCruiseInactive, Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleAppearsWhenCruiseInactive::Hash, Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleAppearsWhenCruiseInactive::HashEqual> _OpCache_with_parameter_ObstacleAppearsWhenCruiseInactive = _OpCache_with_parameter_ObstacleAppearsWhenCruiseInactive_ptr->second;
+                                    auto writeState_ptr = _OpCache_with_parameter_ObstacleAppearsWhenCruiseInactive.find(readState);
+                                    if(writeState_ptr != _OpCache_with_parameter_ObstacleAppearsWhenCruiseInactive.end()) {
+                                        Cruise_finite1_deterministic_MC::_ProjectionWrite_ObstacleAppearsWhenCruiseInactive writeState = writeState_ptr->second;
+                                        copiedState._apply_update_for_ObstacleAppearsWhenCruiseInactive(writeState);
+                                    } else {
+                                        copiedState.ObstacleAppearsWhenCruiseInactive(_tmp_1);
+                                        Cruise_finite1_deterministic_MC::_ProjectionWrite_ObstacleAppearsWhenCruiseInactive writeState = copiedState._update_for_ObstacleAppearsWhenCruiseInactive();
+                                        _OpCache_with_parameter_ObstacleAppearsWhenCruiseInactive.insert({readState, writeState});
+                                    }
                                 }
                             }
-                        }
-
-                        copiedState.stateAccessedVia = "ObstacleAppearsWhenCruiseInactive";
-                        result.insert(copiedState);
-                        {
-                            std::unique_lock<std::mutex> lock(mutex);
-                            transitions += 1;
+                            copiedState.stateAccessedVia = "ObstacleAppearsWhenCruiseInactive";
+                            result.insert(copiedState);
+                            {
+                                std::unique_lock<std::mutex> lock(mutex);
+                                transitions += 1;
+                            }
                         }
                     }
                 }
                 Cruise_finite1_deterministic_MC::_ProjectionRead__tr_ObstacleDisappears read__tr_ObstacleDisappears_state = state._projected_state_for__tr_ObstacleDisappears();
                 bool _trid_24 = false;
-                auto _obj__trid_24_ptr = _OpCache_tr_ObstacleDisappears.find(read__tr_ObstacleDisappears_state);
-                if(_obj__trid_24_ptr == _OpCache_tr_ObstacleDisappears.end()) {
-                    _trid_24 = state._tr_ObstacleDisappears();
-                    {
-                        std::unique_lock<std::mutex> _ProjectionRead__tr_ObstacleDisappears_lock(_ProjectionRead__tr_ObstacleDisappears_mutex);
+                {
+                    std::unique_lock<std::mutex> _ProjectionRead__tr_ObstacleDisappears_lock(_ProjectionRead__tr_ObstacleDisappears_mutex);
+                    auto _obj__trid_24_ptr = _OpCache_tr_ObstacleDisappears.find(read__tr_ObstacleDisappears_state);
+                    if(_obj__trid_24_ptr == _OpCache_tr_ObstacleDisappears.end()) {
+                        _trid_24 = state._tr_ObstacleDisappears();
                         _OpCache_tr_ObstacleDisappears.insert({read__tr_ObstacleDisappears_state, _trid_24});
+                    } else {
+                        _trid_24 = _obj__trid_24_ptr->second;
                     }
-                } else {
-                    _trid_24 = _obj__trid_24_ptr->second;
                 }
                 if(_trid_24) {
                     Cruise_finite1_deterministic_MC copiedState = state._copy();
                     Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleDisappears readState = state._projected_state_for_ObstacleDisappears();
-
-                    auto _OpCache_with_parameter_ObstacleDisappears_ptr = _OpCache_ObstacleDisappears.find(_trid_24);
-                    if(_OpCache_with_parameter_ObstacleDisappears_ptr == _OpCache_ObstacleDisappears.end()) {
-                        {
-                            std::unique_lock<std::mutex> _ProjectionRead_ObstacleDisappears_lock(_ProjectionRead_ObstacleDisappears_mutex);
+                    {
+                        std::unique_lock<std::mutex> _ProjectionRead_ObstacleDisappears_lock(_ProjectionRead_ObstacleDisappears_mutex);
+                        auto _OpCache_with_parameter_ObstacleDisappears_ptr = _OpCache_ObstacleDisappears.find(_trid_24);
+                        if(_OpCache_with_parameter_ObstacleDisappears_ptr == _OpCache_ObstacleDisappears.end()) {
                             copiedState.ObstacleDisappears();
                             Cruise_finite1_deterministic_MC::_ProjectionWrite_ObstacleDisappears writeState = copiedState._update_for_ObstacleDisappears();
                             std::unordered_map<Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleDisappears, Cruise_finite1_deterministic_MC::_ProjectionWrite_ObstacleDisappears, Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleDisappears::Hash, Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleDisappears::HashEqual> _OpCache_with_parameter_ObstacleDisappears = std::unordered_map<Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleDisappears, Cruise_finite1_deterministic_MC::_ProjectionWrite_ObstacleDisappears, Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleDisappears::Hash, Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleDisappears::HashEqual>();
                             _OpCache_with_parameter_ObstacleDisappears.insert({readState, writeState});
                             _OpCache_ObstacleDisappears.insert({_trid_24, _OpCache_with_parameter_ObstacleDisappears});
-                        }
-                    } else {
-                        {
-                            std::unique_lock<std::mutex> _ProjectionRead_ObstacleDisappears_lock(_ProjectionRead_ObstacleDisappears_mutex);
+                        } else {
                             std::unordered_map<Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleDisappears, Cruise_finite1_deterministic_MC::_ProjectionWrite_ObstacleDisappears, Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleDisappears::Hash, Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleDisappears::HashEqual> _OpCache_with_parameter_ObstacleDisappears = _OpCache_with_parameter_ObstacleDisappears_ptr->second;
                             auto writeState_ptr = _OpCache_with_parameter_ObstacleDisappears.find(readState);
                             if(writeState_ptr != _OpCache_with_parameter_ObstacleDisappears.end()) {
@@ -10096,7 +9952,6 @@ class ModelChecker {
                             }
                         }
                     }
-
                     copiedState.stateAccessedVia = "ObstacleDisappears";
                     result.insert(copiedState);
                     {
@@ -10105,125 +9960,111 @@ class ModelChecker {
                     }
                 }
                 Cruise_finite1_deterministic_MC::_ProjectionRead__tr_VehicleManageObstacle read__tr_VehicleManageObstacle_state = state._projected_state_for__tr_VehicleManageObstacle();
-                auto _trid_25_ptr = _OpCache_tr_VehicleManageObstacle.find(read__tr_VehicleManageObstacle_state);
-                if(_trid_25_ptr == _OpCache_tr_VehicleManageObstacle.end()) {
-                    BSet<BTuple<BBoolean, BBoolean >> _trid_25 = state._tr_VehicleManageObstacle();
-                    {
-                        std::unique_lock<std::mutex> _ProjectionRead__tr_VehicleManageObstacle_lock(_ProjectionRead__tr_VehicleManageObstacle_mutex);
+                {
+                    std::unique_lock<std::mutex> _ProjectionRead__tr_VehicleManageObstacle_lock(_ProjectionRead__tr_VehicleManageObstacle_mutex);
+                    auto _trid_25_ptr = _OpCache_tr_VehicleManageObstacle.find(read__tr_VehicleManageObstacle_state);
+                    if(_trid_25_ptr == _OpCache_tr_VehicleManageObstacle.end()) {
+                        BSet<BTuple<BBoolean, BBoolean >> _trid_25 = state._tr_VehicleManageObstacle();
                         _OpCache_tr_VehicleManageObstacle.insert({read__tr_VehicleManageObstacle_state, _trid_25});
-                    }
-                    for(const BTuple<BBoolean, BBoolean >& param : _trid_25) {
-                        BBoolean _tmp_1 = param.projection2();
-                        BBoolean _tmp_2 = param.projection1();
+                        for(const BTuple<BBoolean, BBoolean >& param : _trid_25) {
+                            BBoolean _tmp_1 = param.projection2();
+                            BBoolean _tmp_2 = param.projection1();
 
-                        Cruise_finite1_deterministic_MC copiedState = state._copy();
-                        Cruise_finite1_deterministic_MC::_ProjectionRead_VehicleManageObstacle readState = state._projected_state_for_VehicleManageObstacle();
-
-                        auto _OpCache_with_parameter_VehicleManageObstacle_ptr = _OpCache_VehicleManageObstacle.find(param);
-                        if(_OpCache_with_parameter_VehicleManageObstacle_ptr == _OpCache_VehicleManageObstacle.end()) {
+                            Cruise_finite1_deterministic_MC copiedState = state._copy();
+                            Cruise_finite1_deterministic_MC::_ProjectionRead_VehicleManageObstacle readState = state._projected_state_for_VehicleManageObstacle();
                             {
                                 std::unique_lock<std::mutex> _ProjectionRead_VehicleManageObstacle_lock(_ProjectionRead_VehicleManageObstacle_mutex);
-                                copiedState.VehicleManageObstacle(_tmp_2, _tmp_1);
-                                Cruise_finite1_deterministic_MC::_ProjectionWrite_VehicleManageObstacle writeState = copiedState._update_for_VehicleManageObstacle();
-                                std::unordered_map<Cruise_finite1_deterministic_MC::_ProjectionRead_VehicleManageObstacle, Cruise_finite1_deterministic_MC::_ProjectionWrite_VehicleManageObstacle, Cruise_finite1_deterministic_MC::_ProjectionRead_VehicleManageObstacle::Hash, Cruise_finite1_deterministic_MC::_ProjectionRead_VehicleManageObstacle::HashEqual> _OpCache_with_parameter_VehicleManageObstacle = std::unordered_map<Cruise_finite1_deterministic_MC::_ProjectionRead_VehicleManageObstacle, Cruise_finite1_deterministic_MC::_ProjectionWrite_VehicleManageObstacle, Cruise_finite1_deterministic_MC::_ProjectionRead_VehicleManageObstacle::Hash, Cruise_finite1_deterministic_MC::_ProjectionRead_VehicleManageObstacle::HashEqual>();
-                                _OpCache_with_parameter_VehicleManageObstacle.insert({readState, writeState});
-                                _OpCache_VehicleManageObstacle.insert({param, _OpCache_with_parameter_VehicleManageObstacle});
-                            }
-                        } else {
-                            {
-                                std::unique_lock<std::mutex> _ProjectionRead_VehicleManageObstacle_lock(_ProjectionRead_VehicleManageObstacle_mutex);
-                                std::unordered_map<Cruise_finite1_deterministic_MC::_ProjectionRead_VehicleManageObstacle, Cruise_finite1_deterministic_MC::_ProjectionWrite_VehicleManageObstacle, Cruise_finite1_deterministic_MC::_ProjectionRead_VehicleManageObstacle::Hash, Cruise_finite1_deterministic_MC::_ProjectionRead_VehicleManageObstacle::HashEqual> _OpCache_with_parameter_VehicleManageObstacle = _OpCache_with_parameter_VehicleManageObstacle_ptr->second;
-                                auto writeState_ptr = _OpCache_with_parameter_VehicleManageObstacle.find(readState);
-                                if(writeState_ptr != _OpCache_with_parameter_VehicleManageObstacle.end()) {
-                                    Cruise_finite1_deterministic_MC::_ProjectionWrite_VehicleManageObstacle writeState = writeState_ptr->second;
-                                    copiedState._apply_update_for_VehicleManageObstacle(writeState);
-                                } else {
+                                auto _OpCache_with_parameter_VehicleManageObstacle_ptr = _OpCache_VehicleManageObstacle.find(param);
+                                if(_OpCache_with_parameter_VehicleManageObstacle_ptr == _OpCache_VehicleManageObstacle.end()) {
                                     copiedState.VehicleManageObstacle(_tmp_2, _tmp_1);
                                     Cruise_finite1_deterministic_MC::_ProjectionWrite_VehicleManageObstacle writeState = copiedState._update_for_VehicleManageObstacle();
+                                    std::unordered_map<Cruise_finite1_deterministic_MC::_ProjectionRead_VehicleManageObstacle, Cruise_finite1_deterministic_MC::_ProjectionWrite_VehicleManageObstacle, Cruise_finite1_deterministic_MC::_ProjectionRead_VehicleManageObstacle::Hash, Cruise_finite1_deterministic_MC::_ProjectionRead_VehicleManageObstacle::HashEqual> _OpCache_with_parameter_VehicleManageObstacle = std::unordered_map<Cruise_finite1_deterministic_MC::_ProjectionRead_VehicleManageObstacle, Cruise_finite1_deterministic_MC::_ProjectionWrite_VehicleManageObstacle, Cruise_finite1_deterministic_MC::_ProjectionRead_VehicleManageObstacle::Hash, Cruise_finite1_deterministic_MC::_ProjectionRead_VehicleManageObstacle::HashEqual>();
                                     _OpCache_with_parameter_VehicleManageObstacle.insert({readState, writeState});
+                                    _OpCache_VehicleManageObstacle.insert({param, _OpCache_with_parameter_VehicleManageObstacle});
+                                } else {
+                                    std::unordered_map<Cruise_finite1_deterministic_MC::_ProjectionRead_VehicleManageObstacle, Cruise_finite1_deterministic_MC::_ProjectionWrite_VehicleManageObstacle, Cruise_finite1_deterministic_MC::_ProjectionRead_VehicleManageObstacle::Hash, Cruise_finite1_deterministic_MC::_ProjectionRead_VehicleManageObstacle::HashEqual> _OpCache_with_parameter_VehicleManageObstacle = _OpCache_with_parameter_VehicleManageObstacle_ptr->second;
+                                    auto writeState_ptr = _OpCache_with_parameter_VehicleManageObstacle.find(readState);
+                                    if(writeState_ptr != _OpCache_with_parameter_VehicleManageObstacle.end()) {
+                                        Cruise_finite1_deterministic_MC::_ProjectionWrite_VehicleManageObstacle writeState = writeState_ptr->second;
+                                        copiedState._apply_update_for_VehicleManageObstacle(writeState);
+                                    } else {
+                                        copiedState.VehicleManageObstacle(_tmp_2, _tmp_1);
+                                        Cruise_finite1_deterministic_MC::_ProjectionWrite_VehicleManageObstacle writeState = copiedState._update_for_VehicleManageObstacle();
+                                        _OpCache_with_parameter_VehicleManageObstacle.insert({readState, writeState});
+                                    }
                                 }
                             }
-                        }
-
-                        copiedState.stateAccessedVia = "VehicleManageObstacle";
-                        result.insert(copiedState);
-                        {
-                            std::unique_lock<std::mutex> lock(mutex);
-                            transitions += 1;
-                        }
-                    }
-                } else {
-                    BSet<BTuple<BBoolean, BBoolean >> _trid_25 = _trid_25_ptr->second;
-                    for(const BTuple<BBoolean, BBoolean >& param : _trid_25) {
-                        BBoolean _tmp_1 = param.projection2();
-                        BBoolean _tmp_2 = param.projection1();
-
-                        Cruise_finite1_deterministic_MC copiedState = state._copy();
-                        Cruise_finite1_deterministic_MC::_ProjectionRead_VehicleManageObstacle readState = state._projected_state_for_VehicleManageObstacle();
-
-                        auto _OpCache_with_parameter_VehicleManageObstacle_ptr = _OpCache_VehicleManageObstacle.find(param);
-                        if(_OpCache_with_parameter_VehicleManageObstacle_ptr == _OpCache_VehicleManageObstacle.end()) {
+                            copiedState.stateAccessedVia = "VehicleManageObstacle";
+                            result.insert(copiedState);
                             {
-                                std::unique_lock<std::mutex> _ProjectionRead_VehicleManageObstacle_lock(_ProjectionRead_VehicleManageObstacle_mutex);
-                                copiedState.VehicleManageObstacle(_tmp_2, _tmp_1);
-                                Cruise_finite1_deterministic_MC::_ProjectionWrite_VehicleManageObstacle writeState = copiedState._update_for_VehicleManageObstacle();
-                                std::unordered_map<Cruise_finite1_deterministic_MC::_ProjectionRead_VehicleManageObstacle, Cruise_finite1_deterministic_MC::_ProjectionWrite_VehicleManageObstacle, Cruise_finite1_deterministic_MC::_ProjectionRead_VehicleManageObstacle::Hash, Cruise_finite1_deterministic_MC::_ProjectionRead_VehicleManageObstacle::HashEqual> _OpCache_with_parameter_VehicleManageObstacle = std::unordered_map<Cruise_finite1_deterministic_MC::_ProjectionRead_VehicleManageObstacle, Cruise_finite1_deterministic_MC::_ProjectionWrite_VehicleManageObstacle, Cruise_finite1_deterministic_MC::_ProjectionRead_VehicleManageObstacle::Hash, Cruise_finite1_deterministic_MC::_ProjectionRead_VehicleManageObstacle::HashEqual>();
-                                _OpCache_with_parameter_VehicleManageObstacle.insert({readState, writeState});
-                                _OpCache_VehicleManageObstacle.insert({param, _OpCache_with_parameter_VehicleManageObstacle});
+                                std::unique_lock<std::mutex> lock(mutex);
+                                transitions += 1;
                             }
-                        } else {
+                        }
+                    } else {
+                        BSet<BTuple<BBoolean, BBoolean >> _trid_25 = _trid_25_ptr->second;
+                        for(const BTuple<BBoolean, BBoolean >& param : _trid_25) {
+                            BBoolean _tmp_1 = param.projection2();
+                            BBoolean _tmp_2 = param.projection1();
+
+                            Cruise_finite1_deterministic_MC copiedState = state._copy();
+                            Cruise_finite1_deterministic_MC::_ProjectionRead_VehicleManageObstacle readState = state._projected_state_for_VehicleManageObstacle();
                             {
                                 std::unique_lock<std::mutex> _ProjectionRead_VehicleManageObstacle_lock(_ProjectionRead_VehicleManageObstacle_mutex);
-                                std::unordered_map<Cruise_finite1_deterministic_MC::_ProjectionRead_VehicleManageObstacle, Cruise_finite1_deterministic_MC::_ProjectionWrite_VehicleManageObstacle, Cruise_finite1_deterministic_MC::_ProjectionRead_VehicleManageObstacle::Hash, Cruise_finite1_deterministic_MC::_ProjectionRead_VehicleManageObstacle::HashEqual> _OpCache_with_parameter_VehicleManageObstacle = _OpCache_with_parameter_VehicleManageObstacle_ptr->second;
-                                auto writeState_ptr = _OpCache_with_parameter_VehicleManageObstacle.find(readState);
-                                if(writeState_ptr != _OpCache_with_parameter_VehicleManageObstacle.end()) {
-                                    Cruise_finite1_deterministic_MC::_ProjectionWrite_VehicleManageObstacle writeState = writeState_ptr->second;
-                                    copiedState._apply_update_for_VehicleManageObstacle(writeState);
-                                } else {
+                                auto _OpCache_with_parameter_VehicleManageObstacle_ptr = _OpCache_VehicleManageObstacle.find(param);
+                                if(_OpCache_with_parameter_VehicleManageObstacle_ptr == _OpCache_VehicleManageObstacle.end()) {
                                     copiedState.VehicleManageObstacle(_tmp_2, _tmp_1);
                                     Cruise_finite1_deterministic_MC::_ProjectionWrite_VehicleManageObstacle writeState = copiedState._update_for_VehicleManageObstacle();
+                                    std::unordered_map<Cruise_finite1_deterministic_MC::_ProjectionRead_VehicleManageObstacle, Cruise_finite1_deterministic_MC::_ProjectionWrite_VehicleManageObstacle, Cruise_finite1_deterministic_MC::_ProjectionRead_VehicleManageObstacle::Hash, Cruise_finite1_deterministic_MC::_ProjectionRead_VehicleManageObstacle::HashEqual> _OpCache_with_parameter_VehicleManageObstacle = std::unordered_map<Cruise_finite1_deterministic_MC::_ProjectionRead_VehicleManageObstacle, Cruise_finite1_deterministic_MC::_ProjectionWrite_VehicleManageObstacle, Cruise_finite1_deterministic_MC::_ProjectionRead_VehicleManageObstacle::Hash, Cruise_finite1_deterministic_MC::_ProjectionRead_VehicleManageObstacle::HashEqual>();
                                     _OpCache_with_parameter_VehicleManageObstacle.insert({readState, writeState});
+                                    _OpCache_VehicleManageObstacle.insert({param, _OpCache_with_parameter_VehicleManageObstacle});
+                                } else {
+                                    std::unordered_map<Cruise_finite1_deterministic_MC::_ProjectionRead_VehicleManageObstacle, Cruise_finite1_deterministic_MC::_ProjectionWrite_VehicleManageObstacle, Cruise_finite1_deterministic_MC::_ProjectionRead_VehicleManageObstacle::Hash, Cruise_finite1_deterministic_MC::_ProjectionRead_VehicleManageObstacle::HashEqual> _OpCache_with_parameter_VehicleManageObstacle = _OpCache_with_parameter_VehicleManageObstacle_ptr->second;
+                                    auto writeState_ptr = _OpCache_with_parameter_VehicleManageObstacle.find(readState);
+                                    if(writeState_ptr != _OpCache_with_parameter_VehicleManageObstacle.end()) {
+                                        Cruise_finite1_deterministic_MC::_ProjectionWrite_VehicleManageObstacle writeState = writeState_ptr->second;
+                                        copiedState._apply_update_for_VehicleManageObstacle(writeState);
+                                    } else {
+                                        copiedState.VehicleManageObstacle(_tmp_2, _tmp_1);
+                                        Cruise_finite1_deterministic_MC::_ProjectionWrite_VehicleManageObstacle writeState = copiedState._update_for_VehicleManageObstacle();
+                                        _OpCache_with_parameter_VehicleManageObstacle.insert({readState, writeState});
+                                    }
                                 }
                             }
-                        }
-
-                        copiedState.stateAccessedVia = "VehicleManageObstacle";
-                        result.insert(copiedState);
-                        {
-                            std::unique_lock<std::mutex> lock(mutex);
-                            transitions += 1;
+                            copiedState.stateAccessedVia = "VehicleManageObstacle";
+                            result.insert(copiedState);
+                            {
+                                std::unique_lock<std::mutex> lock(mutex);
+                                transitions += 1;
+                            }
                         }
                     }
                 }
                 Cruise_finite1_deterministic_MC::_ProjectionRead__tr_ObstacleBecomesOld read__tr_ObstacleBecomesOld_state = state._projected_state_for__tr_ObstacleBecomesOld();
                 bool _trid_26 = false;
-                auto _obj__trid_26_ptr = _OpCache_tr_ObstacleBecomesOld.find(read__tr_ObstacleBecomesOld_state);
-                if(_obj__trid_26_ptr == _OpCache_tr_ObstacleBecomesOld.end()) {
-                    _trid_26 = state._tr_ObstacleBecomesOld();
-                    {
-                        std::unique_lock<std::mutex> _ProjectionRead__tr_ObstacleBecomesOld_lock(_ProjectionRead__tr_ObstacleBecomesOld_mutex);
+                {
+                    std::unique_lock<std::mutex> _ProjectionRead__tr_ObstacleBecomesOld_lock(_ProjectionRead__tr_ObstacleBecomesOld_mutex);
+                    auto _obj__trid_26_ptr = _OpCache_tr_ObstacleBecomesOld.find(read__tr_ObstacleBecomesOld_state);
+                    if(_obj__trid_26_ptr == _OpCache_tr_ObstacleBecomesOld.end()) {
+                        _trid_26 = state._tr_ObstacleBecomesOld();
                         _OpCache_tr_ObstacleBecomesOld.insert({read__tr_ObstacleBecomesOld_state, _trid_26});
+                    } else {
+                        _trid_26 = _obj__trid_26_ptr->second;
                     }
-                } else {
-                    _trid_26 = _obj__trid_26_ptr->second;
                 }
                 if(_trid_26) {
                     Cruise_finite1_deterministic_MC copiedState = state._copy();
                     Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleBecomesOld readState = state._projected_state_for_ObstacleBecomesOld();
-
-                    auto _OpCache_with_parameter_ObstacleBecomesOld_ptr = _OpCache_ObstacleBecomesOld.find(_trid_26);
-                    if(_OpCache_with_parameter_ObstacleBecomesOld_ptr == _OpCache_ObstacleBecomesOld.end()) {
-                        {
-                            std::unique_lock<std::mutex> _ProjectionRead_ObstacleBecomesOld_lock(_ProjectionRead_ObstacleBecomesOld_mutex);
+                    {
+                        std::unique_lock<std::mutex> _ProjectionRead_ObstacleBecomesOld_lock(_ProjectionRead_ObstacleBecomesOld_mutex);
+                        auto _OpCache_with_parameter_ObstacleBecomesOld_ptr = _OpCache_ObstacleBecomesOld.find(_trid_26);
+                        if(_OpCache_with_parameter_ObstacleBecomesOld_ptr == _OpCache_ObstacleBecomesOld.end()) {
                             copiedState.ObstacleBecomesOld();
                             Cruise_finite1_deterministic_MC::_ProjectionWrite_ObstacleBecomesOld writeState = copiedState._update_for_ObstacleBecomesOld();
                             std::unordered_map<Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleBecomesOld, Cruise_finite1_deterministic_MC::_ProjectionWrite_ObstacleBecomesOld, Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleBecomesOld::Hash, Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleBecomesOld::HashEqual> _OpCache_with_parameter_ObstacleBecomesOld = std::unordered_map<Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleBecomesOld, Cruise_finite1_deterministic_MC::_ProjectionWrite_ObstacleBecomesOld, Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleBecomesOld::Hash, Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleBecomesOld::HashEqual>();
                             _OpCache_with_parameter_ObstacleBecomesOld.insert({readState, writeState});
                             _OpCache_ObstacleBecomesOld.insert({_trid_26, _OpCache_with_parameter_ObstacleBecomesOld});
-                        }
-                    } else {
-                        {
-                            std::unique_lock<std::mutex> _ProjectionRead_ObstacleBecomesOld_lock(_ProjectionRead_ObstacleBecomesOld_mutex);
+                        } else {
                             std::unordered_map<Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleBecomesOld, Cruise_finite1_deterministic_MC::_ProjectionWrite_ObstacleBecomesOld, Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleBecomesOld::Hash, Cruise_finite1_deterministic_MC::_ProjectionRead_ObstacleBecomesOld::HashEqual> _OpCache_with_parameter_ObstacleBecomesOld = _OpCache_with_parameter_ObstacleBecomesOld_ptr->second;
                             auto writeState_ptr = _OpCache_with_parameter_ObstacleBecomesOld.find(readState);
                             if(writeState_ptr != _OpCache_with_parameter_ObstacleBecomesOld.end()) {
@@ -10236,7 +10077,6 @@ class ModelChecker {
                             }
                         }
                     }
-
                     copiedState.stateAccessedVia = "ObstacleBecomesOld";
                     result.insert(copiedState);
                     {

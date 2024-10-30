@@ -621,91 +621,81 @@ class ModelChecker {
             std::unordered_set<QueensWithEvents_4, QueensWithEvents_4::Hash, QueensWithEvents_4::HashEqual> result = std::unordered_set<QueensWithEvents_4, QueensWithEvents_4::Hash, QueensWithEvents_4::HashEqual>();
             if(isCaching) {
                 QueensWithEvents_4::_ProjectionRead__tr_Solve read__tr_Solve_state = state._projected_state_for__tr_Solve();
-                auto _trid_1_ptr = _OpCache_tr_Solve.find(read__tr_Solve_state);
-                if(_trid_1_ptr == _OpCache_tr_Solve.end()) {
-                    BSet<BRelation<BInteger, BInteger >> _trid_1 = state._tr_Solve();
-                    {
-                        std::unique_lock<std::mutex> _ProjectionRead__tr_Solve_lock(_ProjectionRead__tr_Solve_mutex);
+                {
+                    std::unique_lock<std::mutex> _ProjectionRead__tr_Solve_lock(_ProjectionRead__tr_Solve_mutex);
+                    auto _trid_1_ptr = _OpCache_tr_Solve.find(read__tr_Solve_state);
+                    if(_trid_1_ptr == _OpCache_tr_Solve.end()) {
+                        BSet<BRelation<BInteger, BInteger >> _trid_1 = state._tr_Solve();
                         _OpCache_tr_Solve.insert({read__tr_Solve_state, _trid_1});
-                    }
-                    for(const BRelation<BInteger, BInteger >& param : _trid_1) {
-                        BRelation<BInteger, BInteger > _tmp_1 = param;
+                        for(const BRelation<BInteger, BInteger >& param : _trid_1) {
+                            BRelation<BInteger, BInteger > _tmp_1 = param;
 
-                        QueensWithEvents_4 copiedState = state._copy();
-                        QueensWithEvents_4::_ProjectionRead_Solve readState = state._projected_state_for_Solve();
-
-                        auto _OpCache_with_parameter_Solve_ptr = _OpCache_Solve.find(param);
-                        if(_OpCache_with_parameter_Solve_ptr == _OpCache_Solve.end()) {
+                            QueensWithEvents_4 copiedState = state._copy();
+                            QueensWithEvents_4::_ProjectionRead_Solve readState = state._projected_state_for_Solve();
                             {
                                 std::unique_lock<std::mutex> _ProjectionRead_Solve_lock(_ProjectionRead_Solve_mutex);
-                                copiedState.Solve(_tmp_1);
-                                QueensWithEvents_4::_ProjectionWrite_Solve writeState = copiedState._update_for_Solve();
-                                std::unordered_map<QueensWithEvents_4::_ProjectionRead_Solve, QueensWithEvents_4::_ProjectionWrite_Solve, QueensWithEvents_4::_ProjectionRead_Solve::Hash, QueensWithEvents_4::_ProjectionRead_Solve::HashEqual> _OpCache_with_parameter_Solve = std::unordered_map<QueensWithEvents_4::_ProjectionRead_Solve, QueensWithEvents_4::_ProjectionWrite_Solve, QueensWithEvents_4::_ProjectionRead_Solve::Hash, QueensWithEvents_4::_ProjectionRead_Solve::HashEqual>();
-                                _OpCache_with_parameter_Solve.insert({readState, writeState});
-                                _OpCache_Solve.insert({param, _OpCache_with_parameter_Solve});
-                            }
-                        } else {
-                            {
-                                std::unique_lock<std::mutex> _ProjectionRead_Solve_lock(_ProjectionRead_Solve_mutex);
-                                std::unordered_map<QueensWithEvents_4::_ProjectionRead_Solve, QueensWithEvents_4::_ProjectionWrite_Solve, QueensWithEvents_4::_ProjectionRead_Solve::Hash, QueensWithEvents_4::_ProjectionRead_Solve::HashEqual> _OpCache_with_parameter_Solve = _OpCache_with_parameter_Solve_ptr->second;
-                                auto writeState_ptr = _OpCache_with_parameter_Solve.find(readState);
-                                if(writeState_ptr != _OpCache_with_parameter_Solve.end()) {
-                                    QueensWithEvents_4::_ProjectionWrite_Solve writeState = writeState_ptr->second;
-                                    copiedState._apply_update_for_Solve(writeState);
-                                } else {
+                                auto _OpCache_with_parameter_Solve_ptr = _OpCache_Solve.find(param);
+                                if(_OpCache_with_parameter_Solve_ptr == _OpCache_Solve.end()) {
                                     copiedState.Solve(_tmp_1);
                                     QueensWithEvents_4::_ProjectionWrite_Solve writeState = copiedState._update_for_Solve();
+                                    std::unordered_map<QueensWithEvents_4::_ProjectionRead_Solve, QueensWithEvents_4::_ProjectionWrite_Solve, QueensWithEvents_4::_ProjectionRead_Solve::Hash, QueensWithEvents_4::_ProjectionRead_Solve::HashEqual> _OpCache_with_parameter_Solve = std::unordered_map<QueensWithEvents_4::_ProjectionRead_Solve, QueensWithEvents_4::_ProjectionWrite_Solve, QueensWithEvents_4::_ProjectionRead_Solve::Hash, QueensWithEvents_4::_ProjectionRead_Solve::HashEqual>();
                                     _OpCache_with_parameter_Solve.insert({readState, writeState});
+                                    _OpCache_Solve.insert({param, _OpCache_with_parameter_Solve});
+                                } else {
+                                    std::unordered_map<QueensWithEvents_4::_ProjectionRead_Solve, QueensWithEvents_4::_ProjectionWrite_Solve, QueensWithEvents_4::_ProjectionRead_Solve::Hash, QueensWithEvents_4::_ProjectionRead_Solve::HashEqual> _OpCache_with_parameter_Solve = _OpCache_with_parameter_Solve_ptr->second;
+                                    auto writeState_ptr = _OpCache_with_parameter_Solve.find(readState);
+                                    if(writeState_ptr != _OpCache_with_parameter_Solve.end()) {
+                                        QueensWithEvents_4::_ProjectionWrite_Solve writeState = writeState_ptr->second;
+                                        copiedState._apply_update_for_Solve(writeState);
+                                    } else {
+                                        copiedState.Solve(_tmp_1);
+                                        QueensWithEvents_4::_ProjectionWrite_Solve writeState = copiedState._update_for_Solve();
+                                        _OpCache_with_parameter_Solve.insert({readState, writeState});
+                                    }
                                 }
                             }
-                        }
-
-                        copiedState.stateAccessedVia = "Solve";
-                        result.insert(copiedState);
-                        {
-                            std::unique_lock<std::mutex> lock(mutex);
-                            transitions += 1;
-                        }
-                    }
-                } else {
-                    BSet<BRelation<BInteger, BInteger >> _trid_1 = _trid_1_ptr->second;
-                    for(const BRelation<BInteger, BInteger >& param : _trid_1) {
-                        BRelation<BInteger, BInteger > _tmp_1 = param;
-
-                        QueensWithEvents_4 copiedState = state._copy();
-                        QueensWithEvents_4::_ProjectionRead_Solve readState = state._projected_state_for_Solve();
-
-                        auto _OpCache_with_parameter_Solve_ptr = _OpCache_Solve.find(param);
-                        if(_OpCache_with_parameter_Solve_ptr == _OpCache_Solve.end()) {
+                            copiedState.stateAccessedVia = "Solve";
+                            result.insert(copiedState);
                             {
-                                std::unique_lock<std::mutex> _ProjectionRead_Solve_lock(_ProjectionRead_Solve_mutex);
-                                copiedState.Solve(_tmp_1);
-                                QueensWithEvents_4::_ProjectionWrite_Solve writeState = copiedState._update_for_Solve();
-                                std::unordered_map<QueensWithEvents_4::_ProjectionRead_Solve, QueensWithEvents_4::_ProjectionWrite_Solve, QueensWithEvents_4::_ProjectionRead_Solve::Hash, QueensWithEvents_4::_ProjectionRead_Solve::HashEqual> _OpCache_with_parameter_Solve = std::unordered_map<QueensWithEvents_4::_ProjectionRead_Solve, QueensWithEvents_4::_ProjectionWrite_Solve, QueensWithEvents_4::_ProjectionRead_Solve::Hash, QueensWithEvents_4::_ProjectionRead_Solve::HashEqual>();
-                                _OpCache_with_parameter_Solve.insert({readState, writeState});
-                                _OpCache_Solve.insert({param, _OpCache_with_parameter_Solve});
+                                std::unique_lock<std::mutex> lock(mutex);
+                                transitions += 1;
                             }
-                        } else {
+                        }
+                    } else {
+                        BSet<BRelation<BInteger, BInteger >> _trid_1 = _trid_1_ptr->second;
+                        for(const BRelation<BInteger, BInteger >& param : _trid_1) {
+                            BRelation<BInteger, BInteger > _tmp_1 = param;
+
+                            QueensWithEvents_4 copiedState = state._copy();
+                            QueensWithEvents_4::_ProjectionRead_Solve readState = state._projected_state_for_Solve();
                             {
                                 std::unique_lock<std::mutex> _ProjectionRead_Solve_lock(_ProjectionRead_Solve_mutex);
-                                std::unordered_map<QueensWithEvents_4::_ProjectionRead_Solve, QueensWithEvents_4::_ProjectionWrite_Solve, QueensWithEvents_4::_ProjectionRead_Solve::Hash, QueensWithEvents_4::_ProjectionRead_Solve::HashEqual> _OpCache_with_parameter_Solve = _OpCache_with_parameter_Solve_ptr->second;
-                                auto writeState_ptr = _OpCache_with_parameter_Solve.find(readState);
-                                if(writeState_ptr != _OpCache_with_parameter_Solve.end()) {
-                                    QueensWithEvents_4::_ProjectionWrite_Solve writeState = writeState_ptr->second;
-                                    copiedState._apply_update_for_Solve(writeState);
-                                } else {
+                                auto _OpCache_with_parameter_Solve_ptr = _OpCache_Solve.find(param);
+                                if(_OpCache_with_parameter_Solve_ptr == _OpCache_Solve.end()) {
                                     copiedState.Solve(_tmp_1);
                                     QueensWithEvents_4::_ProjectionWrite_Solve writeState = copiedState._update_for_Solve();
+                                    std::unordered_map<QueensWithEvents_4::_ProjectionRead_Solve, QueensWithEvents_4::_ProjectionWrite_Solve, QueensWithEvents_4::_ProjectionRead_Solve::Hash, QueensWithEvents_4::_ProjectionRead_Solve::HashEqual> _OpCache_with_parameter_Solve = std::unordered_map<QueensWithEvents_4::_ProjectionRead_Solve, QueensWithEvents_4::_ProjectionWrite_Solve, QueensWithEvents_4::_ProjectionRead_Solve::Hash, QueensWithEvents_4::_ProjectionRead_Solve::HashEqual>();
                                     _OpCache_with_parameter_Solve.insert({readState, writeState});
+                                    _OpCache_Solve.insert({param, _OpCache_with_parameter_Solve});
+                                } else {
+                                    std::unordered_map<QueensWithEvents_4::_ProjectionRead_Solve, QueensWithEvents_4::_ProjectionWrite_Solve, QueensWithEvents_4::_ProjectionRead_Solve::Hash, QueensWithEvents_4::_ProjectionRead_Solve::HashEqual> _OpCache_with_parameter_Solve = _OpCache_with_parameter_Solve_ptr->second;
+                                    auto writeState_ptr = _OpCache_with_parameter_Solve.find(readState);
+                                    if(writeState_ptr != _OpCache_with_parameter_Solve.end()) {
+                                        QueensWithEvents_4::_ProjectionWrite_Solve writeState = writeState_ptr->second;
+                                        copiedState._apply_update_for_Solve(writeState);
+                                    } else {
+                                        copiedState.Solve(_tmp_1);
+                                        QueensWithEvents_4::_ProjectionWrite_Solve writeState = copiedState._update_for_Solve();
+                                        _OpCache_with_parameter_Solve.insert({readState, writeState});
+                                    }
                                 }
                             }
-                        }
-
-                        copiedState.stateAccessedVia = "Solve";
-                        result.insert(copiedState);
-                        {
-                            std::unique_lock<std::mutex> lock(mutex);
-                            transitions += 1;
+                            copiedState.stateAccessedVia = "Solve";
+                            result.insert(copiedState);
+                            {
+                                std::unique_lock<std::mutex> lock(mutex);
+                                transitions += 1;
+                            }
                         }
                     }
                 }

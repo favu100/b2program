@@ -1652,33 +1652,29 @@ class ModelChecker {
             if(isCaching) {
                 sort_m2_data1000_MC::_ProjectionRead__tr_progress read__tr_progress_state = state._projected_state_for__tr_progress();
                 bool _trid_1 = false;
-                auto _obj__trid_1_ptr = _OpCache_tr_progress.find(read__tr_progress_state);
-                if(_obj__trid_1_ptr == _OpCache_tr_progress.end()) {
-                    _trid_1 = state._tr_progress();
-                    {
-                        std::unique_lock<std::mutex> _ProjectionRead__tr_progress_lock(_ProjectionRead__tr_progress_mutex);
+                {
+                    std::unique_lock<std::mutex> _ProjectionRead__tr_progress_lock(_ProjectionRead__tr_progress_mutex);
+                    auto _obj__trid_1_ptr = _OpCache_tr_progress.find(read__tr_progress_state);
+                    if(_obj__trid_1_ptr == _OpCache_tr_progress.end()) {
+                        _trid_1 = state._tr_progress();
                         _OpCache_tr_progress.insert({read__tr_progress_state, _trid_1});
+                    } else {
+                        _trid_1 = _obj__trid_1_ptr->second;
                     }
-                } else {
-                    _trid_1 = _obj__trid_1_ptr->second;
                 }
                 if(_trid_1) {
                     sort_m2_data1000_MC copiedState = state._copy();
                     sort_m2_data1000_MC::_ProjectionRead_progress readState = state._projected_state_for_progress();
-
-                    auto _OpCache_with_parameter_progress_ptr = _OpCache_progress.find(_trid_1);
-                    if(_OpCache_with_parameter_progress_ptr == _OpCache_progress.end()) {
-                        {
-                            std::unique_lock<std::mutex> _ProjectionRead_progress_lock(_ProjectionRead_progress_mutex);
+                    {
+                        std::unique_lock<std::mutex> _ProjectionRead_progress_lock(_ProjectionRead_progress_mutex);
+                        auto _OpCache_with_parameter_progress_ptr = _OpCache_progress.find(_trid_1);
+                        if(_OpCache_with_parameter_progress_ptr == _OpCache_progress.end()) {
                             copiedState.progress();
                             sort_m2_data1000_MC::_ProjectionWrite_progress writeState = copiedState._update_for_progress();
                             std::unordered_map<sort_m2_data1000_MC::_ProjectionRead_progress, sort_m2_data1000_MC::_ProjectionWrite_progress, sort_m2_data1000_MC::_ProjectionRead_progress::Hash, sort_m2_data1000_MC::_ProjectionRead_progress::HashEqual> _OpCache_with_parameter_progress = std::unordered_map<sort_m2_data1000_MC::_ProjectionRead_progress, sort_m2_data1000_MC::_ProjectionWrite_progress, sort_m2_data1000_MC::_ProjectionRead_progress::Hash, sort_m2_data1000_MC::_ProjectionRead_progress::HashEqual>();
                             _OpCache_with_parameter_progress.insert({readState, writeState});
                             _OpCache_progress.insert({_trid_1, _OpCache_with_parameter_progress});
-                        }
-                    } else {
-                        {
-                            std::unique_lock<std::mutex> _ProjectionRead_progress_lock(_ProjectionRead_progress_mutex);
+                        } else {
                             std::unordered_map<sort_m2_data1000_MC::_ProjectionRead_progress, sort_m2_data1000_MC::_ProjectionWrite_progress, sort_m2_data1000_MC::_ProjectionRead_progress::Hash, sort_m2_data1000_MC::_ProjectionRead_progress::HashEqual> _OpCache_with_parameter_progress = _OpCache_with_parameter_progress_ptr->second;
                             auto writeState_ptr = _OpCache_with_parameter_progress.find(readState);
                             if(writeState_ptr != _OpCache_with_parameter_progress.end()) {
@@ -1691,7 +1687,6 @@ class ModelChecker {
                             }
                         }
                     }
-
                     copiedState.stateAccessedVia = "progress";
                     result.insert(copiedState);
                     {
@@ -1701,33 +1696,29 @@ class ModelChecker {
                 }
                 sort_m2_data1000_MC::_ProjectionRead__tr_prog1 read__tr_prog1_state = state._projected_state_for__tr_prog1();
                 bool _trid_2 = false;
-                auto _obj__trid_2_ptr = _OpCache_tr_prog1.find(read__tr_prog1_state);
-                if(_obj__trid_2_ptr == _OpCache_tr_prog1.end()) {
-                    _trid_2 = state._tr_prog1();
-                    {
-                        std::unique_lock<std::mutex> _ProjectionRead__tr_prog1_lock(_ProjectionRead__tr_prog1_mutex);
+                {
+                    std::unique_lock<std::mutex> _ProjectionRead__tr_prog1_lock(_ProjectionRead__tr_prog1_mutex);
+                    auto _obj__trid_2_ptr = _OpCache_tr_prog1.find(read__tr_prog1_state);
+                    if(_obj__trid_2_ptr == _OpCache_tr_prog1.end()) {
+                        _trid_2 = state._tr_prog1();
                         _OpCache_tr_prog1.insert({read__tr_prog1_state, _trid_2});
+                    } else {
+                        _trid_2 = _obj__trid_2_ptr->second;
                     }
-                } else {
-                    _trid_2 = _obj__trid_2_ptr->second;
                 }
                 if(_trid_2) {
                     sort_m2_data1000_MC copiedState = state._copy();
                     sort_m2_data1000_MC::_ProjectionRead_prog1 readState = state._projected_state_for_prog1();
-
-                    auto _OpCache_with_parameter_prog1_ptr = _OpCache_prog1.find(_trid_2);
-                    if(_OpCache_with_parameter_prog1_ptr == _OpCache_prog1.end()) {
-                        {
-                            std::unique_lock<std::mutex> _ProjectionRead_prog1_lock(_ProjectionRead_prog1_mutex);
+                    {
+                        std::unique_lock<std::mutex> _ProjectionRead_prog1_lock(_ProjectionRead_prog1_mutex);
+                        auto _OpCache_with_parameter_prog1_ptr = _OpCache_prog1.find(_trid_2);
+                        if(_OpCache_with_parameter_prog1_ptr == _OpCache_prog1.end()) {
                             copiedState.prog1();
                             sort_m2_data1000_MC::_ProjectionWrite_prog1 writeState = copiedState._update_for_prog1();
                             std::unordered_map<sort_m2_data1000_MC::_ProjectionRead_prog1, sort_m2_data1000_MC::_ProjectionWrite_prog1, sort_m2_data1000_MC::_ProjectionRead_prog1::Hash, sort_m2_data1000_MC::_ProjectionRead_prog1::HashEqual> _OpCache_with_parameter_prog1 = std::unordered_map<sort_m2_data1000_MC::_ProjectionRead_prog1, sort_m2_data1000_MC::_ProjectionWrite_prog1, sort_m2_data1000_MC::_ProjectionRead_prog1::Hash, sort_m2_data1000_MC::_ProjectionRead_prog1::HashEqual>();
                             _OpCache_with_parameter_prog1.insert({readState, writeState});
                             _OpCache_prog1.insert({_trid_2, _OpCache_with_parameter_prog1});
-                        }
-                    } else {
-                        {
-                            std::unique_lock<std::mutex> _ProjectionRead_prog1_lock(_ProjectionRead_prog1_mutex);
+                        } else {
                             std::unordered_map<sort_m2_data1000_MC::_ProjectionRead_prog1, sort_m2_data1000_MC::_ProjectionWrite_prog1, sort_m2_data1000_MC::_ProjectionRead_prog1::Hash, sort_m2_data1000_MC::_ProjectionRead_prog1::HashEqual> _OpCache_with_parameter_prog1 = _OpCache_with_parameter_prog1_ptr->second;
                             auto writeState_ptr = _OpCache_with_parameter_prog1.find(readState);
                             if(writeState_ptr != _OpCache_with_parameter_prog1.end()) {
@@ -1740,7 +1731,6 @@ class ModelChecker {
                             }
                         }
                     }
-
                     copiedState.stateAccessedVia = "prog1";
                     result.insert(copiedState);
                     {
@@ -1750,33 +1740,29 @@ class ModelChecker {
                 }
                 sort_m2_data1000_MC::_ProjectionRead__tr_prog2 read__tr_prog2_state = state._projected_state_for__tr_prog2();
                 bool _trid_3 = false;
-                auto _obj__trid_3_ptr = _OpCache_tr_prog2.find(read__tr_prog2_state);
-                if(_obj__trid_3_ptr == _OpCache_tr_prog2.end()) {
-                    _trid_3 = state._tr_prog2();
-                    {
-                        std::unique_lock<std::mutex> _ProjectionRead__tr_prog2_lock(_ProjectionRead__tr_prog2_mutex);
+                {
+                    std::unique_lock<std::mutex> _ProjectionRead__tr_prog2_lock(_ProjectionRead__tr_prog2_mutex);
+                    auto _obj__trid_3_ptr = _OpCache_tr_prog2.find(read__tr_prog2_state);
+                    if(_obj__trid_3_ptr == _OpCache_tr_prog2.end()) {
+                        _trid_3 = state._tr_prog2();
                         _OpCache_tr_prog2.insert({read__tr_prog2_state, _trid_3});
+                    } else {
+                        _trid_3 = _obj__trid_3_ptr->second;
                     }
-                } else {
-                    _trid_3 = _obj__trid_3_ptr->second;
                 }
                 if(_trid_3) {
                     sort_m2_data1000_MC copiedState = state._copy();
                     sort_m2_data1000_MC::_ProjectionRead_prog2 readState = state._projected_state_for_prog2();
-
-                    auto _OpCache_with_parameter_prog2_ptr = _OpCache_prog2.find(_trid_3);
-                    if(_OpCache_with_parameter_prog2_ptr == _OpCache_prog2.end()) {
-                        {
-                            std::unique_lock<std::mutex> _ProjectionRead_prog2_lock(_ProjectionRead_prog2_mutex);
+                    {
+                        std::unique_lock<std::mutex> _ProjectionRead_prog2_lock(_ProjectionRead_prog2_mutex);
+                        auto _OpCache_with_parameter_prog2_ptr = _OpCache_prog2.find(_trid_3);
+                        if(_OpCache_with_parameter_prog2_ptr == _OpCache_prog2.end()) {
                             copiedState.prog2();
                             sort_m2_data1000_MC::_ProjectionWrite_prog2 writeState = copiedState._update_for_prog2();
                             std::unordered_map<sort_m2_data1000_MC::_ProjectionRead_prog2, sort_m2_data1000_MC::_ProjectionWrite_prog2, sort_m2_data1000_MC::_ProjectionRead_prog2::Hash, sort_m2_data1000_MC::_ProjectionRead_prog2::HashEqual> _OpCache_with_parameter_prog2 = std::unordered_map<sort_m2_data1000_MC::_ProjectionRead_prog2, sort_m2_data1000_MC::_ProjectionWrite_prog2, sort_m2_data1000_MC::_ProjectionRead_prog2::Hash, sort_m2_data1000_MC::_ProjectionRead_prog2::HashEqual>();
                             _OpCache_with_parameter_prog2.insert({readState, writeState});
                             _OpCache_prog2.insert({_trid_3, _OpCache_with_parameter_prog2});
-                        }
-                    } else {
-                        {
-                            std::unique_lock<std::mutex> _ProjectionRead_prog2_lock(_ProjectionRead_prog2_mutex);
+                        } else {
                             std::unordered_map<sort_m2_data1000_MC::_ProjectionRead_prog2, sort_m2_data1000_MC::_ProjectionWrite_prog2, sort_m2_data1000_MC::_ProjectionRead_prog2::Hash, sort_m2_data1000_MC::_ProjectionRead_prog2::HashEqual> _OpCache_with_parameter_prog2 = _OpCache_with_parameter_prog2_ptr->second;
                             auto writeState_ptr = _OpCache_with_parameter_prog2.find(readState);
                             if(writeState_ptr != _OpCache_with_parameter_prog2.end()) {
@@ -1789,7 +1775,6 @@ class ModelChecker {
                             }
                         }
                     }
-
                     copiedState.stateAccessedVia = "prog2";
                     result.insert(copiedState);
                     {
@@ -1799,33 +1784,29 @@ class ModelChecker {
                 }
                 sort_m2_data1000_MC::_ProjectionRead__tr_final_evt read__tr_final_evt_state = state._projected_state_for__tr_final_evt();
                 bool _trid_4 = false;
-                auto _obj__trid_4_ptr = _OpCache_tr_final_evt.find(read__tr_final_evt_state);
-                if(_obj__trid_4_ptr == _OpCache_tr_final_evt.end()) {
-                    _trid_4 = state._tr_final_evt();
-                    {
-                        std::unique_lock<std::mutex> _ProjectionRead__tr_final_evt_lock(_ProjectionRead__tr_final_evt_mutex);
+                {
+                    std::unique_lock<std::mutex> _ProjectionRead__tr_final_evt_lock(_ProjectionRead__tr_final_evt_mutex);
+                    auto _obj__trid_4_ptr = _OpCache_tr_final_evt.find(read__tr_final_evt_state);
+                    if(_obj__trid_4_ptr == _OpCache_tr_final_evt.end()) {
+                        _trid_4 = state._tr_final_evt();
                         _OpCache_tr_final_evt.insert({read__tr_final_evt_state, _trid_4});
+                    } else {
+                        _trid_4 = _obj__trid_4_ptr->second;
                     }
-                } else {
-                    _trid_4 = _obj__trid_4_ptr->second;
                 }
                 if(_trid_4) {
                     sort_m2_data1000_MC copiedState = state._copy();
                     sort_m2_data1000_MC::_ProjectionRead_final_evt readState = state._projected_state_for_final_evt();
-
-                    auto _OpCache_with_parameter_final_evt_ptr = _OpCache_final_evt.find(_trid_4);
-                    if(_OpCache_with_parameter_final_evt_ptr == _OpCache_final_evt.end()) {
-                        {
-                            std::unique_lock<std::mutex> _ProjectionRead_final_evt_lock(_ProjectionRead_final_evt_mutex);
+                    {
+                        std::unique_lock<std::mutex> _ProjectionRead_final_evt_lock(_ProjectionRead_final_evt_mutex);
+                        auto _OpCache_with_parameter_final_evt_ptr = _OpCache_final_evt.find(_trid_4);
+                        if(_OpCache_with_parameter_final_evt_ptr == _OpCache_final_evt.end()) {
                             copiedState.final_evt();
                             sort_m2_data1000_MC::_ProjectionWrite_final_evt writeState = copiedState._update_for_final_evt();
                             std::unordered_map<sort_m2_data1000_MC::_ProjectionRead_final_evt, sort_m2_data1000_MC::_ProjectionWrite_final_evt, sort_m2_data1000_MC::_ProjectionRead_final_evt::Hash, sort_m2_data1000_MC::_ProjectionRead_final_evt::HashEqual> _OpCache_with_parameter_final_evt = std::unordered_map<sort_m2_data1000_MC::_ProjectionRead_final_evt, sort_m2_data1000_MC::_ProjectionWrite_final_evt, sort_m2_data1000_MC::_ProjectionRead_final_evt::Hash, sort_m2_data1000_MC::_ProjectionRead_final_evt::HashEqual>();
                             _OpCache_with_parameter_final_evt.insert({readState, writeState});
                             _OpCache_final_evt.insert({_trid_4, _OpCache_with_parameter_final_evt});
-                        }
-                    } else {
-                        {
-                            std::unique_lock<std::mutex> _ProjectionRead_final_evt_lock(_ProjectionRead_final_evt_mutex);
+                        } else {
                             std::unordered_map<sort_m2_data1000_MC::_ProjectionRead_final_evt, sort_m2_data1000_MC::_ProjectionWrite_final_evt, sort_m2_data1000_MC::_ProjectionRead_final_evt::Hash, sort_m2_data1000_MC::_ProjectionRead_final_evt::HashEqual> _OpCache_with_parameter_final_evt = _OpCache_with_parameter_final_evt_ptr->second;
                             auto writeState_ptr = _OpCache_with_parameter_final_evt.find(readState);
                             if(writeState_ptr != _OpCache_with_parameter_final_evt.end()) {
@@ -1838,7 +1819,6 @@ class ModelChecker {
                             }
                         }
                     }
-
                     copiedState.stateAccessedVia = "final_evt";
                     result.insert(copiedState);
                     {

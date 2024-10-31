@@ -662,6 +662,11 @@ public class TestMachines extends TestJava {
         testJavaMC("Lift_MC_Large");
     }
 
+    @Test
+    public void testLift_MC_External() throws Exception {
+        testJava("Lift_External");
+    }
+
     @Ignore
     @Test
     public void testNondeterministic_MC() throws Exception {

@@ -121,7 +121,9 @@ public class OperationGenerator {
                 .filter(identifier -> !globals.contains(identifier.getName()))
                 .collect(Collectors.toList()), DeclarationType.LOCAL_DECLARATION, false));
         TemplateHandler.add(operation, "operationName", nameHandler.handleIdentifier(node.getName(), INCLUDED_MACHINES));
+        TemplateHandler.add(operation, "isExternal", node.getName().startsWith("EXTERNAL_"));
         TemplateHandler.add(operation, "parameters", declarationGenerator.generateDeclarations(node.getParams(), DeclarationType.PARAMETER, false));
+        TemplateHandler.add(operation, "parameterNames", node.getParams().stream().map(DeclarationNode::getName).collect(Collectors.toList()));
         TemplateHandler.add(operation, "returnParameters", declarationGenerator.generateDeclarations(node.getOutputParams(), DeclarationType.PARAMETER, true));
         return operation;
     }

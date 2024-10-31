@@ -3,7 +3,7 @@ abstract, assert, boolean, break, byte, case, catch, char, class, continue, defa
 >>
 
 
-machine(forModelChecking, imports, machine, projectionClasses, structs, constants_declarations, includes, enums, sets, declarations, initialization, mainMethod, copyConstructor, operations, addition, getters, transitions, projection, invariant, copy, hash_equal, modelcheck, lambdaFunctions, choicePoints, choicePointsGetters, choicePointOperationFlags, choicePointOperationFlagGetters, choicePointOperationFlagResets, choicePointOperationTriggered, choicePointOperationTriggeredResets, choicePointOperationTriggeredFlags, choicePointOperationApplies) ::= <<
+machine(forModelChecking, imports, machine, projectionClasses, structs, constants_declarations, includes, enums, sets, declarations, initialization, mainMethod, copyConstructor, operations, addition, getters, transitions, projection, invariant, copy, hash_equal, modelcheck, lambdaFunctions, choicePoints, choicePointsGetters, choicePointOperationFlags, choicePointOperationFlagGetters, choicePointOperationFlagResets, choicePointOperationTriggered, choicePointOperationTriggeredResets, choicePointOperationTriggeredFlags, choicePointOperationApplies, externalFunctions) ::= <<
 <imports; separator="\n">
 <if(forModelChecking)>
 import java.util.HashMap;
@@ -36,6 +36,13 @@ import de.hhu.stups.btypes.BUtils;
 
 public class <machine> {
 
+    <if(externalFunctions)>
+    public interface ExternalFunctionsInterface {
+        <externalFunctions; separator="\n">
+    }
+
+    private final ExternalFunctionsInterface _externalFunctions;
+    <endif>
 
     <if(forModelChecking)>
     private static final Var ASSOC;
@@ -283,7 +290,7 @@ record(struct, parameters) ::= <<
 new <struct>(<parameters; separator=", ">)
 >>
 
-initialization(machine, properties, values, body, iterationConstruct, propertiesCheck) ::= <<
+initialization(machine, properties, values, body, iterationConstruct, propertiesCheck, hasExternalFunctions) ::= <<
 <if(properties)>
 <if(values)>
 static {
@@ -299,7 +306,10 @@ static {
 <endif>
 <endif>
 
-public <machine>() {
+public <machine>(<if(hasExternalFunctions)>ExternalFunctionsInterface _externalFunctions<endif>) {
+    <if(hasExternalFunctions)>
+    this._externalFunctions = _externalFunctions;
+    <endif>
     <body>
 }
 >>
@@ -307,11 +317,15 @@ public <machine>() {
 method() ::= <<
 >>
 
-operation(returnType, operationName, parameters, locals, body, return) ::= <<
+operation(returnType, operationName, parameters, locals, body, return, isExternal, parameterNames) ::= <<
 public <returnType> <operationName>(<parameters; separator=", ">) {
+    <if(isExternal)>
+    _externalFunctions.<operationName>(<parameterNames; separator=", ">);
+    <else>
     <locals; separator="\n">
     <body>
     <return>
+    <endif>
 }
 >>
 
@@ -523,8 +537,11 @@ public boolean <invariantFunction>() {
 }
 >>
 
-copy_constructor(machine, assignments) ::= <<
+copy_constructor(machine, assignments, hasExternals) ::= <<
 public <machine>(<machine> copy) {
+    <if(hasExternals)>
+    this._externalFunctions = copy._externalFunctions;
+    <endif>
     <assignments; separator="\n">
 }
 >>
@@ -1849,3 +1866,7 @@ transition_cache_declaration(type, identifier, operationHasParams) ::= <<
 >>
 
 set_initialization(identifier, type, enums) ::= <<>>
+
+external_function(name, parameters) ::= <<
+void <name>(<parameters; separator=",">);
+>>

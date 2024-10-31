@@ -162,7 +162,8 @@ public class SubstitutionGenerator {
         TemplateHandler.add(initialization, "copy", copy);
         TemplateHandler.add(initialization, "forVisualization", machineGenerator.isForVisualisation());
         TemplateHandler.add(initialization, "forModelChecking", machineGenerator.isForModelChecking());
-
+        TemplateHandler.add(initialization, "hasExternalFunctions", machineGenerator.getMachineNode().getOperations()
+                .stream().anyMatch(op -> op.getName().startsWith("EXTERNAL_")));
         return initialization.render();
     }
 

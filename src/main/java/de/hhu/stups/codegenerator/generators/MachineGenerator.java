@@ -276,6 +276,13 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 			TemplateHandler.add(machine, "props", modelCheckingGenerator.generateModelCheckingProBProp(node));
 		}
 		TemplateHandler.add(machine, "machineString", modelCheckingGenerator.generateToString());
+		TemplateHandler.add(machine, "externalFunctions", machineNode.getOperations()
+				.stream()
+				.filter(op -> op.getName().startsWith("EXTERNAL_"))
+				.map(op -> generateExternalFunction(op.getName(), op.getParams()
+						.stream()
+						.map(DeclarationNode::getName).collect(Collectors.toList())))
+				.collect(Collectors.toList()));
 		generateBody(node, machine);
 		return machine.render();
 	}
@@ -365,6 +372,13 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 		TemplateHandler.add(machine, "structs", recordStructGenerator.generateStructs());
 	}
 
+	private String generateExternalFunction(String name, List<String> parameters) {
+		ST template = currentGroup.getInstanceOf("external_function");
+		TemplateHandler.add(template, "name", name);
+		TemplateHandler.add(template, "parameters", parameters);
+		return template.render();
+	}
+
 	private List<String> generateProjectionClasses() {
 		List<String> projectionClasses = new ArrayList<>();
 		for(OperationNode operation : machineNode.getOperations()) {
@@ -428,7 +442,6 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 	}
 
 	private String generateCopyConstructor(MachineNode node) {
-
 		ST template = currentGroup.getInstanceOf("copy_constructor");
 		TemplateHandler.add(template, "machine", nameHandler.handle(node.getName()));
 		List<DeclarationNode> parameters = new ArrayList<>(node.getConstants());
@@ -444,6 +457,7 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 
 		TemplateHandler.add(template, "parameters", declarationGenerator.generateDeclarations(parameters, OperationGenerator.DeclarationType.PARAMETER, false));
 		TemplateHandler.add(template, "assignments", assignments);
+		TemplateHandler.add(template, "hasExternals", node.getOperations().stream().anyMatch(op -> op.getName().startsWith("EXTERNAL_")));
 
 		return template.render();
 

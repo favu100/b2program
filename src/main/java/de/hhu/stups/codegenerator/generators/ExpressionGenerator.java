@@ -794,8 +794,13 @@ public class ExpressionGenerator {
     */
     private String generateIdentity(List<String> expressionList, BType type) {
         ST identity = currentGroup.getInstanceOf("identity");
+        if(type instanceof CoupleType) {
+            TemplateHandler.add(identity, "leftType", typeGenerator.generate(((CoupleType) type).getLeft()));
+            TemplateHandler.add(identity, "rightType", typeGenerator.generate(((CoupleType) type).getRight()));
+        }
         TemplateHandler.add(identity, "type", typeGenerator.generate(type));
         TemplateHandler.add(identity, "arg", expressionList.get(0));
+        TemplateHandler.add(identity, "relationalArg", type instanceof CoupleType);
         return identity.render();
     }
 

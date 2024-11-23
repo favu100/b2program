@@ -967,6 +967,23 @@ class BRelation : public BObject {
             return BRelation<T,T>(resultMap);
         }
 
+
+        static BRelation<BTuple<S,T>,BTuple<S,T>> identity2(const BRelation<S,T>& relation) {
+            immer::map<BTuple<S,T>,immer::set<BTuple<S,T>, typename BSet<BTuple<S,T>>::Hash, typename BSet<BTuple<S,T>>::HashEqual>,
+                                                               typename BSet<BTuple<S,T>>::Hash,
+                                                               typename BSet<BTuple<S,T>>::HashEqual> resultMap;
+            for(const std::pair<S,immer::set<T, typename BSet<T>::Hash, typename BSet<T>::HashEqual>>& pair : relation.map) {
+                T domainElement = pair.first;
+                immer::set<T, typename BSet<T>::Hash, typename BSet<T>::HashEqual> range = pair.second;
+                for(const T& rangeElement : range) {
+                    immer::set<BTuple<S,T>, typename BSet<BTuple<S,T>>::Hash, typename BSet<BTuple<S,T>>::HashEqual> range;
+                    range = range.insert(BTuple<S,T>(domainElement, rangeElement));
+                    resultMap = resultMap.set(BTuple<S,T>(domainElement, rangeElement), range);
+                }
+            }
+            return BRelation<BTuple<S,T>,BTuple<S,T>>(resultMap);
+        }
+
     	BRelation<S,S> iterate(const BInteger& n) const {
     		BRelation<S,S> thisRelation = (BRelation<S,S>) *this;
             BRelation<S,S> result = BRelation<S,S>::identity(this->domain()._union(thisRelation.range()));

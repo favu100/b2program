@@ -779,8 +779,12 @@ projection_tuple(arg, isProjection1) ::= <<
 (<arg>.<if(isProjection1)>projection1<else>projection2<endif>())
 >>
 
-identity(type, arg) ::= <<
+identity(leftType, rightType, type, arg, relationalArg) ::= <<
+<if(relationalArg)>
+(BRelation\<<leftType>, <rightType> >::identity2(<arg>))
+<else>
 (BRelation\<<type>, <type> >::identity(<arg>))
+<endif>
 >>
 
 cartesian_product(leftType, rightType, arg1, arg2) ::= <<

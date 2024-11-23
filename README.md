@@ -433,13 +433,17 @@ Remarks:
 ./gradlew run -Planguage="python" [-Pbig_integer="true/false" -Pminint="minint" -Pmaxint="maxint" -Pdeferred_set_size="size" -PuseConstraintSolving="true/false" -PforModelchecking="true/false"] -Pfile="<path_relative_to_project_directory>"
 
 # JavaScript/TypeScript
-./gradlew run -Planguage="ts" [-Pbig_integer="true/false" -Pminint="minint" -Pmaxint="maxint" -Pdeferred_set_size="size" -PuseConstraintSolving="true/false" -PforModelchecking="true/false"] -Pfile="<path_relative_to_project_directory>"
+./gradlew run -Planguage="ts" [-Pbig_integer="true/false" -Pminint="minint" -Pmaxint="maxint" -Pdeferred_set_size="size" -PuseConstraintSolving="true/false" -PforModelchecking="true/false" -Pserverlink="<serverLink>"] -Pfile="<path_relative_to_project_directory>"
 
 # C
 ./gradlew run -Planguage="c" [-Pbig_integer="true/false" -Pminint="minint" -Pmaxint="maxint" -Pdeferred_set_size="size" -PuseConstraintSolving="true/false" -PforModelchecking="true/false"] -Pfile="<path_relative_to_project_directory>"
 
 # Rust
 ./gradlew run -Planguage="rs" [-Pbig_integer="true/false" -Pminint="minint" -Pmaxint="maxint" -Pdeferred_set_size="size" -PuseConstraintSolving="true/false" -PforModelchecking="true/false"] -Pfile="<path_relative_to_project_directory>"
+
+
+
+serverLink: Server Link is the link to your website if you want to generate interactive validation HTML documents
 
 Default Values:
 big_integer: false
@@ -448,6 +452,7 @@ maxint: 2147483647
 deferred_set_size: 10
 useConstraintSolving: false
 forModelchecking: false
+
 ```
 
 `-PuseConstraintSolving` is in an experimental stage.
@@ -592,6 +597,15 @@ The right-hand side shows the State View consisting of the variables', constants
 5. Move immutable library to same folder as generated code
 6. Compile generated TypeScript files `tsc --target ES6 --moduleResolution node TrafficLight.ts`
 7. Open Interactive Validation Document for TrafficLight (`TrafficLight.html`)
+
+
+In case you want to link the generated files to a website, then your step 3 is as follows:
+
+3. Generate code for `TrafficLight.mch` and `TrafficLight.json` ```java -jar B2Program-all-0.1.0-SNAPSHOT.jar -l ts -f TrafficLight.mch -v TrafficLight.json -sl <link>```, i.e.,
+   `TrafficLight.mch` and `TrafficLight.json` ```java -jar B2Program-all-0.1.0-SNAPSHOT.jar -l ts -f TrafficLight.mch -v TrafficLight.json -sl https://favu100.github.io/b2program/visualizations/TrafficLight``` for this repository
+
+Furthermore, there is another step between step 6 and 7:
+- Execute the `.js`-File to link your JavaScript files with your website: `node <compatibility>-compatibility.js``` i.e., `node TrafficLight-compatibility.js`
 
 
 ## Steps from B Model to Execution of the Generated Code (with primitive types)

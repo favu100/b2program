@@ -1,9 +1,9 @@
-import { BBoolean } from "https://favu100.github.io/b2program/visualizations/LandingGear/HydraulicCircuit/btypes/BBoolean.js";
-import { BInteger } from "https://favu100.github.io/b2program/visualizations/LandingGear/HydraulicCircuit/btypes/BInteger.js";
-import { BRelation } from "https://favu100.github.io/b2program/visualizations/LandingGear/HydraulicCircuit/btypes/BRelation.js";
-import { BString } from "https://favu100.github.io/b2program/visualizations/LandingGear/HydraulicCircuit/btypes/BString.js";
-import { BStruct } from "https://favu100.github.io/b2program/visualizations/LandingGear/HydraulicCircuit/btypes/BStruct.js";
-import * as immutable from "https://favu100.github.io/b2program/visualizations/LandingGear/HydraulicCircuit/immutable/dist/immutable.es.js";
+import { BBoolean } from "./BBoolean.js";
+import { BInteger } from "./BInteger.js";
+import { BRelation } from "./BRelation.js";
+import { BString } from "./BString.js";
+import { BStruct } from "./BStruct.js";
+import * as immutable from "../immutable/dist/immutable.es.js";
 export class BSet {
     constructor(...args) {
         if (args.length == 1 && args[0] instanceof immutable.Set) {
@@ -22,7 +22,7 @@ export class BSet {
     }
     toString() {
         let sb = "{";
-        this.set.forEach(element => {
+        this.set.forEach((element) => {
             if (sb.length > 1) {
                 sb += ", ";
             }
@@ -31,31 +31,25 @@ export class BSet {
         sb += "}";
         return sb;
     }
-    union(other = null) {
-        if (other == null) {
-            if (this.set.size === 0) {
-                return new BSet();
-            }
-            else if (this.set.values().next().value instanceof BSet) {
-                let result = immutable.Set();
-                for (let current_set of this.set) {
-                    result = BSet.immutableSetUnion(result, current_set.set);
-                }
-                return new BSet(result);
-            }
-            else if (this.set.values().next().value instanceof BRelation) {
-                let result = immutable.Map();
-                for (let current_set of this.set) {
-                    result = BSet.immutableMapUnion(result, current_set.map);
-                }
-                return new BRelation(result);
-            }
-            else {
-                throw new Error("Generalized Union is only possible on immutable.Sets of immutable.Sets or Relations");
-            }
-        }
+    union(other) {
         let result = BSet.immutableSetUnion(this.set, other.set);
         return new BSet(result);
+    }
+    unionForSets() {
+        if (this.set.isEmpty()) {
+            return new BSet();
+        }
+        else {
+            return this.set.reduce((a, e) => a.union(e), new BSet());
+        }
+    }
+    unionForRelations() {
+        if (this.set.isEmpty()) {
+            return new BRelation();
+        }
+        else {
+            return this.set.reduce((a, e) => a.union(e), new BRelation());
+        }
     }
     static immutableSetUnion(s1, s2) {
         return s1.union(s2);
@@ -96,31 +90,25 @@ export class BSet {
         }
         return result;
     }
-    intersect(other = null) {
-        if (other == null) {
-            if (this.set.size === 0) {
-                return new BSet();
-            }
-            else if (this.set.values().next().value instanceof BSet) {
-                let result = this.set.values().next().value.set;
-                for (let current_set of this.set) {
-                    result = BSet.immutableSetDifference(result, BSet.immutableSetDifference(result, current_set.set));
-                }
-                return new BSet(result);
-            }
-            else if (this.set.values().next().value instanceof BRelation) {
-                let result = this.set.values().next().value.map;
-                for (let current_set of this.set) {
-                    result = BSet.immutableMapIntersection(result, current_set.map);
-                }
-                return new BRelation(result);
-            }
-            else {
-                throw new Error("Generalized Intersection is only possible on immutable.Sets of immutable.Sets or Relations");
-            }
+    intersect(other) {
+        let result = BSet.immutableSetIntersection(this.set, other.set);
+        return new BSet(result);
+    }
+    intersectForSets() {
+        if (this.set.isEmpty()) {
+            return new BSet();
         }
-        let new_set = BSet.immutableSetDifference(this.set, BSet.immutableSetDifference(this.set, other.set));
-        return new BSet(new_set);
+        else {
+            return this.set.reduce((a, e) => a.intersect(e));
+        }
+    }
+    intersectForRelations() {
+        if (this.set.isEmpty()) {
+            return new BRelation();
+        }
+        else {
+            return this.set.reduce((a, e) => a.intersect(e));
+        }
     }
     difference(other) {
         let set = BSet.immutableSetDifference(this.set, other.set);
@@ -139,35 +127,24 @@ export class BSet {
         return new BBoolean(!this.set.has(obj));
     }
     subset(other) {
-        this_set_loop: for (let elem of this.set) {
-            for (let other_elem of other.set) {
-                if (other_elem.equals(elem)) {
-                    continue this_set_loop;
-                }
+        for (let element of this.set) {
+            if (!other.getSet().has(element)) {
+                return new BBoolean(false);
             }
-            return new BBoolean(false);
         }
         return new BBoolean(true);
     }
     notSubset(other) {
-        this_set_loop: for (let elem of this.set) {
-            for (let other_elem of other.set) {
-                if (other_elem.equals(elem)) {
-                    continue this_set_loop;
-                }
-            }
-            return new BBoolean(true);
-        }
-        return new BBoolean(false);
+        return this.subset(other).not();
     }
     strictSubset(other) {
-        return this.size().less(other.size()).and(this.subset(other));
+        return new BBoolean(other.getSet().size != this.set.size && this.subset(other).booleanValue());
     }
     strictNotSubset(other) {
-        return this.size().equal(other.size()).and(this.notSubset(other));
+        return this.strictSubset(other).not();
     }
     contains(other) {
-        return other.toString() in this.set;
+        return other in this.set;
     }
     containsAll(other) {
         for (let o of other.set) {
@@ -181,12 +158,12 @@ export class BSet {
         return this.set.size === 0;
     }
     equals(other) {
-        return this.equal(other).booleanValue();
+        if (!(other instanceof BSet)) {
+            return false;
+        }
+        return this.set.equals(other.set);
     }
     equal(other) {
-        if (!(other instanceof BSet)) {
-            return new BBoolean(false);
-        }
         return this.subset(other).and(other.subset(this));
     }
     unequal(other) {
@@ -200,14 +177,18 @@ export class BSet {
         return values[Math.floor(Math.random() * values.length)];
     }
     min() {
-        return this.set.reduce((a, v) => { if (a < v) {
-            return a;
-        } return v; });
+        if (this.size().intValue() == 0) {
+            throw new Error("Minimum does not exist");
+        }
+        let result = this.set.reduce((a, b) => a.lessEqual(b).booleanValue() ? a : b);
+        return result;
     }
     max() {
-        return this.set.reduce((a, v) => { if (a > v) {
-            return a;
-        } return v; });
+        if (this.size().intValue() == 0) {
+            throw new Error("Maximum does not exist");
+        }
+        let result = this.set.reduce((a, b) => a.greaterEqual(b).booleanValue() ? a : b);
+        return result;
     }
     pow() {
         let result = new BSet();
@@ -237,81 +218,113 @@ export class BSet {
     fin1() {
         return this.pow1();
     }
-    subsetOfInteger() {
-        for (let element of this.set) {
-            if (element instanceof BInteger) {
-                return false;
+    subsetOfBoolean() {
+        for (let e of this.getSet()) {
+            if (e instanceof BBoolean) {
+                return new BBoolean(true);
+            }
+            else {
+                return new BBoolean(false);
             }
         }
-        return true;
+        return new BBoolean(true);
+    }
+    strictSubsetOfBoolean() {
+        return this.subsetOfBoolean();
+    }
+    notSubsetOfBoolean() {
+        return this.subsetOfBoolean().not();
+    }
+    equalBoolean() {
+        return new BBoolean(this.subsetOfBoolean().booleanValue() && this.size().intValue() == 2);
+    }
+    unequalBoolean() {
+        return new BBoolean(this.subsetOfBoolean().booleanValue() && this.size().intValue() < 2);
+    }
+    subsetOfInteger() {
+        for (let element of this.set) {
+            if (!(element instanceof BInteger)) {
+                return new BBoolean(false);
+            }
+        }
+        return new BBoolean(true);
     }
     strictSubsetOfInteger() {
         return this.subsetOfInteger();
     }
     notSubsetOfInteger() {
-        return !this.subsetOfInteger();
+        return this.subsetOfInteger().not();
     }
     notStrictSubsetOfInteger() {
-        return !this.strictSubsetOfInteger();
+        return this.strictSubsetOfInteger().not();
     }
     subsetOfNatural() {
         for (let element of this.set) {
             if (!(element instanceof BInteger && element.isNatural().booleanValue())) {
-                return false;
+                return new BBoolean(false);
             }
         }
-        return true;
+        return new BBoolean(true);
     }
     strictSubsetOfNatural() {
         return this.subsetOfNatural();
     }
     notSubsetOfNatural() {
-        return !this.subsetOfNatural();
+        return this.subsetOfNatural().not();
     }
     notStrictSubsetOfNatural() {
-        return !this.strictSubsetOfNatural();
+        return this.strictSubsetOfNatural().not();
     }
     subsetOfNatural1() {
         for (let element of this.set) {
             if (!(element instanceof BInteger && element.isNatural1().booleanValue())) {
-                return false;
+                return new BBoolean(false);
             }
         }
-        return true;
+        return new BBoolean(true);
+    }
+    strictSubsetOfNatural1() {
+        return this.subsetOfNatural1();
+    }
+    notSubsetOfNatural1() {
+        return this.subsetOfNatural1().not();
+    }
+    notStrictSubsetOfNatural1() {
+        return this.strictSubsetOfNatural1().not();
     }
     subsetOfString() {
         for (let element of this.set) {
             if (!(element instanceof BString)) {
-                return false;
+                return new BBoolean(false);
             }
         }
-        return true;
+        return new BBoolean(true);
     }
     strictSubsetOfString() {
         return this.subsetOfString();
     }
     notSubsetOfString() {
-        return !this.subsetOfString();
+        return this.subsetOfString().not();
     }
     notStrictSubsetOfString() {
-        return !this.strictSubsetOfString();
+        return this.strictSubsetOfString().not();
     }
     subsetOfStruct() {
         for (let element of this.set) {
             if (!(element instanceof BStruct)) {
-                return false;
+                return new BBoolean(false);
             }
         }
-        return true;
+        return new BBoolean(true);
     }
     strictSubsetOfStruct() {
         return this.subsetOfStruct();
     }
     notSubsetOfStruct() {
-        return !this.subsetOfStruct();
+        return this.subsetOfStruct().not();
     }
     notStrictSubsetOfStruct() {
-        return !this.strictSubsetOfStruct();
+        return this.strictSubsetOfStruct().not();
     }
     equalInteger() {
         return new BBoolean(false);
@@ -350,8 +363,11 @@ export class BSet {
         if (b.less(a).booleanValue()) {
             return new BSet();
         }
-        const range = [...Array(b.minus(a).intValue() + 1).keys()].map(e => new BInteger(e).plus(a));
-        return new BSet(immutable.Set(range));
+        let persistentSet = immutable.Set();
+        for (let i = a; i.lessEqual(b).booleanValue(); i = i.plus(new BInteger(1))) {
+            persistentSet = persistentSet.add(i);
+        }
+        return new BSet(persistentSet);
     }
     hashCode() {
         return this.set.hashCode();

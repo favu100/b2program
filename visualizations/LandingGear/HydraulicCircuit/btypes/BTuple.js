@@ -1,4 +1,4 @@
-import { BBoolean } from "https://favu100.github.io/b2program/visualizations/LandingGear/HydraulicCircuit/btypes/BBoolean.js";
+import { BBoolean } from "./BBoolean.js";
 export class BTuple {
     constructor(first, second) {
         if (first == null || second == null) {

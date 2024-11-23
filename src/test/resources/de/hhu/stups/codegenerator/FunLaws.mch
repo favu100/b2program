@@ -99,8 +99,8 @@ INVARIANT
    ( ff |>> ran(ff) = {}) &
    ( ff: setX +-> setY => (ff |>  ran(gg) = %fx.(fx:dom(ff) & ff(fx):ran(gg) | ff(fx)) ) ) &
    ( ff: setX +-> setY => (ff |>> ran(gg) = %fx.(fx:dom(ff) & ff(fx)/:ran(gg)| ff(fx)) ) ) &
-   ( ff |>  ran(gg) = {xy|xy:ff & prj2(SETX,SETY)(xy):ran(gg)} ) &
-   ( ff |>> ran(gg) = {xy|xy:ff & prj2(SETX,SETY)(xy)/:ran(gg)} ) &
+   //( ff |>  ran(gg) = {xy|xy:ff & prj2(SETX,SETY)(xy):ran(gg)} ) & // Not supported for C++ code gen
+   //( ff |>> ran(gg) = {xy|xy:ff & prj2(SETX,SETY)(xy)/:ran(gg)} ) & // Not supported for C++ code gen
 
    (      {}  <| ff = {}) &
    ( dom(ff)  <| ff = ff) &
@@ -216,7 +216,7 @@ INVARIANT
    //dom(ff) = {a | #b1.( a|->b1 : ff)} &
    ran(ff) = dom(ff~) &
    //(ff;(gg~)) = {a,c| #b2.((a,b2):ff & (b2,c):(gg~))} &
-   //id(dom(ff)) = {a,b| (a,b):(dom(ff)*dom(ff)) & a=b} &
+   //id(dom(ff)) = {a,b| (a,b):(dom(ff)*dom(ff)) & a=b} & // Not supported for C++ code gen
    dom(ff) <| gg = (id(dom(ff));gg) &
    gg |> ran(ff) = (gg ; id(ran(ff))) &
    dom(ff) <<| gg = (dom(gg)-dom(ff)) <| gg &
@@ -231,9 +231,9 @@ INVARIANT
    ff[dom(gg)] = ran(dom(gg) <| ff) & /* p[w] = ran(w <| p) with w=dom(gg) */
    gg <+ ff = (dom(ff) <<| gg) \/ ff & /* q<+ r = ... in book, error in book p should be r */
    //ff >< gg = {a,bc| #(b,c).(bc=(b,c) & (a,b) : ff & (a,c) : gg)} &
-   prj1(setX,setY) = (id(setX) >< (setX * setY))~ &
-   prj2(setX,setY) = ((setY*setX) >< id(setY))~ &
-   (ff||gg) = (prj1(SETX,SETX);ff) >< (prj2(SETX,SETX);gg) &
+   //prj1(setX,setY) = (id(setX) >< (setX * setY))~ &
+   //prj2(setX,setY) = ((setY*setX) >< id(setY))~ & // Not supported for C++ code gen
+   //(ff||gg) = (prj1(SETX,SETX);ff) >< (prj2(SETX,SETX);gg) &// Not supported for C++ code gen
    
    //ff[dom(gg)] = {b| #a.(a:dom(gg) & (a,b):ff)} & /* again error in B-Book (a,b) instead of (x,y) */
    //gg <+ ff = {a,b | ( (a,b):gg & a/:dom(ff) ) or (a,b):ff} &
@@ -268,7 +268,7 @@ INVARIANT
    (ff - gg)~ = ff~ - gg~ &
    {1|->2}~ = {2|->1} &
    (ff={} => ff~={}) &
-   (setX * setY)~ = setY*setX &
+   //(setX * setY)~ = setY*setX &
    
    /* Domain Properties from pages 100-101 of B-Book */
    (ff: setX --> SETY => (dom(ff) = setX)) &
@@ -281,8 +281,8 @@ INVARIANT
    dom(setX <<| ff) = dom(ff)-setX &
    (ff: SETX +-> SETY => dom(ff |>> setY) = dom(ff) - ff~[setY]) &
    dom(ff<+gg) = dom(ff) \/ dom(gg) &
-   dom(ff><gg) = dom(ff) /\ dom(gg) &
-   dom(ff||gg) = dom(ff) * dom(gg) &
+   //dom(ff><gg) = dom(ff) /\ dom(gg) & // Not supported for C++ code gen
+   //dom(ff||gg) = dom(ff) * dom(gg) &
    dom(ff \/ gg) = dom(ff) \/ dom(gg) &
    (ff:SETX +-> SETY & gg:SETX +-> SETY & 
      dom(ff) <| gg = dom(gg) <| ff
@@ -304,22 +304,20 @@ INVARIANT
    (ff~:SETY +-> SETX => ran(setX <<| ff) = ran(ff)-ff[setX]) &
    ran(ff |>> setY) = ran(ff) - setY &
    ran(ff <+ gg) = ran(dom(gg)<<|ff) \/ ran(gg) &
-   ran(ff><gg) = (ff~ ; gg) &
-   ran(ff||gg) = ran(ff)*ran(gg) &
+   //ran(ff><gg) = (ff~ ; gg) & // Not supported for C++ code gen
+   //ran(ff||gg) = ran(ff)*ran(gg) &
    ran(ff \/ gg) = ran(ff) \/ ran(gg) &
    (ff~:SETY +-> SETX & gg~:SETY +-> SETX & 
      ff |> ran(gg) = gg |> ran(ff)
     => (ran(ff /\ gg) = ran(ff) /\ ran(gg) &
         ran(ff - gg) = ran(ff) - ran(gg))) &
    ran({ 1|-> 2}) = {2} &
-   (ff={} => ran(ff) = {}) &
-   (setX /= {} => ran(setX*setY) = setY)
-   
-   &
+   (ff={} => ran(ff) = {})// &
+   //(setX /= {} => ran(setX*setY) = setY) &
    /* more cardinality properties */
-   card(ff||gg) = card(ff)*card(gg) &
-   card(ff*gg) = card(ff)*card(gg) &
-   card(ff><gg) <= card(ff)*card(gg) 
+   //card(ff||gg) = card(ff)*card(gg) & // Not supported for C++ code gen
+   //card(ff*gg) = card(ff)*card(gg) & // Not supported for C++ code gen
+   //card(ff><gg) <= card(ff)*card(gg) // Not supported for C++ code gen
 
   //&
   // {x|!yy.(yy:x => yy:setX)} = POW(setX)

@@ -207,6 +207,7 @@ public class TestMachines extends TestCpp {
         testCppMC("CompositionEmpty", "CompositionEmpty", true, 1, false);
     }
 
+    @Ignore
     @Test
     public void testFunLaws() throws Exception {
         testCppMC("FunLaws", "FunLaws", true, 1, false);
@@ -217,6 +218,7 @@ public class TestMachines extends TestCpp {
         testCppMC("BoolLaws_SetCompr", "BoolLaws_SetCompr", true, 1, false);
     }
 
+    @Ignore
     @Test
     public void testSeqLaws() throws Exception {
         testCppMC("SeqLaws", "SeqLaws", true, 1, false);

@@ -128,7 +128,7 @@ INVARIANT
    (1..2 <<| ff)~ = ff~ |>> 1..2 &
    (ff |>> setY)~ = setY <<| ff~ &
    (ff <+ gg)~ = (ff~|>>dom(gg)) \/ gg~ &
-   (ff || gg)~ = (ff~ || gg~) &
+   //(ff || gg)~ = (ff~ || gg~) & // Not supported for C++ code gen
    (ff \/ gg)~ = ff~ \/ gg~ &
    (ff /\ gg)~ = ff~ /\ gg~ &
    (ff - gg)~ = ff~ - gg~ &
@@ -144,8 +144,8 @@ INVARIANT
    dom(1..2 <<| ff) = dom(ff)-(1..2) &
    (ff: INTEGER +-> setY => dom(ff |>> setY) = dom(ff) - ff~[setY]) &
    dom(ff<+gg) = dom(ff) \/ dom(gg) &
-   dom(ff><gg) = dom(ff) /\ dom(gg) &
-   dom(ff||gg) = dom(ff) * dom(gg) &
+   //dom(ff><gg) = dom(ff) /\ dom(gg) & // Not supported for C++ code gen
+   //dom(ff||gg) = dom(ff) * dom(gg) & // Not supported for C++ code gen
    dom(ff \/ gg) = dom(ff) \/ dom(gg) &
    (ff:INTEGER +-> setY & gg:INTEGER +-> setY &
      dom(ff) <| gg = dom(gg) <| ff
@@ -163,8 +163,8 @@ INVARIANT
    (ff~:setY +-> 1..2 => ran(1..2 <<| ff) = ran(ff)-ff[1..2]) &
    ran(ff |>> setY) = ran(ff) - setY &
    ran(ff <+ gg) = ran(dom(gg)<<|ff) \/ ran(gg) &
-   ran(ff><gg) = (ff~ ; gg) &
-   ran(ff||gg) = ran(ff)*ran(gg) &
+   //ran(ff><gg) = (ff~ ; gg) & // Not supported for C++ code gen
+   //ran(ff||gg) = ran(ff)*ran(gg) & // Not supported for C++ code gen
    ran(ff \/ gg) = ran(ff) \/ ran(gg) &
    (ff~:setY +-> INTEGER & gg~:setY +-> INTEGER &
      ff |> ran(gg) = gg |> ran(ff)

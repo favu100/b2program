@@ -605,7 +605,7 @@ In case you want to link the generated files to a website, then your step 3 is a
    `TrafficLight.mch` and `TrafficLight.json` ```java -jar B2Program-all-0.1.0-SNAPSHOT.jar -l ts -f TrafficLight.mch -v TrafficLight.json -sl https://favu100.github.io/b2program/visualizations/TrafficLight``` for this repository
 
 Furthermore, there is another step between step 6 and 7:
-- Execute the `.js`-File to link your JavaScript files with your website: `node <compatibility>-compatibility.js``` i.e., `node TrafficLight-compatibility.js`
+- Execute the `.js`-File to link your JavaScript files with your website: `node <compatibility>-compatibility.js` i.e., `node TrafficLight-compatibility.js`
 
 
 ## Steps from B Model to Execution of the Generated Code (with primitive types)

@@ -421,7 +421,7 @@ class BRelation : public BObject {
         BRelation rangeForRelations() const {
             BRelation result = BRelation();
             for(const T& elem : this->range()) {
-                result = result._union(new BRelation((T) elem));
+                result = result._union(BRelation((T) elem));
             }
             return result;
         }

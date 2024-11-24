@@ -1,3 +1,6 @@
+/*
+From ProB Examples
+*/
 MACHINE tictac
 
 ABSTRACT_VARIABLES  square, turn

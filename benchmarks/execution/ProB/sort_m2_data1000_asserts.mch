@@ -1,4 +1,7 @@
-
+/*
+Original Model:
+V. Rivera, N. Catano, T. Wahls, and C. Rueda. Code generation for Event-B. STTT, 19(1):31–52, 2017.
+*/
 MACHINE sort_m2_data1000_asserts
 DEFINITIONS GOAL == k = n
 CONCRETE_CONSTANTS

@@ -1,5 +1,8 @@
 /* https://www3.hhu.de/stups/prob/index.php/Summary_of_B_Syntax */
 /* Model from https://mars-workshop.org/repository/020-CBTC.html */
+/*
+F. Mazzanti and A. Ferrari. Ten diverse formal models for a cbtc automatic train supervision system. Electronic Proceedings in Theoretical Computer Science, 268:104–149, Mar. 2018.
+*/
 
 MACHINE prob_oneway8seq
 

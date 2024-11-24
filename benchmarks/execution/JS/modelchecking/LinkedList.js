@@ -1,3 +1,9 @@
+/*
+Minor parts of implementation bases on https://kenjj.medium.com/linked-list-with-typescript-ea8c88276e2e
+Implementation is strongly modified to imitate behavior of Java linked list, particularly a double-linked list
+which can be used as a stack or queue, to access the first and last element (for DFS, BFS, Mixed BFS/DFS) for model checking more efficiently.
+The LinkedList implementation is designed for the model checking code generation specifically, thus only contains functions for accessing and modifying the first/last element, and accessing the length efficiently.
+*/
 export class LinkedListNode {
     constructor(value) {
         this.value = value;

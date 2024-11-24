@@ -1,3 +1,6 @@
+/*
+Developed by Fabian Vu for Open AI Environment
+*/
 MACHINE HighwayEnvironment2
 
 SETS

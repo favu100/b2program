@@ -1,3 +1,6 @@
+/*
+From ProB Examples
+*/
 MACHINE GCD
 VARIABLES x,y
 INVARIANT

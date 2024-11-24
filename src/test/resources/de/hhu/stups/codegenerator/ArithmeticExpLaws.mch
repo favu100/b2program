@@ -1,3 +1,7 @@
+/*
+From ProB Examples, originally used to test ProB,
+rewritten for B2Program
+*/
 MACHINE ArithmeticExpLaws
 // some specific laws about exponentiation
 // kept separate from other laws because of CLP(FD) overflow issues

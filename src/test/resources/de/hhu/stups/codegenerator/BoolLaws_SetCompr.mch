@@ -1,3 +1,7 @@
+/*
+From ProB Examples, originally used to test ProB,
+rewritten for B2Program
+*/
 MACHINE BoolLaws_SetCompr
 /* Boolean Laws expressed using set comprehensions */
 CONSTANTS

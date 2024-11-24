@@ -1,3 +1,7 @@
+/*
+From ProB Examples, originally used to test ProB,
+rewritten for B2Program
+*/
 MACHINE ExplicitComputations2
 /* A machine with some explicitly given results for certain computations */
 SETS

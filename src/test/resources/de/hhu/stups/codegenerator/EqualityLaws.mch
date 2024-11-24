@@ -1,4 +1,8 @@
-MACHINE EqualityLaws // rewritten from prob_examples for b2program
+/*
+From ProB Examples, originally used to test ProB,
+rewritten for B2Program
+*/
+MACHINE EqualityLaws
 SETS
  ID={i1,i2,i3}
 VARIABLES a,b,c,  s1,  d,e

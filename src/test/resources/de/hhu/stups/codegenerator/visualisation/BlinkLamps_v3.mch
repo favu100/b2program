@@ -1,3 +1,7 @@
+/*
+Formal Model and VisB Visualization from
+M. Leuschel, M. Mutz, and M. Werth. Modelling and Validating an Automotive System in Classical B and Event-B. In Proceedings ABZ, LNCS 12071, pages 335–350, 2020.
+*/
 MACHINE BlinkLamps_v3
 // Manage Blinking Lights Actuators (blinkLeft, blinkRight)
 // and manage timing cycles

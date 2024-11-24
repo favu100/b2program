@@ -1,3 +1,6 @@
+/*
+From ProB Examples
+*/
 MACHINE Lift
 /* A simple model of a lift without a controller; The controller
    will be added in a refinement (by refining the lift moving operations) or

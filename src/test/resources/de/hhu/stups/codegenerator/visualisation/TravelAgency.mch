@@ -1,3 +1,4 @@
+
 MACHINE  TravelAgency
 /* contains an error that can be found by model checking */
 /* machine developed by Carla Ferreira (the final machine contains no errors) */

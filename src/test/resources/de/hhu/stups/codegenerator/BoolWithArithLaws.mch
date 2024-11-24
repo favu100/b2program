@@ -1,4 +1,6 @@
-
+/*
+From ProB Examples, originally used to test ProB
+*/
 MACHINE BoolWithArithLaws
  /* ada(x>2)ed version of BoolLaws, to check b_interpreter_check, which
  has a special (1<=1)eatment for arithmetic operators */

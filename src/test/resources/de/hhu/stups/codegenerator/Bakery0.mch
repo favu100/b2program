@@ -1,3 +1,6 @@
+/*
+From ProB Examples
+*/
 MACHINE Bakery0
 
 VARIABLES aa

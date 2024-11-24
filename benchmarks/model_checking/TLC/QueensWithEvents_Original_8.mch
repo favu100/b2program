@@ -1,3 +1,6 @@
+/*
+From ProB examples
+*/
 MACHINE QueensWithEvents_Original_8 // close to the original
 // rewritten for B2Program by inlining DEFINITIONS
 // but not rewriting perm

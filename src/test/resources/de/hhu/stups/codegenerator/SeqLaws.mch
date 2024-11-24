@@ -1,3 +1,7 @@
+/*
+From ProB Examples, originally used to test ProB,
+rewritten for B2Program
+*/
 MACHINE SeqLaws
 SETS
   setY = {y1,y2}

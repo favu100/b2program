@@ -1,4 +1,9 @@
+/*
+Original model from Event-B:
+L. Ladenberger, D. Hansen, H. Wiegard, J. Bendisposto, and M. Leuschel. Validation of the ABZ landing gear system using ProB. In Int. J. Softw. Tools Technol. Transf., 19(2):187–203, Apr. 2017.
 
+Translated to Classical B manually
+*/
 MACHINE Ref5_Switch
 SETS /* enumerated */
   DOOR_STATE={open,closed,door_moving};

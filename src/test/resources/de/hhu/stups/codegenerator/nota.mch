@@ -1,3 +1,6 @@
+/*
+I. Oliver. Experiences in Using B and UML in Industrial Development. In Proceedings Formal Specification and Development in B, B’07, page 248–251, 2007.
+*/
 MACHINE nota
 
 /* these represent the classes */

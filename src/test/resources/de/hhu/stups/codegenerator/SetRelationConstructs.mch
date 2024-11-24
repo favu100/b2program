@@ -1,3 +1,6 @@
+/*
+From ProB Examples, originally used to test ProB
+*/
 MACHINE SetRelationConstructs
 VARIABLES basea, a, baseb, b, basec, c
 INVARIANT

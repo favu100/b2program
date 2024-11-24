@@ -1,3 +1,7 @@
+/*
+From ProB Examples, originally used to test ProB,
+rewritten for B2Program
+*/
 MACHINE RelLaws_BOOL1
 // BOOL is BOOL
 /* This machine is intended so that you can check whether ProB deals

@@ -1,4 +1,7 @@
-
+/*
+From ProB Examples, originally used to test ProB,
+rewritten for B2Program
+*/
 MACHINE SetLaws
 SETS /* enumerated */
   setX={el1,el2,el3}

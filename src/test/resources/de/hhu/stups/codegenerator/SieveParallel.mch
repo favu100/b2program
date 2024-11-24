@@ -1,3 +1,6 @@
+/*
+Written by Michael Leuschel
+*/
 MACHINE SieveParallel
 VARIABLES numbers,cur, limit
 INVARIANT

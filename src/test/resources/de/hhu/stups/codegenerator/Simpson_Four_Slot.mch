@@ -1,3 +1,6 @@
+/*
+Model of Simpson's four slot algorithm
+*/
 MACHINE Simpson_Four_Slot
 SETS
   INDEX = {p0,p1,s0,s1};

@@ -1,3 +1,6 @@
+/*
+From ProB Examples
+*/
 MACHINE IncrementalStatePackingTestLargeSlow2
 SETS
  ID={aa,bb,cc}

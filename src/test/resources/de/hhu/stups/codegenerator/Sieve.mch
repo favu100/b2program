@@ -1,3 +1,6 @@
+/*
+Written by Michael Leuschel
+*/
 MACHINE Sieve
 VARIABLES numbers,cur, limit
 INVARIANT

@@ -1,3 +1,6 @@
+/*
+From ProB Examples
+*/
 MACHINE Generated100
 CONSTANTS
   c100,

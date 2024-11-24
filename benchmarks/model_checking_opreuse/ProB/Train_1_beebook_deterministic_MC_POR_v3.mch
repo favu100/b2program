@@ -1,4 +1,12 @@
-MACHINE Train_1_beebook_deterministic_MC_POR_v3 // this version is very close to Train_1_beebook_tlc_POR. For instance, top-level ANY substitutions are not re-written to PRE as done in Train_1_beebook_deterministic_MC_POR_v2. DEFINITIONS are still inlined.
+/*
+Original model:
+J.-R. Abrial. Modeling in Event-B: System and Software Engineering. Cambridge University Press, 2010.
+
+Model applies Partial Order Reduction manually.
+Rewritten version for B2Program.
+This version is very close to Train_1_beebook_tlc_POR. For instance, top-level ANY substitutions are not re-written to PRE as done in Train_1_beebook_deterministic_MC_POR_v2. DEFINITIONS are still inlined.
+*/
+MACHINE Train_1_beebook_deterministic_MC_POR_v3
 SETS /* enumerated */
   BLOCKS={A,B,C,D,E,F,G,H,I,J,K,L,M,N};
   ROUTES={R1,R2,R3,R4,R5,R6,R7,R8,R9,R10}

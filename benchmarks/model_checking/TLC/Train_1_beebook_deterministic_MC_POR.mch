@@ -1,3 +1,8 @@
+/*
+Original model:
+J.-R. Abrial. Modeling in Event-B: System and Software Engineering. Cambridge University Press, 2010.
+
+Model applies Partial Order Reduction manually.*/
 MACHINE Train_1_beebook_deterministic_MC_POR
 SETS /* enumerated */
   BLOCKS={A,B,C,D,E,F,G,H,I,J,K,L,M,N};

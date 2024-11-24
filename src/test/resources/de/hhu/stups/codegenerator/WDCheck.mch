@@ -1,3 +1,6 @@
+/*
+From ProB examples
+*/
 MACHINE WDCheck
 VARIABLES
    SS

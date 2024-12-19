@@ -307,7 +307,7 @@ public class ExpressionGenerator {
         }
         if(substitutionGenerator.getCurrentLocalScope() > 0 && identifierGenerator.getCurrentLocals().containsKey(node.getName())) {
             boolean isAssigned = identifierGenerator.isAssigned(node, node.getParent());
-            boolean isParam = node.getDeclarationNode().getKind().equals(DeclarationNode.Kind.OP_INPUT_PARAMETER);
+            boolean isParam = node.getDeclarationNode() != null && DeclarationNode.Kind.OP_INPUT_PARAMETER.equals(node.getDeclarationNode().getKind());
             return identifierGenerator.generateVarDeclaration(node.getName(), isAssigned, isParam);
         }
         return identifierGenerator.generate(node);

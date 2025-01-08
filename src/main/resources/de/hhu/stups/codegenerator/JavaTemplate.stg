@@ -590,8 +590,12 @@ bool() ::= <<
 BUtils.BOOL
 >>
 
-include_declaration(type, identifier) ::= <<
+include_declaration(hasExternals, type, identifier) ::= <<
+<if(hasExternals)>
+private <declaration(type, identifier)> = new <type>(new <type>_EXTERNALS());
+<else>
 private <declaration(type, identifier)> = new <type>();
+<endif>
 >>
 
 global_declaration(type, identifier) ::= <<

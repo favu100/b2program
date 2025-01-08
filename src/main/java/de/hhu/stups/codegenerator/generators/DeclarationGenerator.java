@@ -8,6 +8,7 @@ import de.prob.parser.ast.nodes.DeclarationNode;
 import de.prob.parser.ast.nodes.EnumeratedSetDeclarationNode;
 import de.prob.parser.ast.nodes.MachineNode;
 import de.prob.parser.ast.nodes.MachineReferenceNode;
+import de.prob.parser.ast.nodes.OperationNode;
 import de.prob.parser.ast.types.CoupleType;
 import de.prob.parser.ast.types.SetType;
 import org.stringtemplate.v4.ST;
@@ -144,6 +145,11 @@ public class DeclarationGenerator {
         ST declaration = currentGroup.getInstanceOf("include_declaration");
         String machine = reference.getMachineName();
         String referenceName = reference.getPrefix() != null ? reference.getPrefix() : reference.getMachineName();
+        boolean hasExternals = reference.getMachineNode().getOperations()
+                .stream()
+                .map(OperationNode::getName)
+                .anyMatch(op -> op.startsWith("EXTERNAL_"));
+        TemplateHandler.add(declaration, "hasExternals", hasExternals);
         TemplateHandler.add(declaration, "type", nameHandler.handle(machine));
         TemplateHandler.add(declaration, "identifier", nameHandler.handleIdentifier(referenceName, NameHandler.IdentifierHandlingEnum.MACHINES));
         return declaration.render();

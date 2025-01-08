@@ -760,4 +760,9 @@ public class TestMachines extends TestJava {
         testJava("drone/DroneSafetyController");
     }
 
+    @Test
+    public void testDroneCommunicatorMockup() throws Exception {
+        testJava("drone/DroneCommunicator_Mockup");
+    }
+
 }

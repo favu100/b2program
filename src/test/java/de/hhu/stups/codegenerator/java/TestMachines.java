@@ -755,4 +755,9 @@ public class TestMachines extends TestJava {
         testJavaMC("prob_oneway8seq", "prob_oneway8seq", true, 1, false);
     }
 
+    @Test
+    public void testDroneSafetyController() throws Exception {
+        testJava("drone/DroneSafetyController");
+    }
+
 }

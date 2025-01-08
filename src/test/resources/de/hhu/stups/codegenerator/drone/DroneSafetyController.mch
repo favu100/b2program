@@ -166,6 +166,16 @@ OPERATIONS
     THEN
       sensor_data := data ||
       updated := TRUE
-    END
+    END;
 
+  setCoordinates(newX, newY, newZ) =
+  SELECT
+    newX : INTEGER &
+    newY : INTEGER &
+    newZ : INTEGER
+  THEN
+    x := newX ||
+    y := newY ||
+    z := newZ
+  END
 END

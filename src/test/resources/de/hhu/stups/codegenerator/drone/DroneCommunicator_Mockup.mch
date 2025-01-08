@@ -12,12 +12,12 @@ INITIALISATION
   cycle := 1
 
 OPERATIONS
-  EXTERN_Init =
+  EXTERNAL_Init =
   SELECT init = FALSE THEN
     init := TRUE
   END;
   
-  EXTERN_open_link =
+  EXTERNAL_open_link =
   SELECT init = TRUE THEN
     skip
   END;
@@ -28,7 +28,7 @@ OPERATIONS
   "high_level" - cflib.crazyflie.high_level_commander.HighLevelCommander
   "position_high_level" (the default) - cflib.positioning.position_hl_commander.PositionHlCommander
   */
-  EXTERN_open_link_with_commander_type(commander) =
+  EXTERNAL_open_link_with_commander_type(commander) =
   SELECT
     init = TRUE
     & commander : STRING
@@ -36,27 +36,27 @@ OPERATIONS
     skip
   END;
 
-  EXTERN_close_link =
+  EXTERNAL_close_link =
   SELECT init = TRUE THEN
     skip
   END;
 
-  EXTERN_register_sensors =
+  EXTERNAL_register_sensors =
   SELECT init = TRUE THEN
     skip
   END;
 
-  EXTERN_Drone_Takeoff =
+  EXTERNAL_Drone_Takeoff =
   SELECT init = TRUE THEN
     skip
   END;
 
-  EXTERN_Drone_Land =
+  EXTERNAL_Drone_Land =
   SELECT init = TRUE THEN
     skip
   END;
 
-  EXTERN_Drone_Left(dist) =
+  EXTERNAL_Drone_Left(dist) =
   SELECT
     init = TRUE &
     dist : 0..2000
@@ -64,7 +64,7 @@ OPERATIONS
     skip
   END;
 
-  EXTERN_Drone_Right(dist) =
+  EXTERNAL_Drone_Right(dist) =
   SELECT
     init = TRUE &
     dist : 0..2000
@@ -72,7 +72,7 @@ OPERATIONS
     skip
   END;
 
-  EXTERN_Drone_Up(dist) =
+  EXTERNAL_Drone_Up(dist) =
   SELECT
     init = TRUE &
     dist : 0..2000
@@ -80,7 +80,7 @@ OPERATIONS
     skip
   END;
 
-  EXTERN_Drone_Down(dist) =
+  EXTERNAL_Drone_Down(dist) =
   SELECT
     init = TRUE &
     dist : 0..2000
@@ -88,7 +88,7 @@ OPERATIONS
     skip
   END;
 
-  EXTERN_Drone_Forward(dist) =
+  EXTERNAL_Drone_Forward(dist) =
   SELECT
     init = TRUE &
     dist : 0..2000
@@ -96,7 +96,7 @@ OPERATIONS
     skip
   END;
 
-  EXTERN_Drone_Backward(dist) =
+  EXTERNAL_Drone_Backward(dist) =
   SELECT
     init = TRUE &
     dist : 0..2000
@@ -104,7 +104,7 @@ OPERATIONS
     skip
   END;
 
-  Drone_Turn_Left(degrees) =
+  EXTERNAL_Drone_Turn_Left(degrees) =
   SELECT
     init = TRUE &
     degrees : -360..360
@@ -112,7 +112,7 @@ OPERATIONS
     skip
   END;
 
-  Drone_Turn_Right(degrees) =
+  EXTERNAL_Drone_Turn_Right(degrees) =
   SELECT
     init = TRUE &
     degrees : -360..360
@@ -120,85 +120,85 @@ OPERATIONS
     skip
   END;
 
-  out <-- EXTERN_Drone_GetX =
+  out <-- EXTERNAL_Drone_GetX =
   SELECT init = TRUE THEN
     out := 2000;
     cycle := cycle + 1
   END;
 
-  out <-- EXTERN_Drone_GetY =
+  out <-- EXTERNAL_Drone_GetY =
   SELECT init = TRUE THEN
     out := 2000;
     cycle := cycle + 1
   END;
 
-  out <-- EXTERN_Drone_GetZ =
+  out <-- EXTERNAL_Drone_GetZ =
   SELECT init = TRUE THEN
     out := 2000;
     cycle := cycle + 1
   END;
 
-  out <-- EXTERN_Drone_GetBattery =
+  out <-- EXTERNAL_Drone_GetBattery =
   SELECT init = TRUE THEN
     out := 100;
     cycle := cycle + 1
   END;
 
-  out <-- EXTERN_Drone_GetFrontDistance =
+  out <-- EXTERNAL_Drone_GetFrontDistance =
   SELECT init = TRUE THEN
     out := 2000;
     cycle := cycle + 1
   END;
 
-  out <-- EXTERN_Drone_GetBackDistance =
+  out <-- EXTERNAL_Drone_GetBackDistance =
   SELECT init = TRUE THEN
     out := 2000;
     cycle := cycle + 1
   END;
 
-  out <-- EXTERN_Drone_GetUpDistance =
+  out <-- EXTERNAL_Drone_GetUpDistance =
   SELECT init = TRUE THEN
     out := 2000;
     cycle := cycle + 1
   END;
 
-  out <-- EXTERN_Drone_GetDownDistance =
+  out <-- EXTERNAL_Drone_GetDownDistance =
   SELECT init = TRUE THEN
     out := 2000;
     cycle := cycle + 1
   END;
 
-  out <-- EXTERN_Drone_GetLeftDistance =
+  out <-- EXTERNAL_Drone_GetLeftDistance =
   SELECT init = TRUE THEN
     out := 2000;
     cycle := cycle + 1
   END;
 
-  out <-- EXTERN_Drone_GetRightDistance =
+  out <-- EXTERNAL_Drone_GetRightDistance =
   SELECT init = TRUE THEN
     out := 2000;
     cycle := cycle + 1
   END;
 
-  out <-- EXTERN_Drone_GetRoll =
+  out <-- EXTERNAL_Drone_GetRoll =
   SELECT init = TRUE THEN
     out := 0;
     cycle := cycle + 1
   END;
 
-  out <-- EXTERN_Drone_GetPitch =
+  out <-- EXTERNAL_Drone_GetPitch =
   SELECT init = TRUE THEN
     out := 0;
     cycle := cycle + 1
   END;
 
-  out <-- EXTERN_Drone_GetYaw =
+  out <-- EXTERNAL_Drone_GetYaw =
   SELECT init = TRUE THEN
     out := 0;
     cycle := cycle + 1
   END;
 
-  Destroy =
+  EXTERNAL_Destroy =
   SELECT init = TRUE THEN
     init := FALSE
   END

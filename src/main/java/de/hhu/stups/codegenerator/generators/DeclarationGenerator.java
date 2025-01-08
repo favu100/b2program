@@ -92,7 +92,7 @@ public class DeclarationGenerator {
     /*
     * This function generates code for a parameter with the given node from the AST and the information whether it is an output parameter
     */
-    private String generateParameter(DeclarationNode node, boolean isReturn) {
+    public String generateParameter(DeclarationNode node, boolean isReturn) {
         ST declaration = currentGroup.getInstanceOf("parameter");
         TemplateHandler.add(declaration, "isReturn", isReturn);
         TemplateHandler.add(declaration, "type", typeGenerator.generate(node.getType()));

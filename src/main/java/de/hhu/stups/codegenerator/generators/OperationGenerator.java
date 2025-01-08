@@ -125,6 +125,7 @@ public class OperationGenerator {
         TemplateHandler.add(operation, "parameters", declarationGenerator.generateDeclarations(node.getParams(), DeclarationType.PARAMETER, false));
         TemplateHandler.add(operation, "parameterNames", node.getParams().stream().map(DeclarationNode::getName).collect(Collectors.toList()));
         TemplateHandler.add(operation, "returnParameters", declarationGenerator.generateDeclarations(node.getOutputParams(), DeclarationType.PARAMETER, true));
+        TemplateHandler.add(operation, "hasReturnParameters", !node.getOutputParams().isEmpty());
         return operation;
     }
 
@@ -139,6 +140,17 @@ public class OperationGenerator {
             generateReturnStatementIdentifier(operation, outputs);
         } else {
             generateVoidReturnStatement(operation);
+        }
+    }
+
+    public String generateReturnType(OperationNode node) {
+        List<DeclarationNode> outputs = node.getOutputParams();
+        if(outputs.size() > 1) {
+            return recordStructGenerator.getStruct(node);
+        } else if(outputs.size() == 1) {
+            return typeGenerator.generate(outputs.get(0).getType());
+        } else {
+            return typeGenerator.generateVoid();
         }
     }
 

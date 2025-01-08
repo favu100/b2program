@@ -279,9 +279,10 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 		TemplateHandler.add(machine, "externalFunctions", machineNode.getOperations()
 				.stream()
 				.filter(op -> op.getName().startsWith("EXTERNAL_"))
-				.map(op -> generateExternalFunction(op.getName(), op.getParams()
+				.map(op -> generateExternalFunction(operationGenerator.generateReturnType(op), op.getName(), op.getParams()
 						.stream()
-						.map(DeclarationNode::getName).collect(Collectors.toList())))
+						.map(parameter -> declarationGenerator.generateParameter(parameter, false))
+						.collect(Collectors.toList())))
 				.collect(Collectors.toList()));
 		generateBody(node, machine);
 		return machine.render();
@@ -372,8 +373,9 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 		TemplateHandler.add(machine, "structs", recordStructGenerator.generateStructs());
 	}
 
-	private String generateExternalFunction(String name, List<String> parameters) {
+	private String generateExternalFunction(String type, String name, List<String> parameters) {
 		ST template = currentGroup.getInstanceOf("external_function");
+		TemplateHandler.add(template, "type", type);
 		TemplateHandler.add(template, "name", name);
 		TemplateHandler.add(template, "parameters", parameters);
 		return template.render();

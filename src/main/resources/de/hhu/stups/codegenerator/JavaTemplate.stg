@@ -317,10 +317,14 @@ public <machine>(<if(hasExternalFunctions)>ExternalFunctionsInterface _externalF
 method() ::= <<
 >>
 
-operation(returnType, operationName, parameters, locals, body, return, isExternal, parameterNames) ::= <<
+operation(returnType, operationName, parameters, locals, body, return, isExternal, hasReturnParameters, parameterNames) ::= <<
 public <returnType> <operationName>(<parameters; separator=", ">) {
     <if(isExternal)>
+    <if(hasReturnParameters)>
+    return _externalFunctions.<operationName>(<parameterNames; separator=", ">);
+    <else>
     _externalFunctions.<operationName>(<parameterNames; separator=", ">);
+    <endif>
     <else>
     <locals; separator="\n">
     <body>
@@ -1867,6 +1871,6 @@ transition_cache_declaration(type, identifier, operationHasParams) ::= <<
 
 set_initialization(identifier, type, enums) ::= <<>>
 
-external_function(name, parameters) ::= <<
-void <name>(<parameters; separator=",">);
+external_function(type, name, parameters) ::= <<
+<type> <name>(<parameters; separator=",">);
 >>

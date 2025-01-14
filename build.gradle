@@ -14,8 +14,8 @@ base {
 repositories {
     mavenCentral()
     maven {
-        name "snapshots"
-        url "https://oss.sonatype.org/content/repositories/snapshots/"
+        name = "snapshots"
+        url = "https://oss.sonatype.org/content/repositories/snapshots/"
     }
 }
 

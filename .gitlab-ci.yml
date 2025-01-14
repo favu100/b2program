@@ -23,7 +23,7 @@ test:linux:
     DEBIAN_FRONTEND: noninteractive
   before_script:
     - apt-get update
-    - apt-get install --assume-yes build-essential cmake git libboost-all-dev curl
+    - apt-get install --assume-yes build-essential cmake git libboost-dev curl
     - curl -fsSL https://deb.nodesource.com/setup_21.x | bash -
     - apt-get install --assume-yes nodejs
     - npm install -g typescript

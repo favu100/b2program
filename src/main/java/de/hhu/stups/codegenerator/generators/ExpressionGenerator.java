@@ -252,7 +252,7 @@ public class ExpressionGenerator {
         } else if(node instanceof RecordFieldAccessNode) {
             return visitRecordFieldAccessNode((RecordFieldAccessNode) node);
         }
-        throw new RuntimeException("Given node is not implemented: " + node.getClass());
+        throw new RuntimeException("Given node is not implemented: " + node.getClass() + " at line " + node.getSourceCodePosition().getStartLine());
     }
 
     /*

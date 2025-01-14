@@ -104,7 +104,9 @@ public class OperationGenerator {
                 return "";
             }
         } else {
-            TemplateHandler.add(operation, "body", machineGenerator.visitSubstitutionNode(node.getSubstitution(), null));
+            if(!node.getName().startsWith("EXTERNAL_")) {
+                TemplateHandler.add(operation, "body", machineGenerator.visitSubstitutionNode(node.getSubstitution(), null));
+            }
         }
         TemplateHandler.add(operation, "lastStateCount", machineGenerator.getCurrentStateCount());
         return operation.render();

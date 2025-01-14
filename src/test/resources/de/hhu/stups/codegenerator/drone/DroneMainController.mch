@@ -1,5 +1,5 @@
 MACHINE DroneMainController
-INCLUDES DroneSafetyController, DroneCommunicator_Mockup
+INCLUDES DroneSafetyController, DroneCommunicator
 
 OPERATIONS
 

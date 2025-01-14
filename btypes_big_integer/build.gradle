@@ -2,7 +2,9 @@ apply plugin: 'java'
 apply plugin: 'eclipse'
 apply plugin: 'idea'
 
-project.archivesBaseName = "${rootProject.name}-btypes"
+base {
+    archivesName = "${rootProject.name}-btypes"
+}
 
 repositories {
     mavenCentral()
@@ -15,6 +17,11 @@ repositories {
 dependencies {
     implementation group: 'org.clojure', name: 'clojure', version: '1.10.0'
     testImplementation 'junit:junit:4.8.2'
+}
+
+java {
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
 }
 
 task fatJar(type: Jar) {
@@ -34,10 +41,6 @@ task fatJar(type: Jar) {
 tasks.withType(JavaCompile) {
     options.compilerArgs << "-Xlint:unchecked"
 }
-
-
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
 
 sourceSets.main.java.srcDirs = ['src/main/java']
 

@@ -52,7 +52,7 @@ jar {
 }
 
 task fatJar(type: Jar) {
-    baseName = project.name + '-all'
+    archivesBaseName = project.name + '-all'
     manifest {
         attributes(
                 'Main-Class': 'de.hhu.stups.codegenerator.CodeGenerator'

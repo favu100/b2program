@@ -19,14 +19,13 @@ stages:
 
 .test-linux:
   extends: .test-common
-  before_script: &default_before_script_linux
-    - export DEBIAN_FRONTEND="noninteractive"
+  variables:
+    DEBIAN_FRONTEND: noninteractive
 
 test:linux:
   extends: .test-linux
   image: eclipse-temurin:17
   before_script:
-    - *default_before_script_linux
     - apt-get update
     - apt-get install --assume-yes build-essential fakeroot cmake git build-essential libboost-all-dev wget curl
     - curl -fsSL https://deb.nodesource.com/setup_21.x | bash -

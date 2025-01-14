@@ -21,7 +21,6 @@ stages:
   extends: .test-common
   before_script: &default_before_script_linux
     - export DEBIAN_FRONTEND="noninteractive"
-    - apt-get update
 
 test:linux:
   extends: .test-linux

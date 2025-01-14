@@ -17,14 +17,10 @@ stages:
       - build/distributions
       - build/libs
 
-.test-linux:
-  extends: .test-common
+test:linux:
+  image: eclipse-temurin:17
   variables:
     DEBIAN_FRONTEND: noninteractive
-
-test:linux:
-  extends: .test-linux
-  image: eclipse-temurin:17
   before_script:
     - apt-get update
     - apt-get install --assume-yes build-essential fakeroot cmake git build-essential libboost-all-dev wget curl

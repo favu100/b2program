@@ -12,10 +12,6 @@ stages:
       - .gradle/native
       - .gradle/wrapper
   artifacts:
-    expire_in: 1 week
-    paths:
-      - build/distributions
-      - build/libs
     reports:
       junit:
         - "build/test-results/**/TEST-*.xml"

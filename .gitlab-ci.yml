@@ -16,6 +16,9 @@ stages:
     paths:
       - build/distributions
       - build/libs
+    reports:
+      junit:
+        - "build/test-results/**/TEST-*.xml"
 
 test:linux:
   image: eclipse-temurin:17

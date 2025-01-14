@@ -69,12 +69,6 @@ task fatJar(type: Jar) {
     with jar
 }
 
-wrapper {
-    gradleVersion = "7.4.2"
-}
-
-
-
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 

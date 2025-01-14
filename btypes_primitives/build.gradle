@@ -50,7 +50,3 @@ tasks.withType(JavaExec) {
 
     systemProperty "java.library.path", "./"
 }
-
-wrapper {
-    gradleVersion = "7.4.2"
-}

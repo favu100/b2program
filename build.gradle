@@ -41,6 +41,10 @@ application {
 }
 
 test {
+    // Enable executing tests in parallel, as recommended here:
+    // https://docs.gradle.org/8.12/userguide/performance.html#execute_tests_in_parallel
+    maxParallelForks = Runtime.runtime.availableProcessors().intdiv(2) ?: 1
+
     testLogging {
         exceptionFormat = 'full'
         showStandardStreams = true

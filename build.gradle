@@ -41,9 +41,11 @@ application {
 }
 
 test {
-    // Enable executing tests in parallel, as recommended here:
+    // We could enable executing tests in parallel, as recommended here:
     // https://docs.gradle.org/8.12/userguide/performance.html#execute_tests_in_parallel
-    maxParallelForks = Runtime.runtime.availableProcessors().intdiv(2) ?: 1
+    // But this currently doesn't work with the JavaScript tests,
+    // because multiple tests copy files to the same location and conflict with each other.
+    //maxParallelForks = Runtime.runtime.availableProcessors().intdiv(2) ?: 1
 
     testLogging {
         exceptionFormat = 'full'

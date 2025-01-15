@@ -51,10 +51,6 @@ test {
         exceptionFormat = 'full'
         showStandardStreams = true
         events 'failed', 'skipped', 'passed'
-
-        showExceptions = true
-        showCauses = true
-        showStackTraces = true
     }
 }
 

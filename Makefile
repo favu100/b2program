@@ -22,10 +22,6 @@ btypes_primitives:
 btypes_big_integer:
 	cd btypes_big_integer && ./gradlew fatJar && cp build/libs/btypes_big_integer-all.jar ../btypes.jar && cd ..
 
-refresh:
-	./gradlew eclipse --refresh-dependencies
-
-
 ifndef LANGUAGE
 	echo "LANGUAGE is not set"
 else

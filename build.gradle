@@ -8,10 +8,6 @@ apply plugin: 'idea'
 project.version = '0.1.0-SNAPSHOT' // If no snapshot, adapt ANTLR parser tag to git revision
 project.group = 'de.hhu.stups'
 
-base {
-    archivesName = 'B2Program'
-}
-
 repositories {
     mavenCentral()
     maven {

@@ -57,9 +57,6 @@ import de.prob.parser.ast.visitors.AbstractVisitor;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroup;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -152,7 +149,7 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 	private Set<String> enumIdentifier;
 
 	public MachineGenerator(GeneratorMode mode, boolean useBigInteger, String minint, String maxint, String deferredSetSize,
-							boolean forModelChecking, boolean useConstraintSolving, Path addition, boolean isIncludedMachine,
+							boolean forModelChecking, boolean useConstraintSolving, String addition, boolean isIncludedMachine,
 							boolean forVisualisation, String serverLink) {
 		this.mode = mode;
 		this.currentGroup = CodeGeneratorUtils.getGroup(mode);
@@ -161,13 +158,7 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 		this.useBigInteger = useBigInteger;
 		this.serverLink = serverLink;
 		this.boundedVariablesDepth = new HashMap<>();
-		if(addition != null && !addition.toFile().isDirectory()) {
-			try {
-				this.addition = new String(Files.readAllBytes(addition));
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
+		this.addition = addition;
 		this.machinePreprocessor = new MachinePreprocessor(forModelChecking, forVisualisation);
 		this.nameHandler = new NameHandler(this, currentGroup);
 		this.parallelConstructHandler = new ParallelConstructHandler();

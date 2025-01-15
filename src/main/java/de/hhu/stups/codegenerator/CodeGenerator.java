@@ -231,7 +231,7 @@ public class CodeGenerator {
 		return paths;
 	}
 
-	public void generateBlackBoxTraceGenerator(Path path, String name, String modelPath, String learningTechnique, int episodes, String minint, String maxint, String deferredSetSize) {
+	public void generateBlackBoxTraceGenerator(Path path, String name, String modelPath, String learningTechnique, int episodes, String minint, String maxint, String deferredSetSize) throws IOException {
 		paths.clear();
 
 		BProject project = parseProject(path);
@@ -249,9 +249,16 @@ public class CodeGenerator {
 							  boolean forModelChecking, boolean useConstraintSolving, MachineNode node,
 							  Path addition, boolean isIncludedMachine, boolean forVisualisation, String visualisationFile,
 							  BProject project, String serverLink) throws IOException {
+		String additionText;
+		if (addition != null && !addition.toFile().isDirectory()) {
+			additionText = new String(Files.readAllBytes(addition));
+		} else {
+			additionText = null;
+		}
+
 		MachineGenerator generator =
 				new MachineGenerator(mode, useBigInteger, minint, maxint, deferredSetSize, forModelChecking,
-									useConstraintSolving, addition, isIncludedMachine, forVisualisation, serverLink);
+									useConstraintSolving, additionText, isIncludedMachine, forVisualisation, serverLink);
 		machineReferenceGenerator.updateNameHandler(generator);
 		machineReferenceGenerator.updateDeclarationGenerator(generator);
 		machineReferenceGenerator.updateRecordStructGenerator(generator);
@@ -275,7 +282,7 @@ public class CodeGenerator {
 		return codePath;
 	}
 
-	private void generateVisualisation(BProject project, VisBProject visBProject, MachineGenerator generator, Path mainMachinePath) {
+	private void generateVisualisation(BProject project, VisBProject visBProject, MachineGenerator generator, Path mainMachinePath) throws IOException {
 		VisualisationGenerator visualisationGenerator = new VisualisationGenerator(project, generator, generator.getImportGenerator(), generator.getExpressionGenerator(), generator.getInvariantGenerator(), generator.getIterationConstructHandler());
 		String htmlCode = visualisationGenerator.generateHTML(visBProject);
 		writeToFile(mainMachinePath, GeneratorMode.HTML, false, null, false, generator, htmlCode);
@@ -293,7 +300,7 @@ public class CodeGenerator {
 	/*
 	 * This function writes code for a targeted programming language with creating the belonging file
 	 */
-	private Path writeToFile(Path path, GeneratorMode mode, boolean forModelChecking, MachineNode node, boolean isIncludedMachine, MachineGenerator generator, String code) {
+	private Path writeToFile(Path path, GeneratorMode mode, boolean forModelChecking, MachineNode node, boolean isIncludedMachine, MachineGenerator generator, String code) throws IOException {
 		String fileName = path.getFileName().toString().replace(".mch", "");
 		Path newPath = null;
 		Path jsonPath = null;
@@ -310,49 +317,44 @@ public class CodeGenerator {
 			jsonPath = Paths.get(path.getParent().toString(), generator.getNameHandler().handle(fileName) + ".json");
 		}
 
-		try {
-			if(forModelChecking) {
-				ModelCheckingInfo mcInfo = generator.generateModelCheckingInfo(node);
-				assert jsonPath != null;
-				try (final Writer writer = Files.newBufferedWriter(jsonPath)) {
-					final JsonWriter jsonWriter = new JsonWriter(writer);
-					jsonWriter.setHtmlSafe(false);
-					jsonWriter.setIndent("  ");
-					Gson gson = Converters.registerAll(new GsonBuilder())
-							.disableHtmlEscaping()
-							.serializeNulls()
-							.setPrettyPrinting()
-							.create();
+		if(forModelChecking) {
+			ModelCheckingInfo mcInfo = generator.generateModelCheckingInfo(node);
+			assert jsonPath != null;
+			try (final Writer writer = Files.newBufferedWriter(jsonPath)) {
+				final JsonWriter jsonWriter = new JsonWriter(writer);
+				jsonWriter.setHtmlSafe(false);
+				jsonWriter.setIndent("  ");
+				Gson gson = Converters.registerAll(new GsonBuilder())
+						.disableHtmlEscaping()
+						.serializeNulls()
+						.setPrettyPrinting()
+						.create();
 
-					gson.toJson(mcInfo.toJsonObject(), jsonWriter);
-				}
+				gson.toJson(mcInfo.toJsonObject(), jsonWriter);
 			}
-			return Files.write(newPath, code.getBytes(), Files.exists(newPath) ? TRUNCATE_EXISTING : CREATE_NEW);
-		} catch (IOException e) {
-			e.printStackTrace();
-			throw new RuntimeException(e);
 		}
+		return Files.write(newPath, code.getBytes(), Files.exists(newPath) ? TRUNCATE_EXISTING : CREATE_NEW);
 	}
 
 	/*
 	* This function executes parsing and semantic checking on a project
 	*/
-	private BProject parseProject(Path path) throws CodeGenerationException {
+	private BProject parseProject(Path path) throws CodeGenerationException, IOException {
 		BProject project;
 		try {
 			project = Antlr4BParser.createBProjectFromMainMachineFile(path.toFile());
-		} catch (TypeErrorException | ScopeException | IOException e) {
+		} catch (TypeErrorException | ScopeException e) {
 			e.printStackTrace();
 			throw new CodeGenerationException(e.getMessage());
 		}
 		return project;
 	}
 
-	private VisBProject parseVisBProject(Path path, VisBVisualisation visualisation) throws CodeGenerationException {
+	private VisBProject parseVisBProject(Path path, VisBVisualisation visualisation) throws CodeGenerationException, IOException {
 		VisBProject project;
 		try {
 			project = VisBProjectParser.createVisBProjectFromMainFile(path.toFile(), visualisation);
-		} catch (TypeErrorException | ScopeException | IOException e) {
+		} catch (TypeErrorException | ScopeException e) {
 			e.printStackTrace();
 			throw new CodeGenerationException(e.getMessage());
 		}

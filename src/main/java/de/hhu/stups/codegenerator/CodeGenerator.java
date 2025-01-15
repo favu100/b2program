@@ -344,8 +344,7 @@ public class CodeGenerator {
 		try {
 			project = Antlr4BParser.createBProjectFromMainMachineFile(path.toFile());
 		} catch (TypeErrorException | ScopeException e) {
-			e.printStackTrace();
-			throw new CodeGenerationException(e.getMessage());
+			throw new CodeGenerationException(e);
 		}
 		return project;
 	}
@@ -355,8 +354,7 @@ public class CodeGenerator {
 		try {
 			project = VisBProjectParser.createVisBProjectFromMainFile(path.toFile(), visualisation);
 		} catch (TypeErrorException | ScopeException e) {
-			e.printStackTrace();
-			throw new CodeGenerationException(e.getMessage());
+			throw new CodeGenerationException(e);
 		}
 		return project;
 	}

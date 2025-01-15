@@ -1,15 +1,15 @@
 MACHINE Lift_External
 
-VARIABLES  floor
+VARIABLES  level
 
-INVARIANT  floor : 0..100 /* NAT */
+INVARIANT  level : 0..100 /* NAT */
 
-INITIALISATION floor := 0
+INITIALISATION level := 0
 
 OPERATIONS
 
-	inc = PRE floor<100 THEN floor := floor + 1 END ;
-	dec = PRE floor>0 THEN floor := floor - 1 END;
+	inc = PRE level<100 THEN level := level + 1 END ;
+	dec = PRE level>0 THEN level := level - 1 END;
 	EXTERNAL_SEND = skip
 
 END

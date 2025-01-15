@@ -1,15 +1,15 @@
 MACHINE Assert
 
-VARIABLES  floor
+VARIABLES  level
 
-INVARIANT  floor : 0..99 /* NAT */
+INVARIANT  level : 0..99 /* NAT */
 
-INITIALISATION floor := 0
+INITIALISATION level := 0
 
 OPERATIONS
 
-	inc = ASSERT floor<99 THEN floor := floor + 1 END ;
+	inc = ASSERT level<99 THEN level := level + 1 END ;
 
-	dec = ASSERT floor>0 THEN floor := floor - 1 END
+	dec = ASSERT level>0 THEN level := level - 1 END
 
 END

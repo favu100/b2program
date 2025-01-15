@@ -2,4 +2,4 @@ let lift: Lift = new Lift();
 lift.inc();
 lift.inc();
 lift.inc();
-console.log(lift._get_floor().toString());
+console.log(lift._get_level().toString());

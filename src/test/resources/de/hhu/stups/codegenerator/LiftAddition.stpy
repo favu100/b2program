@@ -3,4 +3,4 @@ if __name__ == '__main__':
     lift.inc()
     lift.inc()
     lift.inc()
-    print(lift._get_floor())
+    print(lift._get_level())

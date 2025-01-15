@@ -3,5 +3,5 @@ fn main() {
     lift.inc();
     lift.inc();
     lift.inc();
-    println!("{}", lift._get_floor());
+    println!("{}", lift._get_level());
 }

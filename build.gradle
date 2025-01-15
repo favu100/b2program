@@ -42,18 +42,42 @@ application {
     mainClass = 'de.hhu.stups.codegenerator.CodeGenerator'
 }
 
-test {
-    // We could enable executing tests in parallel, as recommended here:
-    // https://docs.gradle.org/8.12/userguide/performance.html#execute_tests_in_parallel
-    // But this currently doesn't work with the JavaScript tests,
-    // because multiple tests copy files to the same location and conflict with each other.
-    //maxParallelForks = Runtime.runtime.availableProcessors().intdiv(2) ?: 1
+// The JavaScript tests currently cannot run in parallel,
+// because multiple tests copy files to the same location and conflict with each other.
+final noParallelTests = [
+    "de.hhu.stups.codegenerator.js.*",
+]
 
+test {
+    // Execute tests in parallel where possible, as recommended here:
+    // https://docs.gradle.org/8.12/userguide/performance.html#execute_tests_in_parallel
+    maxParallelForks = Runtime.runtime.availableProcessors().intdiv(2) ?: 1
+
+    filter {
+        excludePatterns += noParallelTests
+    }
+}
+
+final testNoParallel = tasks.register("testNoParallel", Test) {
+    description = "Runs tests that cannot be executed in parallel."
+    group = "verification"
+
+    testClassesDirs = sourceSets.test.output.classesDirs
+    classpath = sourceSets.test.runtimeClasspath
+
+    filter {
+        includePatterns += noParallelTests
+    }
+}
+tasks.named("check").configure {
+    dependsOn += [testNoParallel]
+}
+
+tasks.withType(Test).configureEach {
     testLogging {
         events += [TestLogEvent.PASSED]
     }
 }
-
 
 jar {
     manifest {

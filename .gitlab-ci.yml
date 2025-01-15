@@ -37,4 +37,4 @@ test:linux:
     - mkdir cpp_build && cd cpp_build
     - cmake ..
     - make install & cd ..
-    - ./gradlew test --info --stacktrace
+    - ./gradlew check --info --stacktrace

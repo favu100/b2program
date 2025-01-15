@@ -1,3 +1,5 @@
+import org.gradle.api.tasks.testing.logging.TestLogEvent
+
 apply plugin: 'java'
 apply plugin: 'application'
 apply plugin: 'antlr'
@@ -48,9 +50,7 @@ test {
     //maxParallelForks = Runtime.runtime.availableProcessors().intdiv(2) ?: 1
 
     testLogging {
-        exceptionFormat = 'full'
-        showStandardStreams = true
-        events 'failed', 'skipped', 'passed'
+        events += [TestLogEvent.PASSED]
     }
 }
 

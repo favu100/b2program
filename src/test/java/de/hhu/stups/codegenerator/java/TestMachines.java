@@ -1,7 +1,7 @@
 package de.hhu.stups.codegenerator.java;
 
 import de.hhu.stups.codegenerator.generators.CodeGenerationException;
-import de.prob.parser.ast.visitors.TypeErrorException;
+
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -768,11 +768,7 @@ public class TestMachines extends TestJava {
 
     @Test
     public void testDroneMainController() throws Exception {
-        try {
-            testJava("drone/DroneMainController");
-        } catch (TypeErrorException e) {
-            System.out.println(e.getMessage());
-        }
+        testJava("drone/DroneMainController");
     }
 
 }

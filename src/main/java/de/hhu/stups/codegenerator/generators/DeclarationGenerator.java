@@ -84,6 +84,7 @@ public class DeclarationGenerator {
     * This function generates code for a local declaration with the given node from the AST
     */
     public String generateLocalDeclaration(DeclarationNode node) {
+        importGenerator.addImport(node.getType());
         ST declaration = currentGroup.getInstanceOf("local_declaration");
         TemplateHandler.add(declaration, "type", typeGenerator.generate(node.getType()));
         TemplateHandler.add(declaration, "identifier", nameHandler.handleIdentifier(node.getName(), NameHandler.IdentifierHandlingEnum.FUNCTION_NAMES));
@@ -94,6 +95,7 @@ public class DeclarationGenerator {
     * This function generates code for a parameter with the given node from the AST and the information whether it is an output parameter
     */
     public String generateParameter(DeclarationNode node, boolean isReturn) {
+        importGenerator.addImport(node.getType());
         ST declaration = currentGroup.getInstanceOf("parameter");
         TemplateHandler.add(declaration, "isReturn", isReturn);
         TemplateHandler.add(declaration, "type", typeGenerator.generate(node.getType()));

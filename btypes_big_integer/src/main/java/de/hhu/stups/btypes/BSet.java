@@ -213,7 +213,7 @@ public class BSet<T> implements BObject, Set<T> {
 
 	public static BSet<BInteger> interval(BInteger a, BInteger b) {
 		PersistentHashSet persistentSet = PersistentHashSet.create();
-		for(BInteger i = a; i.lessEqual(b).booleanValue(); i = i.plus(new BInteger("1"))) {
+		for(BInteger i = a; i.lessEqual(b).booleanValue(); i = i.succ()) {
 			persistentSet = (PersistentHashSet) persistentSet.cons(i);
 		}
 		return new BSet<BInteger>(persistentSet);
@@ -221,11 +221,11 @@ public class BSet<T> implements BObject, Set<T> {
 
 
 	public BInteger card() {
-		return new BInteger(String.valueOf((int) COUNT.invoke(this.set)));
+		return new BInteger((int) COUNT.invoke(this.set));
 	}
 
 	public BInteger _size() {
-		return new BInteger(String.valueOf((int) COUNT.invoke(this.set)));
+		return new BInteger((int) COUNT.invoke(this.set));
 	}
 
 	public BBoolean elementOf(T object) {
@@ -326,7 +326,7 @@ public class BSet<T> implements BObject, Set<T> {
 	}
 
 	public BSet<BRelation<BInteger,T>> permutate() {
-		BSet<BInteger> interval = BSet.interval(new BInteger("1"), this._size());
+		BSet<BInteger> interval = BSet.interval(BInteger.ONE, this._size());
 		BSet<BRelation<BInteger,T>> permutations = BRelation.cartesianProduct(interval, this).pow();
 		BSet<BRelation<BInteger,T>> result = permutations;
 		for(BRelation<BInteger, T> permutation : permutations) {

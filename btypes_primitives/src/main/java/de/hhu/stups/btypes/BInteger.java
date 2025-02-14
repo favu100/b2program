@@ -1,32 +1,15 @@
 package de.hhu.stups.btypes;
 
-import java.util.Objects;
+import java.math.BigInteger;
 
-/**
- * Created by fabian on 15.10.18.
- */
-public class BInteger extends java.lang.Number implements Comparable<BInteger>, BObject {
+public final class BInteger extends java.lang.Number implements Comparable<BInteger>, BObject {
 
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (obj instanceof BInteger) {
-            return this.compareTo((BInteger) obj) == 0;
-        }
-        return false;
-    }
+    public static final BInteger ZERO = new BInteger(0);
+    public static final BInteger ONE = new BInteger(1);
+    public static final BInteger TWO = new BInteger(2);
 
     private static final long serialVersionUID = -6484548796859331267L;
-    private int value;
-
-    @Override
-    public int hashCode() {
-        return Integer.hashCode(value);
-    }
+    private final int value;
 
     public BInteger(int value) {
         this.value = value;
@@ -36,21 +19,37 @@ public class BInteger extends java.lang.Number implements Comparable<BInteger>, 
         return new BInteger(value);
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        } else if (!(obj instanceof BInteger)) {
+            return false;
+        } else {
+            return this.value == ((BInteger) obj).value;
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        return Integer.hashCode(value);
+    }
+
+    @Override
     public int compareTo(BInteger o) {
-        return this.value - o.value;
+        return Integer.compare(this.value, o.value);
     }
 
     public BBoolean lessEqual(BInteger o) {
         return new BBoolean(this.value <= o.value);
     }
 
-
     public BBoolean greaterEqual(BInteger o) {
         return new BBoolean(this.value >= o.value);
     }
 
     public java.math.BigInteger asBigInteger() {
-        return new java.math.BigInteger(String.valueOf(value));
+        return BigInteger.valueOf(value);
     }
 
     public BBoolean less(BInteger o) {
@@ -106,18 +105,22 @@ public class BInteger extends java.lang.Number implements Comparable<BInteger>, 
     }
 
     public BInteger power(BInteger exp) {
-        if(exp.intValue() == 0) {
-            return new BInteger(1);
+        if (exp.isNotNatural().booleanValue()) {
+            throw new IllegalArgumentException("Exponent must be a natural number");
         }
-        BInteger tmp = power(exp.divide(new BInteger(2)));
-        if(exp.modulo(new BInteger(2)).equal(new BInteger(0)).booleanValue()) {
-            return tmp.multiply(tmp);
-        } else {
-            if(exp.greater(new BInteger(0)).booleanValue()) {
-                return this.multiply(tmp.multiply(tmp));
-            } else {
-                return (tmp.multiply(tmp)).divide(this);
+
+        BInteger result = ONE;
+        while (true) {
+            if (ONE.equals(exp.modulo(TWO))) {
+                result = result.multiply(this);
             }
+
+            exp = exp.divide(TWO);
+            if (ZERO.equals(exp)) {
+                return result;
+            }
+
+            result = result.multiply(result);
         }
     }
 
@@ -184,5 +187,4 @@ public class BInteger extends java.lang.Number implements Comparable<BInteger>, 
     public BBoolean isNotNatural1() {
         return isNatural1().not();
     }
-
 }

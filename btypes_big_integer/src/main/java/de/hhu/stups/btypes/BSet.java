@@ -337,9 +337,9 @@ public class BSet<T> implements BObject, Set<T> {
 		return result;
 	}
 
-	public BBoolean subsetOfInteger() {
+	public BBoolean subsetOfBoolean() {
 		for(T e : this) {
-			if(e instanceof BInteger) {
+			if(e instanceof BBoolean) {
 				return new BBoolean(true);
 			} else {
 				return new BBoolean(false);
@@ -349,7 +349,7 @@ public class BSet<T> implements BObject, Set<T> {
 	}
 
 	public BBoolean strictSubsetOfBoolean() {
-		return subsetOfBoolean();
+		return new BBoolean(subsetOfBoolean().booleanValue() && this.size() < 2);
 	}
 
 	public BBoolean notSubsetOfBoolean() {
@@ -362,6 +362,17 @@ public class BSet<T> implements BObject, Set<T> {
 
 	public BBoolean unequalBoolean() {
 		return new BBoolean(subsetOfBoolean().booleanValue() && this.size() < 2);
+	}
+
+	public BBoolean subsetOfInteger() {
+		for(T e : this) {
+			if(e instanceof BInteger) {
+				return new BBoolean(true);
+			} else {
+				return new BBoolean(false);
+			}
+		}
+		return new BBoolean(true);
 	}
 
 	public BBoolean strictSubsetOfInteger() {

@@ -70,32 +70,32 @@ public class BInteger extends java.lang.Number implements Comparable<BInteger>, 
 	}
 
 	public BBoolean lessEqual(BInteger o) {
-		return new BBoolean(this.value <= o.value);
+		return new BBoolean(compareTo(o) <= 0);
 	}
 
 
 	public BBoolean greaterEqual(BInteger o) {
-		return new BBoolean(this.value >= o.value);
+		return new BBoolean(compareTo(o) >= 0);
+	}
+
+	public BBoolean less(BInteger o) {
+		return new BBoolean(compareTo(o) < 0);
+	}
+
+	public BBoolean greater(BInteger o) {
+		return new BBoolean(compareTo(o) > 0);
+	}
+
+	public BBoolean equal(BInteger o) {
+		return new BBoolean(compareTo(o) == 0);
+	}
+
+	public BBoolean unequal(BInteger o) {
+		return new BBoolean(compareTo(o) != 0);
 	}
 
 	public java.math.BigInteger asBigInteger() {
 		return new java.math.BigInteger(String.valueOf(value));
-	}
-
-	public BBoolean less(BInteger o) {
-		return new BBoolean(this.value < o.value);
-	}
-
-	public BBoolean greater(BInteger o) {
-		return new BBoolean(this.value > o.value);
-	}
-
-	public BBoolean equal(BInteger o) {
-		return new BBoolean(this.value == o.value);
-	}
-
-	public BBoolean unequal(BInteger o) {
-		return new BBoolean(this.value != o.value);
 	}
 
 	@Override

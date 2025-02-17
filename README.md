@@ -1,9 +1,9 @@
 # B2Program
 
 This is the code generator **B2Program** for generating code from B to other
-programming languages (Java, C++, Python, JavaScript/TypeScript).
+programming languages (Java, C++, JavaScript/TypeScript).
 Currently, code generation for Prolog and Rust are in progress.
-The work for Clojure and C has begun but not continued.
+The work for Python, Clojure and C has begun but not continued.
 
 
 Paper: https://www.researchgate.net/publication/337441241_A_Multi-target_Code_Generator_for_High-Level_B

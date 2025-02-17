@@ -1,4 +1,4 @@
 public static void main(String[] args) {
     While while1 = new While();
-    System.out.println(while1.Inc(new BInteger(1)));
+    System.out.println(while1.Inc(BInteger.of(1)));
 }

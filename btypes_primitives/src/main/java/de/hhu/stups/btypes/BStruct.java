@@ -1,12 +1,15 @@
 package de.hhu.stups.btypes;
 
-public class BStruct implements BObject {
+public abstract class BStruct implements BObject {
 
-    public BBoolean isRecord() {
-        return new BBoolean(true);
-    }
+	protected BStruct() {
+	}
 
-    public BBoolean isNotRecord() {
-        return new BBoolean(false);
-    }
+	public BBoolean isRecord() {
+		return BBoolean.TRUE;
+	}
+
+	public BBoolean isNotRecord() {
+		return BBoolean.FALSE;
+	}
 }

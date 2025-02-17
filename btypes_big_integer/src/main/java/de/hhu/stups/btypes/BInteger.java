@@ -1,16 +1,28 @@
 package de.hhu.stups.btypes;
 
+import java.math.BigInteger;
 import java.util.Objects;
 
 import clojure.lang.BigInt;
 import clojure.lang.RT;
 import clojure.lang.Var;
 
-public final class BInteger extends java.lang.Number implements Comparable<BInteger>, BObject {
+public final class BInteger extends Number implements Comparable<BInteger>, BObject {
 
-	public static final BInteger ZERO = new BInteger(0);
-	public static final BInteger ONE = new BInteger(1);
-	public static final BInteger TWO = new BInteger(2);
+	private static final BigInteger JBI_ZERO = BigInteger.ZERO;
+	private static final BigInteger JBI_ONE = BigInteger.ONE;
+	private static final BigInteger JBI_TWO = BigInteger.valueOf(2);
+	private static final BigInteger JBI_MINUS_ONE = BigInteger.valueOf(-1);
+
+	private static final BigInt CBI_ZERO = BigInt.fromLong(0);
+	private static final BigInt CBI_ONE = BigInt.fromLong(1);
+	private static final BigInt CBI_TWO = BigInt.fromLong(2);
+	private static final BigInt CBI_MINUS_ONE = BigInt.fromLong(-1);
+
+	public static final BInteger ZERO = new BInteger(CBI_ZERO);
+	public static final BInteger ONE = new BInteger(CBI_ONE);
+	public static final BInteger TWO = new BInteger(CBI_TWO);
+	public static final BInteger MINUS_ONE = new BInteger(CBI_MINUS_ONE);
 
 	private static final Var PLUS = RT.var("clojure.core", "+");
 	private static final Var MINUS = RT.var("clojure.core", "-");
@@ -20,32 +32,76 @@ public final class BInteger extends java.lang.Number implements Comparable<BInte
 	private static final Var COMPARE = RT.var("clojure.core", "compare");
 	private static final Var INC = RT.var("clojure.core", "inc");
 	private static final Var DEC = RT.var("clojure.core", "dec");
-	private static final Var SHIFT_LEFT = RT.var("clojure.core", "bit-shift-left");
-	private static final Var SHIFT_RIGHT = RT.var("clojure.core", "bit-shift-right");
-	private static final long serialVersionUID = -6484548796859331267L;
+
+	public static BInteger of(int value) {
+		switch (value) {
+			case 0:
+				return ZERO;
+			case 1:
+				return ONE;
+			case 2:
+				return TWO;
+			case -1:
+				return MINUS_ONE;
+			default:
+				return new BInteger(BigInt.fromLong(value));
+		}
+	}
+
+	public static BInteger of(long value) {
+		if (value == 0) {
+			return ZERO;
+		} else if (value == 1) {
+			return ONE;
+		} else if (value == 2) {
+			return TWO;
+		} else if (value == -1) {
+			return MINUS_ONE;
+		} else {
+			return new BInteger(BigInt.fromLong(value));
+		}
+	}
+
+	public static BInteger of(BigInteger value) {
+		if (JBI_ZERO.equals(value)) {
+			return ZERO;
+		} else if (JBI_ONE.equals(value)) {
+			return ONE;
+		} else if (JBI_TWO.equals(value)) {
+			return TWO;
+		} else if (JBI_MINUS_ONE.equals(value)) {
+			return MINUS_ONE;
+		} else {
+			return new BInteger(BigInt.fromBigInteger(value));
+		}
+	}
+
+	private static BInteger of(BigInt value) {
+		if (CBI_ZERO.equals(value)) {
+			return ZERO;
+		} else if (CBI_ONE.equals(value)) {
+			return ONE;
+		} else if (CBI_TWO.equals(value)) {
+			return TWO;
+		} else if (CBI_MINUS_ONE.equals(value)) {
+			return MINUS_ONE;
+		} else {
+			return new BInteger(value);
+		}
+	}
+
+	public static BInteger of(String value) {
+		return of(new BigInteger(value));
+	}
+
+	public static BInteger of(BInteger value) {
+		return Objects.requireNonNull(value, "value");
+	}
 
 	private final BigInt value;
 
-	public BInteger(BigInt value) {
+	private BInteger(BigInt value) {
 		this.value = Objects.requireNonNull(value, "value");
-	}
-
-	public BInteger(int value) {
-		this(BigInt.fromLong(value));
-	}
-
-	public BInteger(String value) {
-		BigInt parsed;
-		try {
-			parsed = BigInt.fromLong(Long.parseLong(value));
-		} catch (NumberFormatException ignored) {
-			parsed = BigInt.fromBigInteger(new java.math.BigInteger(value));
-		}
-		this.value = parsed;
-	}
-
-	public static BInteger build(int value) {
-		return new BInteger(value);
 	}
 
 	@Override
@@ -70,31 +126,27 @@ public final class BInteger extends java.lang.Number implements Comparable<BInte
 	}
 
 	public BBoolean lessEqual(BInteger o) {
-		return new BBoolean(compareTo(o) <= 0);
+		return BBoolean.of(compareTo(o) <= 0);
 	}
 
 	public BBoolean greaterEqual(BInteger o) {
-		return new BBoolean(compareTo(o) >= 0);
-	}
-
-	public java.math.BigInteger asBigInteger() {
-		return value.toBigInteger();
+		return BBoolean.of(compareTo(o) >= 0);
 	}
 
 	public BBoolean less(BInteger o) {
-		return new BBoolean(compareTo(o) < 0);
+		return BBoolean.of(compareTo(o) < 0);
 	}
 
 	public BBoolean greater(BInteger o) {
-		return new BBoolean(compareTo(o) > 0);
+		return BBoolean.of(compareTo(o) > 0);
 	}
 
 	public BBoolean equal(BInteger o) {
-		return new BBoolean(compareTo(o) == 0);
+		return BBoolean.of(compareTo(o) == 0);
 	}
 
 	public BBoolean unequal(BInteger o) {
-		return new BBoolean(compareTo(o) != 0);
+		return BBoolean.of(compareTo(o) != 0);
 	}
 
 	@Override
@@ -118,19 +170,19 @@ public final class BInteger extends java.lang.Number implements Comparable<BInte
 	}
 
 	public BInteger plus(BInteger o) {
-		return new BInteger((BigInt) PLUS.invoke(this.value, o.value));
+		return of((BigInt) PLUS.invoke(this.value, o.value));
 	}
 
-	public java.lang.String toString() {
+	public String toString() {
 		return this.value.toString();
 	}
 
 	public BInteger minus(BInteger o) {
-		return new BInteger((BigInt) MINUS.invoke(this.value, o.value));
+		return of((BigInt) MINUS.invoke(this.value, o.value));
 	}
 
 	public BInteger multiply(BInteger o) {
-		return new BInteger((BigInt) MULTIPLY.invoke(this.value, o.value));
+		return of((BigInt) MULTIPLY.invoke(this.value, o.value));
 	}
 
 	public BInteger power(BInteger exp) {
@@ -138,43 +190,40 @@ public final class BInteger extends java.lang.Number implements Comparable<BInte
 			throw new IllegalArgumentException("Exponent must be a natural number");
 		}
 
-		BInteger result = ONE;
-		while (true) {
-			if (ONE.equals(exp.modulo(TWO))) {
-				result = result.multiply(this);
-			}
-
-			exp = exp.divide(TWO);
-			if (ZERO.equals(exp)) {
-				return result;
-			}
-
-			result = result.multiply(result);
+		BInteger val = this;
+		if (exp.equals(ZERO) || val.equals(ONE)) {
+			return ONE;
+		} else if (val.equals(ZERO)) {
+			return ZERO;
 		}
+
+		BInteger result = ONE;
+		while (exp.greater(ZERO).booleanValue()) {
+			if (exp.modulo(TWO).equals(ONE)) {
+				result = result.multiply(val);
+			}
+
+			val = val.multiply(val);
+			exp = exp.divide(TWO);
+		}
+
+		return result;
 	}
 
 	public BInteger divide(BInteger o) {
-        return new BInteger((BigInt) DIVIDE.invoke(this.value, o.value));
+		return of((BigInt) DIVIDE.invoke(this.value, o.value));
 	}
 
 	public BInteger modulo(BInteger o) {
-		return new BInteger((BigInt) MODULO.invoke(this.value, o.value));
+		return of((BigInt) MODULO.invoke(this.value, o.value));
 	}
 
 	public BInteger succ() {
-		return new BInteger((BigInt) INC.invoke(this.value));
+		return of((BigInt) INC.invoke(this.value));
 	}
 
 	public BInteger pred() {
-		return new BInteger((BigInt) DEC.invoke(this.value));
-	}
-
-	public BInteger leftShift(BInteger o) {
-		return new BInteger((BigInt) SHIFT_LEFT.invoke(this.value));
-	}
-
-	public BInteger rightShift(BInteger o) {
-		return new BInteger((BigInt) SHIFT_RIGHT.invoke(this.value));
+		return of((BigInt) DEC.invoke(this.value));
 	}
 
 	public boolean isCase(BInteger o) {
@@ -182,23 +231,19 @@ public final class BInteger extends java.lang.Number implements Comparable<BInte
 	}
 
 	public BInteger negative() {
-		return new BInteger((BigInt) MINUS.invoke(this.value));
+		return of((BigInt) MINUS.invoke(this.value));
 	}
 
 	public BInteger positive() {
 		return this;
 	}
 
-	public BigInt getValue() {
-		return value;
-	}
-
 	public BBoolean isInteger() {
-		return new BBoolean(true);
+		return BBoolean.of(true);
 	}
 
 	public BBoolean isNotInteger() {
-		return new BBoolean(false);
+		return BBoolean.of(false);
 	}
 
 	public BBoolean isNatural() {

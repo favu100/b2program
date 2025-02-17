@@ -1,6 +1,6 @@
 public static void main(String[] args) {
     M_expr_list program = new M_expr_list();
-    program.clock_step(new BRelation<LibraryLustre.REF, BInteger>(new BTuple<>(LibraryLustre.REF.ref, new BInteger(1))), new BRelation<LibraryLustre.REF, BInteger>(new BTuple<>(LibraryLustre.REF.ref, new BInteger(2))));
+    program.clock_step(new BRelation<LibraryLustre.REF, BInteger>(new BTuple<>(LibraryLustre.REF.ref, BInteger.of(1))), new BRelation<LibraryLustre.REF, BInteger>(new BTuple<>(LibraryLustre.REF.ref, BInteger.of(2))));
     System.out.println(program.getA());
     System.out.println(program.getB());
 }

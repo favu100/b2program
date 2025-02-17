@@ -172,3 +172,4 @@ benchmarks/model_checking/ProB/lib
 benchmarks/model_checking/ProB/stdlib
 btypes_primitives/src/main/rust/bmachine/src/**
 btypes_big_integer/src/main/rust/bmachine/src/**
+build_cpp/

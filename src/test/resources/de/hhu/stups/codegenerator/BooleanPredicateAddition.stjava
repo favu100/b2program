@@ -1,4 +1,4 @@
 public static void main(String[] args) {
     BooleanPredicate bool = new BooleanPredicate();
-    System.out.println(bool.Inc(new BInteger(10)));
+    System.out.println(bool.Inc(BInteger.of(10)));
 }

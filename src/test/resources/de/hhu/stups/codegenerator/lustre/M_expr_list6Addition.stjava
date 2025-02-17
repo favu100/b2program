@@ -1,10 +1,10 @@
 public static void main(String[] args) {
     M_expr_list6 program = new M_expr_list6();
-    program.clock_step(new BRelation<LibraryLustre.REF, BInteger>(new BTuple<>(LibraryLustre.REF.ref, new BInteger(3))));
+    program.clock_step(new BRelation<LibraryLustre.REF, BInteger>(new BTuple<>(LibraryLustre.REF.ref, BInteger.of(3))));
     System.out.println(program.getA());
     System.out.println(program.getB());
     System.out.println(program.getC());
-    program.clock_step(new BRelation<LibraryLustre.REF, BInteger>(new BTuple<>(LibraryLustre.REF.ref, new BInteger(4))));
+    program.clock_step(new BRelation<LibraryLustre.REF, BInteger>(new BTuple<>(LibraryLustre.REF.ref, BInteger.of(4))));
     System.out.println(program.getA());
     System.out.println(program.getB());
     System.out.println(program.getC());

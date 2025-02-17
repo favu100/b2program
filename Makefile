@@ -17,10 +17,10 @@ b2program:
 	./gradlew fatJar && mv build/libs/B2Program-all-0.1.0-SNAPSHOT.jar .
 
 btypes_primitives:
-	cd btypes_primitives && ./gradlew fatJar && cp build/libs/btypes_primitives-all.jar ../btypes.jar && cd ..
+	cd btypes_primitives && ./gradlew check && ./gradlew fatJar && cp build/libs/btypes_primitives-all.jar ../btypes.jar && cd ..
 
 btypes_big_integer:
-	cd btypes_big_integer && ./gradlew fatJar && cp build/libs/btypes_big_integer-all.jar ../btypes.jar && cd ..
+	cd btypes_big_integer && ./gradlew check && ./gradlew fatJar && cp build/libs/btypes_big_integer-all.jar ../btypes.jar && cd ..
 
 ifndef LANGUAGE
 	echo "LANGUAGE is not set"

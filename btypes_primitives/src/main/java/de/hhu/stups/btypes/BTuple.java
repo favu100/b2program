@@ -2,57 +2,49 @@ package de.hhu.stups.btypes;
 
 import java.util.Objects;
 
-public class BTuple<S,T> implements BObject {
+public final class BTuple<S, T> implements BObject {
 
-	private S first;
-
-	private T second;
+	private final S first;
+	private final T second;
 
 	public BTuple(S first, T second) {
-		if (first == null || second == null) {
-			throw new IllegalArgumentException();
-		}
-		this.first = first;
-		this.second = second;
+		this.first = Objects.requireNonNull(first, "first");
+		this.second = Objects.requireNonNull(second, "second");
 	}
-
 
 	public boolean equals(Object o) {
 		if (this == o) {
 			return true;
-		}
-		if (o == null || getClass() != o.getClass()) {
+		} else if (!(o instanceof BTuple)) {
 			return false;
+		} else {
+			BTuple<?, ?> that = (BTuple<?, ?>) o;
+			return this.first.equals(that.first) && this.second.equals(that.second);
 		}
-
-        BTuple bObjects = (BTuple) o;
-		// elements is never null
-		return bObjects.projection1().equals(this.first) && bObjects.projection2().equals(this.second);
 	}
 
 	public int hashCode() {
-		return Objects.hash(first, second);
+		return Objects.hash(this.first, this.second);
 	}
 
 	@Override
-	public java.lang.String toString() {
-		return "(" + this.projection1() + " |-> " + this.projection2() + ')';
+	public String toString() {
+		return "(" + this.first + " |-> " + this.second + ")";
 	}
 
 	public S projection1() {
-		return first;
+		return this.first;
 	}
 
 	public T projection2() {
-		return second;
+		return this.second;
 	}
 
-	public BBoolean equal(BTuple o) {
-		return new BBoolean(equals(o));
+	public BBoolean equal(BTuple<?, ?> o) {
+		return BBoolean.of(this.equals(o));
 	}
 
-	public BBoolean unequal(BTuple o) {
-		return new BBoolean(!equals(o));
+	public BBoolean unequal(BTuple<?, ?> o) {
+		return BBoolean.of(!this.equals(o));
 	}
-
 }

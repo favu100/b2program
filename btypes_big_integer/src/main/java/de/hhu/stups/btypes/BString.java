@@ -1,65 +1,53 @@
 package de.hhu.stups.btypes;
 
-public class BString implements BObject {
-	public java.lang.String getValue() {
-		return value;
+import java.util.Objects;
+
+public final class BString implements BObject {
+
+	private final String value;
+
+	public BString(String value) {
+		this.value = Objects.requireNonNull(value, "value");
 	}
 
-	private final java.lang.String value;
+	public String getValue() {
+		return this.value;
+	}
 
 	@Override
 	public boolean equals(Object o) {
-		if (this == o)
+		if (this == o) {
 			return true;
-		if (o == null || getClass() != o.getClass())
+		} else if (!(o instanceof BString)) {
 			return false;
-
-        BString bString = (BString) o;
-
-		if (!value.equals(bString.value))
-			return false;
-
-		return true;
-	}
-
-	public int length() {
-		return value.length();
-	}
-
-	public boolean isEmpty() {
-		return value.isEmpty();
+		} else {
+			return this.value.equals(((BString) o).value);
+		}
 	}
 
 	@Override
 	public int hashCode() {
-		return value.hashCode();
+		return this.value.hashCode();
 	}
 
-	public BString(java.lang.String value) {
-		this.value = value;
-	}
-
-	public java.lang.String toString() {
+	@Override
+	public String toString() {
 		return '"' + this.value + '"';
 	}
 
-	public boolean isCase(Object o) {
-		return this.value.equals(o);
-	}
-
 	public BBoolean isString() {
-		return new BBoolean(true);
+		return BBoolean.TRUE;
 	}
 
 	public BBoolean isNotString() {
-		return new BBoolean(false);
+		return BBoolean.FALSE;
 	}
 
 	public BBoolean equal(BString o) {
-		return new BBoolean(equals(o));
+		return BBoolean.of(this.equals(o));
 	}
 
 	public BBoolean unequal(BString o) {
-		return new BBoolean(!equals(o));
+		return BBoolean.of(!this.equals(o));
 	}
 }

@@ -218,11 +218,11 @@ public static class <name> extends BStruct {
     <functions; separator="\n\n">
 
     public BBoolean equal(<name> o) {
-        return new BBoolean(<equalPredicates; separator=" && ">);
+        return BBoolean.of(<equalPredicates; separator=" && ">);
     }
 
     public BBoolean unequal(<name> o) {
-        return new BBoolean(<unequalPredicates; separator=" || ">);
+        return BBoolean.of(<unequalPredicates; separator=" || ">);
     }
 
     public String toString() {
@@ -471,25 +471,25 @@ lambda_function_call(arg1, arg2, fromOtherMachine, otherMachine) ::= <<
 >>
 
 quantified_predicate(identifier, forall, predicate) ::= <<
-BBoolean <identifier> = new BBoolean(<if(forall)>true<else>false<endif>);
+BBoolean <identifier> = BBoolean.<if(forall)>TRUE<else>FALSE<endif>;
 <predicate>
 >>
 
 quantified_predicate_evaluation(otherIterationConstructs, identifier, emptyPredicate, hasCondition, conditionalPredicate, predicate, forall) ::= <<
 <otherIterationConstructs>
 <if(emptyPredicate)>
-<identifier> = new BBoolean(<if(forall)>false<else>true<endif>);
+<identifier> = BBoolean.<if(forall)>FALSE<else>TRUE<endif>;
 break;
 <else>
 if(<if(forall)>!<endif>(<predicate>).booleanValue()) {
-    <identifier> = new BBoolean(<if(forall)>false<else>true<endif>);
+    <identifier> = BBoolean.<if(forall)>FALSE<else>TRUE<endif>;
     break;
 }
 <endif>
 >>
 
 quantified_expression(identifier, identity, useBigInteger, subType, leftType, rightType, evaluation, isInteger, isRelation) ::= <<
-<if(isInteger)>BInteger <identifier> = <if(useBigInteger)>new BInteger("<identity>")<else>new BInteger(<identity>)<endif>;<else>
+<if(isInteger)>BInteger <identifier> = BInteger.of(<identity>);<else>
 <if(isRelation)>BRelation\<<leftType>, <rightType>\> <identifier> = new BRelation\<<leftType>, <rightType>\>();
 <else>BSet\<<subType>\> <identifier> = new BSet\<<subType>\>();<endif><endif>
 
@@ -577,11 +577,11 @@ public enum <name> implements BObject {
     <enums; separator=", \n">;
 
     public BBoolean equal(<name> o) {
-        return new BBoolean(this == o);
+        return BBoolean.of(this == o);
     }
 
     public BBoolean unequal(<name> o) {
-        return new BBoolean(this != o);
+        return BBoolean.of(this != o);
     }
 }
 >>
@@ -813,19 +813,19 @@ binary(arg1,operator,arg2) ::= <<
 >>
 
 or(arg1, arg2) ::= <<
-new BBoolean(<arg1>.booleanValue() || <arg2>.booleanValue())
+BBoolean.of(<arg1>.booleanValue() || <arg2>.booleanValue())
 >>
 
 and(arg1, arg2) ::= <<
-new BBoolean(<arg1>.booleanValue() && <arg2>.booleanValue())
+BBoolean.of(<arg1>.booleanValue() && <arg2>.booleanValue())
 >>
 
 implies(arg1, arg2) ::= <<
-new BBoolean(!<arg1>.booleanValue() || <arg2>.booleanValue())
+BBoolean.of(!<arg1>.booleanValue() || <arg2>.booleanValue())
 >>
 
 equivalent(arg1, arg2) ::= <<
-new BBoolean((!<arg1>.booleanValue() || <arg2>.booleanValue()) && (!<arg2>.booleanValue() || <arg1>.booleanValue()))
+<arg1>.equivalent(<arg2>)
 >>
 
 unary(operator, obj, args) ::= <<
@@ -1135,7 +1135,7 @@ var(locals, body) ::=<<
 >>
 
 boolean_val(val) ::= <<
-<if(val)>new BBoolean(true)<else>new BBoolean(false)<endif>
+BBoolean.<if(val)>TRUE<else>FALSE<endif>
 >>
 
 identifier(identifier, rhsOnLhs, fromOtherMachine, otherMachine) ::= <<
@@ -1143,7 +1143,7 @@ identifier(identifier, rhsOnLhs, fromOtherMachine, otherMachine) ::= <<
 >>
 
 number(number, useBigInteger) ::= <<
-<if(useBigInteger)>new BInteger("<number>")<else>new BInteger(<number>)<endif>
+BInteger.of(<number>)
 >>
 
 infinite_predicate(arg, operator, rhsArguments) ::= <<

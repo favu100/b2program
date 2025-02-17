@@ -1,4 +1,4 @@
 public static void main(String[] args) {
     ManyLocalDeclarations2 locals = new ManyLocalDeclarations2();
-    System.out.println(locals.Inc(new BInteger(10)).card());
+    System.out.println(locals.Inc(BInteger.of(10)).card());
 }

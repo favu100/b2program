@@ -1,55 +1,28 @@
 package de.hhu.stups.btypes;
 
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Queue;
+import java.util.Set;
+
 import clojure.java.api.Clojure;
-import clojure.lang.AFn;
 import clojure.lang.IFn;
 import clojure.lang.PersistentHashSet;
 import clojure.lang.RT;
 import clojure.lang.Var;
 
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.Set;
-import java.util.LinkedList;
-import java.util.Queue;
-import java.util.Optional;
+public final class BSet<T> implements BObject, Set<T> {
 
-import java.lang.reflect.GenericDeclaration;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.lang.reflect.Method;
-
-import java.util.Objects;
-
-public class BSet<T> implements Set<T>, BObject {
-
-	private static final class createBInteger extends AFn {
-		@Override
-		public Object invoke(Object obj) {
-			return new BInteger(Integer.parseInt(obj.toString()));
-		}
-	}
-
-	protected static final Var SET;
-
-	protected static final Var EMPTY;
-
-	protected static final Var COUNT;
-
-	protected static final IFn INTERSECTION;
-
-	protected static final IFn UNION;
-
-	protected static final IFn DIFFERENCE;
-
-	protected static final IFn RANGE;
-
-	protected static final IFn MAP;
-
-	protected static final IFn INC;
-
-	protected static final IFn CREATE_INTEGER;
-
+	private static final Var SET;
+	private static final Var EMPTY;
+	private static final Var COUNT;
+	private static final IFn INTERSECTION;
+	private static final IFn UNION;
+	private static final IFn DIFFERENCE;
 
 	static {
 		RT.var("clojure.core", "require").invoke(Clojure.read("clojure.set"));
@@ -59,27 +32,22 @@ public class BSet<T> implements Set<T>, BObject {
 		INTERSECTION = RT.var("clojure.set", "intersection");
 		UNION = RT.var("clojure.set", "union");
 		DIFFERENCE = RT.var("clojure.set", "difference");
-		RANGE = RT.var("clojure.core", "range");
-		MAP = RT.var("clojure.core", "map");
-		INC = RT.var("clojure.core", "inc");
-		CREATE_INTEGER = new createBInteger();
 	}
 
-	protected final PersistentHashSet set;
+	private final PersistentHashSet set;
 
-	public BSet(PersistentHashSet elements) {
-		this.set = elements;
+	BSet(PersistentHashSet elements) {
+		this.set = Objects.requireNonNull(elements, "elements");
 	}
 
-	@SuppressWarnings("unchecked")
 	@SafeVarargs
 	public BSet(T... elements) {
 		this.set = (PersistentHashSet) SET.invoke(elements);
 	}
 
-	public java.lang.String toString() {
+	public String toString() {
 		Iterator<T> it = this.iterator();
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		sb.append("{");
 		while (it.hasNext()) {
 			T b = it.next();
@@ -116,34 +84,31 @@ public class BSet<T> implements Set<T>, BObject {
 		throw new UnsupportedOperationException();
 	}
 
-	@SuppressWarnings("unchecked")
 	public boolean equals(Object o) {
-		if (this == o)
+		if (this == o) {
 			return true;
-		if (o == null || getClass() != o.getClass())
+		} else if (!(o instanceof BSet)) {
 			return false;
-
-		BSet<T> bObjects = (BSet<T>) o;
-
-		return set.equals(bObjects.set);
+		} else {
+			return this.set.equals(((BSet<?>) o).set);
+		}
 	}
 
 	public int hashCode() {
-		return set.hashCode();
+		return this.set.hashCode();
 	}
 
 	public boolean removeAll(Collection<?> c) {
 		throw new UnsupportedOperationException();
 	}
 
-	@SuppressWarnings("unchecked")
-	public T[] toArray() {
-		return (T[]) set.toArray();
+	public Object[] toArray() {
+		return set.toArray();
 	}
 
 	@SuppressWarnings("unchecked")
-	public <T> T[] toArray(T[] a) {
-		return (T[]) set.toArray(a);
+	public <A> A[] toArray(A[] a) {
+		return (A[]) set.toArray(a);
 	}
 
 	public boolean containsAll(Collection<?> c) {
@@ -164,104 +129,104 @@ public class BSet<T> implements Set<T>, BObject {
 	}
 
 	public BSet<T> intersect(BSet<T> set) {
-		return new BSet<T>((PersistentHashSet) INTERSECTION.invoke(this.set, set.set));
-	}
-
-	@SuppressWarnings("unchecked")
-	public <K extends BObject> T intersectForSets() {
-		if(set.isEmpty()) {
-			return (T) new BSet<K>();
-		} else {
-			return (T) this.set.stream()
-					.reduce((a, e) -> ((BSet<K>) a).intersect((BSet<K>) e)).get();
-		}
-	}
-
-	@SuppressWarnings("unchecked")
-	public <T1 extends BObject, T2 extends BObject> T intersectForRelations() {
-		if(set.isEmpty()) {
-			return (T) new BRelation<T1,T2>();
-		} else {
-			return (T) this.set.stream()
-					.reduce((a, e) -> ((BRelation<T1, T2>) a).intersect((BRelation<T1, T2>) e)).get();
-		}
+		return new BSet<>((PersistentHashSet) INTERSECTION.invoke(this.set, set.set));
 	}
 
 	public BSet<T> difference(BSet<T> set) {
-		return new BSet<T>((PersistentHashSet) DIFFERENCE.invoke(this.set, set.set));
+		return new BSet<>((PersistentHashSet) DIFFERENCE.invoke(this.set, set.set));
 	}
 
 	public BSet<T> union(BSet<T> set) {
-		return new BSet<T>((PersistentHashSet) UNION.invoke(this.set, set.set));
+		return new BSet<>((PersistentHashSet) UNION.invoke(this.set, set.set));
 	}
 
 	@SuppressWarnings("unchecked")
 	public <K extends BObject> T unionForSets() {
-		if(set.isEmpty()) {
+		if (set.isEmpty()) {
 			return (T) new BSet<K>();
 		} else {
 			return (T) this.set.stream()
-					.reduce(new BSet<K>(), (a, e) -> ((BSet<K>) a).union((BSet<K>) e));
+					           .reduce(new BSet<K>(), (a, e) -> ((BSet<K>) a).union((BSet<K>) e));
 		}
 	}
 
 	@SuppressWarnings("unchecked")
 	public <T1 extends BObject, T2 extends BObject> T unionForRelations() {
-		if(set.isEmpty()) {
-			return (T) new BRelation<T1,T2>();
+		if (set.isEmpty()) {
+			return (T) new BRelation<T1, T2>();
 		} else {
 			return (T) this.set.stream()
-					.reduce(new BRelation<T1, T2>(), (a, e) -> ((BRelation<T1, T2>) a).union((BRelation<T1, T2>) e));
+					           .reduce(new BRelation<T1, T2>(), (a, e) -> ((BRelation<T1, T2>) a).union((BRelation<T1, T2>) e));
+		}
+	}
+
+
+	@SuppressWarnings("unchecked")
+	public <K extends BObject> T intersectForSets() {
+		if (set.isEmpty()) {
+			return (T) new BSet<K>();
+		} else {
+			return (T) this.set.stream()
+					           .reduce((a, e) -> ((BSet<K>) a).intersect((BSet<K>) e)).get();
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	public <T1 extends BObject, T2 extends BObject> T intersectForRelations() {
+		if (set.isEmpty()) {
+			return (T) new BRelation<T1, T2>();
+		} else {
+			return (T) this.set.stream()
+					           .reduce((a, e) -> ((BRelation<T1, T2>) a).intersect((BRelation<T1, T2>) e)).get();
 		}
 	}
 
 	public static BSet<BInteger> interval(BInteger a, BInteger b) {
 		PersistentHashSet persistentSet = PersistentHashSet.create();
-		for(BInteger i = a; i.lessEqual(b).booleanValue(); i = i.plus(new BInteger(1))) {
+		for (BInteger i = a; i.lessEqual(b).booleanValue(); i = i.succ()) {
 			persistentSet = (PersistentHashSet) persistentSet.cons(i);
 		}
-		return new BSet<BInteger>(persistentSet);
+		return new BSet<>(persistentSet);
 	}
 
-
 	public BInteger card() {
-		return new BInteger((int) COUNT.invoke(this.set));
+		return BInteger.of((int) COUNT.invoke(this.set));
 	}
 
 	public BInteger _size() {
-		return new BInteger((int) COUNT.invoke(this.set));
+		return BInteger.of((int) COUNT.invoke(this.set));
 	}
 
 	public BBoolean elementOf(T object) {
-		return new BBoolean(this.set.contains(object));
+		return BBoolean.of(this.set.contains(object));
 	}
 
 	public BBoolean notElementOf(T object) {
-		return new BBoolean(!this.set.contains(object));
+		return BBoolean.of(!this.set.contains(object));
 	}
 
 	public BBoolean equal(BSet<T> o) {
-		return new BBoolean(equals(o));
+		return BBoolean.of(equals(o));
 	}
 
 	public BBoolean unequal(BSet<T> o) {
-		return new BBoolean(!equals(o));
+		return BBoolean.of(!equals(o));
 	}
 
 	public BBoolean subset(BSet<T> set) {
-		return new BBoolean(set.containsAll(this));
+		return BBoolean.of(set.containsAll(this));
 	}
 
 	public BBoolean notSubset(BSet<T> set) {
-		return new BBoolean(!set.containsAll(this));
+		return BBoolean.of(!set.containsAll(this));
 	}
 
 	public BBoolean strictSubset(BSet<T> set) {
-		return new BBoolean(set.size() != this.set.size() && set.containsAll(this));
+		return BBoolean.of(set.size() != this.set.size() && set.containsAll(this));
 	}
 
 	public BBoolean strictNotSubset(BSet<T> set) {
-		return new BBoolean(set.size() == this.set.size() || !set.containsAll(this));
+		return BBoolean.of(set.size() == this.set.size() || !set.containsAll(this));
 	}
 
 	public T nondeterminism() {
@@ -269,29 +234,28 @@ public class BSet<T> implements Set<T>, BObject {
 		return nondeterminism(index);
 	}
 
+	@SuppressWarnings("unchecked")
 	public T nondeterminism(int index) {
-		if(index >= this.size()) {
+		if (index >= this.size()) {
 			return null;
 		}
-		return toArray()[index];
+		return (T) toArray()[index];
 	}
 
 	@SuppressWarnings("unchecked")
 	public BInteger min() {
-		Optional<BInteger> result = this.set.stream().reduce((a,b) -> ((BInteger) a).lessEqual((BInteger) b).booleanValue() ? (BInteger) a : (BInteger) b);
-		if(result.isPresent()) {
-			return result.get();
+		if (this.set.isEmpty()) {
+			throw new RuntimeException("Minimum does not exist");
 		}
-		throw new RuntimeException("Minumum does not exist");
+		return (BInteger) Collections.min(this.set);
 	}
 
 	@SuppressWarnings("unchecked")
 	public BInteger max() {
-		Optional<BInteger> result = this.set.stream().reduce((a,b) -> ((BInteger) a).greaterEqual((BInteger) b).booleanValue() ? (BInteger) a : (BInteger) b);
-		if(result.isPresent()) {
-			return result.get();
+		if (this.set.isEmpty()) {
+			throw new RuntimeException("Maximum does not exist");
 		}
-		throw new RuntimeException("Maximum does not exist");
+		return (BInteger) Collections.max(this.set);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -301,13 +265,13 @@ public class BSet<T> implements Set<T>, BObject {
 		Queue<K> queue = new LinkedList<>();
 		queue.add(start);
 		result = result.union(new BSet<K>(start));
-		while(!queue.isEmpty()) {
+		while (!queue.isEmpty()) {
 			K currentSet = queue.remove();
-			for(T element : this) {
+			for (T element : this) {
 				K nextSet = (K) currentSet.union(new BSet<T>(element));
 				int previousSize = result.size();
-				result = result.union(new BSet<K>(nextSet));
-				if(previousSize < result.size()) {
+				result = result.union(new BSet<>(nextSet));
+				if (previousSize < result.size()) {
 					queue.add(nextSet);
 				}
 			}
@@ -315,9 +279,9 @@ public class BSet<T> implements Set<T>, BObject {
 		return result;
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public <K extends BSet<T>> BSet<K> pow1() {
-		BSet<T> emptySet = new BSet<T>();
+		BSet<T> emptySet = new BSet<>();
 		return this.pow().difference(new BSet(emptySet));
 	}
 
@@ -329,31 +293,31 @@ public class BSet<T> implements Set<T>, BObject {
 		return this.pow1();
 	}
 
-	public BSet<BRelation<BInteger,T>> permutate() {
-		BSet<BInteger> interval = BSet.interval(new BInteger(1), this._size());
-		BSet<BRelation<BInteger,T>> permutations = BRelation.cartesianProduct(interval, this).pow();
-		BSet<BRelation<BInteger,T>> result = permutations;
-		for(BRelation<BInteger, T> permutation : permutations) {
-			if(!permutation.isBijection(this).booleanValue()) {
-				result = result.difference(new BSet<BRelation<BInteger, T>>(permutation));
+	public BSet<BRelation<BInteger, T>> permutate() {
+		BSet<BInteger> interval = BSet.interval(BInteger.ONE, this._size());
+		BSet<BRelation<BInteger, T>> permutations = BRelation.cartesianProduct(interval, this).pow();
+		BSet<BRelation<BInteger, T>> result = permutations;
+		for (BRelation<BInteger, T> permutation : permutations) {
+			if (!permutation.isBijection(this).booleanValue()) {
+				result = result.difference(new BSet<>(permutation));
 			}
 		}
 		return result;
 	}
 
 	public BBoolean subsetOfBoolean() {
-		for(T e : this) {
-			if(e instanceof BBoolean) {
-				return new BBoolean(true);
+		for (T e : this) {
+			if (e instanceof BBoolean) {
+				return BBoolean.TRUE;
 			} else {
-				return new BBoolean(false);
+				return BBoolean.FALSE;
 			}
 		}
-		return new BBoolean(true);
+		return BBoolean.TRUE;
 	}
 
 	public BBoolean strictSubsetOfBoolean() {
-		return new BBoolean(subsetOfBoolean().booleanValue() && this.size() < 2);
+		return BBoolean.of(subsetOfBoolean().booleanValue() && this.size() < 2);
 	}
 
 	public BBoolean notSubsetOfBoolean() {
@@ -361,22 +325,22 @@ public class BSet<T> implements Set<T>, BObject {
 	}
 
 	public BBoolean equalBoolean() {
-		return new BBoolean(subsetOfBoolean().booleanValue() && this.size() == 2);
+		return BBoolean.of(subsetOfBoolean().booleanValue() && this.size() == 2);
 	}
 
 	public BBoolean unequalBoolean() {
-		return new BBoolean(subsetOfBoolean().booleanValue() && this.size() < 2);
+		return BBoolean.of(subsetOfBoolean().booleanValue() && this.size() < 2);
 	}
 
 	public BBoolean subsetOfInteger() {
-		for(T e : this) {
-			if(e instanceof BInteger) {
-				return new BBoolean(true);
+		for (T e : this) {
+			if (e instanceof BInteger) {
+				return BBoolean.TRUE;
 			} else {
-				return new BBoolean(false);
+				return BBoolean.FALSE;
 			}
 		}
-		return new BBoolean(true);
+		return BBoolean.TRUE;
 	}
 
 	public BBoolean strictSubsetOfInteger() {
@@ -388,43 +352,43 @@ public class BSet<T> implements Set<T>, BObject {
 	}
 
 	public BBoolean equalInteger() {
-		return new BBoolean(false);
+		return BBoolean.FALSE;
 	}
 
 	public BBoolean unequalInteger() {
-		return new BBoolean(true);
+		return BBoolean.TRUE;
 	}
 
 	public BBoolean equalNatural() {
-		return new BBoolean(false);
+		return BBoolean.FALSE;
 	}
 
 	public BBoolean unequalNatural() {
-		return new BBoolean(true);
+		return BBoolean.TRUE;
 	}
 
 	public BBoolean equalNatural1() {
-		return new BBoolean(false);
+		return BBoolean.FALSE;
 	}
 
 	public BBoolean unequalNatural1() {
-		return new BBoolean(true);
+		return BBoolean.TRUE;
 	}
 
 	public BBoolean equalString() {
-		return new BBoolean(false);
+		return BBoolean.FALSE;
 	}
 
 	public BBoolean unequalString() {
-		return new BBoolean(true);
+		return BBoolean.TRUE;
 	}
 
 	public BBoolean equalStruct() {
-		return new BBoolean(false);
+		return BBoolean.FALSE;
 	}
 
 	public BBoolean unequalStruct() {
-		return new BBoolean(true);
+		return BBoolean.TRUE;
 	}
 
 	public BBoolean notStrictSubsetOfInteger() {
@@ -432,13 +396,13 @@ public class BSet<T> implements Set<T>, BObject {
 	}
 
 	public BBoolean subsetOfNatural() {
-		for(T e : this) {
+		for (T e : this) {
 			BInteger element = (BInteger) e;
-			if(!element.isNatural().booleanValue()) {
-				return new BBoolean(false);
+			if (!element.isNatural().booleanValue()) {
+				return BBoolean.FALSE;
 			}
 		}
-		return new BBoolean(true);
+		return BBoolean.TRUE;
 	}
 
 	public BBoolean strictSubsetOfNatural() {
@@ -454,13 +418,13 @@ public class BSet<T> implements Set<T>, BObject {
 	}
 
 	public BBoolean subsetOfNatural1() {
-		for(T e : this) {
+		for (T e : this) {
 			BInteger element = (BInteger) e;
-			if(!element.isNatural1().booleanValue()) {
-				return new BBoolean(false);
+			if (!element.isNatural1().booleanValue()) {
+				return BBoolean.FALSE;
 			}
 		}
-		return new BBoolean(true);
+		return BBoolean.TRUE;
 	}
 
 	public BBoolean strictSubsetOfNatural1() {
@@ -476,13 +440,13 @@ public class BSet<T> implements Set<T>, BObject {
 	}
 
 	public BBoolean subsetOfString() {
-		for(T e : this) {
+		for (T e : this) {
 			BString element = (BString) e;
-			if(!element.isString().booleanValue()) {
-				return new BBoolean(false);
+			if (!element.isString().booleanValue()) {
+				return BBoolean.FALSE;
 			}
 		}
-		return new BBoolean(true);
+		return BBoolean.TRUE;
 	}
 
 	public BBoolean strictSubsetOfString() {
@@ -499,13 +463,13 @@ public class BSet<T> implements Set<T>, BObject {
 
 
 	public BBoolean subsetOfStruct() {
-		for(T e : this) {
+		for (T e : this) {
 			BStruct element = (BStruct) e;
-			if(!element.isRecord().booleanValue()) {
-				return new BBoolean(false);
+			if (!element.isRecord().booleanValue()) {
+				return BBoolean.FALSE;
 			}
 		}
-		return new BBoolean(true);
+		return BBoolean.TRUE;
 	}
 
 	public BBoolean strictSubsetOfStruct() {

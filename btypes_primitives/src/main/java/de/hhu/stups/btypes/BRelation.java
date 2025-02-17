@@ -1,45 +1,30 @@
 package de.hhu.stups.btypes;
 
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.Objects;
+import java.util.Queue;
+
 import clojure.java.api.Clojure;
-import clojure.lang.PersistentHashSet;
 import clojure.lang.PersistentHashMap;
+import clojure.lang.PersistentHashSet;
 import clojure.lang.RT;
 import clojure.lang.Var;
 
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.Queue;
+public final class BRelation<S, T> implements BObject, Iterable<BTuple<S, T>> {
 
-/**
- * Created by fabian on 15.01.19.
- */
-public class BRelation<S,T> implements BObject, Iterable<BTuple<S,T>> {
-
-	protected static final Var ASSOC;
-
-	protected static final Var DISSOC;
-
-	protected static final Var GET;
-
-	protected static final Var SET;
-
-	protected static final Var SEQ;
-
-	protected static final Var LIST;
-
-	protected static final Var KEYS;
-
-	protected static final Var VALS;
-
-	protected static final Var CONTAINS;
-
-	protected static final Var REDUCE;
-
-	protected static final Var INTERSECTION;
-
-	protected static final Var UNION;
-
-	protected static final Var DIFFERENCE;
+	private static final Var ASSOC;
+	private static final Var DISSOC;
+	private static final Var GET;
+	private static final Var SET;
+	private static final Var SEQ;
+	private static final Var LIST;
+	private static final Var KEYS;
+	private static final Var VALS;
+	private static final Var REDUCE;
+	private static final Var INTERSECTION;
+	private static final Var UNION;
+	private static final Var DIFFERENCE;
 
 	static {
 		RT.var("clojure.core", "require").invoke(Clojure.read("clojure.set"));
@@ -51,73 +36,71 @@ public class BRelation<S,T> implements BObject, Iterable<BTuple<S,T>> {
 		LIST = RT.var("clojure.core", "list");
 		KEYS = RT.var("clojure.core", "keys");
 		VALS = RT.var("clojure.core", "vals");
-		CONTAINS = RT.var("clojure.core", "contains?");
 		REDUCE = RT.var("clojure.core", "reduce");
 		INTERSECTION = RT.var("clojure.set", "intersection");
 		UNION = RT.var("clojure.set", "union");
 		DIFFERENCE = RT.var("clojure.set", "difference");
 	}
 
-	private PersistentHashMap map;
+	private final PersistentHashMap map;
 
-	public BRelation(PersistentHashMap map) {
-		this.map = map;
+	BRelation(PersistentHashMap map) {
+		this.map = Objects.requireNonNull(map, "map");
 	}
 
 	@SafeVarargs
-	public BRelation(BTuple<S,T>... elements) {
-		this.map = PersistentHashMap.EMPTY;
-		for(BTuple<S,T> e : elements) {
+	public BRelation(BTuple<S, T>... elements) {
+		PersistentHashMap map = PersistentHashMap.EMPTY;
+		for (BTuple<S, T> e : elements) {
 			S key = e.projection1();
 			T value = e.projection2();
-			PersistentHashSet set = (PersistentHashSet) GET.invoke(this.map, key);
-			if(set == null) {
+			PersistentHashSet set = (PersistentHashSet) GET.invoke(map, key);
+			if (set == null) {
 				set = (PersistentHashSet) SET.invoke(SEQ.invoke(LIST.invoke(value)));
 			} else {
 				set = (PersistentHashSet) UNION.invoke(set, (PersistentHashSet) SET.invoke(SEQ.invoke(LIST.invoke(value))));
 			}
-			this.map = (PersistentHashMap) ASSOC.invoke(this.map, key, set);
+			map = (PersistentHashMap) ASSOC.invoke(map, key, set);
 		}
-	}
-
-	public static <S,T> BRelation<S,T> fromSet(BSet<BTuple<S,T>> set) {
-		PersistentHashMap resultMap = PersistentHashMap.EMPTY;
-		for(BTuple<S,T> e : set) {
-			S key = e.projection1();
-			T value = e.projection2();
-			PersistentHashSet range = (PersistentHashSet) GET.invoke(resultMap, key);
-			if(set == null) {
-				range = (PersistentHashSet) SET.invoke(SEQ.invoke(LIST.invoke(value)));
-				resultMap = (PersistentHashMap) ASSOC.invoke(resultMap, key, range);
-			} else {
-				range = (PersistentHashSet) UNION.invoke(range, (PersistentHashSet) SET.invoke(SEQ.invoke(LIST.invoke(value))));
-				resultMap = (PersistentHashMap) ASSOC.invoke(resultMap, key, range);
-			}
-		}
-		return new BRelation<S,T>(resultMap);
+		this.map = map;
 	}
 
 	@SuppressWarnings("unchecked")
+	public static <S, T> BRelation<S, T> fromSet(BSet<BTuple<S, T>> set) {
+		return new BRelation<>(set.toArray(new BTuple[0]));
+	}
+
 	public boolean equals(Object o) {
-		if (this == o)
+		if (this == o) {
 			return true;
-		if (o == null || getClass() != o.getClass())
+		} else if (!(o instanceof BRelation)) {
 			return false;
-
-		BRelation<S,T> bObjects = (BRelation<S,T>) o;
-
-		if (!map.equals(bObjects.map))
-			return false;
-
-		return true;
+		} else {
+			return this.map.equals(((BRelation<?, ?>) o).map);
+		}
 	}
 
 	public int hashCode() {
-		return map.hashCode();
+		return this.map.hashCode();
+	}
+
+	public String toString() {
+		Iterator<BTuple<S, T>> it = this.iterator();
+		StringBuilder sb = new StringBuilder();
+		sb.append("{");
+		while (it.hasNext()) {
+			BTuple<S, T> b = it.next();
+			sb.append(b.toString());
+			if (it.hasNext()) {
+				sb.append(", ");
+			}
+		}
+		sb.append("}");
+		return sb.toString();
 	}
 
 	@SuppressWarnings("unchecked")
-	public BRelation<S,T> intersect(BRelation<S,T> relation) {
+	public BRelation<S, T> intersect(BRelation<S, T> relation) {
 		PersistentHashMap otherMap = relation.map;
 		PersistentHashSet otherDomain = (PersistentHashSet) SET.invoke(KEYS.invoke(otherMap));
 		PersistentHashSet thisDomain = (PersistentHashSet) SET.invoke(KEYS.invoke(this.map));
@@ -125,64 +108,64 @@ public class BRelation<S,T> implements BObject, Iterable<BTuple<S,T>> {
 		PersistentHashSet differenceDomain = (PersistentHashSet) DIFFERENCE.invoke(thisDomain, otherDomain);
 
 		PersistentHashMap resultMap = this.map;
-		for(Object obj : intersectionDomain) {
+		for (Object obj : intersectionDomain) {
 			S domainElement = (S) obj;
 			PersistentHashSet thisRangeSet = (PersistentHashSet) GET.invoke(this.map, domainElement);
 			PersistentHashSet otherRangeSet = (PersistentHashSet) GET.invoke(otherMap, domainElement);
 			PersistentHashSet newRangeSet = (PersistentHashSet) INTERSECTION.invoke(thisRangeSet, otherRangeSet);
-			if(newRangeSet.isEmpty()) {
+			if (newRangeSet.isEmpty()) {
 				resultMap = (PersistentHashMap) DISSOC.invoke(resultMap, domainElement);
 			} else {
 				resultMap = (PersistentHashMap) ASSOC.invoke(resultMap, domainElement, newRangeSet);
 			}
 		}
 
-		for(Object obj : differenceDomain) {
+		for (Object obj : differenceDomain) {
 			S domainElement = (S) obj;
 			resultMap = (PersistentHashMap) DISSOC.invoke(resultMap, domainElement);
 		}
-		return new BRelation<S,T>(resultMap);
+		return new BRelation<>(resultMap);
 	}
 
 	@SuppressWarnings("unchecked")
-	public BRelation<S,T> difference(BRelation<S,T> relation) {
+	public BRelation<S, T> difference(BRelation<S, T> relation) {
 		PersistentHashMap otherMap = relation.map;
 		PersistentHashSet otherDomain = (PersistentHashSet) SET.invoke(KEYS.invoke(otherMap));
 		PersistentHashSet thisDomain = (PersistentHashSet) SET.invoke(KEYS.invoke(this.map));
 		PersistentHashSet intersectionDomain = (PersistentHashSet) INTERSECTION.invoke(thisDomain, otherDomain);
 
 		PersistentHashMap resultMap = this.map;
-		for(Object obj : intersectionDomain) {
+		for (Object obj : intersectionDomain) {
 			S domainElement = (S) obj;
 			PersistentHashSet thisRangeSet = (PersistentHashSet) GET.invoke(this.map, domainElement);
 			PersistentHashSet otherRangeSet = (PersistentHashSet) GET.invoke(otherMap, domainElement);
-			if(otherRangeSet == null) {
+			if (otherRangeSet == null) {
 				continue;
 			}
 			PersistentHashSet newRangeSet = (PersistentHashSet) DIFFERENCE.invoke(thisRangeSet, otherRangeSet);
 
-			if(newRangeSet.isEmpty()) {
+			if (newRangeSet.isEmpty()) {
 				resultMap = (PersistentHashMap) DISSOC.invoke(resultMap, domainElement);
 			} else {
 				resultMap = (PersistentHashMap) ASSOC.invoke(resultMap, domainElement, newRangeSet);
 			}
 		}
-		return new BRelation<S,T>(resultMap);
+		return new BRelation<>(resultMap);
 	}
 
 	@SuppressWarnings("unchecked")
-	public BRelation<S,T> union(BRelation<S,T> relation) {
+	public BRelation<S, T> union(BRelation<S, T> relation) {
 		PersistentHashMap otherMap = relation.map;
 		PersistentHashSet otherDomain = (PersistentHashSet) SET.invoke(KEYS.invoke(otherMap));
 
 		PersistentHashMap resultMap = this.map;
-		for(Object obj : otherDomain) {
+		for (Object obj : otherDomain) {
 			S domainElement = (S) obj;
 			PersistentHashSet thisRangeSet = (PersistentHashSet) GET.invoke(this.map, domainElement);
 			PersistentHashSet otherRangeSet = (PersistentHashSet) GET.invoke(otherMap, domainElement);
 			resultMap = (PersistentHashMap) ASSOC.invoke(resultMap, domainElement, UNION.invoke(thisRangeSet, otherRangeSet));
 		}
-		return new BRelation<S,T>(resultMap);
+		return new BRelation<>(resultMap);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -190,7 +173,7 @@ public class BRelation<S,T> implements BObject, Iterable<BTuple<S,T>> {
 		int size = 0;
 		PersistentHashSet thisDomain = (PersistentHashSet) SET.invoke(KEYS.invoke(this.map));
 
-		for(Object obj : thisDomain) {
+		for (Object obj : thisDomain) {
 			S domainElement = (S) obj;
 			PersistentHashSet thisRangeSet = (PersistentHashSet) GET.invoke(this.map, domainElement);
 			size += thisRangeSet.size();
@@ -199,103 +182,100 @@ public class BRelation<S,T> implements BObject, Iterable<BTuple<S,T>> {
 	}
 
 	public BInteger card() {
-		return new BInteger((int) this.size());
+		return BInteger.of(this.size());
 	}
 
 	public BInteger _size() {
-		return new BInteger((int) this.size());
+		return BInteger.of(this.size());
 	}
 
-	public BBoolean equal(BRelation<S,T> o) {
-		return new BBoolean(equals(o));
+	public BBoolean equal(BRelation<S, T> o) {
+		return BBoolean.of(equals(o));
 	}
 
-	public BBoolean unequal(BRelation<S,T> o) {
-		return new BBoolean(!equals(o));
+	public BBoolean unequal(BRelation<S, T> o) {
+		return BBoolean.of(!equals(o));
 	}
 
-	public BBoolean elementOf(BTuple<S,T> object) {
+	public BBoolean elementOf(BTuple<S, T> object) {
 		S prj1 = object.projection1();
 		T prj2 = object.projection2();
 
 		PersistentHashSet domain = (PersistentHashSet) SET.invoke(KEYS.invoke(this.map));
 
-		if(!domain.contains(prj1)) {
-			return new BBoolean(false);
+		if (!domain.contains(prj1)) {
+			return BBoolean.FALSE;
 		}
 
 		PersistentHashSet range = (PersistentHashSet) GET.invoke(this.map, prj1);
 
-		return new BBoolean(range.contains(prj2));
+		return BBoolean.of(range.contains(prj2));
 	}
 
-	public BBoolean notElementOf(BTuple<S,T> object) {
+	public BBoolean notElementOf(BTuple<S, T> object) {
 		S prj1 = object.projection1();
 		T prj2 = object.projection2();
 
 		PersistentHashSet domain = (PersistentHashSet) SET.invoke(KEYS.invoke(this.map));
 
-		if(!domain.contains(prj1)) {
-			return new BBoolean(true);
+		if (!domain.contains(prj1)) {
+			return BBoolean.TRUE;
 		}
 
 		PersistentHashSet range = (PersistentHashSet) GET.invoke(this.map, prj1);
 
-		return new BBoolean(!range.contains(prj2));
+		return BBoolean.of(!range.contains(prj2));
 	}
 
-	@SuppressWarnings("unchecked")
 	public BSet<T> relationImage(BSet<S> domain) {
 		PersistentHashSet resultSet = (PersistentHashSet) SET.invoke(SEQ.invoke(LIST.invoke()));
-		for(S domainElement: domain) {
+		for (S domainElement : domain) {
 			PersistentHashSet thisRangeSet = (PersistentHashSet) GET.invoke(this.map, domainElement);
-			if(thisRangeSet == null) {
+			if (thisRangeSet == null) {
 				continue;
 			}
 			resultSet = (PersistentHashSet) UNION.invoke(resultSet, thisRangeSet);
 		}
-		return new BSet<T>(resultSet);
+		return new BSet<>(resultSet);
 	}
-
 
 	@SuppressWarnings("unchecked")
 	public T functionCall(S arg) {
 		PersistentHashSet range = (PersistentHashSet) GET.invoke(this.map, arg);
-		if(range == null) {
+		if (range == null) {
 			throw new RuntimeException("Argument is not in the domain of this relation");
 		}
-		for(Object element : range) {
+		for (Object element : range) {
 			return (T) element;
 		}
 		throw new RuntimeException("Argument is not in the domain of this relation");
 	}
 
 	@SuppressWarnings("unchecked")
-	public BSet<BRelation<S,T>> pow() {
+	public BSet<BRelation<S, T>> pow() {
 		PersistentHashMap thisMap = this.map;
 		PersistentHashSet thisDomain = (PersistentHashSet) SET.invoke(KEYS.invoke(thisMap));
 
-
-		BSet<BRelation<S,T>> result = new BSet<BRelation<S,T>>();
-		BRelation<S,T> start = new BRelation<>();
-		Queue<BRelation<S,T>> queue = new LinkedList<>();
+		BSet<BRelation<S, T>> result = new BSet<>();
+		BRelation<S, T> start = new BRelation<>();
+		Queue<BRelation<S, T>> queue = new LinkedList<>();
 		queue.add(start);
-		result = result.union(new BSet<BRelation<S,T>>(start));
-		while(!queue.isEmpty()) {
-			BRelation<S,T> currentSet = queue.remove();
+		result = result.union(new BSet<>(start));
+		while (!queue.isEmpty()) {
+			BRelation<S, T> currentSet = queue.remove();
 
-			for(Object e1 : thisDomain) {
+			for (Object e1 : thisDomain) {
 				S domainElement = (S) e1;
 				PersistentHashSet range = (PersistentHashSet) GET.invoke(thisMap, domainElement);
-				if(range == null) {
+				if (range == null) {
 					break;
 				}
-				for(Object e2 : range) {
+				for (Object e2 : range) {
 					T rangeElement = (T) e2;
-					BRelation<S,T> nextRelation = currentSet.union(BRelation.fromSet(new BSet(new BTuple<S,T>(domainElement, rangeElement))));
+					BRelation<S, T> nextRelation = currentSet.union(BRelation.fromSet(new BSet<>(new BTuple<>(domainElement, rangeElement))));
 					int previousSize = result.size();
-					result = result.union(new BSet<BRelation<S,T>>(nextRelation));
-					if(previousSize < result.size()) {
+					result = result.union(new BSet<>(nextRelation));
+					if (previousSize < result.size()) {
 						queue.add(nextRelation);
 					}
 				}
@@ -304,196 +284,187 @@ public class BRelation<S,T> implements BObject, Iterable<BTuple<S,T>> {
 		return result;
 	}
 
-	@SuppressWarnings("unchecked")
-	public BSet<BRelation<S,T>> pow1() {
-		return this.pow().difference(new BSet<BRelation<S,T>>(new BRelation<S,T>()));
+	public BSet<BRelation<S, T>> pow1() {
+		return this.pow().difference(new BSet<>(new BRelation<>()));
 	}
 
-	public BSet<BRelation<S,T>> fin() {
+	public BSet<BRelation<S, T>> fin() {
 		return this.pow();
 	}
 
-	public BSet<BRelation<S,T>> fin1() {
+	public BSet<BRelation<S, T>> fin1() {
 		return this.pow1();
 	}
 
 	@SuppressWarnings("unchecked")
 	public BSet<S> domain() {
-		PersistentHashMap thisMap = this.map;
 		PersistentHashSet set = (PersistentHashSet) SET.invoke(KEYS.invoke(this.map));
 		PersistentHashSet resultSet = set;
-		for(Object obj : set) {
+		for (Object obj : set) {
 			S domainElement = (S) obj;
-			PersistentHashSet range = (PersistentHashSet) GET.invoke(thisMap, domainElement);
-			if(range == null || range.size() == 0) {
+			PersistentHashSet range = (PersistentHashSet) GET.invoke(this.map, domainElement);
+			if (range == null || range.isEmpty()) {
 				resultSet = (PersistentHashSet) DIFFERENCE.invoke(resultSet, SET.invoke(SEQ.invoke(LIST.invoke(domainElement))));
 			}
 		}
-		return new BSet<S>(resultSet);
+		return new BSet<>(resultSet);
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public BRelation domainForRelations() {
 		BRelation result = new BRelation();
-		for(S elem : this.domain()) {
+		for (S elem : this.domain()) {
 			result = result.union(new BRelation((BTuple) elem));
 		}
 		return result;
 	}
 
-	@SuppressWarnings("unchecked")
 	public BSet<T> range() {
 		PersistentHashSet set = (PersistentHashSet) REDUCE.invoke(UNION, SET.invoke(SEQ.invoke(LIST.invoke())), VALS.invoke(this.map));
-		return new BSet<T>(set);
+		return new BSet<>(set);
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public BRelation rangeForRelations() {
 		BRelation result = new BRelation();
-		for(T elem : this.range()) {
+		for (T elem : this.range()) {
 			result = result.union(new BRelation((BTuple) elem));
 		}
 		return result;
 	}
 
 	@SuppressWarnings("unchecked")
-	public BRelation<T,S> inverse() {
+	public BRelation<T, S> inverse() {
 		PersistentHashMap thisMap = this.map;
 		PersistentHashSet keys = (PersistentHashSet) SET.invoke(KEYS.invoke(thisMap));
 
 		PersistentHashMap resultMap = PersistentHashMap.EMPTY;
-		for(Object e1 : keys) {
+		for (Object e1 : keys) {
 			S domainElement = (S) e1;
 			PersistentHashSet range = (PersistentHashSet) GET.invoke(thisMap, domainElement);
-			if(range == null) {
+			if (range == null) {
 				break;
 			}
-			for(Object e2 : range) {
+			for (Object e2 : range) {
 				T rangeElement = (T) e2;
 				PersistentHashSet currentRange = (PersistentHashSet) GET.invoke(resultMap, rangeElement);
-				if(currentRange == null) {
+				if (currentRange == null) {
 					currentRange = (PersistentHashSet) SET.invoke(SEQ.invoke(LIST.invoke()));
 				}
 				currentRange = (PersistentHashSet) UNION.invoke(currentRange, SET.invoke(SEQ.invoke(LIST.invoke(domainElement))));
 				resultMap = (PersistentHashMap) ASSOC.invoke(resultMap, rangeElement, currentRange);
 			}
 		}
-		return new BRelation<T, S>(resultMap);
+		return new BRelation<>(resultMap);
 	}
 
-	@SuppressWarnings("unchecked")
-	public BRelation<S,T> domainRestriction(BSet<S> arg) {
+	public BRelation<S, T> domainRestriction(BSet<S> arg) {
 		PersistentHashSet set = (PersistentHashSet) SET.invoke(KEYS.invoke(this.map));
 		PersistentHashSet otherSet = arg.getSet();
 		PersistentHashSet resultSet = (PersistentHashSet) DIFFERENCE.invoke(set, otherSet);
 		PersistentHashMap resultMap = this.map;
-		for(Object obj : resultSet) {
+		for (Object obj : resultSet) {
 			resultMap = (PersistentHashMap) DISSOC.invoke(resultMap, obj);
 		}
-		return new BRelation<S,T>(resultMap);
+		return new BRelation<>(resultMap);
 	}
 
-	@SuppressWarnings("unchecked")
-	public BRelation<S,T> domainSubstraction(BSet<S> arg) {
-		PersistentHashSet set = (PersistentHashSet) SET.invoke(KEYS.invoke(this.map));
+	public BRelation<S, T> domainSubstraction(BSet<S> arg) {
 		PersistentHashSet otherSet = arg.getSet();
 		PersistentHashMap resultMap = this.map;
-		for(Object obj : otherSet) {
+		for (Object obj : otherSet) {
 			resultMap = (PersistentHashMap) DISSOC.invoke(resultMap, obj);
 		}
-		return new BRelation<S,T>(resultMap);
+		return new BRelation<>(resultMap);
 	}
 
 	@SuppressWarnings("unchecked")
-	public BRelation<S,T> rangeRestriction(BSet<T> arg) {
+	public BRelation<S, T> rangeRestriction(BSet<T> arg) {
 		PersistentHashSet otherSet = (PersistentHashSet) arg.getSet();
 		PersistentHashSet thisDomain = (PersistentHashSet) SET.invoke(KEYS.invoke(this.map));
 
 		PersistentHashMap resultMap = this.map;
-		for(Object obj : thisDomain) {
+		for (Object obj : thisDomain) {
 			S domainElement = (S) obj;
 			PersistentHashSet thisRangeSet = (PersistentHashSet) GET.invoke(this.map, domainElement);
 			PersistentHashSet newRangeSet = (PersistentHashSet) INTERSECTION.invoke(thisRangeSet, otherSet);
-			if(newRangeSet.isEmpty()) {
+			if (newRangeSet.isEmpty()) {
 				resultMap = (PersistentHashMap) DISSOC.invoke(resultMap, domainElement);
 			} else {
 				resultMap = (PersistentHashMap) ASSOC.invoke(resultMap, domainElement, newRangeSet);
 			}
 		}
-		return new BRelation<S, T>(resultMap);
+		return new BRelation<>(resultMap);
 	}
 
 	@SuppressWarnings("unchecked")
-	public BRelation<S,T> rangeSubstraction(BSet<T> arg) {
+	public BRelation<S, T> rangeSubstraction(BSet<T> arg) {
 		PersistentHashSet otherSet = (PersistentHashSet) arg.getSet();
 		PersistentHashSet thisDomain = (PersistentHashSet) SET.invoke(KEYS.invoke(this.map));
 
 		PersistentHashMap resultMap = this.map;
-		for(Object obj : thisDomain) {
+		for (Object obj : thisDomain) {
 			S domainElement = (S) obj;
 			PersistentHashSet thisRangeSet = (PersistentHashSet) GET.invoke(this.map, domainElement);
 			PersistentHashSet newRangeSet = (PersistentHashSet) DIFFERENCE.invoke(thisRangeSet, otherSet);
-			if(newRangeSet.isEmpty()) {
+			if (newRangeSet.isEmpty()) {
 				resultMap = (PersistentHashMap) DISSOC.invoke(resultMap, domainElement);
 			} else {
 				resultMap = (PersistentHashMap) ASSOC.invoke(resultMap, domainElement, newRangeSet);
 			}
 		}
-		return new BRelation<S, T>(resultMap);
+		return new BRelation<>(resultMap);
 	}
 
 	@SuppressWarnings("unchecked")
-	public BBoolean subset(BRelation<S,T> arg) {
+	public BBoolean subset(BRelation<S, T> arg) {
 		PersistentHashSet thisDomain = (PersistentHashSet) SET.invoke(KEYS.invoke(this.map));
 
-		for(Object obj : thisDomain) {
+		for (Object obj : thisDomain) {
 			S domainElement = (S) obj;
 			PersistentHashSet thisRangeSet = (PersistentHashSet) GET.invoke(this.map, domainElement);
 			PersistentHashSet otherRangeSet = (PersistentHashSet) GET.invoke(arg.map, domainElement);
-			if(thisRangeSet != null) {
-				if(otherRangeSet == null) {
-					return new BBoolean(false);
+			if (thisRangeSet != null) {
+				if (otherRangeSet == null) {
+					return BBoolean.FALSE;
 				}
-				if(!thisRangeSet.isEmpty() && !otherRangeSet.containsAll(thisRangeSet)) {
-					return new BBoolean(false);
+				if (!thisRangeSet.isEmpty() && !otherRangeSet.containsAll(thisRangeSet)) {
+					return BBoolean.FALSE;
 				}
 			}
 		}
-		return new BBoolean(true);
+		return BBoolean.TRUE;
 	}
 
-	@SuppressWarnings("unchecked")
-	public BBoolean notSubset(BRelation<S,T> arg) {
+	public BBoolean notSubset(BRelation<S, T> arg) {
 		return subset(arg).not();
 	}
 
-	public BBoolean strictSubset(BRelation<S,T> set) {
-		return new BBoolean(set.size() != this.size() && this.subset(set).booleanValue());
+	public BBoolean strictSubset(BRelation<S, T> set) {
+		return BBoolean.of(set.size() != this.size() && this.subset(set).booleanValue());
 	}
 
 	public BBoolean strictNotSubset(BRelation<S, T> set) {
-		return new BBoolean(set.size() == this.size() || !this.subset(set).booleanValue());
+		return BBoolean.of(set.size() == this.size() || !this.subset(set).booleanValue());
 	}
 
 	@SuppressWarnings("unchecked")
-	public BRelation<S,T> override(BRelation<S,T> arg) {
+	public BRelation<S, T> override(BRelation<S, T> arg) {
 		PersistentHashMap otherMap = arg.map;
-
 		PersistentHashSet otherDomain = (PersistentHashSet) SET.invoke(KEYS.invoke(otherMap));
-
 		PersistentHashMap resultMap = this.map;
-		for(Object obj : otherDomain) {
+		for (Object obj : otherDomain) {
 			S domainElement = (S) obj;
 			PersistentHashSet range = (PersistentHashSet) GET.invoke(otherMap, domainElement);
 			resultMap = (PersistentHashMap) ASSOC.invoke(resultMap, domainElement, range);
 		}
 
-		return new BRelation<S, T>(resultMap);
+		return new BRelation<>(resultMap);
 	}
 
 	@SuppressWarnings("unchecked")
 	public T first() {
-		return this.functionCall((S) new BInteger(1));
+		return this.functionCall((S) BInteger.ONE);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -502,127 +473,118 @@ public class BRelation<S,T> implements BObject, Iterable<BTuple<S,T>> {
 	}
 
 	@SuppressWarnings("unchecked")
-	public BRelation<S,T> reverse() {
+	public BRelation<S, T> reverse() {
 		BInteger size = this.card();
 		PersistentHashMap resultMap = PersistentHashMap.EMPTY;
-		for(BInteger i = new BInteger(1); i.lessEqual(size).booleanValue(); i = i.succ()) {
-			T rangeElement = (T) this.functionCall((S) size.minus(i).succ());
+		for (BInteger i = BInteger.ONE; i.lessEqual(size).booleanValue(); i = i.succ()) {
+			T rangeElement = this.functionCall((S) size.minus(i).succ());
 			resultMap = (PersistentHashMap) ASSOC.invoke(resultMap, i, SET.invoke(SEQ.invoke(LIST.invoke(rangeElement))));
 		}
-		return new BRelation<S, T>(resultMap);
+		return new BRelation<>(resultMap);
 	}
 
 	@SuppressWarnings("unchecked")
-	public BRelation<S,T> front() {
+	public BRelation<S, T> front() {
 		return this.domainSubstraction(new BSet<>((S) this.card()));
 	}
 
 	@SuppressWarnings("unchecked")
-	public BRelation<S,T> tail() {
+	public BRelation<S, T> tail() {
 		BInteger size = this._size();
 		PersistentHashMap resultMap = PersistentHashMap.EMPTY;
-		for(BInteger i = new BInteger(2); i.lessEqual(size).booleanValue(); i = i.succ()) {
-			T rangeElement = (T) this.functionCall((S) i);
+		for (BInteger i = BInteger.TWO; i.lessEqual(size).booleanValue(); i = i.succ()) {
+			T rangeElement = this.functionCall((S) i);
 			resultMap = (PersistentHashMap) ASSOC.invoke(resultMap, i.pred(), SET.invoke(SEQ.invoke(LIST.invoke(rangeElement))));
 		}
-		return new BRelation<S, T>(resultMap);
+		return new BRelation<>(resultMap);
 	}
 
-	@SuppressWarnings("unchecked")
-	public BRelation<S,T> take(BInteger n) {
+	public BRelation<S, T> take(BInteger n) {
 		BInteger size = this._size();
-		if(n.greaterEqual(size).booleanValue()) {
-			return new BRelation<S, T>(this.map);
+		if (n.greaterEqual(size).booleanValue()) {
+			return new BRelation<>(this.map);
 		}
 		PersistentHashMap resultMap = this.map;
 		//Remove sets with index greater than n
-		for(BInteger i = n.succ(); i.lessEqual(size).booleanValue(); i = i.succ()) {
+		for (BInteger i = n.succ(); i.lessEqual(size).booleanValue(); i = i.succ()) {
 			resultMap = (PersistentHashMap) DISSOC.invoke(resultMap, i);
 		}
-		return new BRelation<S, T>(resultMap);
+		return new BRelation<>(resultMap);
 	}
 
-	@SuppressWarnings("unchecked")
-	public BRelation<S,T> drop(BInteger n) {
+	public BRelation<S, T> drop(BInteger n) {
 		BInteger size = this._size();
-		PersistentHashMap thisMap = this.map;
 		PersistentHashMap resultMap = PersistentHashMap.EMPTY;
-		for(BInteger i = n.succ(); i.lessEqual(size).booleanValue(); i = i.succ()) {
-			PersistentHashSet currentSet = (PersistentHashSet) GET.invoke(thisMap, i);
+		for (BInteger i = n.succ(); i.lessEqual(size).booleanValue(); i = i.succ()) {
+			PersistentHashSet currentSet = (PersistentHashSet) GET.invoke(this.map, i);
 			resultMap = (PersistentHashMap) ASSOC.invoke(resultMap, i.minus(n), currentSet);
 		}
-		return new BRelation<S, T>(resultMap);
+		return new BRelation<>(resultMap);
 	}
 
-	@SuppressWarnings("unchecked")
-	public BRelation<S,T> concat(BRelation<S,T> arg) {
+	public BRelation<S, T> concat(BRelation<S, T> arg) {
 		PersistentHashMap resultMap = this.map;
-		PersistentHashMap otherMap = arg.map;
 		BInteger size = this.card();
-		for(BInteger i = new BInteger(1); i.lessEqual(arg._size()).booleanValue(); i = i.succ()) {
-			resultMap = (PersistentHashMap) ASSOC.invoke(resultMap, size.plus(i), (PersistentHashSet) GET.invoke(otherMap, i));
+		for (BInteger i = BInteger.ONE; i.lessEqual(arg._size()).booleanValue(); i = i.succ()) {
+			resultMap = (PersistentHashMap) ASSOC.invoke(resultMap, size.plus(i), (PersistentHashSet) GET.invoke(arg.map, i));
 		}
-		return new BRelation<S, T>(resultMap);
+		return new BRelation<>(resultMap);
 	}
 
 	@SuppressWarnings("unchecked")
-	public <R,A> T conc() {
-		BRelation<R,A> result = new BRelation<R,A>();
+	public <R, A> T conc() {
+		BRelation<R, A> result = new BRelation<R, A>();
 		BInteger size = this.card();
-		for(BInteger i = new BInteger(1); i.lessEqual(size).booleanValue(); i = i.succ()) {
-			result = result.concat((BRelation<R,A>) functionCall((S) i));
+		for (BInteger i = BInteger.ONE; i.lessEqual(size).booleanValue(); i = i.succ()) {
+			result = result.concat((BRelation<R, A>) functionCall((S) i));
 		}
 		return (T) result;
 	}
 
-	@SuppressWarnings("unchecked")
-	public BRelation<S,T> append(T arg) {
+	public BRelation<S, T> append(T arg) {
 		PersistentHashMap resultMap = this.map;
 		resultMap = (PersistentHashMap) ASSOC.invoke(resultMap, this.card().succ(), (PersistentHashSet) SET.invoke(SEQ.invoke(LIST.invoke(arg))));
-		return new BRelation<S, T>(resultMap);
+		return new BRelation<>(resultMap);
 	}
 
-	@SuppressWarnings("unchecked")
-	public BRelation<S,T> prepend(T arg) {
+	public BRelation<S, T> prepend(T arg) {
 		PersistentHashMap resultMap = PersistentHashMap.EMPTY;
-		PersistentHashMap thisMap = this.map;
 		BInteger size = this._size();
-		for(BInteger i = new BInteger(1); i.lessEqual(size).booleanValue(); i = i.succ()) {
-			resultMap = (PersistentHashMap) ASSOC.invoke(resultMap, i.succ(), (PersistentHashSet) GET.invoke(thisMap, i));
+		for (BInteger i = BInteger.ONE; i.lessEqual(size).booleanValue(); i = i.succ()) {
+			resultMap = (PersistentHashMap) ASSOC.invoke(resultMap, i.succ(), (PersistentHashSet) GET.invoke(this.map, i));
 		}
-		resultMap = (PersistentHashMap) ASSOC.invoke(resultMap, new BInteger(1), (PersistentHashSet) SET.invoke(SEQ.invoke(LIST.invoke(arg))));
-		return new BRelation<S, T>(resultMap);
+		resultMap = (PersistentHashMap) ASSOC.invoke(resultMap, BInteger.ONE, (PersistentHashSet) SET.invoke(SEQ.invoke(LIST.invoke(arg))));
+		return new BRelation<>(resultMap);
 	}
 
 	@SuppressWarnings("unchecked")
-	public <R> BRelation<S,BTuple<T,R>> directProduct(BRelation<S,R> arg) {
+	public <R> BRelation<S, BTuple<T, R>> directProduct(BRelation<S, R> arg) {
 		PersistentHashMap thisMap = (PersistentHashMap) this.map;
 		PersistentHashSet thisDomain = (PersistentHashSet) SET.invoke(KEYS.invoke(thisMap));
-		PersistentHashMap otherMap = (PersistentHashMap) arg.map;
 
 		PersistentHashMap resultMap = PersistentHashMap.EMPTY;
-		for(Object obj : thisDomain) {
+		for (Object obj : thisDomain) {
 			S domainElement = (S) obj;
 			PersistentHashSet thisRange = (PersistentHashSet) GET.invoke(thisMap, domainElement);
-			PersistentHashSet otherRange = (PersistentHashSet) GET.invoke(otherMap, domainElement);
-			if(otherRange == null) {
+			PersistentHashSet otherRange = (PersistentHashSet) GET.invoke((PersistentHashMap) arg.map, domainElement);
+			if (otherRange == null) {
 				continue;
 			}
 			PersistentHashSet resultRange = (PersistentHashSet) SET.invoke(SEQ.invoke(LIST.invoke()));
-			for(Object lhs : thisRange) {
-				for(Object rhs : otherRange) {
+			for (Object lhs : thisRange) {
+				for (Object rhs : otherRange) {
 					T lhsElement = (T) lhs;
 					R rhsElement = (R) rhs;
-					resultRange = (PersistentHashSet) UNION.invoke(resultRange, SET.invoke(SEQ.invoke(LIST.invoke(new BTuple<T,R>(lhsElement, rhsElement)))));
+					resultRange = (PersistentHashSet) UNION.invoke(resultRange, SET.invoke(SEQ.invoke(LIST.invoke(new BTuple<>(lhsElement, rhsElement)))));
 				}
 			}
 			resultMap = (PersistentHashMap) ASSOC.invoke(resultMap, domainElement, resultRange);
 		}
-		return new BRelation<S, BTuple<T, R>>(resultMap);
+		return new BRelation<>(resultMap);
 	}
 
 	@SuppressWarnings("unchecked")
-	public <R, A> BRelation<BTuple<S,R>,BTuple<T,A>> parallelProduct(BRelation<R,A> arg) {
+	public <R, A> BRelation<BTuple<S, R>, BTuple<T, A>> parallelProduct(BRelation<R, A> arg) {
 		PersistentHashMap thisMap = (PersistentHashMap) this.map;
 		PersistentHashSet thisDomain = (PersistentHashSet) SET.invoke(KEYS.invoke(thisMap));
 
@@ -631,8 +593,8 @@ public class BRelation<S,T> implements BObject, Iterable<BTuple<S,T>> {
 
 		PersistentHashMap resultMap = PersistentHashMap.EMPTY;
 
-		for(Object domainElementThis : thisDomain) {
-			for(Object domaineElementOther : otherDomain) {
+		for (Object domainElementThis : thisDomain) {
+			for (Object domaineElementOther : otherDomain) {
 				S domainElementThisElement = (S) domainElementThis;
 				R domainElementOtherElement = (R) domaineElementOther;
 
@@ -640,289 +602,253 @@ public class BRelation<S,T> implements BObject, Iterable<BTuple<S,T>> {
 				PersistentHashSet otherRange = (PersistentHashSet) GET.invoke(otherMap, domainElementOtherElement);
 
 				PersistentHashSet resultRange = (PersistentHashSet) SET.invoke(SEQ.invoke(LIST.invoke()));
-				for(Object lhs : thisRange) {
-					for(Object rhs : otherRange) {
+				for (Object lhs : thisRange) {
+					for (Object rhs : otherRange) {
 						T lhsElement = (T) lhs;
 						A rhsElement = (A) rhs;
-						resultRange = (PersistentHashSet) UNION.invoke(resultRange, SET.invoke(SEQ.invoke(LIST.invoke(new BTuple<T,A>(lhsElement, rhsElement)))));
+						resultRange = (PersistentHashSet) UNION.invoke(resultRange, SET.invoke(SEQ.invoke(LIST.invoke(new BTuple<>(lhsElement, rhsElement)))));
 					}
 				}
-				BTuple<S,R> tuple = new BTuple<S,R>(domainElementThisElement, domainElementOtherElement);
+				BTuple<S, R> tuple = new BTuple<S, R>(domainElementThisElement, domainElementOtherElement);
 				resultMap = (PersistentHashMap) ASSOC.invoke(resultMap, tuple, resultRange);
 			}
 		}
-		return new BRelation<BTuple<S, R>, BTuple<T, A>>(resultMap);
+		return new BRelation<>(resultMap);
 	}
 
 	@SuppressWarnings("unchecked")
-	public <R> BRelation<S,R> composition(BRelation<T,R> arg) {
+	public <R> BRelation<S, R> composition(BRelation<T, R> arg) {
 		PersistentHashMap thisMap = this.map;
-		PersistentHashMap otherMap = arg.map;
-
 		PersistentHashSet thisDomain = (PersistentHashSet) SET.invoke(KEYS.invoke(thisMap));
-
 		PersistentHashMap resultMap = PersistentHashMap.EMPTY;
 
-		for(Object e1 : thisDomain) {
+		for (Object e1 : thisDomain) {
 			S domainElement = (S) e1;
 			PersistentHashSet range = (PersistentHashSet) GET.invoke(thisMap, domainElement);
 
 			PersistentHashSet set = (PersistentHashSet) SET.invoke(SEQ.invoke(LIST.invoke()));
-			if(range == null) {
+			if (range == null) {
 				break;
 			}
-			for(Object e2: range) {
+			for (Object e2 : range) {
 				T rangeElement = (T) e2;
-				set = (PersistentHashSet) UNION.invoke(set, (PersistentHashSet) GET.invoke(otherMap, rangeElement));
+				set = (PersistentHashSet) UNION.invoke(set, (PersistentHashSet) GET.invoke(arg.map, rangeElement));
 			}
-			if(set.isEmpty()) {
+			if (set.isEmpty()) {
 				continue;
 			}
 			resultMap = (PersistentHashMap) ASSOC.invoke(resultMap, domainElement, set);
 		}
-		return new BRelation<S, R>(resultMap);
+		return new BRelation<>(resultMap);
 	}
 
 	@SuppressWarnings("unchecked")
-	public BRelation<S,S> iterate(BInteger n) {
-		BRelation<S,S> thisRelation = (BRelation<S,S>) this;
-		BRelation<S,S> result = (BRelation<S,S>) this;
-		for(BInteger i = new BInteger(2); i.lessEqual(n).booleanValue(); i = i.succ()) {
+	public BRelation<S, S> iterate(BInteger n) {
+		BRelation<S, S> thisRelation = (BRelation<S, S>) this;
+		BRelation<S, S> result = (BRelation<S, S>) this;
+		for (BInteger i = BInteger.TWO; i.lessEqual(n).booleanValue(); i = i.succ()) {
 			result = result.composition(thisRelation);
 		}
 		return result;
 	}
 
 	@SuppressWarnings("unchecked")
-	public BRelation<S,S> closure() {
-		BRelation<S,S> thisRelation = (BRelation<S,S>) this;
-		BRelation<S,S> result = iterate(new BInteger(0));
-		BRelation<S,S> nextResult = result.composition(thisRelation);
-		BRelation<S,S> lastResult = null;
+	public BRelation<S, S> closure() {
+		BRelation<S, S> thisRelation = (BRelation<S, S>) this;
+		BRelation<S, S> result = iterate(BInteger.ZERO);
+		BRelation<S, S> nextResult = result.composition(thisRelation);
+		BRelation<S, S> lastResult;
 		do {
 			lastResult = result;
 			result = result.union(nextResult);
 			nextResult = result.composition(thisRelation);
-		} while(!result.equal(lastResult).booleanValue());
+		} while (!result.equal(lastResult).booleanValue());
 		return result;
 	}
 
 	@SuppressWarnings("unchecked")
-	public BRelation<S,S> closure1() {
-		BRelation<S,S> thisRelation = (BRelation<S,S>) this;
-		BRelation<S,S> result = (BRelation<S,S>) this;
-		BRelation<S,S> nextResult = result.composition(thisRelation);
-		BRelation<S,S> lastResult = null;
+	public BRelation<S, S> closure1() {
+		BRelation<S, S> thisRelation = (BRelation<S, S>) this;
+		BRelation<S, S> result = (BRelation<S, S>) this;
+		BRelation<S, S> nextResult = result.composition(thisRelation);
+		BRelation<S, S> lastResult;
 		do {
 			lastResult = result;
 			result = result.union(nextResult);
 			nextResult = result.composition(thisRelation);
-		} while(!result.equal(lastResult).booleanValue());
+		} while (!result.equal(lastResult).booleanValue());
 		return result;
 	}
 
-	public BBoolean isInClosure(BTuple<S,S> tuple) {
+	public BBoolean isInClosure(BTuple<S, S> tuple) {
 		S projection1 = tuple.projection1();
 		S projection2 = tuple.projection2();
-		if(projection1.equals(projection2)) {
+		if (projection1.equals(projection2)) {
 			PersistentHashSet imageOfProjection1 = (PersistentHashSet) GET.invoke(this.map, projection1);
-			if(imageOfProjection1 != null && !imageOfProjection1.isEmpty()) {
-				return new BBoolean(true);
+			if (imageOfProjection1 != null && !imageOfProjection1.isEmpty()) {
+				return BBoolean.TRUE;
 			}
 			PersistentHashSet keys = (PersistentHashSet) SET.invoke(KEYS.invoke(this.map));
 			for (Object key : keys) {
 				PersistentHashSet image = (PersistentHashSet) GET.invoke(this.map, key);
-				if(image != null && image.contains(projection2)) {
-					return new BBoolean(true);
+				if (image != null && image.contains(projection2)) {
+					return BBoolean.TRUE;
 				}
 			}
 		}
 		return isInClosure1(tuple);
 	}
 
-	public BBoolean isNotInClosure(BTuple<S,S> tuple) {
+	public BBoolean isNotInClosure(BTuple<S, S> tuple) {
 		return isInClosure(tuple).not();
 	}
 
 	@SuppressWarnings("unchecked")
-	public BBoolean isInClosure1(BTuple<S,S> tuple) {
+	public BBoolean isInClosure1(BTuple<S, S> tuple) {
 		BBoolean inThisRelation = this.elementOf((BTuple<S, T>) tuple);
-		if(inThisRelation.booleanValue()) {
+		if (inThisRelation.booleanValue()) {
 			return inThisRelation;
 		}
-		BRelation<S,S> thisRelation = (BRelation<S,S>) this;
-		BRelation<S,S> result = (BRelation<S,S>) this;
-		BRelation<S,S> nextResult = result.composition(thisRelation);
-		BRelation<S,S> lastResult = null;
+		BRelation<S, S> thisRelation = (BRelation<S, S>) this;
+		BRelation<S, S> result = (BRelation<S, S>) this;
+		BRelation<S, S> nextResult = result.composition(thisRelation);
+		BRelation<S, S> lastResult;
 		do {
 			inThisRelation = nextResult.elementOf(tuple);
-			if(inThisRelation.booleanValue()) {
+			if (inThisRelation.booleanValue()) {
 				return inThisRelation;
 			}
 			lastResult = result;
 			result = result.union(nextResult);
 			nextResult = result.composition(thisRelation);
-		} while(!result.equal(lastResult).booleanValue());
-		return new BBoolean(false);
+		} while (!result.equal(lastResult).booleanValue());
+		return BBoolean.FALSE;
 	}
 
-	public BBoolean isNotInClosure1(BTuple<S,S> tuple) {
+	public BBoolean isNotInClosure1(BTuple<S, S> tuple) {
 		return isInClosure1(tuple).not();
 	}
 
 	@SuppressWarnings("unchecked")
-	public static <S,T> BRelation<BTuple<S,T>, S> projection1(BSet<S> arg1, BSet<T> arg2) {
+	public static <S, T> BRelation<BTuple<S, T>, S> projection1(BSet<S> arg1, BSet<T> arg2) {
 		PersistentHashSet argSet1 = (PersistentHashSet) arg1.getSet();
 		PersistentHashSet argSet2 = (PersistentHashSet) arg2.getSet();
 
 		PersistentHashMap resultMap = PersistentHashMap.EMPTY;
-		for(Object e1 : argSet1) {
-			for(Object e2 : argSet2) {
+		for (Object e1 : argSet1) {
+			for (Object e2 : argSet2) {
 				S element1 = (S) e1;
 				T element2 = (T) e2;
 
-				BTuple<S,T> tuple = new BTuple<S,T>(element1, element2);
+				BTuple<S, T> tuple = new BTuple<S, T>(element1, element2);
 				resultMap = (PersistentHashMap) ASSOC.invoke(resultMap, tuple, (PersistentHashSet) SET.invoke(SEQ.invoke(LIST.invoke(element1))));
 			}
 		}
-		return new BRelation<BTuple<S, T>, S>(resultMap);
+		return new BRelation<>(resultMap);
 	}
 
-	@SuppressWarnings("unchecked")
-	public static <S,T,R> BRelation<BTuple<S,BTuple<T,R>>, S> projection1(BSet<S> arg1, BRelation<T,R> arg2) {
-
+	public static <S, T, R> BRelation<BTuple<S, BTuple<T, R>>, S> projection1(BSet<S> arg1, BRelation<T, R> arg2) {
 		PersistentHashMap resultMap = PersistentHashMap.EMPTY;
-		for(Object e1 : arg1) {
-			for(Object e2 : arg2) {
-				S element1 = (S) e1;
-				BTuple<T,R> element2 = (BTuple<T,R>) e2;
-
-				BTuple<S,BTuple<T,R>> tuple = new BTuple<S,BTuple<T,R>>(element1, element2);
-				resultMap = (PersistentHashMap) ASSOC.invoke(resultMap, tuple, (PersistentHashSet) SET.invoke(SEQ.invoke(LIST.invoke(element1))));
+		for (S e1 : arg1) {
+			for (BTuple<T, R> e2 : arg2) {
+				BTuple<S, BTuple<T, R>> tuple = new BTuple<>(e1, e2);
+				resultMap = (PersistentHashMap) ASSOC.invoke(resultMap, tuple, (PersistentHashSet) SET.invoke(SEQ.invoke(LIST.invoke(e1))));
 			}
 		}
-		return new BRelation<BTuple<S,BTuple<T,R>>, S>(resultMap);
+		return new BRelation<>(resultMap);
 	}
 
-	@SuppressWarnings("unchecked")
-	public static <S,T,R> BRelation<BTuple<BTuple<S,T>,R>, BTuple<S,T>> projection1(BRelation<S,T> arg1, BSet<R> arg2) {
-
+	public static <S, T, R> BRelation<BTuple<BTuple<S, T>, R>, BTuple<S, T>> projection1(BRelation<S, T> arg1, BSet<R> arg2) {
 		PersistentHashMap resultMap = PersistentHashMap.EMPTY;
-		for(Object e1 : arg1) {
-			for(Object e2 : arg2) {
-				BTuple<S,T> element1 = (BTuple<S,T>) e1;
-				R element2 = (R) e2;
-
-				BTuple<BTuple<S,T>,R> tuple = new BTuple<BTuple<S,T>,R>(element1, element2);
-				resultMap = (PersistentHashMap) ASSOC.invoke(resultMap, tuple, (PersistentHashSet) SET.invoke(SEQ.invoke(LIST.invoke(element1))));
+		for (BTuple<S, T> e1 : arg1) {
+			for (R e2 : arg2) {
+				BTuple<BTuple<S, T>, R> tuple = new BTuple<>(e1, e2);
+				resultMap = (PersistentHashMap) ASSOC.invoke(resultMap, tuple, (PersistentHashSet) SET.invoke(SEQ.invoke(LIST.invoke(e1))));
 			}
 		}
-		return new BRelation<BTuple<BTuple<S,T>,R>, BTuple<S,T>>(resultMap);
+		return new BRelation<>(resultMap);
 	}
 
-	@SuppressWarnings("unchecked")
-	public static <S,T,R,A> BRelation<BTuple<BTuple<S,T>,BTuple<R,A>>, BTuple<S,T>> projection1(BRelation<S,T> arg1, BRelation<R,A> arg2) {
-
+	public static <S, T, R, A> BRelation<BTuple<BTuple<S, T>, BTuple<R, A>>, BTuple<S, T>> projection1(BRelation<S, T> arg1, BRelation<R, A> arg2) {
 		PersistentHashMap resultMap = PersistentHashMap.EMPTY;
-		for(Object e1 : arg1) {
-			for(Object e2 : arg2) {
-				BTuple<S,T> element1 = (BTuple<S,T>) e1;
-				BTuple<R,A> element2 = (BTuple<R,A>) e2;
-
-				BTuple<BTuple<S,T>,BTuple<R,A>> tuple = new BTuple<BTuple<S,T>,BTuple<R,A>>(element1, element2);
-				resultMap = (PersistentHashMap) ASSOC.invoke(resultMap, tuple, (PersistentHashSet) SET.invoke(SEQ.invoke(LIST.invoke(element1))));
+		for (BTuple<S, T> e1 : arg1) {
+			for (BTuple<R, A> e2 : arg2) {
+				BTuple<BTuple<S, T>, BTuple<R, A>> tuple = new BTuple<>(e1, e2);
+				resultMap = (PersistentHashMap) ASSOC.invoke(resultMap, tuple, (PersistentHashSet) SET.invoke(SEQ.invoke(LIST.invoke(e1))));
 			}
 		}
-		return new BRelation<BTuple<BTuple<S,T>,BTuple<R,A>>, BTuple<S,T>>(resultMap);
+		return new BRelation<>(resultMap);
 	}
 
 	@SuppressWarnings("unchecked")
-	public static <S,T> BRelation<BTuple<S,T>, T> projection2(BSet<S> arg1, BSet<T> arg2) {
+	public static <S, T> BRelation<BTuple<S, T>, T> projection2(BSet<S> arg1, BSet<T> arg2) {
 		PersistentHashSet argSet1 = (PersistentHashSet) arg1.getSet();
 		PersistentHashSet argSet2 = (PersistentHashSet) arg2.getSet();
 
 		PersistentHashMap resultMap = PersistentHashMap.EMPTY;
-		for(Object e1 : argSet1) {
-			for(Object e2 : argSet2) {
+		for (Object e1 : argSet1) {
+			for (Object e2 : argSet2) {
 				S element1 = (S) e1;
 				T element2 = (T) e2;
 
-				BTuple<S,T> tuple = new BTuple<S,T>(element1, element2);
+				BTuple<S, T> tuple = new BTuple<>(element1, element2);
 				resultMap = (PersistentHashMap) ASSOC.invoke(resultMap, tuple, (PersistentHashSet) SET.invoke(SEQ.invoke(LIST.invoke(element2))));
 			}
 		}
-		return new BRelation<BTuple<S, T>, T>(resultMap);
+		return new BRelation<>(resultMap);
 	}
 
-	@SuppressWarnings("unchecked")
-	public static <S,T,R> BRelation<BTuple<S,BTuple<T,R>>, BTuple<T,R>> projection2(BSet<S> arg1, BRelation<T,R> arg2) {
-
+	public static <S, T, R> BRelation<BTuple<S, BTuple<T, R>>, BTuple<T, R>> projection2(BSet<S> arg1, BRelation<T, R> arg2) {
 		PersistentHashMap resultMap = PersistentHashMap.EMPTY;
-		for(Object e1 : arg1) {
-			for(Object e2 : arg2) {
-				S element1 = (S) e1;
-				BTuple<T,R> element2 = (BTuple<T,R>) e2;
-
-				BTuple<S,BTuple<T,R>> tuple = new BTuple<S,BTuple<T,R>>(element1, element2);
-				resultMap = (PersistentHashMap) ASSOC.invoke(resultMap, tuple, (PersistentHashSet) SET.invoke(SEQ.invoke(LIST.invoke(element2))));
+		for (S e1 : arg1) {
+			for (BTuple<T, R> e2 : arg2) {
+				BTuple<S, BTuple<T, R>> tuple = new BTuple<>(e1, e2);
+				resultMap = (PersistentHashMap) ASSOC.invoke(resultMap, tuple, (PersistentHashSet) SET.invoke(SEQ.invoke(LIST.invoke(e2))));
 			}
 		}
-		return new BRelation<BTuple<S,BTuple<T,R>>, BTuple<T,R>>(resultMap);
+		return new BRelation<>(resultMap);
 	}
 
-	@SuppressWarnings("unchecked")
-	public static <S,T,R> BRelation<BTuple<BTuple<S,T>,R>, R> projection2(BRelation<S,T> arg1, BSet<R> arg2) {
-
+	public static <S, T, R> BRelation<BTuple<BTuple<S, T>, R>, R> projection2(BRelation<S, T> arg1, BSet<R> arg2) {
 		PersistentHashMap resultMap = PersistentHashMap.EMPTY;
-		for(Object e1 : arg1) {
-			for(Object e2 : arg2) {
-				BTuple<S,T> element1 = (BTuple<S,T>) e1;
-				R element2 = (R) e2;
-
-				BTuple<BTuple<S,T>,R> tuple = new BTuple<BTuple<S,T>,R>(element1, element2);
-				resultMap = (PersistentHashMap) ASSOC.invoke(resultMap, tuple, (PersistentHashSet) SET.invoke(SEQ.invoke(LIST.invoke(element2))));
+		for (BTuple<S, T> e1 : arg1) {
+			for (R e2 : arg2) {
+				BTuple<BTuple<S, T>, R> tuple = new BTuple<>(e1, e2);
+				resultMap = (PersistentHashMap) ASSOC.invoke(resultMap, tuple, (PersistentHashSet) SET.invoke(SEQ.invoke(LIST.invoke(e2))));
 			}
 		}
-		return new BRelation<BTuple<BTuple<S,T>,R>, R>(resultMap);
+		return new BRelation<>(resultMap);
 	}
 
-	@SuppressWarnings("unchecked")
-	public static <S,T,R,A> BRelation<BTuple<BTuple<S,T>,BTuple<R,A>>, BTuple<R,A>> projection2(BRelation<S,T> arg1, BRelation<R,A> arg2) {
-
+	public static <S, T, R, A> BRelation<BTuple<BTuple<S, T>, BTuple<R, A>>, BTuple<R, A>> projection2(BRelation<S, T> arg1, BRelation<R, A> arg2) {
 		PersistentHashMap resultMap = PersistentHashMap.EMPTY;
-		for(Object e1 : arg1) {
-			for(Object e2 : arg2) {
-				BTuple<S,T> element1 = (BTuple<S,T>) e1;
-				BTuple<R,A> element2 = (BTuple<R,A>) e2;
-
-				BTuple<BTuple<S,T>,BTuple<R,A>> tuple = new BTuple<BTuple<S,T>,BTuple<R,A>>(element1, element2);
-				resultMap = (PersistentHashMap) ASSOC.invoke(resultMap, tuple, (PersistentHashSet) SET.invoke(SEQ.invoke(LIST.invoke(element2))));
+		for (BTuple<S, T> e1 : arg1) {
+			for (BTuple<R, A> e2 : arg2) {
+				BTuple<BTuple<S, T>, BTuple<R, A>> tuple = new BTuple<>(e1, e2);
+				resultMap = (PersistentHashMap) ASSOC.invoke(resultMap, tuple, (PersistentHashSet) SET.invoke(SEQ.invoke(LIST.invoke(e2))));
 			}
 		}
-		return new BRelation<BTuple<BTuple<S,T>,BTuple<R,A>>, BTuple<R,A>>(resultMap);
+		return new BRelation<>(resultMap);
 	}
 
 	@SuppressWarnings("unchecked")
-	public BRelation<S,BSet<T>> fnc() {
-		PersistentHashMap thisMap = this.map;
+	public BRelation<S, BSet<T>> fnc() {
 		PersistentHashSet domain = this.domain().getSet();
-
 		PersistentHashMap resultMap = PersistentHashMap.EMPTY;
-		for(Object e : domain) {
+		for (Object e : domain) {
 			S domainElement = (S) e;
-			PersistentHashSet range = (PersistentHashSet) GET.invoke(thisMap, e);
-			BSet<T> rangeSet = new BSet<T>(range);
+			PersistentHashSet range = (PersistentHashSet) GET.invoke(this.map, e);
+			BSet<T> rangeSet = new BSet<>(range);
 			resultMap = (PersistentHashMap) ASSOC.invoke(resultMap, domainElement, (PersistentHashSet) SET.invoke(SEQ.invoke(LIST.invoke(rangeSet))));
 		}
-		return new BRelation<S, BSet<T>>(resultMap);
+		return new BRelation<>(resultMap);
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	public BRelation rel() {
 		BSet<S> domain = this.domain();
-
 		PersistentHashMap resultMap = PersistentHashMap.EMPTY;
-		for(S domainElement : domain) {
+		for (S domainElement : domain) {
 			BSet range = (BSet) this.functionCall(domainElement);
 			PersistentHashSet rangeSet = range.getSet();
 			resultMap = (PersistentHashMap) ASSOC.invoke(resultMap, domainElement, rangeSet);
@@ -930,91 +856,83 @@ public class BRelation<S,T> implements BObject, Iterable<BTuple<S,T>> {
 		return new BRelation(resultMap);
 	}
 
-	@SuppressWarnings("unchecked")
-	public static <T> BRelation<T,T> identity(BSet<T> arg) {
+	public static <T> BRelation<T, T> identity(BSet<T> arg) {
 		PersistentHashMap resultMap = PersistentHashMap.EMPTY;
-		for(T e : arg) {
+		for (T e : arg) {
 			resultMap = (PersistentHashMap) ASSOC.invoke(resultMap, e, SET.invoke(SEQ.invoke(LIST.invoke(e))));
 		}
-		return new BRelation<T, T>(resultMap);
+		return new BRelation<>(resultMap);
 	}
 
-	@SuppressWarnings("unchecked")
-	public static <S,T> BRelation<BTuple<S,T>,BTuple<S,T>> identity(BRelation<S,T> arg) {
+	public static <S, T> BRelation<BTuple<S, T>, BTuple<S, T>> identity(BRelation<S, T> arg) {
 		PersistentHashMap resultMap = PersistentHashMap.EMPTY;
-		for(BTuple<S,T> e : arg) {
+		for (BTuple<S, T> e : arg) {
 			resultMap = (PersistentHashMap) ASSOC.invoke(resultMap, e, SET.invoke(SEQ.invoke(LIST.invoke(e))));
 		}
-		return new BRelation<BTuple<S,T>,BTuple<S,T>>(resultMap);
+		return new BRelation<>(resultMap);
 	}
 
-	@SuppressWarnings("unchecked")
-	public static <S,T> BRelation<S,T> cartesianProduct(BSet<S> arg1, BSet<T> arg2) {
+	public static <S, T> BRelation<S, T> cartesianProduct(BSet<S> arg1, BSet<T> arg2) {
 		PersistentHashMap resultMap = PersistentHashMap.EMPTY;
-		for(S e1 : arg1) {
-			if(!arg2.getSet().isEmpty()) {
-				resultMap = (PersistentHashMap) ASSOC.invoke(resultMap, e1, arg2.getSet());
-			}
-		}
-		return new BRelation<S, T>(resultMap);
-	}
-
-	@SuppressWarnings("unchecked")
-	public static <S,T,R> BRelation<BTuple<S,T>, R> cartesianProduct(BRelation<S,T> arg1, BSet<R> arg2) {
-		PersistentHashMap resultMap = PersistentHashMap.EMPTY;
-		for(BTuple<S,T> e1 : arg1) {
-			if(!arg2.getSet().isEmpty()) {
+		for (S e1 : arg1) {
+			if (!arg2.getSet().isEmpty()) {
 				resultMap = (PersistentHashMap) ASSOC.invoke(resultMap, e1, arg2.getSet());
 			}
 		}
 		return new BRelation<>(resultMap);
 	}
 
-	@SuppressWarnings("unchecked")
-	public static <S,T,R> BRelation<S,BTuple<T,R>> cartesianProduct(BSet<S> arg1, BRelation<T,R> arg2) {
+	public static <S, T, R> BRelation<BTuple<S, T>, R> cartesianProduct(BRelation<S, T> arg1, BSet<R> arg2) {
 		PersistentHashMap resultMap = PersistentHashMap.EMPTY;
-		for(S e1 : arg1) {
+		for (BTuple<S, T> e1 : arg1) {
+			if (!arg2.getSet().isEmpty()) {
+				resultMap = (PersistentHashMap) ASSOC.invoke(resultMap, e1, arg2.getSet());
+			}
+		}
+		return new BRelation<>(resultMap);
+	}
+
+	public static <S, T, R> BRelation<S, BTuple<T, R>> cartesianProduct(BSet<S> arg1, BRelation<T, R> arg2) {
+		PersistentHashMap resultMap = PersistentHashMap.EMPTY;
+		for (S e1 : arg1) {
 			PersistentHashSet rangeSet = PersistentHashSet.EMPTY;
-			for(BTuple<T,R> e2 : arg2) {
+			for (BTuple<T, R> e2 : arg2) {
 				rangeSet = (PersistentHashSet) UNION.invoke(rangeSet, SET.invoke(SEQ.invoke(LIST.invoke(e2))));
 			}
-			if(!rangeSet.isEmpty()) {
+			if (!rangeSet.isEmpty()) {
 				resultMap = (PersistentHashMap) ASSOC.invoke(resultMap, e1, rangeSet);
 			}
 		}
-		return new BRelation<S,BTuple<T,R>>(resultMap);
+		return new BRelation<>(resultMap);
 	}
 
-	@SuppressWarnings("unchecked")
-	public static <S,T,R,A> BRelation<BTuple<S,T>,BTuple<R,A>> cartesianProduct(BRelation<S,T> arg1, BRelation<R,A> arg2) {
+	public static <S, T, R, A> BRelation<BTuple<S, T>, BTuple<R, A>> cartesianProduct(BRelation<S, T> arg1, BRelation<R, A> arg2) {
 		PersistentHashMap resultMap = PersistentHashMap.EMPTY;
-		for(BTuple<S,T> e1 : arg1) {
+		for (BTuple<S, T> e1 : arg1) {
 			PersistentHashSet rangeSet = PersistentHashSet.EMPTY;
-			for(BTuple<R,A> e2 : arg2) {
+			for (BTuple<R, A> e2 : arg2) {
 				rangeSet = (PersistentHashSet) UNION.invoke(rangeSet, SET.invoke(SEQ.invoke(LIST.invoke(e2))));
 			}
-			if(!rangeSet.isEmpty()) {
+			if (!rangeSet.isEmpty()) {
 				resultMap = (PersistentHashMap) ASSOC.invoke(resultMap, e1, rangeSet);
 			}
 		}
-		return new BRelation<BTuple<S,T>,BTuple<R,A>>(resultMap);
+		return new BRelation<>(resultMap);
 	}
 
 	@SuppressWarnings("unchecked")
-	public BTuple<S,T> nondeterminism(int index) {
+	public BTuple<S, T> nondeterminism(int index) {
 		int size = this.size();
-		if(index >= size) {
+		if (index >= size) {
 			return null;
 		}
-		PersistentHashMap thisMap = this.map;
 		PersistentHashSet domain = (PersistentHashSet) SET.invoke(KEYS.invoke(this.map));
-
 		int i = 0;
-		for(Object domObj : domain) {
+		for (Object domObj : domain) {
 			PersistentHashSet range = (PersistentHashSet) GET.invoke(this.map, (S) domObj);
-			for(Object rangeObj : range) {
-				if(i == index) {
-					return new BTuple<S,T>((S) domObj, (T) rangeObj);
+			for (Object rangeObj : range) {
+				if (i == index) {
+					return new BTuple<>((S) domObj, (T) rangeObj);
 				}
 				i++;
 			}
@@ -1023,15 +941,13 @@ public class BRelation<S,T> implements BObject, Iterable<BTuple<S,T>> {
 	}
 
 	@SuppressWarnings("unchecked")
-	public BTuple<S,T> nondeterminism() {
-		PersistentHashMap thisMap = this.map;
+	public BTuple<S, T> nondeterminism() {
 		PersistentHashSet domain = (PersistentHashSet) SET.invoke(KEYS.invoke(this.map));
-
 		int index = (int) Math.floor(Math.random() * domain.size());
 		int i = 0;
 		S domainElement = null;
-		for(Object obj : domain) {
-			if(i == index) {
+		for (Object obj : domain) {
+			if (i == index) {
 				domainElement = (S) obj;
 				break;
 			}
@@ -1039,14 +955,14 @@ public class BRelation<S,T> implements BObject, Iterable<BTuple<S,T>> {
 		}
 
 		PersistentHashSet range = (PersistentHashSet) GET.invoke(this.map, domainElement);
-		index = (int) Math.floor(Math.random() * range.size());
-		i = 0;
-		if(range == null) {
+		if (range == null) {
 			return null;
 		}
-		for(Object obj : range) {
-			if(i == index) {
-				return new BTuple<S,T>(domainElement, (T) obj);
+		index = (int) Math.floor(Math.random() * range.size());
+		i = 0;
+		for (Object obj : range) {
+			if (i == index) {
+				return new BTuple<>(domainElement, (T) obj);
 			}
 			i++;
 		}
@@ -1060,7 +976,7 @@ public class BRelation<S,T> implements BObject, Iterable<BTuple<S,T>> {
 	@SuppressWarnings("unchecked")
 	public <R1, R2> BBoolean isTotal(BRelation<R1, R2> domain) {
 		BSet<BTuple<R1, R2>> domainAsSet = new BSet<BTuple<R1, R2>>();
-		for(BTuple<R1, R2> tuple: domain) {
+		for (BTuple<R1, R2> tuple : domain) {
 			domainAsSet = domainAsSet.union(new BSet<>(tuple));
 		}
 		return this.domain().equal((BSet<S>) domainAsSet);
@@ -1072,23 +988,23 @@ public class BRelation<S,T> implements BObject, Iterable<BTuple<S,T>> {
 	}
 
 	public BBoolean isTotalInteger() {
-		return new BBoolean(false);
+		return BBoolean.FALSE;
 	}
 
 	public BBoolean isTotalNatural() {
-		return new BBoolean(false);
+		return BBoolean.FALSE;
 	}
 
 	public BBoolean isTotalNatural1() {
-		return new BBoolean(false);
+		return BBoolean.FALSE;
 	}
 
 	public BBoolean isTotalString() {
-		return new BBoolean(false);
+		return BBoolean.FALSE;
 	}
 
 	public BBoolean isTotalStruct() {
-		return new BBoolean(false);
+		return BBoolean.FALSE;
 	}
 
 	public BBoolean isPartial(BSet<S> domain) {
@@ -1096,76 +1012,76 @@ public class BRelation<S,T> implements BObject, Iterable<BTuple<S,T>> {
 	}
 
 	@SuppressWarnings("unchecked")
-	public <A1,A2> BBoolean isPartial(BRelation<A1, A2> domain) {
-		for(S element : this.domain()) {
+	public <A1, A2> BBoolean isPartial(BRelation<A1, A2> domain) {
+		for (S element : this.domain()) {
 			BTuple<A1, A2> elementAsTuple = (BTuple<A1, A2>) element;
 			PersistentHashSet range = (PersistentHashSet) GET.invoke(domain.map, elementAsTuple.projection1());
-			if(range == null) {
-				return new BBoolean(false);
+			if (range == null) {
+				return BBoolean.FALSE;
 			}
-			if(!range.contains(elementAsTuple.projection2())) {
-				return new BBoolean(false);
+			if (!range.contains(elementAsTuple.projection2())) {
+				return BBoolean.FALSE;
 			}
 		}
-		return new BBoolean(true);
+		return BBoolean.TRUE;
 	}
 
 	public BBoolean isPartialBoolean() {
-		for(S e : this.domain()) {
-			if(e instanceof BBoolean) {
-				return new BBoolean(true);
+		for (S e : this.domain()) {
+			if (e instanceof BBoolean) {
+				return BBoolean.TRUE;
 			} else {
-				return new BBoolean(false);
+				return BBoolean.FALSE;
 			}
 		}
-		return new BBoolean(true);
+		return BBoolean.TRUE;
 	}
 
 	public BBoolean isPartialInteger() {
-		for(S e : this.domain()) {
-			if(e instanceof BInteger) {
-				return new BBoolean(true);
+		for (S e : this.domain()) {
+			if (e instanceof BInteger) {
+				return BBoolean.TRUE;
 			} else {
-				return new BBoolean(false);
+				return BBoolean.FALSE;
 			}
 		}
-		return new BBoolean(true);
+		return BBoolean.TRUE;
 	}
 
 	public BBoolean isPartialNatural() {
-		for(S e : this.domain()) {
-			if(e instanceof BInteger && !((BInteger)e).isNatural().booleanValue()) {
-				return new BBoolean(false);
+		for (S e : this.domain()) {
+			if (e instanceof BInteger && !((BInteger) e).isNatural().booleanValue()) {
+				return BBoolean.FALSE;
 			}
 		}
-		return new BBoolean(true);
+		return BBoolean.TRUE;
 	}
 
 	public BBoolean isPartialNatural1() {
-		for(S e : this.domain()) {
-			if(e instanceof BInteger && !((BInteger)e).isNatural1().booleanValue()) {
-				return new BBoolean(false);
+		for (S e : this.domain()) {
+			if (e instanceof BInteger && !((BInteger) e).isNatural1().booleanValue()) {
+				return BBoolean.FALSE;
 			}
 		}
-		return new BBoolean(true);
+		return BBoolean.TRUE;
 	}
 
 	public BBoolean isPartialString() {
-		for(S e : this.domain()) {
-			if(e instanceof BString && !((BString) e).isString().booleanValue()) {
-				return new BBoolean(false);
+		for (S e : this.domain()) {
+			if (e instanceof BString && !((BString) e).isString().booleanValue()) {
+				return BBoolean.FALSE;
 			}
 		}
-		return new BBoolean(true);
+		return BBoolean.TRUE;
 	}
 
 	public BBoolean isPartialStruct() {
-		for(S e : this.domain()) {
-			if(e instanceof BStruct && !((BStruct) e).isRecord().booleanValue()) {
-				return new BBoolean(false);
+		for (S e : this.domain()) {
+			if (e instanceof BStruct && !((BStruct) e).isRecord().booleanValue()) {
+				return BBoolean.FALSE;
 			}
 		}
-		return new BBoolean(true);
+		return BBoolean.TRUE;
 	}
 
 	public BBoolean checkDomain(BSet<S> domain) {
@@ -1173,76 +1089,76 @@ public class BRelation<S,T> implements BObject, Iterable<BTuple<S,T>> {
 	}
 
 	@SuppressWarnings("unchecked")
-	public <A1,A2> BBoolean checkDomain(BRelation<A1, A2> domain) {
-		for(S element : this.domain()) {
+	public <A1, A2> BBoolean checkDomain(BRelation<A1, A2> domain) {
+		for (S element : this.domain()) {
 			BTuple<A1, A2> elementAsTuple = (BTuple<A1, A2>) element;
 			PersistentHashSet range = (PersistentHashSet) GET.invoke(domain.map, elementAsTuple.projection1());
-			if(range == null) {
-				return new BBoolean(false);
+			if (range == null) {
+				return BBoolean.FALSE;
 			}
-			if(!range.contains(elementAsTuple.projection2())) {
-				return new BBoolean(false);
+			if (!range.contains(elementAsTuple.projection2())) {
+				return BBoolean.FALSE;
 			}
 		}
-		return new BBoolean(true);
+		return BBoolean.TRUE;
 	}
 
 	public BBoolean checkDomainBoolean() {
-		for(S e : this.domain()) {
-			if(e instanceof BBoolean) {
-				return new BBoolean(true);
+		for (S e : this.domain()) {
+			if (e instanceof BBoolean) {
+				return BBoolean.TRUE;
 			} else {
-				return new BBoolean(false);
+				return BBoolean.FALSE;
 			}
 		}
-		return new BBoolean(true);
+		return BBoolean.TRUE;
 	}
 
 	public BBoolean checkDomainInteger() {
-		for(S e : this.domain()) {
-			if(e instanceof BInteger) {
-				return new BBoolean(true);
+		for (S e : this.domain()) {
+			if (e instanceof BInteger) {
+				return BBoolean.TRUE;
 			} else {
-				return new BBoolean(false);
+				return BBoolean.FALSE;
 			}
 		}
-		return new BBoolean(true);
+		return BBoolean.TRUE;
 	}
 
 	public BBoolean checkDomainNatural() {
-		for(S e : this.domain()) {
-			if(e instanceof BInteger && !((BInteger) e).isNatural().booleanValue()) {
-				return new BBoolean(false);
+		for (S e : this.domain()) {
+			if (e instanceof BInteger && !((BInteger) e).isNatural().booleanValue()) {
+				return BBoolean.FALSE;
 			}
 		}
-		return new BBoolean(true);
+		return BBoolean.TRUE;
 	}
 
 	public BBoolean checkDomainNatural1() {
-		for(S e : this.domain()) {
-			if(e instanceof BInteger && !((BInteger) e).isNatural1().booleanValue()) {
-				return new BBoolean(false);
+		for (S e : this.domain()) {
+			if (e instanceof BInteger && !((BInteger) e).isNatural1().booleanValue()) {
+				return BBoolean.FALSE;
 			}
 		}
-		return new BBoolean(true);
+		return BBoolean.TRUE;
 	}
 
 	public BBoolean checkDomainString() {
-		for(S e : this.domain()) {
-			if(e instanceof BString && !((BString) e).isString().booleanValue()) {
-				return new BBoolean(false);
+		for (S e : this.domain()) {
+			if (e instanceof BString && !((BString) e).isString().booleanValue()) {
+				return BBoolean.FALSE;
 			}
 		}
-		return new BBoolean(true);
+		return BBoolean.TRUE;
 	}
 
 	public BBoolean checkDomainStruct() {
-		for(S e : this.domain()) {
-			if(e instanceof BStruct && !((BStruct) e).isRecord().booleanValue()) {
-				return new BBoolean(false);
+		for (S e : this.domain()) {
+			if (e instanceof BStruct && !((BStruct) e).isRecord().booleanValue()) {
+				return BBoolean.FALSE;
 			}
 		}
-		return new BBoolean(true);
+		return BBoolean.TRUE;
 	}
 
 	public BBoolean checkRange(BSet<T> range) {
@@ -1250,90 +1166,90 @@ public class BRelation<S,T> implements BObject, Iterable<BTuple<S,T>> {
 	}
 
 	@SuppressWarnings("unchecked")
-	public <A1,A2> BBoolean checkRange(BRelation<A1, A2> range) {
-		for(T element : this.range()) {
+	public <A1, A2> BBoolean checkRange(BRelation<A1, A2> range) {
+		for (T element : this.range()) {
 			BTuple<A1, A2> elementAsTuple = (BTuple<A1, A2>) element;
 			PersistentHashSet rangeRange = (PersistentHashSet) GET.invoke(range.map, elementAsTuple.projection1());
-			if(rangeRange == null) {
-				return new BBoolean(false);
+			if (rangeRange == null) {
+				return BBoolean.FALSE;
 			}
-			if(!rangeRange.contains(elementAsTuple.projection2())) {
-				return new BBoolean(false);
+			if (!rangeRange.contains(elementAsTuple.projection2())) {
+				return BBoolean.FALSE;
 			}
 		}
-		return new BBoolean(true);
+		return BBoolean.TRUE;
 	}
 
 	public BBoolean checkRangeInteger() {
-		for(T e : this.range()) {
-			if(e instanceof BInteger) {
-				return new BBoolean(true);
+		for (T e : this.range()) {
+			if (e instanceof BInteger) {
+				return BBoolean.TRUE;
 			} else {
-				return new BBoolean(false);
+				return BBoolean.FALSE;
 			}
 		}
-		return new BBoolean(true);
+		return BBoolean.TRUE;
 	}
 
 	public BBoolean checkRangeBoolean() {
-		for(T e : this.range()) {
-			if(e instanceof BBoolean) {
-				return new BBoolean(true);
+		for (T e : this.range()) {
+			if (e instanceof BBoolean) {
+				return BBoolean.TRUE;
 			} else {
-				return new BBoolean(false);
+				return BBoolean.FALSE;
 			}
 		}
-		return new BBoolean(true);
+		return BBoolean.TRUE;
 	}
 
 	public BBoolean checkRangeNatural() {
-		for(T e : this.range()) {
-			if(e instanceof BInteger && !((BInteger) e).isNatural().booleanValue()) {
-				return new BBoolean(false);
+		for (T e : this.range()) {
+			if (e instanceof BInteger && !((BInteger) e).isNatural().booleanValue()) {
+				return BBoolean.FALSE;
 			}
 		}
-		return new BBoolean(true);
+		return BBoolean.TRUE;
 	}
 
 	public BBoolean checkRangeNatural1() {
-		for(T e : this.range()) {
-			if(e instanceof BInteger && !((BInteger) e).isNatural1().booleanValue()) {
-				return new BBoolean(false);
+		for (T e : this.range()) {
+			if (e instanceof BInteger && !((BInteger) e).isNatural1().booleanValue()) {
+				return BBoolean.FALSE;
 			}
 		}
-		return new BBoolean(true);
+		return BBoolean.TRUE;
 	}
 
 	public BBoolean checkRangeString() {
-		for(T e : this.range()) {
-			if(e instanceof BString && !((BString) e).isString().booleanValue()) {
-				return new BBoolean(false);
+		for (T e : this.range()) {
+			if (e instanceof BString && !((BString) e).isString().booleanValue()) {
+				return BBoolean.FALSE;
 			}
 		}
-		return new BBoolean(true);
+		return BBoolean.TRUE;
 	}
 
 	public BBoolean checkRangeStruct() {
-		for(T e : this.range()) {
-			if(e instanceof BStruct && !((BStruct) e).isRecord().booleanValue()) {
-				return new BBoolean(false);
+		for (T e : this.range()) {
+			if (e instanceof BStruct && !((BStruct) e).isRecord().booleanValue()) {
+				return BBoolean.FALSE;
 			}
 		}
-		return new BBoolean(true);
+		return BBoolean.TRUE;
 	}
 
 	public BBoolean isRelation() {
-		return new BBoolean(true);
+		return BBoolean.TRUE;
 	}
 
 	public BBoolean isFunction() {
-		for(S element : this.domain()) {
+		for (S element : this.domain()) {
 			PersistentHashSet range = (PersistentHashSet) GET.invoke(this.map, element);
-			if(range.size() > 1) {
-				return new BBoolean(false);
+			if (range.size() > 1) {
+				return BBoolean.FALSE;
 			}
 		}
-		return new BBoolean(true);
+		return BBoolean.TRUE;
 	}
 
 	public BBoolean isSurjection(BSet<T> range) {
@@ -1341,42 +1257,42 @@ public class BRelation<S,T> implements BObject, Iterable<BTuple<S,T>> {
 	}
 
 	public BBoolean isSurjectionInteger() {
-		return new BBoolean(false);
+		return BBoolean.FALSE;
 	}
 
 	public BBoolean isSurjectionNatural() {
-		return new BBoolean(false);
+		return BBoolean.FALSE;
 	}
 
 	public BBoolean isSurjectionNatural1() {
-		return new BBoolean(false);
+		return BBoolean.FALSE;
 	}
 
 	public BBoolean isSurjectionString() {
-		return new BBoolean(false);
+		return BBoolean.FALSE;
 	}
 
 	public BBoolean isSurjectionStruct() {
-		return new BBoolean(false);
+		return BBoolean.FALSE;
 	}
 
 	@SuppressWarnings("unchecked")
 	public BBoolean isInjection() {
 		PersistentHashSet visited = (PersistentHashSet) SET.invoke(SEQ.invoke(LIST.invoke()));
-		for(S element : this.domain()) {
+		for (S element : this.domain()) {
 			PersistentHashSet range = (PersistentHashSet) GET.invoke(this.map, element);
-			if(range == null) {
+			if (range == null) {
 				break;
 			}
-			for(Object e : range) {
+			for (Object e : range) {
 				T rangeElement = (T) e;
-				if(visited.contains(rangeElement)) {
-					return new BBoolean(false);
+				if (visited.contains(rangeElement)) {
+					return BBoolean.FALSE;
 				}
 				visited = (PersistentHashSet) UNION.invoke(visited, SET.invoke(SEQ.invoke(LIST.invoke(rangeElement))));
 			}
 		}
-		return new BBoolean(true);
+		return BBoolean.TRUE;
 	}
 
 	public BBoolean isBijection(BSet<T> range) {
@@ -1384,27 +1300,27 @@ public class BRelation<S,T> implements BObject, Iterable<BTuple<S,T>> {
 	}
 
 	public BBoolean isBijectionInteger() {
-		return new BBoolean(false);
+		return BBoolean.FALSE;
 	}
 
 	public BBoolean isBijectionNatural() {
-		return new BBoolean(false);
+		return BBoolean.FALSE;
 	}
 
 	public BBoolean isBijectionNatural1() {
-		return new BBoolean(false);
+		return BBoolean.FALSE;
 	}
 
 	public BBoolean isBijectionString() {
-		return new BBoolean(false);
+		return BBoolean.FALSE;
 	}
 
 	public BBoolean isBijectionStruct() {
-		return new BBoolean(false);
+		return BBoolean.FALSE;
 	}
 
 	public BBoolean isInDomain(S element) {
-		return new BBoolean(this.map.containsKey(element));
+		return BBoolean.of(this.map.containsKey(element));
 	}
 
 	public BBoolean isNotInDomain(S element) {
@@ -1415,11 +1331,11 @@ public class BRelation<S,T> implements BObject, Iterable<BTuple<S,T>> {
 		PersistentHashSet keys = (PersistentHashSet) SET.invoke(KEYS.invoke(this.map));
 		for (Object key : keys) {
 			PersistentHashSet range = (PersistentHashSet) GET.invoke(this.map, key);
-			if(range != null && range.contains(element)) {
-				return new BBoolean(true);
+			if (range != null && range.contains(element)) {
+				return BBoolean.TRUE;
 			}
 		}
-		return new BBoolean(false);
+		return BBoolean.FALSE;
 	}
 
 	public BBoolean isNotInRange(T element) {
@@ -1429,41 +1345,41 @@ public class BRelation<S,T> implements BObject, Iterable<BTuple<S,T>> {
 	public BBoolean isInRelationalImage(T element, BSet<S> set) {
 		for (S key : set) {
 			PersistentHashSet image = (PersistentHashSet) GET.invoke(this.map, key);
-			if(image != null && image.contains(element)) {
-				return new BBoolean(true);
+			if (image != null && image.contains(element)) {
+				return BBoolean.TRUE;
 			}
 		}
-		return new BBoolean(false);
+		return BBoolean.FALSE;
 	}
 
 	public BBoolean isNotInRelationalImage(T element, BSet<S> set) {
 		return isInRelationalImage(element, set).not();
 	}
 
-	public <R> BBoolean isInComposition(BTuple<S,R> tuple, BRelation<T,R> arg) {
+	public <R> BBoolean isInComposition(BTuple<S, R> tuple, BRelation<T, R> arg) {
 		S projection1 = tuple.projection1();
 		R projection2 = tuple.projection2();
 
 		PersistentHashSet range = (PersistentHashSet) GET.invoke(this.map, projection1);
 
-		if(range != null) {
+		if (range != null) {
 			for (Object value : range) {
 				PersistentHashSet range2 = (PersistentHashSet) GET.invoke(arg.map, value);
 				if (range2 != null && range2.contains(projection2)) {
-					return new BBoolean(true);
+					return BBoolean.TRUE;
 				}
 			}
 		}
-		return new BBoolean(false);
+		return BBoolean.FALSE;
 	}
 
-	public <R> BBoolean isNotInComposition(BTuple<S,R> tuple, BRelation<T,R> arg) {
+	public <R> BBoolean isNotInComposition(BTuple<S, R> tuple, BRelation<T, R> arg) {
 		return isInComposition(tuple, arg).not();
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public Iterator<BTuple<S,T>> iterator() {
+	public Iterator<BTuple<S, T>> iterator() {
 		PersistentHashMap thisMap = this.map;
 
 
@@ -1475,13 +1391,13 @@ public class BRelation<S,T> implements BObject, Iterable<BTuple<S,T>> {
 
 			@Override
 			public boolean hasNext() {
-				if(keyIterator == null) {
+				if (keyIterator == null) {
 					return false;
 				}
-				if(keyIterator.hasNext()) {
+				if (keyIterator.hasNext()) {
 					return true;
 				}
-				if(valueIterator == null) {
+				if (valueIterator == null) {
 					return false;
 				}
 				return valueIterator.hasNext();
@@ -1491,55 +1407,21 @@ public class BRelation<S,T> implements BObject, Iterable<BTuple<S,T>> {
 			@Override
 			public BTuple<S, T> next() {
 				// If there is no next key, then we have already iterated through the relation
-				if(currentLhs == null) {
+				if (currentLhs == null) {
 					return null;
 				}
 
-				if(valueIterator == null || !valueIterator.hasNext()) {
+				if (valueIterator == null || !valueIterator.hasNext()) {
 					currentLhs = keyIterator.next();
 					valueIterator = currentLhs == null ? null : ((PersistentHashSet) thisMap.get(currentLhs)).iterator();
 				}
 
-				if(currentLhs == null || !valueIterator.hasNext()) {
+				if (currentLhs == null || !valueIterator.hasNext()) {
 					return null;
 				}
 
-				return new BTuple<S,T>(currentLhs, valueIterator.next());
+				return new BTuple<S, T>(currentLhs, valueIterator.next());
 			}
 		};
-	}
-
-	@SuppressWarnings("unchecked")
-	public java.lang.String toString() {
-
-		PersistentHashMap thisMap = this.map;
-		PersistentHashSet domain = (PersistentHashSet) SET.invoke(KEYS.invoke(thisMap));
-
-		int size = this.size();
-		int i = 0;
-
-		StringBuffer sb = new StringBuffer();
-		sb.append("{");
-		for(Object e1 : domain) {
-			S domainElement = (S) e1;
-			PersistentHashSet range = (PersistentHashSet) GET.invoke(thisMap, domainElement);
-			if(range == null) {
-				break;
-			}
-			for(Object e2 : range) {
-				T rangeElement = (T) e2;
-				sb.append("(");
-				sb.append(domainElement.toString());
-				sb.append(" |-> ");
-				sb.append(rangeElement.toString());
-				sb.append(")");
-				if (i+1 < size) {
-					sb.append(", ");
-				}
-				i++;
-			}
-		}
-		sb.append("}");
-		return sb.toString();
 	}
 }

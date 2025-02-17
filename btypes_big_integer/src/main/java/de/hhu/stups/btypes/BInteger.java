@@ -14,8 +14,8 @@ public final class BInteger extends Number implements Comparable<BInteger>, BObj
 	private static final BigInteger JBI_TWO = BigInteger.valueOf(2);
 	private static final BigInteger JBI_MINUS_ONE = BigInteger.valueOf(-1);
 
-	private static final BigInt CBI_ZERO = BigInt.fromLong(0);
-	private static final BigInt CBI_ONE = BigInt.fromLong(1);
+	private static final BigInt CBI_ZERO = BigInt.ZERO;
+	private static final BigInt CBI_ONE = BigInt.ONE;
 	private static final BigInt CBI_TWO = BigInt.fromLong(2);
 	private static final BigInt CBI_MINUS_ONE = BigInt.fromLong(-1);
 

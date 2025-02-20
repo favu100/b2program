@@ -673,6 +673,99 @@ public static final class <name> extends <freetype> {
         return "<name>(" + this.value + ")";
     }
 }
+
+public static final class <name>Constructor implements BObject {
+
+    public static final <name>Constructor INSTANCE = new <name>Constructor();
+
+    private <name>Constructor() {
+    }
+
+    public static <name>Destructor inverse() {
+        return <name>Destructor.INSTANCE;
+    }
+
+    public static <name> functionCall(<subtype> value) {
+        return new <name>(value);
+    }
+
+    public static BBoolean isInRange(<freetype> o) {
+        return new BBoolean(o instanceof <name>);
+    }
+
+    public BBoolean equal(<name>Constructor o) {
+        return new BBoolean(true);
+    }
+
+    public BBoolean unequal(<name>Constructor o) {
+        return new BBoolean(false);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return o instanceof <name>Constructor;
+    }
+
+    @Override
+    public int hashCode() {
+        return <name>Constructor.class.hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return "<name>";
+    }
+}
+
+public static final class <name>Destructor implements BObject {
+
+    public static final <name>Destructor INSTANCE = new <name>Destructor();
+
+    private <name>Destructor() {
+    }
+
+    public static <subtype> functionCall(<freetype> value) {
+        return ((<name>) value).getValue();
+    }
+
+    public BBoolean equal(<name>Destructor o) {
+        return new BBoolean(true);
+    }
+
+    public BBoolean unequal(<name>Destructor o) {
+        return new BBoolean(false);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return o instanceof <name>Destructor;
+    }
+
+    @Override
+    public int hashCode() {
+        return <name>Destructor.class.hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return "<name>~";
+    }
+}
+>>
+
+freetype_import() ::= <<
+>>
+
+freetype_call(name) ::= <<
+<name>
+>>
+
+freetype_element_call(name) ::= <<
+<name>.INSTANCE
+>>
+
+freetype_constructor_call(name) ::= <<
+<name>Constructor.INSTANCE
 >>
 
 bool() ::= <<

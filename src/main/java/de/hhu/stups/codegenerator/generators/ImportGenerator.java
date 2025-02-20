@@ -1,6 +1,10 @@
 package de.hhu.stups.codegenerator.generators;
 
 
+import java.util.HashSet;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import de.hhu.stups.codegenerator.handlers.NameHandler;
 import de.hhu.stups.codegenerator.handlers.TemplateHandler;
 import de.prob.parser.ast.nodes.MachineNode;
@@ -10,18 +14,14 @@ import de.prob.parser.ast.types.BoolType;
 import de.prob.parser.ast.types.CoupleType;
 import de.prob.parser.ast.types.DeferredSetElementType;
 import de.prob.parser.ast.types.EnumeratedSetElementType;
+import de.prob.parser.ast.types.FreetypeType;
 import de.prob.parser.ast.types.IntegerType;
 import de.prob.parser.ast.types.RecordType;
 import de.prob.parser.ast.types.SetType;
 import de.prob.parser.ast.types.StringType;
+
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroup;
-
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 public class ImportGenerator {
 
@@ -81,6 +81,13 @@ public class ImportGenerator {
             importBObject();
             importStruct((RecordType) type);
             importBBoolean();
+        } else if (type instanceof FreetypeType) {
+            importBObject();
+            importBFreetype();
+            importFreetype((FreetypeType) type);
+            importBBoolean();
+        } else {
+            throw new IllegalArgumentException("Unsupported type: " + type);
         }
     }
 
@@ -104,6 +111,18 @@ public class ImportGenerator {
         }
     }
 
+    /*
+     * This function generates code for importing the given freetype
+     */
+    private void importFreetype(FreetypeType type) {
+        boolean fromOtherMachine = nameHandler.getFreetypeToMachine().get(type.getName()) != null && !nameHandler.getMachineName().equals(nameHandler.getFreetypeToMachine().get(type.getName()));
+        if (fromOtherMachine || forVisualization) {
+            ST enumImport = group.getInstanceOf("freetype_import");
+            TemplateHandler.add(enumImport, "name", type.getName());
+            TemplateHandler.add(enumImport, "machineName", nameHandler.getEnumToMachine().get(type.getName()));
+            importedEnums.add(enumImport.render());
+        }
+    }
 
     /*
     * This function generates an import for a type and its subtype
@@ -202,6 +221,17 @@ public class ImportGenerator {
         type.getSubtypes().forEach(this::addImport);
         imports.add(template.render());
         importedTypes.add("BStruct");
+    }
+
+    /*
+     * This function generates code for importing BFreetype
+     */
+    private void importBFreetype() {
+        ST template = group.getInstanceOf("import_type");
+        TemplateHandler.add(template, "type", "BFreetype");
+        TemplateHandler.add(template, "useBigInteger", useBigInteger);
+        imports.add(template.render());
+        importedTypes.add("BFreetype");
     }
 
     /*

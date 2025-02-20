@@ -1,6 +1,15 @@
 package de.hhu.stups.codegenerator.generators;
 
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import de.hhu.stups.codegenerator.GeneratorMode;
 import de.hhu.stups.codegenerator.handlers.IterationConstructHandler;
 import de.hhu.stups.codegenerator.handlers.NameHandler;
@@ -30,17 +39,9 @@ import de.prob.parser.ast.types.CoupleType;
 import de.prob.parser.ast.types.IntegerType;
 import de.prob.parser.ast.types.SetType;
 import de.prob.parser.ast.types.UntypedType;
+
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroup;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.BOOL;
 import static de.prob.parser.ast.nodes.expression.ExpressionOperatorNode.ExpressionOperator.CARD;
@@ -224,6 +225,16 @@ public class ExpressionGenerator {
             EnumeratedSetElementNode element = (EnumeratedSetElementNode) node;
             return declarationGenerator.callEnum(element.getType().toString(), element.getDeclarationNode());
         } else if(node instanceof IdentifierExprNode) {
+            IdentifierExprNode identNode = (IdentifierExprNode) node;
+            DeclarationNode declNode = identNode.getDeclarationNode();
+            if (declNode != null) {
+                switch (declNode.getKind()) {
+                    case FREETYPE:
+                        return declarationGenerator.callFreetype(declNode);
+                    case FREETYPE_ELEMENT:
+                        return declarationGenerator.callFreetypeElement(declNode);
+                }
+            }
             Map<String, List<String>> enumTypes = nameHandler.getEnumTypes();
             //This is the case where the name of an enumerated set element is returned as an IdentifierExprNode
             String nodeName = ((IdentifierExprNode) node).getName();

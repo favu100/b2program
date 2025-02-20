@@ -111,10 +111,16 @@ public class NameHandler {
         reservedMachinesAndFunctionsAndVariables.addAll(node.getDeferredSets().stream()
                 .map(set -> handleIdentifier(set.getName(), FUNCTION_NAMES))
                 .collect(Collectors.toList()));
+        reservedMachinesAndFunctionsAndVariables.addAll(node.getFreetypes().stream()
+                .map(set -> handleIdentifier(set.getFreetypeDeclarationNode().getName(), FUNCTION_NAMES))
+                .collect(Collectors.toList()));
 
         globals.addAll(reservedMachinesAndFunctionsAndVariables);
         globals.addAll(node.getEnumeratedSets().stream()
                 .map(set -> handleIdentifier(set.getSetDeclarationNode().getName(), NameHandler.IdentifierHandlingEnum.VARIABLES))
+                .collect(Collectors.toList()));
+        globals.addAll(node.getFreetypes().stream()
+                .map(set -> handleIdentifier(set.getFreetypeDeclarationNode().getName(), NameHandler.IdentifierHandlingEnum.VARIABLES))
                 .collect(Collectors.toList()));
     }
 
@@ -217,6 +223,10 @@ public class NameHandler {
 
     public Map<String, String> getEnumToMachine() {
         return machineGenerator.getDeclarationGenerator().getEnumToMachine();
+    }
+
+    public Map<String, String> getFreetypeToMachine() {
+        return machineGenerator.getDeclarationGenerator().getFreetypeToMachine();
     }
 
     public String getMachineName() {

@@ -412,4 +412,24 @@ public class DeclarationGenerator {
 
         return result;
     }
+
+    public String callFreetype(DeclarationNode declNode) {
+        ST ftCall = currentGroup.getInstanceOf("freetype_call");
+        TemplateHandler.add(ftCall, "name", nameHandler.handleIdentifier(declNode.getName(), NameHandler.IdentifierHandlingEnum.FUNCTION_NAMES));
+        return ftCall.render();
+    }
+
+    public String callFreetypeElement(DeclarationNode declNode) {
+        ST ftCall;
+        if (declNode instanceof FreetypeElementNode) {
+            ftCall = currentGroup.getInstanceOf("freetype_element_call");
+        } else if (declNode instanceof FreetypeConstructorNode) {
+            ftCall = currentGroup.getInstanceOf("freetype_constructor_call");
+        } else {
+            throw new AssertionError();
+        }
+
+        TemplateHandler.add(ftCall, "name", nameHandler.handleIdentifier(declNode.getName(), NameHandler.IdentifierHandlingEnum.FUNCTION_NAMES));
+        return ftCall.render();
+    }
 }

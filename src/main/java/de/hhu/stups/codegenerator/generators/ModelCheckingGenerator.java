@@ -339,7 +339,6 @@ public class ModelCheckingGenerator {
         //TemplateHandler.add(template, "operationID", operationIDs.get(nameHandler.handle(opNode.getName())));
         TemplateHandler.add(template, "hasParameters", hasParameters);
         TemplateHandler.add(template, "checkReachability", checkReachabilityAnalyzer.visitOperation(opNode));
-        TemplateHandler.add(template, "tupleType", typeGenerator.generate(tupleType));
 
         String evalName = hasParameters ? "param" : transitionIdentifier;
         List<String> readParameters = new ArrayList<>();

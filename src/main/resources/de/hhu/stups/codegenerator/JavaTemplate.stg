@@ -591,8 +591,26 @@ public enum <name> implements BObject {
 freetype_declaration(name) ::= <<
 public static abstract class <name> extends BFreetype {
 
-    protected <name>() {
+    private <name>() {
     }
+
+    public final BBoolean equal(<name> o) {
+        return new BBoolean(this.equals(o));
+    }
+
+    public final BBoolean unequal(<name> o) {
+        return this.equal(o).not();
+    }
+
+    @Override
+    public abstract boolean equals(Object o);
+
+    @Override
+    public abstract int hashCode();
+
+    @Override
+    public abstract String toString();
+
 }
 >>
 
@@ -604,14 +622,6 @@ public static final class <name> extends <freetype> {
     private <name>() {
     }
 
-    public BBoolean equal(<freetype> o) {
-        return new BBoolean(this.equals(o));
-    }
-
-    public BBoolean unequal(<freetype> o) {
-        return this.equal(o).not();
-    }
-
     @Override
     public boolean equals(Object o) {
         return o instanceof <name>;
@@ -619,7 +629,7 @@ public static final class <name> extends <freetype> {
 
     @Override
     public int hashCode() {
-        return this.getClass().hashCode();
+        return <name>.class.hashCode();
     }
 
     @Override
@@ -630,7 +640,7 @@ public static final class <name> extends <freetype> {
 >>
 
 freetype_constructor_declaration(name,freetype,subtype) ::= <<
-public final class <name> extends <freetype> {
+public static final class <name> extends <freetype> {
 
     private final <subtype> value;
 
@@ -640,14 +650,6 @@ public final class <name> extends <freetype> {
 
     public <subtype> getValue() {
         return this.value;
-    }
-
-    public BBoolean equal(<freetype> o) {
-        return new BBoolean(this.equals(o));
-    }
-
-    public BBoolean unequal(<freetype> o) {
-        return this.equal(o).not();
     }
 
     @Override
@@ -663,7 +665,7 @@ public final class <name> extends <freetype> {
 
     @Override
     public int hashCode() {
-        return Objects.hash(this.getClass(), this.value);
+        return Objects.hash(<name>.class, this.value);
     }
 
     @Override

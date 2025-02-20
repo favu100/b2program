@@ -1,6 +1,6 @@
 package de.hhu.stups.btypes;
 
-public class BFreetype implements BObject {
+public abstract class BFreetype implements BObject {
 
     public BBoolean isFreetype() {
         return new BBoolean(true);

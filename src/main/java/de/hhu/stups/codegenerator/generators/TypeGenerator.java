@@ -8,6 +8,7 @@ import de.prob.parser.ast.types.BoolType;
 import de.prob.parser.ast.types.CoupleType;
 import de.prob.parser.ast.types.DeferredSetElementType;
 import de.prob.parser.ast.types.EnumeratedSetElementType;
+import de.prob.parser.ast.types.FreetypeType;
 import de.prob.parser.ast.types.IntegerType;
 import de.prob.parser.ast.types.RecordType;
 import de.prob.parser.ast.types.SetType;
@@ -53,14 +54,17 @@ public class TypeGenerator {
             return generateEnumeratedSetElement((EnumeratedSetElementType) type);
         } else if(type instanceof DeferredSetElementType) {
             return generateDeferredSetElement((DeferredSetElementType) type);
+        } else if(type instanceof FreetypeType) {
+            return generateFreetype((FreetypeType) type);
         } else if(type instanceof CoupleType) {
             return generateBTuple((CoupleType) type);
         } else if(type instanceof RecordType) {
             return generateBStruct((RecordType) type);
         } else if(type instanceof UntypedType) {
             return generateUntyped();
+        } else {
+            throw new IllegalArgumentException("Unsupported type: " + type);
         }
-        return "";
     }
 
     /*
@@ -160,6 +164,18 @@ public class TypeGenerator {
         ST template = group.getInstanceOf("type");
         TemplateHandler.add(template, "fromOtherMachine", declarationGenerator.getEnumToMachine().get(type.getSetName()) != null && !machineGenerator.getMachineName().equals(declarationGenerator.getEnumToMachine().get(type.getSetName())));
         TemplateHandler.add(template, "otherMachine", declarationGenerator.getEnumToMachine().get(type.getSetName()));
+        TemplateHandler.add(template, "fromOutside", fromOutside);
+        TemplateHandler.add(template, "type", nameHandler.handleIdentifier(type.toString(), NameHandler.IdentifierHandlingEnum.FUNCTION_NAMES));
+        return template.render();
+    }
+
+    /*
+     * This function generates code for the type of a freetype
+     */
+    private String generateFreetype(FreetypeType type) {
+        ST template = group.getInstanceOf("type");
+        TemplateHandler.add(template, "fromOtherMachine", declarationGenerator.getFreetypeToMachine().get(type.getName()) != null && !machineGenerator.getMachineName().equals(declarationGenerator.getFreetypeToMachine().get(type.getName())));
+        TemplateHandler.add(template, "otherMachine", declarationGenerator.getFreetypeToMachine().get(type.getName()));
         TemplateHandler.add(template, "fromOutside", fromOutside);
         TemplateHandler.add(template, "type", nameHandler.handleIdentifier(type.toString(), NameHandler.IdentifierHandlingEnum.FUNCTION_NAMES));
         return template.render();

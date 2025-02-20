@@ -1,18 +1,19 @@
 package de.hhu.stups.codegenerator.handlers;
 
-import de.hhu.stups.codegenerator.GeneratorMode;
-import de.hhu.stups.codegenerator.generators.MachineGenerator;
-import de.prob.parser.ast.nodes.DeclarationNode;
-import de.prob.parser.ast.nodes.MachineNode;
-import org.stringtemplate.v4.ST;
-import org.stringtemplate.v4.STGroup;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import de.hhu.stups.codegenerator.GeneratorMode;
+import de.hhu.stups.codegenerator.generators.MachineGenerator;
+import de.prob.parser.ast.nodes.DeclarationNode;
+import de.prob.parser.ast.nodes.MachineNode;
+
+import org.stringtemplate.v4.ST;
+import org.stringtemplate.v4.STGroup;
 
 import static de.hhu.stups.codegenerator.handlers.NameHandler.IdentifierHandlingEnum.FUNCTION_NAMES;
 import static de.hhu.stups.codegenerator.handlers.NameHandler.IdentifierHandlingEnum.INCLUDED_MACHINES;
@@ -51,12 +52,15 @@ public class NameHandler {
 
     private List<String> deferredTypes;
 
+    private Map<String, List<String>> freeTypes;
+
     public NameHandler(final MachineGenerator machineGenerator, final STGroup group) {
         this.machineGenerator = machineGenerator;
         this.group = group;
         this.globals = new ArrayList<>();
         this.enumTypes = new HashMap<>();
         this.deferredTypes = new ArrayList<>();
+        this.freeTypes = new HashMap<>();
         this.reservedMachines = new ArrayList<>();
         this.reservedMachinesWithIncludedMachines = new ArrayList<>();
         this.reservedMachinesAndFunctions = new ArrayList<>();
@@ -75,6 +79,14 @@ public class NameHandler {
             }
         });
         deferredTypes.addAll(node.getDeferredSets().stream().map(DeclarationNode::getName).collect(Collectors.toList()));
+        node.getFreetypes().forEach(ft -> {
+            List<String> elementsAsString = ft.getElements().stream().map(DeclarationNode::getName).collect(Collectors.toList());
+            if (node.getPrefix() != null && !node.equals(machineGenerator.getMachineNode())) {
+                freeTypes.put(node.getPrefix() + "." + ft.getFreetypeDeclarationNode().getName(), elementsAsString);
+            } else {
+                freeTypes.put(ft.getFreetypeDeclarationNode().getName(), elementsAsString);
+            }
+        });
         reservedMachines.addAll(node.getMachineReferences().stream()
                 .map(reference -> handle(reference.getMachineName()))
                 .collect(Collectors.toList()));
@@ -197,6 +209,10 @@ public class NameHandler {
 
     public List<String> getDeferredTypes() {
         return deferredTypes;
+    }
+
+    public Map<String, List<String>> getFreeTypes() {
+        return freeTypes;
     }
 
     public Map<String, String> getEnumToMachine() {

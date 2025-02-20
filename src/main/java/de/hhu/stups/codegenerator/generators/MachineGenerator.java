@@ -1,5 +1,13 @@
 package de.hhu.stups.codegenerator.generators;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import de.hhu.stups.codegenerator.CodeGeneratorUtils;
 import de.hhu.stups.codegenerator.GeneratorMode;
 import de.hhu.stups.codegenerator.MachineConstantsOptimizer;
@@ -11,7 +19,11 @@ import de.hhu.stups.codegenerator.handlers.NameHandler;
 import de.hhu.stups.codegenerator.handlers.ParallelConstructHandler;
 import de.hhu.stups.codegenerator.handlers.TemplateHandler;
 import de.hhu.stups.codegenerator.json.modelchecker.ModelCheckingInfo;
-import de.prob.parser.ast.nodes.*;
+import de.prob.parser.ast.nodes.DeclarationNode;
+import de.prob.parser.ast.nodes.MachineNode;
+import de.prob.parser.ast.nodes.MachineReferenceNode;
+import de.prob.parser.ast.nodes.Node;
+import de.prob.parser.ast.nodes.OperationNode;
 import de.prob.parser.ast.nodes.expression.ExprNode;
 import de.prob.parser.ast.nodes.expression.ExpressionOperatorNode;
 import de.prob.parser.ast.nodes.expression.IdentifierExprNode;
@@ -54,11 +66,9 @@ import de.prob.parser.ast.nodes.substitution.WhileSubstitutionNode;
 import de.prob.parser.ast.types.CoupleType;
 import de.prob.parser.ast.types.UntypedType;
 import de.prob.parser.ast.visitors.AbstractVisitor;
+
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroup;
-
-import java.util.*;
-import java.util.stream.Collectors;
 
 /*
 * The code generator is implemented by using the visitor pattern
@@ -326,6 +336,7 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 		enumIdentifier.addAll(identifier);
 		TemplateHandler.add(machine, "enum_imports", importGenerator.getImportedEnums());
 		TemplateHandler.add(machine, "sets", declarationGenerator.generateSetDeclarations(node));
+		TemplateHandler.add(machine, "freetypes", declarationGenerator.generateFreetypeDeclarations(node));
 		TemplateHandler.add(machine, "declarations", declarationGenerator.visitDeclarations(node.getVariables()));
 		TemplateHandler.add(machine, "includes", declarationGenerator.generateIncludes(node));
 		TemplateHandler.add(machine, "initialization", substitutionGenerator.visitInitialization(node));

@@ -1,23 +1,30 @@
 package de.hhu.stups.codegenerator.generators;
 
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
 import de.hhu.stups.codegenerator.analyzers.DeferredSetAnalyzer;
 import de.hhu.stups.codegenerator.handlers.NameHandler;
 import de.hhu.stups.codegenerator.handlers.TemplateHandler;
 import de.prob.parser.ast.nodes.DeclarationNode;
 import de.prob.parser.ast.nodes.EnumeratedSetDeclarationNode;
+import de.prob.parser.ast.nodes.FreetypeBaseElementNode;
+import de.prob.parser.ast.nodes.FreetypeConstructorNode;
+import de.prob.parser.ast.nodes.FreetypeDeclarationNode;
+import de.prob.parser.ast.nodes.FreetypeElementNode;
 import de.prob.parser.ast.nodes.MachineNode;
 import de.prob.parser.ast.nodes.MachineReferenceNode;
 import de.prob.parser.ast.nodes.OperationNode;
-import de.prob.parser.ast.types.CoupleType;
 import de.prob.parser.ast.types.SetType;
+
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroup;
-
-import java.util.*;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 public class DeclarationGenerator {
 
@@ -37,6 +44,8 @@ public class DeclarationGenerator {
 
     private final DeferredSetAnalyzer deferredSetAnalyzer;
 
+    private final Map<String, String> freetypeToMachine;
+
 
     public DeclarationGenerator(final STGroup currentGroup, final MachineGenerator machineGenerator, final TypeGenerator typeGenerator,
                                 final ImportGenerator importGenerator, final NameHandler nameHandler, final DeferredSetAnalyzer deferredSetAnalyzer) {
@@ -49,6 +58,7 @@ public class DeclarationGenerator {
         this.deferredSetAnalyzer = deferredSetAnalyzer;
         this.setToEnum = new HashMap<>();
         this.enumToMachine = new HashMap<>();
+        this.freetypeToMachine = new HashMap<>();
     }
 
     /*
@@ -354,4 +364,52 @@ public class DeclarationGenerator {
         return enumToMachine;
     }
 
+    public Map<String, String> getFreetypeToMachine() {
+        return freetypeToMachine;
+    }
+
+    /*
+     * Generate all declarations for the freetypes included in the given machine.
+     */
+    public List<String> generateFreetypeDeclarations(MachineNode node) {
+        node.getFreetypes().forEach(ft -> {
+            freetypeToMachine.put(ft.getFreetypeDeclarationNode().getName(), node.getName());
+        });
+        return node.getFreetypes().stream()
+                       .flatMap(ft -> this.declareFreetype(ft).stream())
+                       .collect(Collectors.toList());
+    }
+
+    /*
+     * Generate the declaration for one freetype.
+     */
+    private List<String> declareFreetype(FreetypeDeclarationNode node) {
+        List<String> result = new ArrayList<>();
+
+        String ftName = nameHandler.handleIdentifier(node.getFreetypeDeclarationNode().getName(), NameHandler.IdentifierHandlingEnum.FUNCTION_NAMES);
+
+        ST ftDeclaration = currentGroup.getInstanceOf("freetype_declaration");
+        TemplateHandler.add(ftDeclaration, "name", ftName);
+        result.add(ftDeclaration.render());
+
+        for (FreetypeBaseElementNode element : node.getElements()) {
+            ST ftElement;
+            if (element instanceof FreetypeElementNode) {
+                ftElement = currentGroup.getInstanceOf("freetype_element_declaration");
+            } else if (element instanceof FreetypeConstructorNode) {
+                FreetypeConstructorNode c = (FreetypeConstructorNode) element;
+                ftElement = currentGroup.getInstanceOf("freetype_constructor_declaration");
+                SetType type = (SetType) c.getExpr().getType();
+                TemplateHandler.add(ftElement, "subtype", typeGenerator.generate(type.getSubType()));
+            } else {
+                throw new AssertionError();
+            }
+
+            TemplateHandler.add(ftElement, "freetype", ftName);
+            TemplateHandler.add(ftElement, "name", nameHandler.handleIdentifier(element.getName(), NameHandler.IdentifierHandlingEnum.FUNCTION_NAMES));
+            result.add(ftElement.render());
+        }
+
+        return result;
+    }
 }

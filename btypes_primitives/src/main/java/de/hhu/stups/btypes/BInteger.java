@@ -43,8 +43,20 @@ public final class BInteger extends Number implements Comparable<BInteger>, BObj
 
 	private final int value;
 
-	private BInteger(int value) {
+	/**
+	 * Please use BInteger.of(...) instead.
+	 */
+	@Deprecated
+	public BInteger(int value) {
 		this.value = value;
+	}
+
+	/**
+	 * Please use BInteger.of(...) instead.
+	 */
+	@Deprecated
+	public BInteger(String value) {
+		this(of(value).value);
 	}
 
 	@Override
@@ -64,8 +76,33 @@ public final class BInteger extends Number implements Comparable<BInteger>, BObj
 	}
 
 	@Override
+	public String toString() {
+		return String.valueOf(this.value);
+	}
+
+	@Override
 	public int compareTo(BInteger o) {
 		return Integer.compare(this.value, o.value);
+	}
+
+	@Override
+	public int intValue() {
+		return this.value;
+	}
+
+	@Override
+	public long longValue() {
+		return this.value;
+	}
+
+	@Override
+	public float floatValue() {
+		return (float) this.value;
+	}
+
+	@Override
+	public double doubleValue() {
+		return this.value;
 	}
 
 	public BBoolean lessEqual(BInteger o) {
@@ -92,32 +129,8 @@ public final class BInteger extends Number implements Comparable<BInteger>, BObj
 		return BBoolean.of(this.value != o.value);
 	}
 
-	@Override
-	public int intValue() {
-		return this.value;
-	}
-
-	@Override
-	public long longValue() {
-		return this.value;
-	}
-
-	@Override
-	public float floatValue() {
-		return (float) this.value;
-	}
-
-	@Override
-	public double doubleValue() {
-		return this.value;
-	}
-
 	public BInteger plus(BInteger o) {
 		return of(Math.addExact(this.value, o.value));
-	}
-
-	public String toString() {
-		return String.valueOf(this.value);
 	}
 
 	public BInteger minus(BInteger o) {

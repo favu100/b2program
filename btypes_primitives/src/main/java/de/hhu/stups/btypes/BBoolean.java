@@ -1,5 +1,7 @@
 package de.hhu.stups.btypes;
 
+import java.util.Objects;
+
 public final class BBoolean implements BObject {
 
 	public static final BBoolean TRUE = new BBoolean(true);
@@ -19,6 +21,14 @@ public final class BBoolean implements BObject {
 		return of(Boolean.parseBoolean(value));
 	}
 
+	public static BBoolean of(BBoolean value) {
+		return Objects.requireNonNull(value, "value");
+	}
+
+	/**
+	 * Please use BBoolean.of(...) instead.
+	 */
+	@Deprecated
 	public BBoolean(boolean value) {
 		this.value = value;
 	}

@@ -1,11 +1,11 @@
 package de.hhu.stups.btypes;
 
-import java.math.BigInteger;
-import java.util.Objects;
-
 import clojure.lang.BigInt;
 import clojure.lang.RT;
 import clojure.lang.Var;
+
+import java.math.BigInteger;
+import java.util.Objects;
 
 public final class BInteger extends Number implements Comparable<BInteger>, BObject {
 
@@ -104,6 +104,22 @@ public final class BInteger extends Number implements Comparable<BInteger>, BObj
 		this.value = Objects.requireNonNull(value, "value");
 	}
 
+	/**
+	 * Please use BInteger.of(...) instead.
+	 */
+	@Deprecated
+	public BInteger(int value) {
+		this(of(value).value);
+	}
+
+	/**
+	 * Please use BInteger.of(...) instead.
+	 */
+	@Deprecated
+	public BInteger(String value) {
+		this(of(value).value);
+	}
+
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
@@ -121,8 +137,33 @@ public final class BInteger extends Number implements Comparable<BInteger>, BObj
 	}
 
 	@Override
+	public String toString() {
+		return this.value.toString();
+	}
+
+	@Override
 	public int compareTo(BInteger o) {
 		return (int) COMPARE.invoke(this.value, o.value);
+	}
+
+	@Override
+	public int intValue() {
+		return this.value.intValue();
+	}
+
+	@Override
+	public long longValue() {
+		return this.value.longValue();
+	}
+
+	@Override
+	public float floatValue() {
+		return this.value.floatValue();
+	}
+
+	@Override
+	public double doubleValue() {
+		return this.value.doubleValue();
 	}
 
 	public BBoolean lessEqual(BInteger o) {
@@ -149,32 +190,8 @@ public final class BInteger extends Number implements Comparable<BInteger>, BObj
 		return BBoolean.of(compareTo(o) != 0);
 	}
 
-	@Override
-	public int intValue() {
-		return this.value.intValue();
-	}
-
-	@Override
-	public long longValue() {
-		return this.value.longValue();
-	}
-
-	@Override
-	public float floatValue() {
-		return this.value.floatValue();
-	}
-
-	@Override
-	public double doubleValue() {
-		return this.value.doubleValue();
-	}
-
 	public BInteger plus(BInteger o) {
 		return of((BigInt) PLUS.invoke(this.value, o.value));
-	}
-
-	public String toString() {
-		return this.value.toString();
 	}
 
 	public BInteger minus(BInteger o) {

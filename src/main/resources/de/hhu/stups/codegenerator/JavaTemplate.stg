@@ -681,15 +681,15 @@ public static final class <name>Constructor implements BObject {
     private <name>Constructor() {
     }
 
-    public static <name>Destructor inverse() {
+    public <name>Destructor inverse() {
         return <name>Destructor.INSTANCE;
     }
 
-    public static <name> functionCall(<subtype> value) {
+    public <name> functionCall(<subtype> value) {
         return new <name>(value);
     }
 
-    public static BBoolean isInRange(<freetype> o) {
+    public BBoolean isInRange(<freetype> o) {
         return new BBoolean(o instanceof <name>);
     }
 
@@ -724,7 +724,7 @@ public static final class <name>Destructor implements BObject {
     private <name>Destructor() {
     }
 
-    public static <subtype> functionCall(<freetype> value) {
+    public <subtype> functionCall(<freetype> value) {
         return ((<name>) value).getValue();
     }
 

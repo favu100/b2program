@@ -613,7 +613,7 @@ public static abstract class <name> extends BFreetype {
 
 }
 
-public static final class <name>Set implements BObject {
+public static final class <name>Set implements BObject, Iterable\<<name>\> {
 
     public static final <name>Set INSTANCE = new <name>Set();
 
@@ -630,6 +630,22 @@ public static final class <name>Set implements BObject {
 
     public BBoolean unequal(<name>Set o) {
         return new BBoolean(false);
+    }
+
+    @Override
+    public java.util.Iterator\<<name>\> iterator() {
+        return new java.util.Iterator\<<name>\>() {
+
+            @Override
+            public boolean hasNext() {
+                throw new java.util.UnsupportedOperationException("freetype enumeration not supported");
+            }
+
+            @Override
+            public <name> next() {
+                throw new java.util.UnsupportedOperationException("freetype enumeration not supported");
+            }
+        };
     }
 
     @Override

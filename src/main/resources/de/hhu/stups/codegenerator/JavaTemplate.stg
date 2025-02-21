@@ -638,12 +638,12 @@ public static final class <name>Set implements BObject, Iterable\<<name>\> {
 
             @Override
             public boolean hasNext() {
-                throw new java.util.UnsupportedOperationException("freetype enumeration not supported");
+                throw new UnsupportedOperationException("freetype enumeration not supported");
             }
 
             @Override
             public <name> next() {
-                throw new java.util.UnsupportedOperationException("freetype enumeration not supported");
+                throw new UnsupportedOperationException("freetype enumeration not supported");
             }
         };
     }

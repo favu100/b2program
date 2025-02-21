@@ -167,6 +167,7 @@ benchmarks/execution/ProB/stdlib
 /*.py
 **/Cargo.lock
 **/vendor/
+build_cpp/
 btypes_primitives/**/*.js
 benchmarks/model_checking/ProB/lib
 benchmarks/model_checking/ProB/stdlib

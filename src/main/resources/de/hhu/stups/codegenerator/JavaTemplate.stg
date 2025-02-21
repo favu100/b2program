@@ -599,7 +599,7 @@ public static abstract class <name> extends BFreetype {
     }
 
     public final BBoolean unequal(<name> o) {
-        return this.equal(o).not();
+        return new BBoolean(!this.equals(o));
     }
 
     @Override
@@ -611,6 +611,41 @@ public static abstract class <name> extends BFreetype {
     @Override
     public abstract String toString();
 
+}
+
+public static final class <name>Set implements BObject {
+
+    public static final <name>Set INSTANCE = new <name>Set();
+
+    private <name>Set() {
+    }
+
+    public BBoolean elementOf(<name> o) {
+        return new BBoolean(true);
+    }
+
+    public BBoolean equal(<name>Set o) {
+        return new BBoolean(true);
+    }
+
+    public BBoolean unequal(<name>Set o) {
+        return new BBoolean(false);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return o instanceof <name>Set;
+    }
+
+    @Override
+    public int hashCode() {
+        return <name>Set.class.hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return "<name>";
+    }
 }
 >>
 
@@ -757,7 +792,7 @@ freetype_import() ::= <<
 >>
 
 freetype_call(name) ::= <<
-<name>
+<name>Set.INSTANCE
 >>
 
 freetype_element_call(name) ::= <<

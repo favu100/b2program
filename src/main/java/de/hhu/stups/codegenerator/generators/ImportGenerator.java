@@ -19,6 +19,7 @@ import de.prob.parser.ast.types.IntegerType;
 import de.prob.parser.ast.types.RecordType;
 import de.prob.parser.ast.types.SetType;
 import de.prob.parser.ast.types.StringType;
+import de.prob.parser.ast.types.UntypedType;
 
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroup;
@@ -86,7 +87,8 @@ public class ImportGenerator {
             importBFreetype();
             importFreetype((FreetypeType) type);
             importBBoolean();
-        } else {
+        } else if (type != null && !(type instanceof UntypedType)) {
+            // null and untyped slip through sometimes, just ignore those
             throw new IllegalArgumentException("Unsupported type: " + type);
         }
     }

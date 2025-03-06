@@ -87,6 +87,7 @@ public class ImportGenerator {
             importBFreetype();
             importFreetype((FreetypeType) type);
             importBBoolean();
+            importSetType(new SetType(null));
         } else if (type != null && !(type instanceof UntypedType)) {
             // null and untyped slip through sometimes, just ignore those
             throw new IllegalArgumentException("Unsupported type: " + type);

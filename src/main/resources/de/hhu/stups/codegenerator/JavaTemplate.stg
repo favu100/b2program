@@ -744,6 +744,10 @@ public static final class <name>Constructor implements BObject {
         return new BBoolean(o instanceof <name>);
     }
 
+    public BSet\<<freetype>\> range() {
+        throw new UnsupportedOperationException("freetype iteration not supported");
+    }
+
     public BBoolean equal(<name>Constructor o) {
         return new BBoolean(true);
     }

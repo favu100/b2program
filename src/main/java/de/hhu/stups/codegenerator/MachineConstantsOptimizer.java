@@ -313,17 +313,17 @@ public class MachineConstantsOptimizer implements AbstractVisitor<Node, Void> {
 
     @Override
     public Node visitRecordNode(RecordNode node, Void expected) {
-        return node;
+        return new RecordNode(node.getSourceCodePosition(), node.getDeclarations(), node.getExpressions().stream().map(expr -> (ExprNode) visitExprNode(expr, expected)).collect(Collectors.toList()));
     }
 
     @Override
     public Node visitStructNode(StructNode node, Void expected) {
-        return node;
+        return new StructNode(node.getSourceCodePosition(), node.getDeclarations(), node.getExpressions().stream().map(expr -> (ExprNode) visitExprNode(expr, expected)).collect(Collectors.toList()));
     }
 
     @Override
     public Node visitRecordFieldAccessNode(RecordFieldAccessNode node, Void expected) {
-        return node;
+        return new RecordFieldAccessNode(node.getSourceCodePosition(), (ExprNode) visitExprNode(node.getRecord(), expected), node.getIdentifier());
     }
 
     @Override

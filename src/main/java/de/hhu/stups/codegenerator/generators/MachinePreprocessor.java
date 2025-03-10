@@ -577,14 +577,14 @@ public class MachinePreprocessor implements AbstractVisitor<Node, Void> {
 
     @Override
     public Node visitRecordNode(RecordNode node, Void expected) {
-        RecordNode result = new RecordNode(node.getSourceCodePosition(), node.getDeclarations(), node.getExpressions().stream().map(expr -> (ExprNode) visitExprNode(node, expected)).collect(Collectors.toList()));
+        RecordNode result = new RecordNode(node.getSourceCodePosition(), node.getDeclarations(), node.getExpressions().stream().map(expr -> (ExprNode) visitExprNode(expr, expected)).collect(Collectors.toList()));
         result.setType(node.getType());
         return result;
     }
 
     @Override
     public Node visitStructNode(StructNode node, Void expected) {
-        StructNode result = new StructNode(node.getSourceCodePosition(), node.getDeclarations(), node.getExpressions().stream().map(expr -> (ExprNode) visitExprNode(node, expected)).collect(Collectors.toList()));
+        StructNode result = new StructNode(node.getSourceCodePosition(), node.getDeclarations(), node.getExpressions().stream().map(expr -> (ExprNode) visitExprNode(expr, expected)).collect(Collectors.toList()));
         result.setType(node.getType());
         return result;
     }

@@ -313,17 +313,23 @@ public class MachineConstantsOptimizer implements AbstractVisitor<Node, Void> {
 
     @Override
     public Node visitRecordNode(RecordNode node, Void expected) {
-        return new RecordNode(node.getSourceCodePosition(), node.getDeclarations(), node.getExpressions().stream().map(expr -> (ExprNode) visitExprNode(expr, expected)).collect(Collectors.toList()));
+        RecordNode result = new RecordNode(node.getSourceCodePosition(), node.getDeclarations(), node.getExpressions().stream().map(expr -> (ExprNode) visitExprNode(expr, expected)).collect(Collectors.toList()));
+        result.setType(node.getType());
+        return result;
     }
 
     @Override
     public Node visitStructNode(StructNode node, Void expected) {
-        return new StructNode(node.getSourceCodePosition(), node.getDeclarations(), node.getExpressions().stream().map(expr -> (ExprNode) visitExprNode(expr, expected)).collect(Collectors.toList()));
+        StructNode result = new StructNode(node.getSourceCodePosition(), node.getDeclarations(), node.getExpressions().stream().map(expr -> (ExprNode) visitExprNode(expr, expected)).collect(Collectors.toList()));
+        result.setType(node.getType());
+        return result;
     }
 
     @Override
     public Node visitRecordFieldAccessNode(RecordFieldAccessNode node, Void expected) {
-        return new RecordFieldAccessNode(node.getSourceCodePosition(), (ExprNode) visitExprNode(node.getRecord(), expected), node.getIdentifier());
+        RecordFieldAccessNode result = new RecordFieldAccessNode(node.getSourceCodePosition(), (ExprNode) visitExprNode(node.getRecord(), expected), node.getIdentifier());
+        result.setType(node.getType());
+        return result;
     }
 
     @Override

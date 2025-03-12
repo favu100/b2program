@@ -739,7 +739,7 @@ public class MachineGenerator implements AbstractVisitor<String, Void> {
 
 	@Override
 	public String visitStructNode(StructNode node, Void expected) {
-		return "";
+		return expressionGenerator.visitExprNode(node);
 	}
 
 	@Override

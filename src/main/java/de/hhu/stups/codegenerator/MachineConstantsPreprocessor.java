@@ -271,16 +271,19 @@ public class MachineConstantsPreprocessor implements AbstractVisitor<Node, Void>
 
     @Override
     public Node visitRecordNode(RecordNode node, Void expected) {
+        node.getExpressions().forEach(e -> visitExprNode(e, expected));
         return null;
     }
 
     @Override
     public Node visitStructNode(StructNode node, Void expected) {
+        node.getExpressions().forEach(e -> visitExprNode(e, expected));
         return null;
     }
 
     @Override
     public Node visitRecordFieldAccessNode(RecordFieldAccessNode node, Void expected) {
+        visitExprNode(node.getRecord(), expected);
         return null;
     }
 

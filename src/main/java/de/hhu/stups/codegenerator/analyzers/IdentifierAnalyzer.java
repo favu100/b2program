@@ -348,16 +348,19 @@ public class IdentifierAnalyzer implements AbstractVisitor<Void, Void> {
 
     @Override
     public Void visitRecordNode(RecordNode node, Void expected) {
+        node.getExpressions().forEach(expr -> visitExprNode(expr, expected));
         return null;
     }
 
     @Override
     public Void visitStructNode(StructNode node, Void expected) {
+        node.getExpressions().forEach(expr -> visitExprNode(expr, expected));
         return null;
     }
 
     @Override
     public Void visitRecordFieldAccessNode(RecordFieldAccessNode node, Void expected) {
+        visitExprNode(node.getRecord(), expected);
         return null;
     }
 

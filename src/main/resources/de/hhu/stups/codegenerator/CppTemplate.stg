@@ -1734,6 +1734,7 @@ model_check_main_method(machine) ::= <<
 int main(int argc, char *argv[]) {
     if(argc != 4) {
         cout \<\< "Number of arguments errorneous\n";
+        cout \<\< "Expecting arguments: STRATEGY NR_THREADS CACHING\n";
         return -1;
     }
     string strategy = argv[1];
@@ -1750,6 +1751,7 @@ int main(int argc, char *argv[]) {
         type = <machine>::Type::DFS;
     } else {
         cout \<\< "Input for strategy is wrong.\n";
+        cout \<\< "Expecting mixed, bf or df.\n";
         return -1;
     }
 
@@ -1774,7 +1776,7 @@ int main(int argc, char *argv[]) {
     } else if(std::string("false").compare(caching) == 0) {
         isCaching = false;
     } else {
-        cout \<\< "Input for caching is wrong.\n";
+        cout \<\< "Input for caching is wrong, expecting true or false.\n";
         return - 1;
     }
 

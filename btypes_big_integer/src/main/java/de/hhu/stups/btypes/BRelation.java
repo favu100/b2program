@@ -219,13 +219,11 @@ public class BRelation<S,T> implements BObject, Iterable<BTuple<S,T>> {
 		S prj1 = object.projection1();
 		T prj2 = object.projection2();
 
-		PersistentHashSet domain = (PersistentHashSet) SET.invoke(KEYS.invoke(this.map));
+		PersistentHashSet range = (PersistentHashSet) GET.invoke(this.map, prj1);
 
-		if(!domain.contains(prj1)) {
+		if(range == null) {
 			return new BBoolean(false);
 		}
-
-		PersistentHashSet range = (PersistentHashSet) GET.invoke(this.map, prj1);
 
 		return new BBoolean(range.contains(prj2));
 	}
@@ -234,13 +232,11 @@ public class BRelation<S,T> implements BObject, Iterable<BTuple<S,T>> {
 		S prj1 = object.projection1();
 		T prj2 = object.projection2();
 
-		PersistentHashSet domain = (PersistentHashSet) SET.invoke(KEYS.invoke(this.map));
+		PersistentHashSet range = (PersistentHashSet) GET.invoke(this.map, prj1);
 
-		if(!domain.contains(prj1)) {
+		if(range == null) {
 			return new BBoolean(true);
 		}
-
-		PersistentHashSet range = (PersistentHashSet) GET.invoke(this.map, prj1);
 
 		return new BBoolean(!range.contains(prj2));
 	}

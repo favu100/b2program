@@ -1780,11 +1780,7 @@ int main(int argc, char *argv[]) {
         return - 1;
     }
 
-    bool isDebug = (argc>=5 && std::string("true").compare(argv[4])) ? true : false;
-    
-    if (isDebug) {
-      cout \<\< "Model checking with B2Program."  \<\< endl;
-    }
+    bool isDebug = (argc>=5 && std::string("true").compare(argv[4])==0) ? true : false;
 
     ModelChecker modelchecker(type, threads, isCaching, isDebug);
     modelchecker.modelCheck();

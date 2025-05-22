@@ -1732,14 +1732,14 @@ void modelCheckMultiThreaded(boost::asio::thread_pool& workers) {
 
 model_check_main_method(machine) ::= <<
 int main(int argc, char *argv[]) {
-    if(argc != 4) {
-        cout \<\< "Number of arguments errorneous\n";
-        cout \<\< "Expecting arguments: STRATEGY NR_THREADS CACHING\n";
+    if(argc > 5) {
+        cout \<\< "Too many arguments\n";
+        cout \<\< "Expecting arguments: STRATEGY NR_THREADS CACHING DEBUG\n";
         return -1;
     }
-    string strategy = argv[1];
-    string numberThreads = argv[2];
-    string caching = argv[3];
+    string strategy = (argc>=2) ? argv[1] : "mixed";
+    string numberThreads = (argc>=3) ? argv[2] : "1";
+    string caching = (argc>=4) ? argv[3] :"false";
 
     <machine>::Type type;
 
@@ -1780,7 +1780,11 @@ int main(int argc, char *argv[]) {
         return - 1;
     }
 
-    bool isDebug = false;
+    bool isDebug = (argc>=5 && std::string("true").compare(argv[4])) ? true : false;
+    
+    if (isDebug) {
+      cout \<\< "Model checking with B2Program."  \<\< endl;
+    }
 
     ModelChecker modelchecker(type, threads, isCaching, isDebug);
     modelchecker.modelCheck();

@@ -316,6 +316,8 @@ public class IterationPredicateGenerator {
                 + " column: " + predicateNode.getSourceCodePosition().getStartColumn() 
                 + " (variables already processed: " + declarationProcessed + " from " + declarations + ")");
             }
+            // TODO: B2Program seems to require predicates even for enumerated set elements
+            //       even though they are finite by construction
             result.add(nextDeclaration);
             declarationProcessed.add(nextDeclaration.getName());
             i++;

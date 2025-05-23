@@ -471,7 +471,7 @@ public class ExpressionGenerator {
         } else if(node.getOperator() == NAT1) {
             return generateNat1();
         }
-        throw new CodeGenerationException("Given operator is not supported: " + node.getOperator());
+        throw new CodeGenerationException("Given operator is not supported: " + node.getOperator() + " at line " + node.getSourceCodePosition().getStartLine() + " column " + node.getSourceCodePosition().getStartColumn());
     }
 
     /*

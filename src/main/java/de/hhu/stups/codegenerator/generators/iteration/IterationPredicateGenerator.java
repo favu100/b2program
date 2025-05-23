@@ -311,7 +311,10 @@ public class IterationPredicateGenerator {
         while(i < declarations.size() && declarations.size() != declarationProcessed.size()) {
             DeclarationNode nextDeclaration = getNextDeclarationInEnumerationPredicate(declarations, declarationProcessed, predicateNode, universalQuantification);
             if(nextDeclaration == null) {
-                throw new RuntimeException("There are not enough predicates to constraint bounded variables at: " + "line: " + predicateNode.getSourceCodePosition().getStartLine() + " column: " + predicateNode.getSourceCodePosition().getStartColumn());
+                throw new RuntimeException("There are not enough predicates to constraint bounded variables at: " 
+                + "line: " + predicateNode.getSourceCodePosition().getStartLine() // TODO: this seems to give wrong nr
+                + " column: " + predicateNode.getSourceCodePosition().getStartColumn() 
+                + " (variables already processed: " + declarationProcessed + " from " + declarations + ")");
             }
             result.add(nextDeclaration);
             declarationProcessed.add(nextDeclaration.getName());

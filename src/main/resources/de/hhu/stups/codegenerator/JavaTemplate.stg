@@ -1862,7 +1862,7 @@ public static void main(String[] args) {
     ModelChecker modelchecker = new ModelChecker(type, threads, isCaching, isDebug);
     modelchecker.modelCheck();
     long stop = java.lang.System.currentTimeMillis();
-    System.out.println("Model Checking Time: "+ (stop-start) + " ms");
+    System.out.println("Model Checking Time (excluding time for assigning constants): "+ (stop-start) + " ms");
 }
 >>
 

@@ -70,12 +70,15 @@ public class TransitionIterationGenerator {
             return result;
         } else {
             machineGenerator.inIterationConstruct(declarations);
-            int iterationConstructCounter = iterationConstructHandler.getIterationConstructCounter();
-            String identifier = "_ic_set_" + iterationConstructCounter;
 
             iterationConstructGenerator.prepareGeneration(predicate, declarations, false);
+
             List<ST> enumerationTemplates = iterationPredicateGenerator.getEnumerationTemplates(iterationConstructGenerator, declarations, predicate, false);
             Collection<String> otherConstructs = generateOtherIterationConstructs(predicate);
+
+
+            int iterationConstructCounter = iterationConstructHandler.getIterationConstructCounter();
+            String identifier = "_ic_set_" + iterationConstructCounter;
 
             generateBody(template, otherConstructs, enumerationTemplates, conditionalPredicate, predicate, node.getName(), identifier, declarations);
 

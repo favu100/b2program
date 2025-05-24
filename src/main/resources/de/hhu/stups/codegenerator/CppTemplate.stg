@@ -176,20 +176,20 @@ int hashCode() const {
 }
 
 int _hashCode_1() const {
-    int result = 1;
+    int _result = 1;
     <assignments1; separator= "\n">
-    return result;
+    return _result;
 }
 
 int _hashCode_2() const {
-    int result = 1;
+    int _result = 1;
     <assignments2; separator= "\n">
-    return result;
+    return _result;
 }
 >>
 
 machine_hash_assignment(primeNumber, var) ::= <<
-result = (<primeNumber> * result) ^ ((this-><var>()).hashCode() \<\< 1);
+_result = (<primeNumber> * _result) ^ ((this-><var>()).hashCode() \<\< 1);
 >>
 
 machine_string(machine, variables) ::= <<
@@ -254,9 +254,9 @@ class <name> : public BStruct {
         }
 
         int hashCode() const {
-            int result = 1;
-            <fields: {field | result = 31 * result + (<field>.hashCode() \<\< 1);}; separator="\n">
-            return result;
+            int _result = 1;
+            <fields: {field | _result = 31 * _result + (<field>.hashCode() \<\< 1);}; separator="\n">
+            return _result;
         }
 };
 >>
@@ -1236,9 +1236,9 @@ class _ProjectionRead__tr_<name> {
         }
 
         int hashCode() const {
-            int result = 1;
-            <variables: {variable | result = 31 * result + (<variable>.hashCode() \<\< 1);}; separator="\n">
-            return result;
+            int _result = 1;
+            <variables: {variable | _result = 31 * _result + (<variable>.hashCode() \<\< 1);}; separator="\n">
+            return _result;
         }
 };
 <else>
@@ -1295,9 +1295,9 @@ class _ProjectionRead_<name> {
         }
 
         int hashCode() const {
-            int result = 1;
-            <variables: {variable | result = 31 * result + (<variable>.hashCode() \<\< 1);}; separator="\n">
-            return result;
+            int _result = 1;
+            <variables: {variable | _result = 31 * _result + (<variable>.hashCode() \<\< 1);}; separator="\n">
+            return _result;
         }
 
 };
@@ -1354,9 +1354,9 @@ class _ProjectionRead_<name> {
         }
 
         int hashCode() const {
-            int result = 1;
-            <variables: {variable | result = 31 * result + (<variable>.hashCode() \<\< 1);}; separator="\n">
-            return result;
+            int _result = 1;
+            <variables: {variable | _result = 31 * _result + (<variable>.hashCode() \<\< 1);}; separator="\n">
+            return _result;
         }
 
 };
@@ -1415,9 +1415,9 @@ class _ProjectionWrite_<name> {
         }
 
         int hashCode() const {
-            int result = 1;
-            <variables: {variable | result = 31 * result + (<variable>.hashCode() \<\< 1);}; separator="\n">
-            return result;
+            int _result = 1;
+            <variables: {variable | _result = 31 * _result + (<variable>.hashCode() \<\< 1);}; separator="\n">
+            return _result;
         }
 
 };

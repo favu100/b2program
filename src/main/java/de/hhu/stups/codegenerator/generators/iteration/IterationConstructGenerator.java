@@ -123,8 +123,8 @@ public class IterationConstructGenerator implements AbstractVisitor<Void, Void> 
     }
 
     public void visitOperationNode(OperationNode node, List<DeclarationNode> params, PredicateNode predicate) {
-        iterationsMapCode.put(node.toString(), transitionGenerator.generateTransition(buildConditionalPredicate(node.getSourceCodePosition()), node, params, predicate));
         iterationConstructHandler.incrementIterationConstructCounter();
+        iterationsMapCode.put(node.toString(), transitionGenerator.generateTransition(buildConditionalPredicate(node.getSourceCodePosition()), node, params, predicate));
     }
 
     @Override
@@ -165,8 +165,8 @@ public class IterationConstructGenerator implements AbstractVisitor<Void, Void> 
     */
     @Override
     public Void visitQuantifiedExpressionNode(QuantifiedExpressionNode node, Void expected) {
-        iterationsMapCode.put(node.toString(), quantifiedExpressionGenerator.generateQuantifiedExpression(buildConditionalPredicate(node.getSourceCodePosition()), node));
         iterationConstructHandler.incrementIterationConstructCounter();
+        iterationsMapCode.put(node.toString(), quantifiedExpressionGenerator.generateQuantifiedExpression(buildConditionalPredicate(node.getSourceCodePosition()), node));
         return null;
     }
 
@@ -176,12 +176,12 @@ public class IterationConstructGenerator implements AbstractVisitor<Void, Void> 
     */
     @Override
     public Void visitSetComprehensionNode(SetComprehensionNode node, Void expected) {
+        iterationConstructHandler.incrementIterationConstructCounter();
         if(!useConstraintSolving) {
             iterationsMapCode.put(node.toString(), setComprehensionGenerator.generateSetComprehension(buildConditionalPredicate(node.getSourceCodePosition()), node));
         } else {
             iterationsMapCode.put(node.toString(), setComprehensionGenerator.generateConstraintSet(node));
         }
-        iterationConstructHandler.incrementIterationConstructCounter();
         return null;
     }
 
@@ -191,8 +191,8 @@ public class IterationConstructGenerator implements AbstractVisitor<Void, Void> 
     */
     @Override
     public Void visitLambdaNode(LambdaNode node, Void expected) {
-        iterationsMapCode.put(node.toString(), lambdaGenerator.generateLambda(buildConditionalPredicate(node.getSourceCodePosition()), node));
         iterationConstructHandler.incrementIterationConstructCounter();
+        iterationsMapCode.put(node.toString(), lambdaGenerator.generateLambda(buildConditionalPredicate(node.getSourceCodePosition()), node));
         return null;
     }
 
@@ -256,8 +256,8 @@ public class IterationConstructGenerator implements AbstractVisitor<Void, Void> 
     */
     @Override
     public Void visitQuantifiedPredicateNode(QuantifiedPredicateNode node, Void aVoid) {
-        iterationsMapCode.put(node.toString(), quantifiedPredicateGenerator.generateQuantifiedPredicate(buildConditionalPredicate(node.getSourceCodePosition()), node));
         iterationConstructHandler.incrementIterationConstructCounter();
+        iterationsMapCode.put(node.toString(), quantifiedPredicateGenerator.generateQuantifiedPredicate(buildConditionalPredicate(node.getSourceCodePosition()), node));
         return null;
     }
 
@@ -321,8 +321,8 @@ public class IterationConstructGenerator implements AbstractVisitor<Void, Void> 
     */
     @Override
     public Void visitAnySubstitution(AnySubstitutionNode node, Void expected) {
-        iterationsMapCode.put(node.toString(), anySubstitutionGenerator.generateAnySubstitution(buildConditionalPredicate(node.getSourceCodePosition()), node));
         iterationConstructHandler.incrementIterationConstructCounter();
+        iterationsMapCode.put(node.toString(), anySubstitutionGenerator.generateAnySubstitution(buildConditionalPredicate(node.getSourceCodePosition()), node));
         return null;
     }
 
@@ -332,8 +332,8 @@ public class IterationConstructGenerator implements AbstractVisitor<Void, Void> 
     */
     @Override
     public Void visitLetSubstitution(LetSubstitutionNode node, Void expected) {
-        iterationsMapCode.put(node.toString(), anySubstitutionGenerator.generateAnySubstitution(buildConditionalPredicate(node.getSourceCodePosition()), new AnySubstitutionNode(node.getSourceCodePosition(), node.getLocalIdentifiers(), node.getPredicate(), node.getBody())));
         iterationConstructHandler.incrementIterationConstructCounter();
+        iterationsMapCode.put(node.toString(), anySubstitutionGenerator.generateAnySubstitution(buildConditionalPredicate(node.getSourceCodePosition()), new AnySubstitutionNode(node.getSourceCodePosition(), node.getLocalIdentifiers(), node.getPredicate(), node.getBody())));
         return null;
     }
 
@@ -343,8 +343,8 @@ public class IterationConstructGenerator implements AbstractVisitor<Void, Void> 
     */
     @Override
     public Void visitLetExpressionNode(LetExpressionNode node, Void expected) {
-        iterationsMapCode.put(node.toString(), letExpressionPredicateGenerator.generateLetExpression(buildConditionalPredicate(node.getSourceCodePosition()), node));
         iterationConstructHandler.incrementIterationConstructCounter();
+        iterationsMapCode.put(node.toString(), letExpressionPredicateGenerator.generateLetExpression(buildConditionalPredicate(node.getSourceCodePosition()), node));
         return null;
     }
 
@@ -354,8 +354,8 @@ public class IterationConstructGenerator implements AbstractVisitor<Void, Void> 
     */
     @Override
     public Void visitLetPredicateNode(LetPredicateNode node, Void expected) {
-        iterationsMapCode.put(node.toString(), letExpressionPredicateGenerator.generateLetPredicate(buildConditionalPredicate(node.getSourceCodePosition()), node));
         iterationConstructHandler.incrementIterationConstructCounter();
+        iterationsMapCode.put(node.toString(), letExpressionPredicateGenerator.generateLetPredicate(buildConditionalPredicate(node.getSourceCodePosition()), node));
         return null;
     }
 
@@ -372,8 +372,8 @@ public class IterationConstructGenerator implements AbstractVisitor<Void, Void> 
     */
     @Override
     public Void visitBecomesSuchThatSubstitutionNode(BecomesSuchThatSubstitutionNode node, Void expected) {
-        iterationsMapCode.put(node.toString(), becomesSuchThatGenerator.generateBecomesSuchThat(buildConditionalPredicate(node.getSourceCodePosition()), node));
         iterationConstructHandler.incrementIterationConstructCounter();
+        iterationsMapCode.put(node.toString(), becomesSuchThatGenerator.generateBecomesSuchThat(buildConditionalPredicate(node.getSourceCodePosition()), node));
         return null;
     }
 

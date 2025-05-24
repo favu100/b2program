@@ -1655,13 +1655,15 @@ private void printResult(final int states, final int transitions) {
 
         System.out.println("COUNTER EXAMPLE TRACE: ");
         StringBuilder sb = new StringBuilder();
+        int stepnr = 0;
         while(counterExampleState != null) {
             sb.insert(0, counterExampleState);
             sb.insert(0, "\n");
             if(counterExampleState.stateAccessedVia != null) {
                 sb.insert(0, counterExampleState.stateAccessedVia);
             }
-            sb.insert(0, "\n\n");
+            sb.insert(0, "\n" + "* Step " + stepnr + ":");
+            stepnr++;
             counterExampleState = counterExampleState.parent;
         }
         System.out.println(sb);

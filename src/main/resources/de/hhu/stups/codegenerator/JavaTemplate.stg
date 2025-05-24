@@ -1516,6 +1516,7 @@ while(!currentState._get_calculate_flag_cp()) {
     copiedState.<operation>(<parameters; separator=", ">);
     <if(isCaching)>
     copiedState.parent = state;
+    copiedState = stateAccessedVia = "<operation>(<parameters; separator=", ">)";
     <endif>
     if(copiedState._get_<operation>_triggered()) {
         <if(isCaching)>
@@ -1542,9 +1543,11 @@ try {
         if(writeState != null) {
             copiedState._apply_update_for_<operation>(writeState);
             copiedState.parent = state;
+            copiedState.stateAccessedVia = "<operation>(" + <parameters; separator=" + \",\" + "> + ")";
         } else {
             copiedState.<operation>(<parameters; separator=", ">);
             copiedState.parent = state;
+            copiedState.stateAccessedVia = "<operation>(" + <parameters; separator=" + \",\" + "> + ")";
             writeState = copiedState._update_for_<operation>();
             _OpCache_with_parameter_<operation> = (PersistentHashMap) ASSOC.invoke(_OpCache_with_parameter_<operation>, readState, writeState);
             _OpCache_<operation> = (PersistentHashMap) ASSOC.invoke(_OpCache_<operation>, <transitionEval>, _OpCache_with_parameter_<operation>);
@@ -1553,6 +1556,7 @@ try {
     } else {
         copiedState.<operation>(<parameters; separator=", ">);
         copiedState.parent = state;
+        copiedState.stateAccessedVia = "<operation>(" + <parameters; separator=" + \",\" + "> + ")";
         _ProjectionWrite_<operation> writeState = copiedState._update_for_<operation>();
         _OpCache_with_parameter_<operation> = (PersistentHashMap) ASSOC.invoke(PersistentHashMap.EMPTY, readState, writeState);
         _OpCache_<operation> = (PersistentHashMap) ASSOC.invoke(_OpCache_<operation>, <transitionEval>, _OpCache_with_parameter_<operation>);
@@ -1574,9 +1578,11 @@ if(_OpCache_with_parameter_<operation> != null) {
     if(writeState != null) {
         copiedState._apply_update_for_<operation>(writeState);
         copiedState.parent = state;
+        copiedState.stateAccessedVia = "<operation>(" + <parameters; separator=" + \",\" + "> + ")";
     } else {
         copiedState.<operation>(<parameters; separator=", ">);
         copiedState.parent = state;
+        copiedState.stateAccessedVia = "<operation>(" + <parameters; separator=" + \",\" + "> + ")";
         writeState = copiedState._update_for_<operation>();
         _OpCache_with_parameter_<operation> = (PersistentHashMap) ASSOC.invoke(_OpCache_with_parameter_<operation>, readState, writeState);
         _OpCache_<operation> = (PersistentHashMap) ASSOC.invoke(_OpCache_<operation>, <transitionEval>, _OpCache_with_parameter_<operation>);
@@ -1585,6 +1591,7 @@ if(_OpCache_with_parameter_<operation> != null) {
 } else {
     copiedState.<operation>(<parameters; separator=", ">);
     copiedState.parent = state;
+    copiedState.stateAccessedVia = "<operation>(" + <parameters; separator=" + \",\" + "> + ")";
     _ProjectionWrite_<operation> writeState = copiedState._update_for_<operation>();
     _OpCache_with_parameter_<operation> = (PersistentHashMap) ASSOC.invoke(PersistentHashMap.EMPTY, readState, writeState);
     _OpCache_<operation> = (PersistentHashMap) ASSOC.invoke(_OpCache_<operation>, <transitionEval>, _OpCache_with_parameter_<operation>);

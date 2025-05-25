@@ -128,13 +128,13 @@ public class IterationPredicateGenerator {
                 }
             }
             ST enumerationTemplate = getEnumerationTemplate(declarationNode, declarationProcessed, innerPredicate);
-            if(enumerationTemplate == null) {
+            /*if(enumerationTemplate == null) {
                 i = i - 1;
                 if(declarations.size() != declarationProcessed.size()) {
                     subpredicateIndex = j+1;
                 }
                 continue;
-            }
+            }*/
             subpredicateIndex = j+1;
             declarationProcessed.add(declarationNode.getName());
         }

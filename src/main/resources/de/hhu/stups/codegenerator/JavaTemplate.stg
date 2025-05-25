@@ -1543,11 +1543,11 @@ try {
         if(writeState != null) {
             copiedState._apply_update_for_<operation>(writeState);
             copiedState.parent = state;
-            copiedState.stateAccessedVia = <if(parameters)>"<operation>";<else>"<operation>(" + <parameters; separator=" + \",\" + "> + ")";<endif>
+            copiedState.stateAccessedVia = <if(!hasParameters)>"<operation>";<else>"<operation>(" + <parameters; separator=" + \",\" + "> + ")";<endif>
         } else {
             copiedState.<operation>(<parameters; separator=", ">);
             copiedState.parent = state;
-            copiedState.stateAccessedVia = <if(parameters)>"<operation>";<else>"<operation>(" + <parameters; separator=" + \",\" + "> + ")";<endif>
+            copiedState.stateAccessedVia = <if(!hasParameters)>"<operation>";<else>"<operation>(" + <parameters; separator=" + \",\" + "> + ")";<endif>
             writeState = copiedState._update_for_<operation>();
             _OpCache_with_parameter_<operation> = (PersistentHashMap) ASSOC.invoke(_OpCache_with_parameter_<operation>, readState, writeState);
             _OpCache_<operation> = (PersistentHashMap) ASSOC.invoke(_OpCache_<operation>, <transitionEval>, _OpCache_with_parameter_<operation>);
@@ -1556,7 +1556,7 @@ try {
     } else {
         copiedState.<operation>(<parameters; separator=", ">);
         copiedState.parent = state;
-        copiedState.stateAccessedVia = <if(parameters)>"<operation>";<else>"<operation>(" + <parameters; separator=" + \",\" + "> + ")";<endif>
+        copiedState.stateAccessedVia = <if(!hasParameters)>"<operation>";<else>"<operation>(" + <parameters; separator=" + \",\" + "> + ")";<endif>
         _ProjectionWrite_<operation> writeState = copiedState._update_for_<operation>();
         _OpCache_with_parameter_<operation> = (PersistentHashMap) ASSOC.invoke(PersistentHashMap.EMPTY, readState, writeState);
         _OpCache_<operation> = (PersistentHashMap) ASSOC.invoke(_OpCache_<operation>, <transitionEval>, _OpCache_with_parameter_<operation>);
@@ -1578,11 +1578,11 @@ if(_OpCache_with_parameter_<operation> != null) {
     if(writeState != null) {
         copiedState._apply_update_for_<operation>(writeState);
         copiedState.parent = state;
-        copiedState.stateAccessedVia = <if(parameters)>"<operation>";<else>"<operation>(" + <parameters; separator=" + \",\" + "> + ")";<endif>
+        copiedState.stateAccessedVia = <if(!hasParameters)>"<operation>";<else>"<operation>(" + <parameters; separator=" + \",\" + "> + ")";<endif>
     } else {
         copiedState.<operation>(<parameters; separator=", ">);
         copiedState.parent = state;
-        copiedState.stateAccessedVia = <if(parameters)>"<operation>";<else>"<operation>(" + <parameters; separator=" + \",\" + "> + ")";<endif>
+        copiedState.stateAccessedVia = <if(!hasParameters)>"<operation>";<else>"<operation>(" + <parameters; separator=" + \",\" + "> + ")";<endif>
         writeState = copiedState._update_for_<operation>();
         _OpCache_with_parameter_<operation> = (PersistentHashMap) ASSOC.invoke(_OpCache_with_parameter_<operation>, readState, writeState);
         _OpCache_<operation> = (PersistentHashMap) ASSOC.invoke(_OpCache_<operation>, <transitionEval>, _OpCache_with_parameter_<operation>);
@@ -1591,7 +1591,7 @@ if(_OpCache_with_parameter_<operation> != null) {
 } else {
     copiedState.<operation>(<parameters; separator=", ">);
     copiedState.parent = state;
-    copiedState.stateAccessedVia = <if(parameters)>"<operation>";<else>"<operation>(" + <parameters; separator=" + \",\" + "> + ")";<endif>
+    copiedState.stateAccessedVia = <if(!hasParameters)>"<operation>";<else>"<operation>(" + <parameters; separator=" + \",\" + "> + ")";<endif>
     _ProjectionWrite_<operation> writeState = copiedState._update_for_<operation>();
     _OpCache_with_parameter_<operation> = (PersistentHashMap) ASSOC.invoke(PersistentHashMap.EMPTY, readState, writeState);
     _OpCache_<operation> = (PersistentHashMap) ASSOC.invoke(_OpCache_<operation>, <transitionEval>, _OpCache_with_parameter_<operation>);

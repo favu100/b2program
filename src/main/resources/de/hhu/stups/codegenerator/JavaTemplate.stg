@@ -1239,6 +1239,12 @@ private static class ModelChecker {
         this.isCaching = isCaching;
         this.isDebug = isDebug;
     }
+    
+    void debug_println (String msg) {
+       if(isDebug) {
+           System.out.println(msg);
+       }
+    }
 
     <main>
 
@@ -1514,8 +1520,8 @@ while(!currentState._get_calculate_flag_cp()) {
     <machine> copiedState = state._copy();
     copiedState._apply_<operation>_cp(currentState);
     copiedState.<operation>(<parameters; separator=", ">);
-    <if(isCaching)>
     copiedState.parent = state;
+    <if(isCaching)>
     copiedState = stateAccessedVia = "<operation>(<parameters; separator=", ">)";
     <endif>
     if(copiedState._get_<operation>_triggered()) {
@@ -1563,6 +1569,7 @@ try {
     }
     <else>
     copiedState.<operation>(<parameters; separator=", ">);
+    copiedState.parent = state;
     <endif>
     result.add(copiedState);
     transitions.getAndIncrement();
@@ -1598,6 +1605,7 @@ if(_OpCache_with_parameter_<operation> != null) {
 }
 <else>
 copiedState.<operation>(<parameters; separator=", ">);
+copiedState.parent = state;
 <endif>
 result.add(copiedState);
 transitions.getAndIncrement();
@@ -1669,7 +1677,7 @@ private void printResult(final int states, final int transitions) {
             if(counterExampleState.stateAccessedVia != null) {
                 sb.insert(0, counterExampleState.stateAccessedVia);
             }
-            sb.insert(0, "\n" + "* Step " + stepnr + ":");
+            sb.insert(0, "\n" + "* Step: ");
             stepnr++;
             counterExampleState = counterExampleState.parent;
         }
@@ -1689,14 +1697,12 @@ model_check_init_static(map, keyy, entries) ::= <<
 
 model_check_main(machine, invariants, invariantDependency, guardDependency) ::= <<
 public void modelCheck() {
-    if (isDebug) {
-        System.out.println("Starting Modelchecking, STRATEGY=" + type + ", THREADS=" + threads + ", CACHING=" + isCaching);
-    }
 
     if (threads \<= 1) {
-
+        debug_println("Starting Single-Threaded Modelchecking, STRATEGY=" + type + ", THREADS=" + threads + ", CACHING=" + isCaching);
         modelCheckSingleThreaded();
     } else {
+        debug_println("Starting Multi-Threaded Modelchecking, STRATEGY=" + type + ", THREADS=" + threads + ", CACHING=" + isCaching);
         this.threadPool = (ThreadPoolExecutor) Executors.newFixedThreadPool(threads-1);
         modelCheckMultiThreaded();
     }

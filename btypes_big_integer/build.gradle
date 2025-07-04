@@ -34,7 +34,6 @@ task fatJar(type: Jar) {
         exclude "META-INF/*.md"
         exclude "module-info.class"
     }
-    from('src/main/python'){include 'btypes/*.py'}
     with jar
 }
 

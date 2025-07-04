@@ -20,7 +20,7 @@ public class BIntegerTest {
 		} else if (o instanceof Integer) {
 			return BInteger.of((int) o);
 		} else if (o instanceof Long) {
-			return BInteger.of((int) o);
+			return BInteger.of((long) o);
 		} else if (o instanceof BigInteger) {
 			return BInteger.of((BigInteger) o);
 		} else {

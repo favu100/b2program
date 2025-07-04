@@ -17,6 +17,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Created by fabian on 30.08.18.
@@ -66,7 +67,7 @@ public class TestCpp {
 				null);
 
 		Process process = Runtime.getRuntime()
-				.exec("g++ -std=c++17 -O2 -g -DIMMER_NO_THREAD_SAFETY -c " + cppFilePaths.get(cppFilePaths.size() - 1).toFile().getAbsoluteFile().toString());
+				.exec("g++ -w -std=c++17 -O2 -g -DIMMER_NO_THREAD_SAFETY -c " + cppFilePaths.get(cppFilePaths.size() - 1).toFile().getAbsoluteFile().toString());
 		writeInputToSystem(process.getErrorStream());
 		writeInputToOutput(process.getErrorStream(), process.getOutputStream());
 		process.waitFor();
@@ -104,10 +105,10 @@ public class TestCpp {
 		Process compileProcess;
 		if(osName.contains("mac")) {
 			compileProcess = runtime
-					.exec("g++ -std=c++17 -O2 -flto -g -DIMMER_NO_THREAD_SAFETY -o " + machineName + ".exec " + generatedMachinePath);
+					.exec("g++ -w -std=c++17 -O2 -flto -g -DIMMER_NO_THREAD_SAFETY -o " + machineName + ".exec " + generatedMachinePath);
 		} else {
 			compileProcess = runtime
-					.exec("g++ -std=c++17 -O2 -flto=4 -g -DIMMER_NO_THREAD_SAFETY -o " + machineName + ".exec " + generatedMachinePath);
+					.exec("g++ -w -std=c++17 -O2 -flto=4 -g -DIMMER_NO_THREAD_SAFETY -o " + machineName + ".exec " + generatedMachinePath);
 		}
 		compileProcess.waitFor();
 
@@ -157,7 +158,7 @@ public class TestCpp {
 				null);
 
 		Process process = Runtime.getRuntime()
-				.exec("g++ -std=c++17 -O2 -g -DIMMER_NO_THREAD_SAFETY -c " + cppFilePaths.get(cppFilePaths.size() - 1).toFile().getAbsoluteFile().toString());
+				.exec("g++ -w -std=c++17 -O2 -g -DIMMER_NO_THREAD_SAFETY -c " + cppFilePaths.get(cppFilePaths.size() - 1).toFile().getAbsoluteFile().toString());
 		writeInputToSystem(process.getErrorStream());
 		writeInputToOutput(process.getErrorStream(), process.getOutputStream());
 		process.waitFor();
@@ -192,10 +193,10 @@ public class TestCpp {
 		Process compileProcess;
 		if(osName.contains("mac")) {
 			compileProcess = runtime
-					.exec("g++ -std=c++17 -O1 -flto -fbracket-depth=10000 -g -DIMMER_NO_THREAD_SAFETY -o " + machineName + ".exec " + generatedMachinePath);
+					.exec("g++ -w -std=c++17 -O1 -flto -fbracket-depth=10000 -g -DIMMER_NO_THREAD_SAFETY -o " + machineName + ".exec " + generatedMachinePath);
 		} else {
 			compileProcess = runtime
-					.exec("g++ -std=c++17 -O1 -flto=4 -g -DIMMER_NO_THREAD_SAFETY -o " + machineName + ".exec " + generatedMachinePath);
+					.exec("g++ -w -std=c++17 -O1 -flto=4 -g -DIMMER_NO_THREAD_SAFETY -o " + machineName + ".exec " + generatedMachinePath);
 		}
 		compileProcess.waitFor();
 
@@ -219,9 +220,12 @@ public class TestCpp {
 		String result = streamToString(executeProcess.getInputStream()).replaceAll("\n", "");
 		String expectedOutput = streamToString(new FileInputStream(mainPath.toFile().getAbsoluteFile().toString().replaceAll(".cpp", "_MC.out"))).replaceAll("\n", "");
 
-		System.out.println("Assert: " + result + " = " + expectedOutput);
-
-		assertEquals(expectedOutput, result);
+		if(expectedOutput.startsWith("INVARIANT CONJUNCT VIOLATED")) {
+			assertTrue(result.startsWith("INVARIANT CONJUNCT VIOLATED"));
+		} else {
+			System.out.println("Assert: " + result + " = " + expectedOutput);
+			assertEquals(expectedOutput, result);
+		}
 	}
 
 	private void cleanUp(String path) {

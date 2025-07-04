@@ -128,13 +128,13 @@ public class IterationPredicateGenerator {
                 }
             }
             ST enumerationTemplate = getEnumerationTemplate(declarationNode, declarationProcessed, innerPredicate);
-            if(enumerationTemplate == null) {
+            /*if(enumerationTemplate == null) {
                 i = i - 1;
                 if(declarations.size() != declarationProcessed.size()) {
                     subpredicateIndex = j+1;
                 }
                 continue;
-            }
+            }*/
             subpredicateIndex = j+1;
             declarationProcessed.add(declarationNode.getName());
         }
@@ -311,8 +311,13 @@ public class IterationPredicateGenerator {
         while(i < declarations.size() && declarations.size() != declarationProcessed.size()) {
             DeclarationNode nextDeclaration = getNextDeclarationInEnumerationPredicate(declarations, declarationProcessed, predicateNode, universalQuantification);
             if(nextDeclaration == null) {
-                throw new RuntimeException("There are not enough predicates to constraint bounded variables at: " + "line: " + predicateNode.getSourceCodePosition().getStartLine() + " column: " + predicateNode.getSourceCodePosition().getStartColumn());
+                throw new RuntimeException("There are not enough predicates to constraint bounded variables at: " 
+                + "line: " + predicateNode.getSourceCodePosition().getStartLine() // TODO: this seems to give wrong nr
+                + " column: " + predicateNode.getSourceCodePosition().getStartColumn() 
+                + " (variables already processed: " + declarationProcessed + " from " + declarations + ")");
             }
+            // TODO: B2Program seems to require predicates even for enumerated set elements
+            //       even though they are finite by construction
             result.add(nextDeclaration);
             declarationProcessed.add(nextDeclaration.getName());
             i++;
@@ -321,22 +326,32 @@ public class IterationPredicateGenerator {
     }
 
     private DeclarationNode getNextDeclarationInEnumerationPredicate(List<DeclarationNode> declarations, Set<String> declarationProcessed, PredicateNode predicate, boolean universalQuantification) {
-        PredicateNode innerPredicate = null;
+        PredicateNode innerPredicate;
         int numberConjuncts = 0;
-        if(universalQuantification) {
-            if(predicate instanceof PredicateOperatorWithExprArgsNode) {
+        if (universalQuantification) {
+            if (predicate instanceof PredicateOperatorWithExprArgsNode) {
                 numberConjuncts = 1;
-            } else if(predicate instanceof PredicateOperatorNode) {
-                if(((PredicateOperatorNode) predicate).getPredicateArguments().get(0) instanceof PredicateOperatorWithExprArgsNode) {
+            } else if (predicate instanceof PredicateOperatorNode) {
+                PredicateOperatorNode predOp = (PredicateOperatorNode) predicate;
+                PredicateNode firstArg = predOp.getPredicateArguments().get(0);
+                if (firstArg instanceof PredicateOperatorWithExprArgsNode) {
                     numberConjuncts = 1;
+                } else if (firstArg instanceof PredicateOperatorNode) {
+                    numberConjuncts = ((PredicateOperatorNode) firstArg).getPredicateArguments().size();
                 } else {
-                    numberConjuncts = ((PredicateOperatorNode) ((PredicateOperatorNode) predicate).getPredicateArguments().get(0)).getPredicateArguments().size();
+                    // ?
                 }
             }
         } else {
-            numberConjuncts = predicate instanceof PredicateOperatorWithExprArgsNode ? 1
-                    : predicate instanceof QuantifiedPredicateNode ? 1
-                    : ((PredicateOperatorNode) predicate).getPredicateArguments().size();
+            if (predicate instanceof PredicateOperatorWithExprArgsNode) {
+                numberConjuncts = 1;
+            } else if (predicate instanceof PredicateOperatorNode) {
+                numberConjuncts = ((PredicateOperatorNode) predicate).getPredicateArguments().size();
+            } else if (predicate instanceof QuantifiedPredicateNode) {
+                numberConjuncts = 1;
+            } else {
+                // ?
+            }
         }
 
         for(int i = 0; i < numberConjuncts; i++) {

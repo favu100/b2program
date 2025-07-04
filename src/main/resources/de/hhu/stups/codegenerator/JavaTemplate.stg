@@ -1239,6 +1239,12 @@ private static class ModelChecker {
         this.isCaching = isCaching;
         this.isDebug = isDebug;
     }
+    
+    void debug_println (String msg) {
+       if(isDebug) {
+           System.out.println(msg);
+       }
+    }
 
     <main>
 
@@ -1514,8 +1520,9 @@ while(!currentState._get_calculate_flag_cp()) {
     <machine> copiedState = state._copy();
     copiedState._apply_<operation>_cp(currentState);
     copiedState.<operation>(<parameters; separator=", ">);
-    <if(isCaching)>
     copiedState.parent = state;
+    <if(isCaching)>
+    copiedState = stateAccessedVia = "<operation>(<parameters; separator=", ">)";
     <endif>
     if(copiedState._get_<operation>_triggered()) {
         <if(isCaching)>
@@ -1542,9 +1549,11 @@ try {
         if(writeState != null) {
             copiedState._apply_update_for_<operation>(writeState);
             copiedState.parent = state;
+            copiedState.stateAccessedVia = <if(!hasParameters)>"<operation>";<else>"<operation>(" + <parameters; separator=" + \",\" + "> + ")";<endif>
         } else {
             copiedState.<operation>(<parameters; separator=", ">);
             copiedState.parent = state;
+            copiedState.stateAccessedVia = <if(!hasParameters)>"<operation>";<else>"<operation>(" + <parameters; separator=" + \",\" + "> + ")";<endif>
             writeState = copiedState._update_for_<operation>();
             _OpCache_with_parameter_<operation> = (PersistentHashMap) ASSOC.invoke(_OpCache_with_parameter_<operation>, readState, writeState);
             _OpCache_<operation> = (PersistentHashMap) ASSOC.invoke(_OpCache_<operation>, <transitionEval>, _OpCache_with_parameter_<operation>);
@@ -1553,12 +1562,14 @@ try {
     } else {
         copiedState.<operation>(<parameters; separator=", ">);
         copiedState.parent = state;
+        copiedState.stateAccessedVia = <if(!hasParameters)>"<operation>";<else>"<operation>(" + <parameters; separator=" + \",\" + "> + ")";<endif>
         _ProjectionWrite_<operation> writeState = copiedState._update_for_<operation>();
         _OpCache_with_parameter_<operation> = (PersistentHashMap) ASSOC.invoke(PersistentHashMap.EMPTY, readState, writeState);
         _OpCache_<operation> = (PersistentHashMap) ASSOC.invoke(_OpCache_<operation>, <transitionEval>, _OpCache_with_parameter_<operation>);
     }
     <else>
     copiedState.<operation>(<parameters; separator=", ">);
+    copiedState.parent = state;
     <endif>
     result.add(copiedState);
     transitions.getAndIncrement();
@@ -1574,9 +1585,11 @@ if(_OpCache_with_parameter_<operation> != null) {
     if(writeState != null) {
         copiedState._apply_update_for_<operation>(writeState);
         copiedState.parent = state;
+        copiedState.stateAccessedVia = <if(!hasParameters)>"<operation>";<else>"<operation>(" + <parameters; separator=" + \",\" + "> + ")";<endif>
     } else {
         copiedState.<operation>(<parameters; separator=", ">);
         copiedState.parent = state;
+        copiedState.stateAccessedVia = <if(!hasParameters)>"<operation>";<else>"<operation>(" + <parameters; separator=" + \",\" + "> + ")";<endif>
         writeState = copiedState._update_for_<operation>();
         _OpCache_with_parameter_<operation> = (PersistentHashMap) ASSOC.invoke(_OpCache_with_parameter_<operation>, readState, writeState);
         _OpCache_<operation> = (PersistentHashMap) ASSOC.invoke(_OpCache_<operation>, <transitionEval>, _OpCache_with_parameter_<operation>);
@@ -1585,12 +1598,14 @@ if(_OpCache_with_parameter_<operation> != null) {
 } else {
     copiedState.<operation>(<parameters; separator=", ">);
     copiedState.parent = state;
+    copiedState.stateAccessedVia = <if(!hasParameters)>"<operation>";<else>"<operation>(" + <parameters; separator=" + \",\" + "> + ")";<endif>
     _ProjectionWrite_<operation> writeState = copiedState._update_for_<operation>();
     _OpCache_with_parameter_<operation> = (PersistentHashMap) ASSOC.invoke(PersistentHashMap.EMPTY, readState, writeState);
     _OpCache_<operation> = (PersistentHashMap) ASSOC.invoke(_OpCache_<operation>, <transitionEval>, _OpCache_with_parameter_<operation>);
 }
 <else>
 copiedState.<operation>(<parameters; separator=", ">);
+copiedState.parent = state;
 <endif>
 result.add(copiedState);
 transitions.getAndIncrement();
@@ -1655,13 +1670,15 @@ private void printResult(final int states, final int transitions) {
 
         System.out.println("COUNTER EXAMPLE TRACE: ");
         StringBuilder sb = new StringBuilder();
+        int stepnr = 0;
         while(counterExampleState != null) {
             sb.insert(0, counterExampleState);
             sb.insert(0, "\n");
             if(counterExampleState.stateAccessedVia != null) {
                 sb.insert(0, counterExampleState.stateAccessedVia);
             }
-            sb.insert(0, "\n\n");
+            sb.insert(0, "\n" + "* Step: ");
+            stepnr++;
             counterExampleState = counterExampleState.parent;
         }
         System.out.println(sb);
@@ -1680,14 +1697,12 @@ model_check_init_static(map, keyy, entries) ::= <<
 
 model_check_main(machine, invariants, invariantDependency, guardDependency) ::= <<
 public void modelCheck() {
-    if (isDebug) {
-        System.out.println("Starting Modelchecking, STRATEGY=" + type + ", THREADS=" + threads + ", CACHING=" + isCaching);
-    }
 
     if (threads \<= 1) {
-
+        debug_println("Starting Single-Threaded Modelchecking, STRATEGY=" + type + ", THREADS=" + threads + ", CACHING=" + isCaching);
         modelCheckSingleThreaded();
     } else {
+        debug_println("Starting Multi-Threaded Modelchecking, STRATEGY=" + type + ", THREADS=" + threads + ", CACHING=" + isCaching);
         this.threadPool = (ThreadPoolExecutor) Executors.newFixedThreadPool(threads-1);
         modelCheckMultiThreaded();
     }
@@ -1860,7 +1875,7 @@ public static void main(String[] args) {
     ModelChecker modelchecker = new ModelChecker(type, threads, isCaching, isDebug);
     modelchecker.modelCheck();
     long stop = java.lang.System.currentTimeMillis();
-    System.out.println("Model Checking Time: "+ (stop-start) + " ms");
+    System.out.println("Model Checking Time (excluding time for assigning constants): "+ (stop-start) + " ms");
 }
 >>
 

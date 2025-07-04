@@ -1514,10 +1514,11 @@ class BRelation : public BObject {
             S prj1 = object.projection1();
             T prj2 = object.projection2();
 
-            if(this->domain().getSet().count(prj1) == 0) {
+            const immer::set<T, typename BSet<T>::Hash, typename BSet<T>::HashEqual>* rangePtr = this->map.find(prj1);
+            if(rangePtr == nullptr) {
                 return BBoolean(false);
             }
-            immer::set<T, typename BSet<T>::Hash, typename BSet<T>::HashEqual> range = this->map[prj1];
+            immer::set<T, typename BSet<T>::Hash, typename BSet<T>::HashEqual> range = *rangePtr;
             return BBoolean(range.count(prj2) > 0);
         }
 
@@ -1525,10 +1526,12 @@ class BRelation : public BObject {
             S prj1 = object.projection1();
             T prj2 = object.projection2();
 
-            if(this->domain().getSet().count(prj1) == 0) {
+            const immer::set<T, typename BSet<T>::Hash, typename BSet<T>::HashEqual>* rangePtr = this->map.find(prj1);
+            if(rangePtr == nullptr) {
                 return BBoolean(true);
             }
-            immer::set<T, typename BSet<T>::Hash, typename BSet<T>::HashEqual> range = this->map[prj1];
+
+            immer::set<T, typename BSet<T>::Hash, typename BSet<T>::HashEqual> range = *rangePtr;
             return BBoolean(range.count(prj2) == 0);
         }
 

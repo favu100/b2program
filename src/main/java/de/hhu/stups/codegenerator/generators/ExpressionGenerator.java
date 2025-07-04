@@ -471,7 +471,7 @@ public class ExpressionGenerator {
         } else if(node.getOperator() == NAT1) {
             return generateNat1();
         }
-        throw new CodeGenerationException("Given operator is not supported: " + node.getOperator());
+        throw new CodeGenerationException("Given operator is not supported: " + node.getOperator() + " at line " + node.getSourceCodePosition().getStartLine() + " column " + node.getSourceCodePosition().getStartColumn());
     }
 
     /*
@@ -592,7 +592,7 @@ public class ExpressionGenerator {
             case ISEQ:
             case ISEQ1:
             case PERM:
-                throw new CodeGenerationException("Operator only supported in element of: " + operator);
+                throw new CodeGenerationException("Operator only supported in element of: " + operator); // TODO: provide position info
             case SIZE:
                 operatorName = "size";
                 break;
@@ -600,7 +600,7 @@ public class ExpressionGenerator {
                 operatorName = "reverse";
                 break;
             default:
-                throw new RuntimeException("Given operator is not implemented: " + operator);
+                throw new RuntimeException("Given operator is not implemented: " + operator); // TODO: provide position info
         }
         TemplateHandler.add(template, "operator", nameHandler.handle(operatorName));
         TemplateHandler.add(template, "isOverloadedOperator", isOverloadedOperator);
@@ -678,7 +678,7 @@ public class ExpressionGenerator {
             case PARTIAL_SURJECTION:
             case PARTIAL_FUNCTION:
             case PARTIAL_INJECTION:
-                throw new CodeGenerationException("Operator only supported in element of: " + operator + " at ");
+                throw new CodeGenerationException("Operator only supported in element of: " + operator + " at "); // TODO: provide position info
             case INSERT_FRONT:
                 operatorName = "prepend";
                 break;
@@ -695,7 +695,7 @@ public class ExpressionGenerator {
                 operatorName = "concat";
                 break;
             default:
-                throw new RuntimeException("Given operator is not implemented: " + operator);
+                throw new RuntimeException("Given operator is not implemented: " + operator); // TODO: provide position info
         }
         TemplateHandler.add(template, "operator", nameHandler.handle(operatorName));
         return template;

@@ -176,20 +176,20 @@ int hashCode() const {
 }
 
 int _hashCode_1() const {
-    int result = 1;
+    int _result = 1;
     <assignments1; separator= "\n">
-    return result;
+    return _result;
 }
 
 int _hashCode_2() const {
-    int result = 1;
+    int _result = 1;
     <assignments2; separator= "\n">
-    return result;
+    return _result;
 }
 >>
 
 machine_hash_assignment(primeNumber, var) ::= <<
-result = (<primeNumber> * result) ^ ((this-><var>()).hashCode() \<\< 1);
+_result = (<primeNumber> * _result) ^ ((this-><var>()).hashCode() \<\< 1);
 >>
 
 machine_string(machine, variables) ::= <<
@@ -254,9 +254,9 @@ class <name> : public BStruct {
         }
 
         int hashCode() const {
-            int result = 1;
-            <fields: {field | result = 31 * result + (<field>.hashCode() \<\< 1);}; separator="\n">
-            return result;
+            int _result = 1;
+            <fields: {field | _result = 31 * _result + (<field>.hashCode() \<\< 1);}; separator="\n">
+            return _result;
         }
 };
 >>
@@ -1236,9 +1236,9 @@ class _ProjectionRead__tr_<name> {
         }
 
         int hashCode() const {
-            int result = 1;
-            <variables: {variable | result = 31 * result + (<variable>.hashCode() \<\< 1);}; separator="\n">
-            return result;
+            int _result = 1;
+            <variables: {variable | _result = 31 * _result + (<variable>.hashCode() \<\< 1);}; separator="\n">
+            return _result;
         }
 };
 <else>
@@ -1295,9 +1295,9 @@ class _ProjectionRead_<name> {
         }
 
         int hashCode() const {
-            int result = 1;
-            <variables: {variable | result = 31 * result + (<variable>.hashCode() \<\< 1);}; separator="\n">
-            return result;
+            int _result = 1;
+            <variables: {variable | _result = 31 * _result + (<variable>.hashCode() \<\< 1);}; separator="\n">
+            return _result;
         }
 
 };
@@ -1354,9 +1354,9 @@ class _ProjectionRead_<name> {
         }
 
         int hashCode() const {
-            int result = 1;
-            <variables: {variable | result = 31 * result + (<variable>.hashCode() \<\< 1);}; separator="\n">
-            return result;
+            int _result = 1;
+            <variables: {variable | _result = 31 * _result + (<variable>.hashCode() \<\< 1);}; separator="\n">
+            return _result;
         }
 
 };
@@ -1415,9 +1415,9 @@ class _ProjectionWrite_<name> {
         }
 
         int hashCode() const {
-            int result = 1;
-            <variables: {variable | result = 31 * result + (<variable>.hashCode() \<\< 1);}; separator="\n">
-            return result;
+            int _result = 1;
+            <variables: {variable | _result = 31 * _result + (<variable>.hashCode() \<\< 1);}; separator="\n">
+            return _result;
         }
 
 };
@@ -1732,13 +1732,14 @@ void modelCheckMultiThreaded(boost::asio::thread_pool& workers) {
 
 model_check_main_method(machine) ::= <<
 int main(int argc, char *argv[]) {
-    if(argc != 4) {
-        cout \<\< "Number of arguments errorneous\n";
+    if(argc > 5) {
+        cout \<\< "Too many arguments\n";
+        cout \<\< "Expecting arguments: STRATEGY NR_THREADS CACHING DEBUG\n";
         return -1;
     }
-    string strategy = argv[1];
-    string numberThreads = argv[2];
-    string caching = argv[3];
+    string strategy = (argc>=2) ? argv[1] : "mixed";
+    string numberThreads = (argc>=3) ? argv[2] : "1";
+    string caching = (argc>=4) ? argv[3] :"false";
 
     <machine>::Type type;
 
@@ -1750,6 +1751,7 @@ int main(int argc, char *argv[]) {
         type = <machine>::Type::DFS;
     } else {
         cout \<\< "Input for strategy is wrong.\n";
+        cout \<\< "Expecting mixed, bf or df.\n";
         return -1;
     }
 
@@ -1774,11 +1776,11 @@ int main(int argc, char *argv[]) {
     } else if(std::string("false").compare(caching) == 0) {
         isCaching = false;
     } else {
-        cout \<\< "Input for caching is wrong.\n";
+        cout \<\< "Input for caching is wrong, expecting true or false.\n";
         return - 1;
     }
 
-    bool isDebug = false;
+    bool isDebug = (argc>=5 && std::string("true").compare(argv[4])==0) ? true : false;
 
     ModelChecker modelchecker(type, threads, isCaching, isDebug);
     modelchecker.modelCheck();

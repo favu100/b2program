@@ -326,32 +326,22 @@ public class IterationPredicateGenerator {
     }
 
     private DeclarationNode getNextDeclarationInEnumerationPredicate(List<DeclarationNode> declarations, Set<String> declarationProcessed, PredicateNode predicate, boolean universalQuantification) {
-        PredicateNode innerPredicate;
+        PredicateNode innerPredicate = null;
         int numberConjuncts = 0;
-        if (universalQuantification) {
-            if (predicate instanceof PredicateOperatorWithExprArgsNode) {
+        if(universalQuantification) {
+            if(predicate instanceof PredicateOperatorWithExprArgsNode) {
                 numberConjuncts = 1;
-            } else if (predicate instanceof PredicateOperatorNode) {
-                PredicateOperatorNode predOp = (PredicateOperatorNode) predicate;
-                PredicateNode firstArg = predOp.getPredicateArguments().get(0);
-                if (firstArg instanceof PredicateOperatorWithExprArgsNode) {
+            } else if(predicate instanceof PredicateOperatorNode) {
+                if(((PredicateOperatorNode) predicate).getPredicateArguments().get(0) instanceof PredicateOperatorWithExprArgsNode) {
                     numberConjuncts = 1;
-                } else if (firstArg instanceof PredicateOperatorNode) {
-                    numberConjuncts = ((PredicateOperatorNode) firstArg).getPredicateArguments().size();
                 } else {
-                    // ?
+                    numberConjuncts = ((PredicateOperatorNode) ((PredicateOperatorNode) predicate).getPredicateArguments().get(0)).getPredicateArguments().size();
                 }
             }
         } else {
-            if (predicate instanceof PredicateOperatorWithExprArgsNode) {
-                numberConjuncts = 1;
-            } else if (predicate instanceof PredicateOperatorNode) {
-                numberConjuncts = ((PredicateOperatorNode) predicate).getPredicateArguments().size();
-            } else if (predicate instanceof QuantifiedPredicateNode) {
-                numberConjuncts = 1;
-            } else {
-                // ?
-            }
+            numberConjuncts = predicate instanceof PredicateOperatorWithExprArgsNode ? 1
+                    : predicate instanceof QuantifiedPredicateNode ? 1
+                    : ((PredicateOperatorNode) predicate).getPredicateArguments().size();
         }
 
         for(int i = 0; i < numberConjuncts; i++) {

@@ -176,7 +176,7 @@ public class TestJs {
 						visualisation,
 						serverLink);
 
-		Process compileProcess = Runtime.getRuntime().exec("tsc --target ES6 --moduleResolution node " +
+		Process compileProcess = Runtime.getRuntime().exec("tsc --target ES6 --moduleResolution --project tsconfig.json node " +
 				String.join(" ", tsFilePaths.stream()
 						.map(path -> path.toFile().getAbsoluteFile().toString())
 						.collect(Collectors.toSet())));

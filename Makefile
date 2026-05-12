@@ -50,7 +50,7 @@ ifeq ($(LANGUAGE), ts)
 %:
 	java -jar B2Program-all-0.1.0-SNAPSHOT.jar $(TS_CODE_GEN_FLAGS) -f $(DIRECTORY)/$@.mch
 	@if [ "$(DIRECTORY)" != "." ]; then cp $(DIRECTORY)/*.ts .; fi
-	$(TSC) $(TSCFLAGS) $@.ts
+	$(TSC) $(TSCFLAGS) --project tsconfig.json $@.ts
 	node $@.js $(STRATEGY) $(THREADS) $(CACHING)
 endif
 ifneq (,$(findstring $(LANGUAGE), rs|RS|rust|Rust))

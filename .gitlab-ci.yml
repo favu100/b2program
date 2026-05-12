@@ -24,7 +24,7 @@ test:linux:
     DEBIAN_FRONTEND: noninteractive
   before_script:
     - apt-get update
-    - apt-get install --assume-yes build-essential cmake git libboost-dev nodejs
+    - apt-get install --assume-yes build-essential cmake git libboost-dev npm
     - npm install -g typescript
     - npm i --save-dev @types/node
   timeout: 3h

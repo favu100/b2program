@@ -10,6 +10,7 @@ stages:
     paths:
       - .gradle/caches
       - .gradle/native
+      - .gradle/notifications
       - .gradle/wrapper
   artifacts:
     reports:

@@ -31,10 +31,7 @@ test:linux:
   script:
     - make btypes_primitives
     - git clone https://github.com/arximboldi/immer.git
-    - cd immer
-    - mv immer /usr/local/include/
-    - cd ..
-    - mkdir cpp_build && cd cpp_build
-    - cmake ..
-    - make install & cd ..
+    - (cd immer && mv immer /usr/local/include/)
+    - mkdir cpp_build
+    - (cd cpp_build && cmake .. && make install)
     - ./gradlew ${GRADLE_OPTIONS} check

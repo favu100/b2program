@@ -38,7 +38,7 @@ dependencies {
 }
 
 java {
-    sourceCompatibility = 1.8
+    sourceCompatibility = JavaVersion.VERSION_17
 }
 
 application {

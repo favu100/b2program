@@ -33,5 +33,5 @@ test:linux:
     - git clone https://github.com/arximboldi/immer.git
     - (cd immer && mv immer /usr/local/include/)
     - mkdir cpp_build
-    - (cd cpp_build && cmake .. && make install)
+    - (cd cpp_build && cmake .. && cmake --install .)
     - ./gradlew ${GRADLE_OPTIONS} check
